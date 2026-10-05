@@ -56,13 +56,7 @@ class QuestionHistoryAggregator:
             relation = self._relation_for_appearance(
                 question_id, appearance, relationship_by_question
             )
-            if relation is None or appearance_identity(appearance) in {
-                appearance_identity(item)
-                for items in buckets.values()
-                for item in items
-            }:
-                continue
-            if deduplicator.seen(appearance):
+            if relation is None or deduplicator.seen(appearance):
                 continue
             if relation in buckets:
                 buckets[relation].append(appearance)
