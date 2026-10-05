@@ -79,6 +79,22 @@ This phase does not yet:
 - calculate user performance;
 - claim that the master appeared in all government examinations.
 
+## Phase 5.3 — Batch Master Assignment
+
+`MasterQuestionBatchService` accepts a complete extracted question set plus explicit `QuestionMatch` records.
+
+The batch flow:
+
+1. preserves already-assigned questions;
+2. builds deterministic EXACT-equivalence components;
+3. groups a new exact component under one master;
+4. reuses an existing safe master when external evidence supports it;
+5. applies the REPHRASED confidence and margin policy;
+6. returns AMBIGUOUS instead of guessing when competing masters remain;
+7. never uses SAME_CONCEPT or RELATED_TOPIC for master identity.
+
+The batch API is deterministic with respect to question metadata and does not depend on the caller's input order.
+
 ## Next step
 
-Complete master read/query projections and controlled merge/repair operations, then connect the master identity layer to the live verified ingestion pipeline.
+Connect batch master assignment to the verified ingestion orchestration: normalized document → question extraction → answer-key resolution → matching persistence → exam appearance → master assignment, with one auditable lifecycle.
