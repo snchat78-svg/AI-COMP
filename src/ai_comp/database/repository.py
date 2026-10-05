@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from ai_comp.database.models import PaperRecord, RegistrySnapshot
+from ai_comp.database.models import EmbeddingModelRecord, PaperRecord, RegistrySnapshot
 from ai_comp.domain.exams import ConductingBody, Exam, PaperCategory
 from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
 from ai_comp.domain.sources import SourceRecord
@@ -64,6 +64,23 @@ class MatchRepository(Protocol):
 
     def save(self, match: QuestionMatch) -> None: ...
     def get_for_question(self, question_id: str) -> tuple[QuestionMatch, ...]: ...
+
+
+class EmbeddingRepository(Protocol):
+    """Persistence contract for model-versioned question embeddings."""
+
+    def save_model(self, model: EmbeddingModelRecord) -> None: ...
+    def save_embedding(
+        self,
+        question_id: str,
+        model_id: str,
+        embedding: tuple[float, ...],
+    ) -> None: ...
+    def get_embedding(
+        self,
+        question_id: str,
+        model_id: str,
+    ) -> tuple[float, ...] | None: ...
 
 
 class ResearchRepository(Protocol):
