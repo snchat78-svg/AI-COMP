@@ -1,16 +1,14 @@
 from pathlib import Path
 
 
-SCHEMA_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "database"
-    / "migrations"
-    / "0001_phase4_core.sql"
-)
+MIGRATIONS_ROOT = Path(__file__).resolve().parents[1] / "database" / "migrations"
 
 
 def schema_text() -> str:
-    return SCHEMA_PATH.read_text(encoding="utf-8")
+    return "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(MIGRATIONS_ROOT.glob("*.sql"))
+    )
 
 
 def test_phase4_schema_contains_required_core_tables():
@@ -61,8 +59,8 @@ def test_phase4_schema_keeps_embedding_provider_and_model_configurable():
     assert "model_name TEXT NOT NULL" in sql
     assert "embedding vector NOT NULL" in sql
 
+
 def test_phase4_schema_enforces_canonical_match_pair_ordering():
     sql = schema_text()
-    assert "question_matches_canonical_order" in sql or (
-        "0004_phase4_match_pair_integrity.sql" in str(SCHEMA_PATH.parent)
-    )
+    assert "question_matches_canonical_order" in sql
+    assert "CHECK (left_question_id < right_question_id)" in sql
