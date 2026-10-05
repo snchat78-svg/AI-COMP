@@ -536,14 +536,6 @@ class PostgresMasterQuestionRepository:
                 )
                 self._connection.execute(
                     """
-                    DELETE FROM master_question_memberships
-                    WHERE master_question_id = %s
-                      AND question_id = %s
-                    """,
-                    (source_master_id, question_id),
-                )
-                self._connection.execute(
-                    """
                     INSERT INTO master_repair_events (
                         question_id,
                         source_master_id,
