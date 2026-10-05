@@ -111,16 +111,14 @@ class MigrationRunner:
     @staticmethod
     def _without_transaction_wrappers(sql: str) -> str:
         value = sql.strip()
-        if value.upper().startswith("BEGIN;"):
-            value = value[6:].lstrip()
-        elif value.upper().startswith("BEGIN
-"):
-            value = value[6:].lstrip()
 
-        if value.upper().endswith("COMMIT;"):
-            value = value[:-7].rstrip()
-        elif value.upper().endswith("COMMIT"):
-            value = value[:-6].rstrip()
+        begin = value.upper().find("BEGIN;")
+        if begin >= 0:
+            value = value[begin + len("BEGIN;"):].lstrip()
+
+        commit = value.upper().rfind("COMMIT;")
+        if commit >= 0:
+            value = value[:commit].rstrip()
 
         if not value:
             raise MigrationError("migration SQL is empty after normalization")
