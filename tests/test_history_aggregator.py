@@ -110,6 +110,26 @@ def test_history_service_loads_related_appearances_from_repository():
     assert history.verified_appearance_count == 2
 
 
+
+def test_history_service_verified_count_uses_canonical_deduplication():
+    repo = InMemoryAppearanceRepository()
+    repo.save(appearance("copy-1", "q1", "exam-1", 12))
+    repo.save(appearance("copy-2", "q2", "exam-1", 12))
+
+    from ai_comp.domain.matching import MatchType, QuestionMatch
+
+    service = HistoryService(
+        repo,
+        match_repository=None,
+    )
+
+    assert service.verified_count("q1") == 1
+    history = service.build_history(
+        "q1",
+        (QuestionMatch("q1", "q2", MatchType.EXACT, 1.0),),
+    )
+    assert history.verified_appearance_count == 1
+
 def test_history_view_preserves_exam_year_shift_question_number_and_source():
     repo = InMemoryAppearanceRepository()
     repo.save(appearance("view-1", "q1", "exam-2024", 17))
