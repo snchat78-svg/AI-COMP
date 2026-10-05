@@ -60,7 +60,7 @@ class _HTMLTextParser(HTMLParser):
     _SKIP_TAGS = {"script", "style", "noscript", "template", "title"}
     _BLOCK_TAGS = {
         "address", "article", "aside", "blockquote", "dd", "div", "dl", "dt",
-        "footer", "br", "h1", "h2", "h3", "h4", "h5", "h6", "header",
+        "footer", "h1", "h2", "h3", "h4", "h5", "h6", "header",
         "li", "main", "nav", "ol", "p", "pre", "section", "table", "td",
         "th", "tr", "ul",
     }
