@@ -1,7 +1,6 @@
 from typing import Any
 
 from ai_comp.database.repository import RepositoryError
-from ai_comp.domain.questions import QuestionExtractionResult
 from ai_comp.research.paper import FetchedDocument, PaperCandidate
 from ai_comp.research.processing import NormalizedDocument
 
@@ -54,49 +53,14 @@ class PostgresResearchRepository:
     def save_document(self, document: FetchedDocument) -> None:
         try:
             with self._connection.transaction():
-                self._connection.execute(
-                    """
-                    INSERT INTO documents (
-                        document_id,
-                        candidate_id,
-                        source_url,
-                        content_type,
-                        sha256,
-                        size_bytes,
-                        storage_key,
-                        declared_format,
-                        detected_format
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (document_id) DO UPDATE SET
-                        candidate_id = EXCLUDED.candidate_id,
-                        source_url = EXCLUDED.source_url,
-                        content_type = EXCLUDED.content_type,
-                        sha256 = EXCLUDED.sha256,
-                        size_bytes = EXCLUDED.size_bytes,
-                        storage_key = EXCLUDED.storage_key,
-                        declared_format = EXCLUDED.declared_format,
-                        detected_format = EXCLUDED.detected_format
-                    """,
-                    (
-                        document.document_id,
-                        document.candidate_id,
-                        document.source_url,
-                        document.content_type,
-                        document.sha256,
-                        document.size_bytes,
-                        document.storage_key,
-                        document.format.value,
-                        document.format.value,
-                    ),
-                )
+                self._save_document_row(document)
         except Exception as exc:
             raise RepositoryError("failed to persist document") from exc
 
     def save_normalized_document(self, document: NormalizedDocument) -> None:
         try:
             with self._connection.transaction():
-                self.save_document(document.document)
+                self._save_document_row(document.document)
                 self._connection.execute(
                     """
                     UPDATE documents
@@ -135,19 +99,39 @@ class PostgresResearchRepository:
                 "failed to persist normalized document"
             ) from exc
 
-    def save_extraction_result(self, result: QuestionExtractionResult) -> None:
-        """Convenience transaction for Phase 3 output; repositories stay separable."""
-        from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
-        from ai_comp.database.postgres_question import PostgresQuestionRepository
-
-        try:
-            with self._connection.transaction():
-                questions = PostgresQuestionRepository(self._connection)
-                answers = PostgresAnswerKeyRepository(self._connection)
-                for question in result.questions:
-                    questions.save(question)
-                answers.save_many(result.document_id, result.answer_key_entries)
-        except Exception as exc:
-            raise RepositoryError(
-                "failed to persist question extraction result"
-            ) from exc
+    def _save_document_row(self, document: FetchedDocument) -> None:
+        self._connection.execute(
+            """
+            INSERT INTO documents (
+                document_id,
+                candidate_id,
+                source_url,
+                content_type,
+                sha256,
+                size_bytes,
+                storage_key,
+                declared_format,
+                detected_format
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (document_id) DO UPDATE SET
+                candidate_id = EXCLUDED.candidate_id,
+                source_url = EXCLUDED.source_url,
+                content_type = EXCLUDED.content_type,
+                sha256 = EXCLUDED.sha256,
+                size_bytes = EXCLUDED.size_bytes,
+                storage_key = EXCLUDED.storage_key,
+                declared_format = EXCLUDED.declared_format
+            """,
+            (
+                document.document_id,
+                document.candidate_id,
+                document.source_url,
+                document.content_type,
+                document.sha256,
+                document.size_bytes,
+                document.storage_key,
+                document.format.value,
+                document.format.value,
+            ),
+        )
