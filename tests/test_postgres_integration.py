@@ -254,6 +254,14 @@ B. दो",
                 (MatchEvidence("normalized_text_sha256"),),
             )
         )
+        match_repo.save(
+            QuestionMatch(
+                "q2",
+                "q1",
+                MatchType.EXACT,
+                1.0,
+            )
+        )
 
         appearance_repo = PostgresAppearanceRepository(connection)
         appearance_repo.save(
