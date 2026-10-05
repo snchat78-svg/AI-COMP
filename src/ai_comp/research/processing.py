@@ -57,7 +57,7 @@ class NullOCRAdapter:
 
 
 class _HTMLTextParser(HTMLParser):
-    _SKIP_TAGS = {"script", "style", "noscript", "template"}
+    _SKIP_TAGS = {"script", "style", "noscript", "template", "title"}
     _BLOCK_TAGS = {
         "address", "article", "aside", "blockquote", "dd", "div", "dl", "dt",
         "footer", "br", "h1", "h2", "h3", "h4", "h5", "h6", "header",
