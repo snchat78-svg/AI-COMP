@@ -5,6 +5,7 @@ from ai_comp.domain.matching import QuestionMatch
 from ai_comp.domain.verification import VerificationStatus
 from ai_comp.history.aggregator import QuestionHistory, QuestionHistoryAggregator
 from ai_comp.history.repository import AppearanceRepository
+from ai_comp.history.view import HistoricalQuestionView
 
 
 class HistoryService:
@@ -30,6 +31,15 @@ class HistoryService:
         return sum(
             item.verification.status is VerificationStatus.VERIFIED
             for item in appearances
+        )
+
+    def get_history_view(
+        self,
+        question_id: str,
+        matches: Iterable[QuestionMatch] = (),
+    ) -> HistoricalQuestionView:
+        return HistoricalQuestionView.from_history(
+            self.build_history(question_id, matches)
         )
 
     def build_history(
