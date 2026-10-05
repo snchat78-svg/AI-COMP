@@ -1,5 +1,4 @@
 from ai_comp.domain.master_questions import (
-    MasterAssignmentPolicy,
     MasterAssignmentStatus,
     MasterMembershipType,
     MasterQuestion,
@@ -7,6 +6,7 @@ from ai_comp.domain.master_questions import (
 )
 from ai_comp.domain.matching import MatchType, QuestionMatch
 from ai_comp.domain.questions import QuestionCandidate, QuestionKind, QuestionOption
+from ai_comp.master.policy import MasterAssignmentPolicy
 from ai_comp.master.repository import InMemoryMasterQuestionRepository
 from ai_comp.master.service import MasterQuestionService
 
