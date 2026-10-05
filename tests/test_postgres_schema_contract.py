@@ -35,6 +35,8 @@ def test_phase4_schema_contains_required_core_tables():
         "appearance_sources",
         "embedding_models",
         "question_embeddings",
+        "answer_key_entries",
+        "question_answer_records",
     )
 
     for table in required_tables:
