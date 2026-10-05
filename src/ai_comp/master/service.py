@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 
 from ai_comp.domain.master_questions import (
-    MasterAssignmentPolicy,
     MasterAssignmentResult,
     MasterAssignmentStatus,
     MasterMembershipType,
@@ -10,6 +9,7 @@ from ai_comp.domain.master_questions import (
 )
 from ai_comp.domain.matching import MatchType, QuestionMatch
 from ai_comp.domain.questions import QuestionCandidate
+from ai_comp.master.policy import MasterAssignmentPolicy
 from ai_comp.master.repository import MasterQuestionRepository
 
 
@@ -45,7 +45,7 @@ class MasterQuestionService:
         eligible = [
             item
             for item in candidates
-            if self._eligible(item[0])
+            if self._eligible(item)
         ]
 
         selected = self._select(eligible)
@@ -113,11 +113,14 @@ class MasterQuestionService:
 
     def _eligible(
         self,
-        relationship: MasterMembershipType,
+        candidate: tuple[str, MasterMembershipType, float],
     ) -> bool:
-        return relationship is MasterMembershipType.EXACT or (
+        _, relationship, confidence = candidate
+        if relationship is MasterMembershipType.EXACT:
+            return confidence == 1.0
+        return (
             relationship is MasterMembershipType.REPHRASED
-            and self.policy.min_rephrased_confidence <= 1.0
+            and confidence >= self.policy.min_rephrased_confidence
         )
 
     def _select(
