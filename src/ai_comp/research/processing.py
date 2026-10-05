@@ -43,6 +43,11 @@ class NormalizedDocument:
     text: str
     extraction_method: ExtractionMethod
 
+    @property
+    def document_id(self) -> str:
+        """Compatibility accessor for downstream extraction stages."""
+        return self.document.document_id
+
 
 class OCRAdapter(Protocol):
     def extract_text(self, content: bytes, document_format: DocumentFormat) -> str:
