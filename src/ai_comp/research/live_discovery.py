@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from time import sleep
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
 
 from ai_comp.domain.sources import CrawlPolicy, SourceRecord
@@ -103,11 +103,16 @@ class LiveOfficialSourceDiscovery:
         return tuple(urljoin(base, path) for path in ("sitemap.xml", "sitemap_index.xml", "feed", "rss.xml", "archive"))
 
     def _unique_allowed(self, source, policy, parser, urls):
+        """Allow crawl-control URLs (sitemaps/feeds) on the registered host.
+
+        Paper path restrictions are applied when paper candidates are created;
+        they must not block a source's own sitemap or feed endpoints.
+        """
         result = []
+        base = urlparse(source.base_url)
         for url in dict.fromkeys(urls):
-            try:
-                validate_candidate_url(source, url, policy)
-            except ResearchPolicyError:
+            parsed = urlparse(url)
+            if parsed.scheme not in {"http", "https"} or parsed.netloc != base.netloc:
                 continue
             if parser.can_fetch(self.user_agent, url):
                 result.append(url)
