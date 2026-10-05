@@ -54,7 +54,8 @@ class LiveOfficialSourceDiscovery:
         parser = RobotFileParser()
         parser.set_url(robots_url)
         parser.parse(robots.content.splitlines())
-        seeds = list(parser.site_maps() or []) + list(self._configured_seeds(source))
+        declared_seeds = list(parser.site_maps() or [])
+        seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
         pending = [(url, 0) for url in seeds]
