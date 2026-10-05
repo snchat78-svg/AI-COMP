@@ -40,3 +40,44 @@ COMMIT;
     assert "BEGIN;" not in normalized
     assert "COMMIT;" not in normalized
     assert "CREATE TABLE example" in normalized
+
+
+class MigrationConnection:
+    def __init__(self, applied=()):
+        self.applied = dict(applied)
+        self.events = []
+
+    def execute(self, sql, params=()):
+        self.events.append((sql, params))
+        if sql.strip().startswith("SELECT version, checksum"):
+            return type("Result", (), {"fetchall": lambda self: list(owner.applied.items())})()
+        return type("Result", (), {})()
+
+    def transaction(self):
+        owner = self
+
+        class Tx:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                if exc_type is None:
+                    owner.events.append(("commit", ()))
+                return False
+
+        return Tx()
+
+    def commit(self):
+        self.events.append(("commit-final", ()))
+
+
+def test_migration_runner_rejects_checksum_drift(tmp_path: Path):
+    migration = tmp_path / "0001_first.sql"
+    migration.write_text("CREATE TABLE first (id INT);", encoding="utf-8")
+    checksum = __import__("hashlib").sha256(
+        "different".encode("utf-8")
+    ).hexdigest()
+    connection = MigrationConnection(applied=(("0001", checksum),))
+
+    with pytest.raises(MigrationError, match="applied migration changed"):
+        MigrationRunner(tmp_path).apply(connection)
