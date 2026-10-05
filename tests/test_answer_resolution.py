@@ -52,3 +52,27 @@ def test_missing_question_is_not_guessed():
     result = AnswerKeyResolver().resolve(None, AnswerKeyEntry(9, "A", "9-A", 10))
     assert result.status is AnswerResolutionStatus.MISSING_QUESTION
     assert result.selected_option_key is None
+
+
+def test_duplicate_question_numbers_produce_ambiguous_resolution():
+    first = question()
+    second = QuestionCandidate(
+        question_id="q2",
+        document_id="doc1",
+        document_sha256="a" * 64,
+        question_number=1,
+        stem="दूसरा प्रश्न?",
+        options=first.options,
+        kind=QuestionKind.MCQ,
+        raw_text="1. दूसरा प्रश्न?",
+        start_line=5,
+        end_line=7,
+    )
+
+    result = AnswerKeyResolver().resolve_many(
+        (first, second),
+        (AnswerKeyEntry(1, "A", "1-A", 10),),
+    )[0]
+
+    assert result.status is AnswerResolutionStatus.AMBIGUOUS
+    assert result.selected_option_key is None
