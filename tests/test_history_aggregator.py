@@ -90,3 +90,22 @@ def test_unknown_direct_appearance_match_type_defaults_to_exact():
 
     assert len(history.exact_appearances) == 1
     assert history.verified_appearance_count == 1
+
+
+def test_history_service_loads_related_appearances_from_repository():
+    from ai_comp.domain.matching import MatchType, QuestionMatch
+    from ai_comp.history.repository import InMemoryAppearanceRepository
+    from ai_comp.history.service import HistoryService
+
+    repo = InMemoryAppearanceRepository()
+    repo.save(appearance("q1-a1", "q1", "exam-1", 1))
+    repo.save(appearance("q2-a1", "q2", "exam-2", 2))
+
+    history = HistoryService(repo).build_history(
+        "q1",
+        (QuestionMatch("q1", "q2", MatchType.REPHRASED, 0.95),),
+    )
+
+    assert len(history.exact_appearances) == 1
+    assert len(history.rephrased_appearances) == 1
+    assert history.verified_appearance_count == 2
