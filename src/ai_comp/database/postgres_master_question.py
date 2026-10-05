@@ -198,6 +198,24 @@ class PostgresMasterQuestionRepository:
     ) -> None:
         try:
             with self._connection.transaction():
+                target = self._connection.execute(
+                    """
+                    SELECT status
+                    FROM master_questions
+                    WHERE master_question_id = %s
+                    FOR UPDATE
+                    """,
+                    (membership.master_question_id,),
+                ).fetchone()
+                if target is None:
+                    raise RepositoryError(
+                        "membership references an unknown master question"
+                    )
+                if str(target[0]) != MasterQuestionStatus.ACTIVE.value:
+                    raise RepositoryError(
+                        "membership target master is not active"
+                    )
+
                 existing = self._connection.execute(
                     """
                     SELECT
