@@ -39,7 +39,12 @@ class Connection:
 def test_embedding_repository_validates_dimensions_and_round_trips_vector():
     conn = Connection()
     repo = PostgresEmbeddingRepository(conn)
-    conn.results = [Result(row=(3,)), Result(), Result(row=("[0.1,0.2,0.3]",))]
+    conn.results = [
+        Result(),
+        Result(row=(3,)),
+        Result(),
+        Result(row=("[0.1,0.2,0.3]",)),
+    ]
 
     repo.save_model(
         EmbeddingModelRecord(
