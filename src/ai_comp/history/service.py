@@ -88,12 +88,18 @@ class HistoryService:
     ) -> QuestionHistory:
         """Aggregate direct appearance records using supplied or persisted relationships."""
         match_items = self._resolve_matches(question_id, matches)
-        question_ids = {question_id}
+        question_ids = [question_id]
+        seen_question_ids = {question_id}
         for match in match_items:
             if match.left_question_id == question_id:
-                question_ids.add(match.right_question_id)
+                other_id = match.right_question_id
             elif match.right_question_id == question_id:
-                question_ids.add(match.left_question_id)
+                other_id = match.left_question_id
+            else:
+                continue
+            if other_id not in seen_question_ids:
+                seen_question_ids.add(other_id)
+                question_ids.append(other_id)
 
         appearances = tuple(
             appearance
