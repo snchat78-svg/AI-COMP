@@ -50,3 +50,37 @@ def test_same_concept_is_not_used_for_batch_master_grouping():
     )
 
     assert result[0].master_question_id != result[1].master_question_id
+
+
+def test_rephrased_batch_assignment_uses_selected_existing_master():
+    from ai_comp.domain.master_questions import MasterQuestion, MasterQuestionMembership, MasterMembershipType
+    from ai_comp.master.repository import InMemoryMasterQuestionRepository
+
+    repo = InMemoryMasterQuestionRepository()
+    base = question("existing", 1)
+    repo.save_master(
+        MasterQuestion(
+            master_question_id="m1",
+            canonical_question_id="existing",
+            stem=base.stem,
+            options=base.options,
+            kind=base.kind,
+        )
+    )
+    repo.save_membership(
+        MasterQuestionMembership(
+            master_question_id="m1",
+            question_id="existing",
+            relationship=MasterMembershipType.CANONICAL,
+            confidence=1.0,
+        )
+    )
+
+    result = MasterQuestionBatchService(repo).assign_many(
+        (question("q1", 2),),
+        (QuestionMatch("q1", "existing", MatchType.REPHRASED, 0.96),),
+    )[0]
+
+    assert result.master_question_id == "m1"
+    assert result.relationship is MasterMembershipType.REPHRASED
+    assert repo.get_membership_for_question("q1").master_question_id == "m1"
