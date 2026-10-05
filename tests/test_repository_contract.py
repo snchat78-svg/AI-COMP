@@ -16,7 +16,7 @@ def test_repository_contract_exposes_required_persistence_methods():
         "get_verifications",
         "snapshot",
     }
-    assert required.issubset(set(RegistryRepository.__dict__["__annotations__"]) or set())
+    assert all(hasattr(RegistryRepository, name) for name in required)
 
 
 def test_registry_snapshot_is_database_neutral():
