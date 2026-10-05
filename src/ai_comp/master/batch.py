@@ -32,6 +32,16 @@ class MasterQuestionBatchService:
         match_items = tuple(matches)
 
         results: dict[str, MasterAssignmentResult] = {}
+        for question_id in questions_by_id:
+            membership = self.repository.get_membership_for_question(question_id)
+            if membership is not None:
+                results[question_id] = MasterAssignmentResult(
+                    question_id=question_id,
+                    status=MasterAssignmentStatus.ALREADY_ASSIGNED,
+                    master_question_id=membership.master_question_id,
+                    relationship=membership.relationship,
+                    reason="question already has a master assignment",
+                )
         components = self._exact_components(
             tuple(questions_by_id),
             match_items,
