@@ -9,15 +9,18 @@ from ai_comp.database.migrations import MigrationRunner
 from ai_comp.database.models import EmbeddingModelRecord, PaperRecord
 from ai_comp.database.postgres_appearance import PostgresAppearanceRepository
 from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
+from ai_comp.database.postgres_answer_resolution import PostgresAnswerResolutionRepository
 from ai_comp.database.postgres_embedding import PostgresEmbeddingRepository
 from ai_comp.database.postgres_match import PostgresMatchRepository
+from ai_comp.database.postgres_concept import PostgresConceptRepository
 from ai_comp.database.postgres_paper import PostgresPaperRepository
 from ai_comp.database.postgres_question import PostgresQuestionRepository
 from ai_comp.database.postgres_registry import PostgresRegistryRepository
 from ai_comp.database.postgres_research import PostgresResearchRepository
 from ai_comp.domain.exams import ConductingBody, Exam, ExamLevel, PaperCategory
+from ai_comp.domain.answers import AnswerKeyResolver
 from ai_comp.domain.history import ExamAppearance
-from ai_comp.domain.matching import MatchEvidence, MatchType, QuestionMatch
+from ai_comp.domain.matching import ConceptRecord, MatchEvidence, MatchType, QuestionMatch
 from ai_comp.domain.questions import (
     AnswerKeyEntry,
     QuestionCandidate,
@@ -109,7 +112,9 @@ def test_full_phase4_postgres_round_trip():
     dsn = database_url()
     with connect_postgres(dsn) as connection:
         migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
-        MigrationRunner(migrations_dir).apply(connection)
+        applied = MigrationRunner(migrations_dir).apply(connection)
+        assert applied == ("0001", "0002", "0003")
+        assert MigrationRunner(migrations_dir).apply(connection) == ()
 
         registry = PostgresRegistryRepository(connection)
         registry.save_body(
@@ -221,10 +226,23 @@ B. दो",
         q_repo.save(question("q1", "राजस्थान का उदाहरण?"))
         q_repo.save(question("q2", "राजस्थान का उदाहरण?"))
         answer_repo = PostgresAnswerKeyRepository(connection)
-        answer_repo.save_many(
-            "doc-1",
-            (AnswerKeyEntry(1, "A", "1-A", 10),),
+        answer_entries = (AnswerKeyEntry(1, "A", "1-A", 10),)
+        answer_repo.save_many("doc-1", answer_entries)
+
+        resolution = AnswerKeyResolver().resolve(q_repo.get("q1"), answer_entries[0])
+        answer_resolution_repo = PostgresAnswerResolutionRepository(connection)
+        answer_resolution_repo.save(resolution)
+
+        PostgresConceptRepository(connection).save(
+            ConceptRecord(
+                concept_id="C1",
+                label="Rajasthan Example",
+                subject="General",
+                topic="Rajasthan",
+            )
         )
+
+        PostgresConceptRepository(connection).link_question("q1", "C1")
 
         match_repo = PostgresMatchRepository(connection)
         match_repo.save(
@@ -272,7 +290,16 @@ B. दो",
             )
         )
         embeddings.save_embedding("q1", "model-v1", (0.1, 0.2, 0.3))
+        embeddings.save_embedding("q2", "model-v1", (0.1, 0.2, 0.31))
         assert embeddings.get_embedding("q1", "model-v1") == (0.1, 0.2, 0.3)
+        neighbors = embeddings.nearest_neighbors(
+            "model-v1",
+            (0.1, 0.2, 0.3),
+            limit=1,
+            exclude_question_id="q1",
+        )
+        assert neighbors[0][0] == "q2"
+        assert neighbors[0][1] > 0.99
 
         source = registry.get_source("rssb-source")
         assert source is not None
@@ -280,5 +307,7 @@ B. दो",
         assert len(registry.get_verifications("rssb-source")) == 1
         assert q_repo.get("q1") is not None
         assert len(answer_repo.get_for_document("doc-1")) == 1
+        assert answer_resolution_repo.get_for_question("q1")[0].selected_option_key == "A"
+        assert PostgresConceptRepository(connection).get("C1") is not None
         assert len(match_repo.get_for_question("q1")) == 1
         assert PostgresPaperRepository(connection).get("paper-1") is not None
