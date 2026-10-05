@@ -84,3 +84,70 @@ def test_appearance_builder_preserves_phase3_question_metadata():
     assert appearance.question_number == 1
     assert appearance.paper_id == "paper-1"
     assert appearance.verification.status is VerificationStatus.VERIFIED
+
+def test_appearance_builder_uses_resolved_answer_when_available():
+    from ai_comp.domain.answers import (
+        AnswerResolution,
+        AnswerResolutionMethod,
+        AnswerResolutionStatus,
+    )
+
+    question = q("q1", "Example question?", ("A", "B"))
+    resolution = AnswerResolution(
+        question_id="q1",
+        document_id="doc",
+        question_number=1,
+        answer_key="B",
+        selected_option_key="B",
+        status=AnswerResolutionStatus.RESOLVED,
+        method=AnswerResolutionMethod.DIRECT_OPTION_KEY,
+        source_line=10,
+    )
+
+    appearance = ExamAppearanceBuilder().build(
+        appearance_id="appearance-2",
+        question=question,
+        exam_id="cet_2024",
+        conducting_body_id="rssb",
+        year=2024,
+        exam_date="2024-01-01",
+        shift="Shift 1",
+        paper_id="paper-1",
+        source_url="https://example.gov/paper.pdf",
+        verification=verification(),
+        answer_resolution=resolution,
+    )
+
+    assert appearance.correct_answer == "B"
+
+
+def test_appearance_builder_does_not_guess_unresolved_answer():
+    from ai_comp.domain.answers import AnswerResolution, AnswerResolutionStatus
+
+    question = q("q1", "Example question?", ("A", "B"))
+    resolution = AnswerResolution(
+        question_id="q1",
+        document_id="doc",
+        question_number=1,
+        answer_key="Z",
+        selected_option_key=None,
+        status=AnswerResolutionStatus.INVALID_OPTION,
+        method=None,
+        source_line=10,
+    )
+
+    appearance = ExamAppearanceBuilder().build(
+        appearance_id="appearance-3",
+        question=question,
+        exam_id="cet_2024",
+        conducting_body_id="rssb",
+        year=2024,
+        exam_date="2024-01-01",
+        shift="Shift 1",
+        paper_id="paper-1",
+        source_url="https://example.gov/paper.pdf",
+        verification=verification(),
+        answer_resolution=resolution,
+    )
+
+    assert appearance.correct_answer is None
