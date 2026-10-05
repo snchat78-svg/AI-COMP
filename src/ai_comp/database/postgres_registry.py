@@ -165,7 +165,7 @@ class PostgresRegistryRepository:
             level=ExamLevel(str(row[2])),
             country=str(row[3]),
             state=None if row[4] is None else str(row[4]),
-            official_domains=tuple(str(item) for item in (row[5] or ())),
+            official_domains=self._json_array(row[5]),
         )
 
     def get_exam(self, exam_id: str) -> Exam | None:
@@ -185,7 +185,7 @@ class PostgresRegistryRepository:
             conducting_body_id=str(row[2]),
             level=ExamLevel(str(row[3])),
             state=None if row[4] is None else str(row[4]),
-            categories=tuple(str(item) for item in (row[5] or ())),
+            categories=self._json_array(row[5]),
             active=bool(row[6]),
         )
 
@@ -205,7 +205,7 @@ class PostgresRegistryRepository:
             name=str(row[1]),
             exam_id=str(row[2]),
             description=str(row[3]),
-            allowed_formats=tuple(str(item) for item in (row[4] or ())),
+            allowed_formats=self._json_array(row[4]),
         )
 
     def get_source(self, source_id: str) -> SourceRecord | None:
@@ -230,7 +230,7 @@ class PostgresRegistryRepository:
             conducting_body_id=(
                 None if row[5] is None else str(row[5])
             ),
-            allowed_paths=tuple(str(item) for item in (row[6] or ())),
+            allowed_paths=self._json_array(row[6]),
             notes=str(row[7]),
         )
 
@@ -296,6 +296,14 @@ class PostgresRegistryRepository:
             return self._connection.execute(sql, params).fetchall()
         except Exception as exc:
             raise RepositoryError("failed to read registry collection") from exc
+
+    @staticmethod
+    def _json_array(value) -> tuple[str, ...]:
+        if value is None:
+            return ()
+        if isinstance(value, str):
+            value = json.loads(value)
+        return tuple(str(item) for item in value)
 
     @staticmethod
     def _verification_from_row(row) -> SourceVerification:
