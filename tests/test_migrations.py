@@ -28,3 +28,15 @@ def test_migration_discovery_rejects_bad_version_names(tmp_path: Path):
 
     with pytest.raises(MigrationError, match="must start with numeric"):
         MigrationRunner(tmp_path).discover()
+
+def test_transaction_wrappers_are_removed_even_when_prefixed_by_comments():
+    sql = """-- header comment
+BEGIN;
+CREATE TABLE example (id INT);
+COMMIT;
+"""
+    normalized = MigrationRunner._without_transaction_wrappers(sql)
+
+    assert "BEGIN;" not in normalized
+    assert "COMMIT;" not in normalized
+    assert "CREATE TABLE example" in normalized
