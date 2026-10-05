@@ -106,3 +106,61 @@ def test_master_repository_rejects_different_existing_membership():
 
     with pytest.raises(Exception, match="already assigned"):
         PostgresMasterQuestionRepository(conn).save_membership(membership())
+
+
+def test_master_repository_lists_masters_with_filters_and_paging():
+    conn = Connection()
+    conn.results = [
+        Result(rows=[master_row()]),
+        Result(rows=[("A", "एक"), ("B", "दो")]),
+    ]
+
+    masters = PostgresMasterQuestionRepository(conn).list_masters(
+        status=MasterQuestionStatus.ACTIVE,
+        concept_id=None,
+        limit=10,
+        offset=0,
+    )
+
+    assert masters == (master(),)
+    assert conn.calls[0][1] == ("ACTIVE", 10, 0)
+
+
+def test_master_repository_merge_moves_source_memberships_and_audits():
+    conn = Connection()
+    conn.results = [
+        Result(rows=[("m1", "ACTIVE"), ("m2", "ACTIVE")]),
+        Result(rows=[("q1", "CANONICAL", 1.0)]),
+    ]
+
+    moved = PostgresMasterQuestionRepository(conn).merge_masters(
+        "m1",
+        "m2",
+        reason="duplicate review",
+    )
+
+    assert moved == 1
+    assert "UPDATE master_questions" in conn.calls[-2][0]
+    assert "master_merge_events" in conn.calls[-1][0]
+    assert conn.calls[2][1] == ("m2", "q1", "EXACT", 1.0)
+
+
+def test_master_repository_repair_moves_membership_and_audits():
+    conn = Connection()
+    conn.results = [
+        Result(row=("ACTIVE",)),
+        Result(row=("m1", "REPHRASED", 0.91)),
+        Result(row=("ACTIVE",)),
+    ]
+
+    PostgresMasterQuestionRepository(conn).reassign_question(
+        "q2",
+        "m2",
+        relationship=MasterMembershipType.EXACT,
+        confidence=1.0,
+        reason="manual correction",
+    )
+
+    assert "DELETE FROM master_question_memberships" in conn.calls[3][0]
+    assert "INSERT INTO master_question_memberships" in conn.calls[4][0]
+    assert "master_repair_events" in conn.calls[5][0]
