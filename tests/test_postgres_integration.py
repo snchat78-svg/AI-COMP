@@ -1,10 +1,10 @@
 import os
 from datetime import datetime, timezone
-from pathlib import Path
 
 import pytest
 
 from ai_comp.database.connection import connect_postgres
+from ai_comp.database.migrations import MigrationRunner
 from ai_comp.database.models import EmbeddingModelRecord, PaperRecord
 from ai_comp.database.postgres_appearance import PostgresAppearanceRepository
 from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
@@ -46,17 +46,6 @@ def database_url() -> str:
     if not value:
         pytest.skip("AI_COMP_DATABASE_URL is not configured")
     return value
-
-
-def apply_migrations(connection) -> None:
-    root = Path(__file__).resolve().parents[1] / "database" / "migrations"
-    for path in sorted(root.glob("*.sql")):
-        sql = path.read_text(encoding="utf-8")
-        for statement in sql.split(";"):
-            statement = statement.strip()
-            if statement:
-                connection.execute(statement)
-    connection.commit()
 
 
 def question(question_id: str, stem: str) -> QuestionCandidate:
@@ -118,8 +107,8 @@ def appearance(
 def test_full_phase4_postgres_round_trip():
     dsn = database_url()
     with connect_postgres(dsn) as connection:
-        connection.autocommit = True
-        apply_migrations(connection)
+        migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
+        MigrationRunner(migrations_dir).apply(connection)
 
         registry = PostgresRegistryRepository(connection)
         registry.save_body(
