@@ -36,5 +36,6 @@ def test_postgres_unit_of_work_builds_all_phase4_repositories():
         assert repositories.matches is not None
         assert repositories.appearances is not None
         assert repositories.embeddings is not None
+        assert repositories.master_questions is not None
 
     assert connection.events == ["begin", "commit"]
