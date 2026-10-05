@@ -292,22 +292,24 @@ class MasterQuestionBatchService:
             confidence = 1.0
 
             if not exact:
-                direct_rephrased = [
-                    match.confidence
-                    for match in matches
+                direct_rephrased = []
+                for match in matches:
                     if (
-                        match.match_type is MatchType.REPHRASED
-                        and question_id
-                        in (match.left_question_id, match.right_question_id)
-                    )
-                    and self._other_question(question_id, match) is not None
-                    and (
-                        self.repository.get_master_for_question(
-                            self._other_question(question_id, match) or ""
-                        )
-                        is not None
-                    )
-                ]
+                        match.match_type is not MatchType.REPHRASED
+                        or question_id
+                        not in (match.left_question_id, match.right_question_id)
+                    ):
+                        continue
+                    other_id = self._other_question(question_id, match)
+                    if other_id is None:
+                        continue
+                    other_master = self.repository.get_master_for_question(other_id)
+                    if (
+                        other_master is not None
+                        and other_master.master_question_id == master_id
+                        and self._is_active(other_master)
+                    ):
+                        direct_rephrased.append(match.confidence)
                 if direct_rephrased:
                     relationship = MasterMembershipType.REPHRASED
                     confidence = max(direct_rephrased)
