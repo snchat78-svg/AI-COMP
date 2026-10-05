@@ -132,6 +132,6 @@ class PostgresResearchRepository:
                 document.size_bytes,
                 document.storage_key,
                 document.format.value,
-                document.format.value,
+                "unknown",
             ),
         )
