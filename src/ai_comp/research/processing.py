@@ -167,7 +167,10 @@ class TextExtractor:
         fmt = stored.metadata.detected_format
 
         if fmt is DocumentFormat.PDF:
-            text = self._extract_pdf(stored.content)
+            try:
+                text = self._extract_pdf(stored.content)
+            except Exception:
+                text = ""
             if text.strip():
                 return TextExtractionResult(
                     stored.document, fmt, text, ExtractionMethod.PDF_TEXT, False
