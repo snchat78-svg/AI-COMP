@@ -26,6 +26,7 @@ Migrations live under `database/migrations/` and are applied in numeric order:
 - `0001_phase4_core.sql`
 - `0002_phase4_answer_keys.sql`
 - `0003_phase4_answer_resolution.sql`
+- `0004_phase4_match_pair_integrity.sql`
 
 `MigrationRunner` records version, filename and SHA-256 checksum in `schema_migrations`. A migration that was previously applied with different content is rejected instead of silently changing the database schema.
 
@@ -112,6 +113,8 @@ The database protocols remain application-facing contracts:
 - `MatchRepository`
 - `AppearanceRepository`
 - `EmbeddingRepository`
+
+`PostgresUnitOfWork` groups the adapters behind one connection transaction. Repository-level transaction blocks become savepoints when an outer transaction is already active, allowing a higher-level operation to remain atomic.
 
 PostgreSQL implementations can be replaced by another persistence implementation without changing the domain matching rules.
 
