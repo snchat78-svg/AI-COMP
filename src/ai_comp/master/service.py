@@ -6,6 +6,7 @@ from ai_comp.domain.master_questions import (
     MasterMembershipType,
     MasterQuestion,
     MasterQuestionMembership,
+    MasterQuestionStatus,
 )
 from ai_comp.domain.matching import MatchType, QuestionMatch
 from ai_comp.domain.questions import QuestionCandidate
@@ -100,7 +101,7 @@ class MasterQuestionService:
                 continue
 
             master = self.repository.get_master_for_question(other_id)
-            if master is None:
+            if master is None or master.status is not MasterQuestionStatus.ACTIVE:
                 continue
 
             if match.match_type is MatchType.EXACT:
