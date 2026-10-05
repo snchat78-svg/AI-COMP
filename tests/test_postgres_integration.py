@@ -334,15 +334,20 @@ B. दो""",
             )
         ) == 3
 
+        q4 = question("q4", "चौथा अलग प्रश्न?")
+        q3_repo.save(q4)
+        created_third = master_service.assign(q4)
+
         repaired = maintenance.repair(
             "q2",
-            created_second.master_question_id,
+            created_third.master_question_id,
             relationship=MasterMembershipType.REPHRASED,
             confidence=0.93,
             reason="manual assignment correction",
         )
         assert repaired.source_master_id == created_second.master_question_id
-        assert master_repo.get_membership_for_question("q2").master_question_id == created_second.master_question_id
+        assert repaired.target_master_id == created_third.master_question_id
+        assert master_repo.get_membership_for_question("q2").master_question_id == created_third.master_question_id
 
         views = MasterQuestionReadService(master_repo).list_views(
             MasterQuestionQuery(status=merged_source.status)
