@@ -494,23 +494,6 @@ class PostgresMasterQuestionRepository:
 
                 self._connection.execute(
                     """
-                    INSERT INTO master_question_memberships (
-                        master_question_id,
-                        question_id,
-                        relationship,
-                        confidence
-                    )
-                    VALUES (%s, %s, %s, %s)
-                    """,
-                    (
-                        target_master_id,
-                        question_id,
-                        relationship.value,
-                        confidence,
-                    ),
-                )
-                self._connection.execute(
-                    """
                     DELETE FROM master_question_memberships
                     WHERE question_id = %s
                     """,
