@@ -215,9 +215,9 @@ def test_full_phase4_postgres_round_trip():
                 declared_format=DocumentFormat.PDF,
                 detected_format=DocumentFormat.PDF,
             ),
-            text="1. राजस्थान का उदाहरण?
+            text="""1. राजस्थान का उदाहरण?
 A. एक
-B. दो",
+B. दो""",
             extraction_method=ExtractionMethod.PDF_TEXT,
         )
         research.save_normalized_document(normalized)
