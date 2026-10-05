@@ -132,10 +132,11 @@ def test_postgres_appearance_repository_reuses_canonical_copy_and_only_adds_prov
     )
     repo.save(copied)
 
-    assert len(conn.calls) == 3
-    assert "SELECT appearance_id" in conn.calls[1][0]
-    assert conn.calls[1][1] == ("exam-2024", 2024, "Shift 1", 12)
-    assert conn.calls[2][1] == (
+    assert len(conn.calls) == 4
+    assert "WHERE a.appearance_id = %s" in conn.calls[1][0]
+    assert conn.calls[1][1] == ("copy-a1",)
+    assert conn.calls[2][1] == ("exam-2024", 2024, "Shift 1", 12)
+    assert conn.calls[3][1] == (
         "canonical-a1",
         "https://secondary.example/paper.pdf",
         "paper-1",
