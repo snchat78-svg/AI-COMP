@@ -38,6 +38,8 @@ def test_phase4_schema_contains_required_core_tables():
         "master_questions",
         "master_question_options",
         "master_question_memberships",
+        "master_merge_events",
+        "master_repair_events",
     )
 
     for table in required_tables:
