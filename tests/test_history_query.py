@@ -144,3 +144,25 @@ def test_query_rejects_conflicting_verified_only_status():
         assert "non-VERIFIED" in str(exc)
     else:
         raise AssertionError("expected ValueError")
+
+class FakeMatchRepository:
+    def __init__(self, matches):
+        self.matches = tuple(matches)
+
+    def get_for_question(self, question_id):
+        return self.matches
+
+
+def test_history_service_can_load_matches_from_repository():
+    repo = InMemoryAppearanceRepository()
+    repo.save(appearance("q1", "q1", "exam-a", 2024, "Shift 1"))
+    repo.save(appearance("q2", "q2", "exam-b", 2024, "Shift 1"))
+
+    match = QuestionMatch("q1", "q2", MatchType.REPHRASED, 0.96)
+    view = HistoryService(
+        repo,
+        match_repository=FakeMatchRepository((match,)),
+    ).get_history_view("q1")
+
+    assert [item.appearance_id for item in view.rephrased_appearances] == ["q2"]
+    assert view.verified_appearance_count == 2
