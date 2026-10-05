@@ -79,8 +79,7 @@ def test_research_repository_persists_candidate_document_and_normalized_document
     repo.save_document(document())
     repo.save_normalized_document(normalized())
 
-    sql = "
-".join(item[0] for item in conn.calls)
+    sql = "\n".join(item[0] for item in conn.calls)
     assert "INSERT INTO paper_candidates" in sql
     assert "INSERT INTO documents" in sql
     assert "INSERT INTO normalized_documents" in sql
