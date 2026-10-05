@@ -96,7 +96,6 @@ def test_unknown_direct_appearance_match_type_defaults_to_exact():
 
 
 def test_history_service_loads_related_appearances_from_repository():
-    from ai_comp.domain.matching import MatchType, QuestionMatch
     repo = InMemoryAppearanceRepository()
     repo.save(appearance("q1-a1", "q1", "exam-1", 1))
     repo.save(appearance("q2-a1", "q2", "exam-2", 2))
@@ -109,7 +108,6 @@ def test_history_service_loads_related_appearances_from_repository():
     assert len(history.exact_appearances) == 1
     assert len(history.rephrased_appearances) == 1
     assert history.verified_appearance_count == 2
-from ai_comp.history.view import HistoricalAppearanceView, HistoricalQuestionView
 
 
 def test_history_view_preserves_exam_year_shift_question_number_and_source():
