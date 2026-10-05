@@ -145,7 +145,8 @@ def test_master_repository_merge_moves_source_memberships_and_audits():
     assert moved == 1
     assert "UPDATE master_questions" in conn.calls[-2][0]
     assert "master_merge_events" in conn.calls[-1][0]
-    assert conn.calls[2][1] == ("m2", "q1", "EXACT", 1.0)
+    assert conn.calls[2][1] == ("m1", "q1")
+    assert conn.calls[3][1] == ("m2", "q1", "EXACT", 1.0)
 
 
 def test_master_repository_repair_moves_membership_and_audits():
