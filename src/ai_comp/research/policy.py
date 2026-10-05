@@ -10,6 +10,10 @@ class ResearchPolicyError(ValueError):
 def validate_candidate_url(source: SourceRecord, url: str, policy: CrawlPolicy) -> None:
     if not policy.allowed:
         raise ResearchPolicyError("Research is disabled by crawl policy")
+    if not policy.respect_robots:
+        raise ResearchPolicyError("robots.txt compliance must remain enabled")
+    if not policy.respect_terms:
+        raise ResearchPolicyError("terms/access compliance must remain enabled")
     parsed = urlparse(url)
     base = urlparse(source.base_url)
     if parsed.scheme not in {"http", "https"}:
