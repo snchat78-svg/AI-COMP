@@ -125,9 +125,14 @@ class InMemoryMasterQuestionRepository:
                 "question is already assigned to a different master question"
             )
 
-        if membership.master_question_id not in self._masters:
+        master = self._masters.get(membership.master_question_id)
+        if master is None:
             raise ValueError(
                 "membership references an unknown master question"
+            )
+        if master.status is not MasterQuestionStatus.ACTIVE:
+            raise ValueError(
+                "membership target master is not active"
             )
 
         self._memberships_by_question[membership.question_id] = membership
