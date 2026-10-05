@@ -109,3 +109,21 @@ def test_history_service_loads_related_appearances_from_repository():
     assert len(history.exact_appearances) == 1
     assert len(history.rephrased_appearances) == 1
     assert history.verified_appearance_count == 2
+from ai_comp.history.view import HistoricalAppearanceView, HistoricalQuestionView
+
+
+def test_history_view_preserves_exam_year_shift_question_number_and_source():
+    repo = InMemoryAppearanceRepository()
+    repo.save(appearance("view-1", "q1", "exam-2024", 17))
+
+    view = HistoryService(repo).get_history_view("q1")
+
+    item = view.exact_appearances[0]
+    assert isinstance(item, HistoricalAppearanceView)
+    assert isinstance(view, HistoricalQuestionView)
+    assert item.exam_id == "exam-2024"
+    assert item.year == 2024
+    assert item.shift == "Shift 1"
+    assert item.question_number == 17
+    assert item.source_url == "https://example.gov/view-1.pdf"
+    assert item.verification_status is VerificationStatus.VERIFIED
