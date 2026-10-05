@@ -69,6 +69,23 @@ It must not claim:
 
 "यह question सभी सरकारी परीक्षाओं में कुल N बार आया है."
 
+
+## History Query API
+
+HistoryService.query_history_view() adds read-time filtering without changing the underlying appearance records or matching relationships.
+
+Supported filters:
+- exam_id
+- conducting_body_id
+- year
+- shift
+- verification_status
+- verified_only
+
+verified_only=True returns only records backed by VerificationStatus.VERIFIED.
+
+Filtering is applied after relationship classification, so EXACT, REPHRASED, SAME_CONCEPT, and RELATED_TOPIC remain separate buckets.
+
 ## Phase 4 implementation strategy
 
 The matching layer is dependency-injected. Embeddings and concept resolution can later be connected to pgvector/LLM services without changing deterministic contracts.
