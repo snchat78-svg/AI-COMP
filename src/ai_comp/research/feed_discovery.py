@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from urllib.parse import urlparse
 from xml.etree import ElementTree as ET
 
 from ai_comp.domain.sources import CrawlPolicy, SourceRecord
@@ -24,7 +25,7 @@ class FeedDiscovery:
         return tuple(
             DiscoveryLink(loc.text.strip(), "sitemap")
             for loc in root.findall(".//{*}loc")
-            if loc.text and self._valid(loc.text.strip())
+            if loc.text and self._valid(loc.text.strip(), allow_unrestricted=True)
         )
 
     def feed_links(self, xml: str) -> tuple[DiscoveryLink, ...]:
@@ -36,7 +37,16 @@ class FeedDiscovery:
                 links.append(DiscoveryLink(href, "feed"))
         return tuple(links)
 
-    def _valid(self, url: str) -> bool:
+    def _valid(self, url: str, *, allow_unrestricted: bool = False) -> bool:
+        if allow_unrestricted:
+            if not self.policy.allowed or not self.policy.respect_robots or not self.policy.respect_terms:
+                return False
+            parsed = urlparse(url)
+            base = urlparse(self.source.base_url)
+            return (
+                parsed.scheme in {"http", "https"}
+                and parsed.netloc == base.netloc
+            )
         try:
             validate_candidate_url(self.source, url, self.policy)
         except ResearchPolicyError:
