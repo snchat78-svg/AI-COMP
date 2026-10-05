@@ -68,15 +68,6 @@ def test_master_query_filters_status_and_concept_and_bounds_page():
             stem="question q3",
             options=(QuestionOption("A", "एक"),),
             kind=QuestionKind.MCQ,
-        )
-    )
-    repo.save_master(
-        MasterQuestion(
-            master_question_id="m3",
-            canonical_question_id="q3",
-            stem="question q3",
-            options=(QuestionOption("A", "एक"),),
-            kind=QuestionKind.MCQ,
             status=MasterQuestionStatus.RETIRED,
         )
     )
@@ -90,7 +81,6 @@ def test_master_query_filters_status_and_concept_and_bounds_page():
     )
 
     assert [item.master_question_id for item in views] == ["m2"]
-
 
 def test_merge_moves_canonical_membership_as_exact_and_marks_source_merged():
     repo = InMemoryMasterQuestionRepository()
