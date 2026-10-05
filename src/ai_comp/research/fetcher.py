@@ -5,20 +5,19 @@ from urllib.request import Request, urlopen
 
 from ai_comp.domain.sources import CrawlPolicy
 from ai_comp.research.paper import FetchedDocument
-
+from ai_comp.research.storage import DocumentStorage
 
 @dataclass(frozen=True)
 class FetchResult:
     document: FetchedDocument
     duplicate: bool
 
-
 class PaperFetcher:
-    """Small dependency-free fetcher with injectable transport for tests."""
-
-    def __init__(self, storage_dir: str | Path, timeout_seconds: float = 20.0) -> None:
+    """Fetches a candidate and persists bytes through DocumentStorage."""
+    def __init__(self, storage_dir: str | Path, timeout_seconds: float = 20.0, storage: DocumentStorage | None = None) -> None:
         self.storage_dir = Path(storage_dir)
         self.timeout_seconds = timeout_seconds
+        self.storage = storage or DocumentStorage(self.storage_dir)
 
     def fetch(self, url: str, candidate_id: str, policy: CrawlPolicy) -> FetchResult:
         if not policy.allowed:
@@ -28,20 +27,8 @@ class PaperFetcher:
             payload = response.read()
             content_type = response.headers.get("Content-Type", "application/octet-stream")
         digest = sha256(payload).hexdigest()
-        target = self.storage_dir / digest
-        duplicate = target.exists()
-        if not duplicate:
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(payload)
         from ai_comp.research.discovery import infer_document_format
-        document = FetchedDocument(
-            document_id=digest,
-            candidate_id=candidate_id,
-            source_url=url,
-            content_type=content_type,
-            sha256=digest,
-            size_bytes=len(payload),
-            storage_key=str(target),
-            format=infer_document_format(url, content_type),
-        )
-        return FetchResult(document=document, duplicate=duplicate)
+        document = FetchedDocument(digest, candidate_id, url, content_type, digest, len(payload), str(self.storage.root / digest), infer_document_format(url, content_type))
+        duplicate = self.storage.exists(document)
+        self.storage.write(document, payload)
+        return FetchResult(document, duplicate)
