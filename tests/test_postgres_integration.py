@@ -19,7 +19,7 @@ from ai_comp.database.postgres_question import PostgresQuestionRepository
 from ai_comp.database.postgres_registry import PostgresRegistryRepository
 from ai_comp.database.postgres_research import PostgresResearchRepository
 from ai_comp.domain.exams import ConductingBody, Exam, ExamLevel, PaperCategory
-from ai_comp.domain.master_questions import MasterAssignmentStatus
+from ai_comp.domain.master_questions import MasterAssignmentStatus, MasterMembershipType
 from ai_comp.domain.answers import AnswerKeyResolver
 from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import ConceptRecord, MatchEvidence, MatchType, QuestionMatch
@@ -36,6 +36,8 @@ from ai_comp.domain.verification import (
     VerificationStatus,
 )
 from ai_comp.history.service import HistoryService
+from ai_comp.master.maintenance import MasterQuestionMaintenanceService
+from ai_comp.master.query import MasterQuestionQuery, MasterQuestionReadService
 from ai_comp.master.service import MasterQuestionService
 from ai_comp.research.paper import DocumentFormat, FetchedDocument, PaperCandidate
 from ai_comp.research.processing import (
@@ -305,6 +307,49 @@ B. दो""",
         loaded_master = master_repo.get_master(created.master_question_id)
         assert loaded_master is not None
         assert loaded_master.canonical_question_id == "q1"
+
+        q3 = question("q3", "अलग प्रश्न?")
+        q3_repo = PostgresQuestionRepository(connection)
+        q3_repo.save(q3)
+        created_second = master_service.assign(q3)
+
+        maintenance = MasterQuestionMaintenanceService(master_repo)
+        merged = maintenance.merge(
+            created.master_question_id,
+            created_second.master_question_id,
+            reason="verified duplicate review",
+        )
+
+        assert merged.moved_question_count == 2
+        merged_source = master_repo.get_master(created.master_question_id)
+        assert merged_source is not None
+        assert merged_source.status.value == "MERGED"
+        assert (
+            master_repo.get_master_for_question("q1").master_question_id
+            == created_second.master_question_id
+        )
+        assert len(
+            master_repo.get_memberships_for_master(
+                created_second.master_question_id
+            )
+        ) == 3
+
+        repaired = maintenance.repair(
+            "q2",
+            created_second.master_question_id,
+            relationship=MasterMembershipType.REPHRASED,
+            confidence=0.93,
+            reason="manual assignment correction",
+        )
+        assert repaired.source_master_id == created_second.master_question_id
+        assert master_repo.get_membership_for_question("q2").master_question_id == created_second.master_question_id
+
+        views = MasterQuestionReadService(master_repo).list_views(
+            MasterQuestionQuery(status=merged_source.status)
+        )
+        assert [view.master_question_id for view in views] == [
+            created.master_question_id
+        ]
 
         embeddings = PostgresEmbeddingRepository(connection)
         embeddings.save_model(
