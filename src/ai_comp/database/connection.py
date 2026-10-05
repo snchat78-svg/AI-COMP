@@ -6,7 +6,7 @@ class DatabaseConfigurationError(RuntimeError):
 
 
 def connect_postgres(dsn: str) -> Any:
-    """Create a Psycopg 3 connection without importing it at application startup."""
+    """Create an autocommit Psycopg 3 connection for explicit transaction blocks."""
     if not dsn.strip():
         raise DatabaseConfigurationError("PostgreSQL DSN must not be empty")
     try:
@@ -15,4 +15,4 @@ def connect_postgres(dsn: str) -> Any:
         raise DatabaseConfigurationError(
             "PostgreSQL support requires the 'postgres' optional dependency"
         ) from exc
-    return psycopg.connect(dsn)
+    return psycopg.connect(dsn, autocommit=True)
