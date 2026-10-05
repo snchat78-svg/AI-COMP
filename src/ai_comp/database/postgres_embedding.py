@@ -153,7 +153,7 @@ class PostgresEmbeddingRepository:
                     1.0 - (embedding <=> %s::vector) AS similarity
                 FROM question_embeddings
                 WHERE model_id = %s
-                  AND (%s IS NULL OR question_id <> %s)
+                  AND (%s::text IS NULL OR question_id <> %s::text)
                 ORDER BY embedding <=> %s::vector
                 LIMIT %s
                 """,
