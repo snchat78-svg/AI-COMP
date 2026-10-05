@@ -75,7 +75,7 @@ class _HTMLTextParser(HTMLParser):
         if tag in self._SKIP_TAGS:
             self.skip_depth += 1
             return
-        if self.skip_depth == 0 and tag in self._BLOCK_TAGS:
+        if self.skip_depth == 0 and tag == "br":
             self.parts.append("\n")
 
     def handle_endtag(self, tag: str) -> None:
