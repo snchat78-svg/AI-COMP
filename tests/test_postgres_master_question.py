@@ -100,7 +100,10 @@ def test_master_repository_reads_question_membership():
 
 def test_master_repository_rejects_different_existing_membership():
     conn = Connection()
-    conn.results = [Result(row=("m2", "q1", "CANONICAL", 1.0))]
+    conn.results = [
+        Result(row=("ACTIVE",)),
+        Result(row=("m2", "q1", "CANONICAL", 1.0)),
+    ]
 
     import pytest
 
@@ -164,3 +167,15 @@ def test_master_repository_repair_moves_membership_and_audits():
     assert "DELETE FROM master_question_memberships" in conn.calls[3][0]
     assert "INSERT INTO master_question_memberships" in conn.calls[4][0]
     assert "master_repair_events" in conn.calls[5][0]
+
+
+def test_master_repository_rejects_membership_to_inactive_master():
+    conn = Connection()
+    conn.results = [Result(row=("MERGED",))]
+
+    import pytest
+
+    with pytest.raises(Exception, match="not active"):
+        PostgresMasterQuestionRepository(conn).save_membership(
+            membership()
+        )
