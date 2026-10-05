@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 
+from ai_comp.database.repository import MatchRepository
 from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import QuestionMatch
 from ai_comp.domain.verification import VerificationStatus
@@ -16,9 +17,11 @@ class HistoryService:
         self,
         repository: AppearanceRepository,
         aggregator: QuestionHistoryAggregator | None = None,
+        match_repository: MatchRepository | None = None,
     ) -> None:
         self.repository = repository
         self.aggregator = aggregator or QuestionHistoryAggregator()
+        self.match_repository = match_repository
 
     def record(self, appearance: ExamAppearance) -> None:
         self.repository.save(appearance)
@@ -28,16 +31,12 @@ class HistoryService:
             self.record(appearance)
 
     def verified_count(self, question_id: str) -> int:
-        appearances = self.repository.get_for_question(question_id)
-        return sum(
-            item.verification.status is VerificationStatus.VERIFIED
-            for item in appearances
-        )
+        return self.build_history(question_id).verified_appearance_count
 
     def get_history_view(
         self,
         question_id: str,
-        matches: Iterable[QuestionMatch] = (),
+        matches: Iterable[QuestionMatch] | None = None,
     ) -> HistoricalQuestionView:
         return HistoricalQuestionView.from_history(
             self.build_history(question_id, matches)
@@ -46,7 +45,7 @@ class HistoryService:
     def query_history_view(
         self,
         question_id: str,
-        matches: Iterable[QuestionMatch] = (),
+        matches: Iterable[QuestionMatch] | None = None,
         query: HistoryQuery | None = None,
     ) -> HistoricalQuestionView:
         """Build a history view after applying optional exam/verification filters."""
@@ -71,13 +70,24 @@ class HistoryService:
         )
         return HistoricalQuestionView.from_history(filtered)
 
+    def _resolve_matches(
+        self,
+        question_id: str,
+        matches: Iterable[QuestionMatch] | None,
+    ) -> tuple[QuestionMatch, ...]:
+        if matches is not None:
+            return tuple(matches)
+        if self.match_repository is None:
+            return ()
+        return tuple(self.match_repository.get_for_question(question_id))
+
     def build_history(
         self,
         question_id: str,
-        matches: Iterable[QuestionMatch] = (),
+        matches: Iterable[QuestionMatch] | None = None,
     ) -> QuestionHistory:
-        """Aggregate direct appearance records using the supplied match relationships."""
-        match_items = tuple(matches)
+        """Aggregate direct appearance records using supplied or persisted relationships."""
+        match_items = self._resolve_matches(question_id, matches)
         question_ids = {question_id}
         for match in match_items:
             if match.left_question_id == question_id:
