@@ -1,3 +1,4 @@
+import pytest
 from ai_comp.domain.master_questions import (
     MasterAssignmentStatus,
     MasterMembershipType,
@@ -127,3 +128,65 @@ def test_already_assigned_is_idempotent():
 
     assert result.status is MasterAssignmentStatus.ALREADY_ASSIGNED
     assert result.master_question_id == "m1"
+
+
+def test_low_confidence_rephrased_match_creates_new_master():
+    repo = InMemoryMasterQuestionRepository()
+    seed_master(repo, "m1", "q1")
+
+    result = MasterQuestionService(repo).assign(
+        question("q2", "uncertain"),
+        (QuestionMatch("q2", "q1", MatchType.REPHRASED, 0.89),),
+    )
+
+    assert result.status is MasterAssignmentStatus.CREATED
+    assert result.master_question_id == "master:q2"
+
+
+def test_two_exact_matches_from_different_masters_are_ambiguous():
+    repo = InMemoryMasterQuestionRepository()
+    seed_master(repo, "m1", "q1")
+    seed_master(repo, "m2", "q3")
+
+    result = MasterQuestionService(repo).assign(
+        question("q2", "duplicate"),
+        (
+            QuestionMatch("q2", "q1", MatchType.EXACT, 1.0),
+            QuestionMatch("q2", "q3", MatchType.EXACT, 1.0),
+        ),
+    )
+
+    assert result.status is MasterAssignmentStatus.AMBIGUOUS
+    assert result.competing_master_ids == ("m1", "m2")
+
+
+def test_related_topic_never_assigns_existing_master():
+    repo = InMemoryMasterQuestionRepository()
+    seed_master(repo, "m1", "q1")
+
+    result = MasterQuestionService(repo).assign(
+        question("q2", "related"),
+        (QuestionMatch("q2", "q1", MatchType.RELATED_TOPIC, 0.99),),
+    )
+
+    assert result.status is MasterAssignmentStatus.CREATED
+    assert result.master_question_id == "master:q2"
+
+
+def test_inmemory_repository_prevents_two_canonical_questions_for_one_master_identity():
+    repo = InMemoryMasterQuestionRepository()
+    seed_master(repo, "m1", "q1")
+
+    q = question("q2", "other")
+    from ai_comp.domain.master_questions import MasterQuestion
+
+    with pytest.raises(ValueError, match="canonical question is already owned"):
+        repo.save_master(
+            MasterQuestion(
+                master_question_id="m2",
+                canonical_question_id="q1",
+                stem=q.stem,
+                options=q.options,
+                kind=q.kind,
+            )
+        )
