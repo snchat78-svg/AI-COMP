@@ -4,6 +4,7 @@ from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import QuestionMatch
 from ai_comp.domain.verification import VerificationStatus
 from ai_comp.history.aggregator import QuestionHistory, QuestionHistoryAggregator
+from ai_comp.history.query import HistoryQuery
 from ai_comp.history.repository import AppearanceRepository
 from ai_comp.history.view import HistoricalQuestionView
 
@@ -41,6 +42,34 @@ class HistoryService:
         return HistoricalQuestionView.from_history(
             self.build_history(question_id, matches)
         )
+
+    def query_history_view(
+        self,
+        question_id: str,
+        matches: Iterable[QuestionMatch] = (),
+        query: HistoryQuery | None = None,
+    ) -> HistoricalQuestionView:
+        """Build a history view after applying optional exam/verification filters."""
+        history = self.build_history(question_id, matches)
+        if query is None:
+            return HistoricalQuestionView.from_history(history)
+
+        filtered = QuestionHistory(
+            question_id=history.question_id,
+            exact_appearances=tuple(
+                item for item in history.exact_appearances if query.matches(item)
+            ),
+            rephrased_appearances=tuple(
+                item for item in history.rephrased_appearances if query.matches(item)
+            ),
+            same_concept_appearances=tuple(
+                item for item in history.same_concept_appearances if query.matches(item)
+            ),
+            related_topic_appearances=tuple(
+                item for item in history.related_topic_appearances if query.matches(item)
+            ),
+        )
+        return HistoricalQuestionView.from_history(filtered)
 
     def build_history(
         self,
