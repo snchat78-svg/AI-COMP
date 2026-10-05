@@ -7,6 +7,7 @@ from ai_comp.database.postgres_appearance import PostgresAppearanceRepository
 from ai_comp.database.postgres_concept import PostgresConceptRepository
 from ai_comp.database.postgres_embedding import PostgresEmbeddingRepository
 from ai_comp.database.postgres_match import PostgresMatchRepository
+from ai_comp.database.postgres_master_question import PostgresMasterQuestionRepository
 from ai_comp.database.postgres_paper import PostgresPaperRepository
 from ai_comp.database.postgres_question import PostgresQuestionRepository
 from ai_comp.database.postgres_registry import PostgresRegistryRepository
@@ -25,6 +26,7 @@ class PostgresRepositories:
     matches: PostgresMatchRepository
     appearances: PostgresAppearanceRepository
     embeddings: PostgresEmbeddingRepository
+    master_questions: PostgresMasterQuestionRepository
 
 
 class PostgresUnitOfWork:
@@ -43,6 +45,7 @@ class PostgresUnitOfWork:
             matches=PostgresMatchRepository(connection),
             appearances=PostgresAppearanceRepository(connection),
             embeddings=PostgresEmbeddingRepository(connection),
+            master_questions=PostgresMasterQuestionRepository(connection),
         )
         self._transaction = None
 
