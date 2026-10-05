@@ -113,8 +113,28 @@ class AnswerKeyResolver:
         questions: tuple[QuestionCandidate, ...],
         entries: tuple[AnswerKeyEntry, ...],
     ) -> tuple[AnswerResolution, ...]:
-        by_number = {question.question_number: question for question in questions}
-        return tuple(
-            self.resolve(by_number.get(entry.question_number), entry)
-            for entry in entries
-        )
+        by_number: dict[int, list[QuestionCandidate]] = {}
+        for question in questions:
+            by_number.setdefault(question.question_number, []).append(question)
+
+        resolutions = []
+        for entry in entries:
+            candidates = by_number.get(entry.question_number, [])
+            if len(candidates) > 1:
+                resolutions.append(
+                    AnswerResolution(
+                        question_id="",
+                        document_id="",
+                        question_number=entry.question_number,
+                        answer_key=entry.answer_key,
+                        selected_option_key=None,
+                        status=AnswerResolutionStatus.AMBIGUOUS,
+                        method=None,
+                        source_line=entry.line_number,
+                        notes="multiple extracted questions share the same question number",
+                    )
+                )
+                continue
+            question = candidates[0] if candidates else None
+            resolutions.append(self.resolve(question, entry))
+        return tuple(resolutions)
