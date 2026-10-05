@@ -70,7 +70,6 @@ def test_master_query_filters_status_and_concept_and_bounds_page():
             kind=QuestionKind.MCQ,
         )
     )
-    repo.save_membership(membership("m3", "q3", MasterMembershipType.CANONICAL))
     repo.save_master(
         MasterQuestion(
             master_question_id="m3",
