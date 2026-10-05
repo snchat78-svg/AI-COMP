@@ -46,7 +46,9 @@ class PostgresEmbeddingRepository:
     ) -> None:
         if not embedding:
             raise ValueError("embedding must not be empty")
-        vector_literal = "[" + ",".join(format(value, ".12g") for value in embedding) + "]"
+        vector_literal = "[" + ",".join(
+            format(value, ".12g") for value in embedding
+        ) + "]"
         try:
             with self._connection.transaction():
                 row = self._connection.execute(
@@ -111,3 +113,61 @@ class PostgresEmbeddingRepository:
         if not values:
             return ()
         return tuple(float(item.strip()) for item in values.split(","))
+
+    def nearest_neighbors(
+        self,
+        model_id: str,
+        embedding: tuple[float, ...],
+        *,
+        limit: int = 100,
+        exclude_question_id: str | None = None,
+    ) -> tuple[tuple[str, float], ...]:
+        if not embedding:
+            raise ValueError("embedding must not be empty")
+        if limit < 1:
+            raise ValueError("limit must be positive")
+
+        vector_literal = "[" + ",".join(
+            format(value, ".12g") for value in embedding
+        ) + "]"
+        try:
+            row = self._connection.execute(
+                """
+                SELECT dimensions
+                FROM embedding_models
+                WHERE model_id = %s
+                """,
+                (model_id,),
+            ).fetchone()
+            if row is None:
+                raise RepositoryError(f"embedding model not found: {model_id}")
+            if int(row[0]) != len(embedding):
+                raise ValueError(
+                    "embedding dimension does not match model dimensions"
+                )
+
+            rows = self._connection.execute(
+                """
+                SELECT
+                    question_id,
+                    1.0 - (embedding <=> %s::vector) AS similarity
+                FROM question_embeddings
+                WHERE model_id = %s
+                  AND (%s IS NULL OR question_id <> %s)
+                ORDER BY embedding <=> %s::vector
+                LIMIT %s
+                """,
+                (
+                    vector_literal,
+                    model_id,
+                    exclude_question_id,
+                    exclude_question_id,
+                    vector_literal,
+                    limit,
+                ),
+            ).fetchall()
+            return tuple((str(item[0]), float(item[1])) for item in rows)
+        except (RepositoryError, ValueError):
+            raise
+        except Exception as exc:
+            raise RepositoryError("failed to search question embeddings") from exc
