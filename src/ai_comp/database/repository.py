@@ -2,8 +2,12 @@ from typing import Protocol
 
 from ai_comp.database.models import RegistrySnapshot
 from ai_comp.domain.exams import ConductingBody, Exam, PaperCategory
+from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
 from ai_comp.domain.sources import SourceRecord
 from ai_comp.domain.verification import SourceVerification
+from ai_comp.domain.matching import QuestionMatch
+from ai_comp.research.paper import FetchedDocument, PaperCandidate
+from ai_comp.research.processing import NormalizedDocument
 
 
 class RepositoryError(RuntimeError):
@@ -11,11 +15,7 @@ class RepositoryError(RuntimeError):
 
 
 class RegistryRepository(Protocol):
-    """Storage contract.
-
-    Phase 1 keeps the interface database-agnostic. A PostgreSQL implementation
-    can satisfy this protocol later without changing the domain layer.
-    """
+    """Database-neutral registry storage contract."""
 
     def save_body(self, body: ConductingBody) -> None: ...
     def save_exam(self, exam: Exam) -> None: ...
@@ -30,3 +30,38 @@ class RegistryRepository(Protocol):
     def get_verifications(self, source_id: str) -> tuple[SourceVerification, ...]: ...
 
     def snapshot(self) -> RegistrySnapshot: ...
+
+
+class QuestionRepository(Protocol):
+    """Persistence contract for extracted question candidates."""
+
+    def save(self, question: QuestionCandidate) -> None: ...
+    def get(self, question_id: str) -> QuestionCandidate | None: ...
+    def get_for_document(self, document_id: str) -> tuple[QuestionCandidate, ...]: ...
+
+
+class AnswerKeyRepository(Protocol):
+    """Persistence contract for source-observed answer-key entries."""
+
+    def save_many(
+        self,
+        document_id: str,
+        entries: tuple[AnswerKeyEntry, ...],
+    ) -> None: ...
+
+    def get_for_document(self, document_id: str) -> tuple[AnswerKeyEntry, ...]: ...
+
+
+class MatchRepository(Protocol):
+    """Persistence contract for explicit question relationships."""
+
+    def save(self, match: QuestionMatch) -> None: ...
+    def get_for_question(self, question_id: str) -> tuple[QuestionMatch, ...]: ...
+
+
+class ResearchRepository(Protocol):
+    """Persistence contract for research and document metadata layers."""
+
+    def save_candidate(self, candidate: PaperCandidate) -> None: ...
+    def save_document(self, document: FetchedDocument) -> None: ...
+    def save_normalized_document(self, document: NormalizedDocument) -> None: ...
