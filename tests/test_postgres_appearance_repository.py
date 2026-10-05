@@ -120,6 +120,7 @@ def test_postgres_appearance_repository_reuses_canonical_copy_and_only_adds_prov
     )
     conn = FakeConnection(
         FakeResult(row=None),
+        FakeResult(row=None),
         FakeResult(row=canonical_row),
         FakeResult(),
     )
