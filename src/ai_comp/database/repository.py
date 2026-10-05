@@ -1,7 +1,9 @@
 from typing import Protocol
 
 from ai_comp.database.models import EmbeddingModelRecord, PaperRecord, RegistrySnapshot
+from ai_comp.domain.answers import AnswerResolution
 from ai_comp.domain.exams import ConductingBody, Exam, PaperCategory
+from ai_comp.domain.matching import ConceptRecord
 from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
 from ai_comp.domain.sources import SourceRecord
 from ai_comp.domain.verification import SourceVerification
@@ -59,6 +61,24 @@ class AnswerKeyRepository(Protocol):
     def get_for_document(self, document_id: str) -> tuple[AnswerKeyEntry, ...]: ...
 
 
+class ConceptRepository(Protocol):
+    """Persistence contract for the explicit concept taxonomy."""
+
+    def save(self, concept: ConceptRecord) -> None: ...
+    def get(self, concept_id: str) -> ConceptRecord | None: ...
+    def link_question(self, question_id: str, concept_id: str) -> None: ...
+
+
+class AnswerResolutionRepository(Protocol):
+    """Persistence contract for deterministic answer-key mappings."""
+
+    def save(self, resolution: AnswerResolution) -> None: ...
+    def get_for_question(
+        self,
+        question_id: str,
+    ) -> tuple[AnswerResolution, ...]: ...
+
+
 class MatchRepository(Protocol):
     """Persistence contract for explicit question relationships."""
 
@@ -81,6 +101,14 @@ class EmbeddingRepository(Protocol):
         question_id: str,
         model_id: str,
     ) -> tuple[float, ...] | None: ...
+    def nearest_neighbors(
+        self,
+        model_id: str,
+        embedding: tuple[float, ...],
+        *,
+        limit: int = 100,
+        exclude_question_id: str | None = None,
+    ) -> tuple[tuple[str, float], ...]: ...
 
 
 class ResearchRepository(Protocol):
