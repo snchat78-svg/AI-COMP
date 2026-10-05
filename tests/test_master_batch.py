@@ -84,3 +84,34 @@ def test_rephrased_batch_assignment_uses_selected_existing_master():
     assert result.master_question_id == "m1"
     assert result.relationship is MasterMembershipType.REPHRASED
     assert repo.get_membership_for_question("q1").master_question_id == "m1"
+
+
+def test_batch_preserves_preassigned_question_status():
+    from ai_comp.domain.master_questions import MasterMembershipType, MasterQuestion, MasterQuestionMembership
+
+    repo = InMemoryMasterQuestionRepository()
+    q1 = question("q1", 1)
+    repo.save_master(
+        MasterQuestion(
+            master_question_id="m1",
+            canonical_question_id="q1",
+            stem=q1.stem,
+            options=q1.options,
+            kind=q1.kind,
+        )
+    )
+    repo.save_membership(
+        MasterQuestionMembership(
+            master_question_id="m1",
+            question_id="q1",
+            relationship=MasterMembershipType.CANONICAL,
+            confidence=1.0,
+        )
+    )
+
+    result = MasterQuestionBatchService(repo).assign_many(
+        (q1,),
+    )[0]
+
+    assert result.status.value == "ALREADY_ASSIGNED"
+    assert result.master_question_id == "m1"
