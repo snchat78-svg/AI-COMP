@@ -35,6 +35,9 @@ def test_phase4_schema_contains_required_core_tables():
         "question_embeddings",
         "answer_key_entries",
         "question_answer_records",
+        "master_questions",
+        "master_question_options",
+        "master_question_memberships",
     )
 
     for table in required_tables:
@@ -64,3 +67,14 @@ def test_phase4_schema_enforces_canonical_match_pair_ordering():
     sql = schema_text()
     assert "question_matches_canonical_order" in sql
     assert "CHECK (left_question_id < right_question_id)" in sql
+
+def test_phase5_schema_enforces_one_master_per_observed_question():
+    sql = schema_text()
+    assert "UNIQUE (question_id)" in sql
+    assert "UNIQUE (canonical_question_id)" in sql
+    assert "master_questions_status" in sql
+
+
+def test_phase5_schema_restricts_master_memberships_to_equivalent_relationships():
+    sql = schema_text()
+    assert "relationship IN ('CANONICAL', 'EXACT', 'REPHRASED')" in sql
