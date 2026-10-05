@@ -60,3 +60,9 @@ def test_phase4_schema_keeps_embedding_provider_and_model_configurable():
     assert "provider TEXT NOT NULL" in sql
     assert "model_name TEXT NOT NULL" in sql
     assert "embedding vector NOT NULL" in sql
+
+def test_phase4_schema_enforces_canonical_match_pair_ordering():
+    sql = schema_text()
+    assert "question_matches_canonical_order" in sql or (
+        "0004_phase4_match_pair_integrity.sql" in str(SCHEMA_PATH.parent)
+    )
