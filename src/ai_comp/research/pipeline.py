@@ -94,3 +94,11 @@ class PaperResearchPipeline:
             discovered.candidates,
             self.fetch_candidates(discovered.candidates),
         )
+
+    def run_live_to_normalized(
+        self,
+        transport: HttpTransport | None = None,
+        max_documents: int = 100,
+    ) -> tuple[ResearchBatchResult, tuple[NormalizedDocument, ...]]:
+        batch = self.run_live(transport=transport, max_documents=max_documents)
+        return batch, self.process_fetched(batch.fetched)
