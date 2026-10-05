@@ -38,7 +38,7 @@ The schema enables `pgvector` and stores embeddings independently from matching 
 
 The application does not hard-code a provider, model, or dimension. `embedding_models` identifies provider/model/version and `question_embeddings` stores the vector for that model.
 
-An approximate HNSW index is intentionally not created yet because production indexing depends on the selected embedding dimensions/model. pgvector supports vector columns and HNSW/IVFFlat indexes; the later adapter can add a dimension-specific index once the embedding model contract is frozen. citeturn454096search1turn454096search3
+An approximate HNSW index is intentionally not created yet because production indexing depends on the selected embedding dimensions/model. pgvector supports vector columns and HNSW/IVFFlat indexes; the later adapter can add a dimension-specific index once the embedding model contract is frozen.
 
 ## Why the application contracts stay DB-neutral
 
