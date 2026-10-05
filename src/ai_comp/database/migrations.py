@@ -81,8 +81,9 @@ class MigrationRunner:
                 continue
 
             try:
-                connection.execute(migration.sql)
+                migration_sql = self._without_transaction_wrappers(migration.sql)
                 with connection.transaction():
+                    connection.execute(migration_sql)
                     connection.execute(
                         """
                         INSERT INTO schema_migrations (
@@ -106,3 +107,21 @@ class MigrationRunner:
 
         connection.commit()
         return tuple(applied_now)
+
+    @staticmethod
+    def _without_transaction_wrappers(sql: str) -> str:
+        value = sql.strip()
+        if value.upper().startswith("BEGIN;"):
+            value = value[6:].lstrip()
+        elif value.upper().startswith("BEGIN
+"):
+            value = value[6:].lstrip()
+
+        if value.upper().endswith("COMMIT;"):
+            value = value[:-7].rstrip()
+        elif value.upper().endswith("COMMIT"):
+            value = value[:-6].rstrip()
+
+        if not value:
+            raise MigrationError("migration SQL is empty after normalization")
+        return value
