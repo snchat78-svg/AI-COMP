@@ -1,9 +1,9 @@
-import json
 from typing import Any
 
 from ai_comp.database.repository import RepositoryError
 from ai_comp.domain.master_questions import (
     MasterMembershipType,
+    MasterQuestionStatus,
     MasterQuestion,
     MasterQuestionMembership,
 )
@@ -268,7 +268,7 @@ class PostgresMasterQuestionRepository:
             stem=str(row[2]),
             kind=QuestionKind(str(row[3])),
             concept_id=None if row[4] is None else str(row[4]),
-            status=row[5],
+            status=MasterQuestionStatus(str(row[5])),
             merged_into_master_id=(
                 None if row[6] is None else str(row[6])
             ),
