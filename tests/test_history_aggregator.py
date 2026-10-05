@@ -4,6 +4,9 @@ from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import MatchType, QuestionMatch
 from ai_comp.domain.verification import EvidenceType, SourceVerification, VerificationStatus
 from ai_comp.history.aggregator import QuestionHistoryAggregator
+from ai_comp.history.repository import InMemoryAppearanceRepository
+from ai_comp.history.service import HistoryService
+from ai_comp.history.view import HistoricalAppearanceView, HistoricalQuestionView
 
 
 def verification(status=VerificationStatus.VERIFIED):
@@ -94,9 +97,6 @@ def test_unknown_direct_appearance_match_type_defaults_to_exact():
 
 def test_history_service_loads_related_appearances_from_repository():
     from ai_comp.domain.matching import MatchType, QuestionMatch
-    from ai_comp.history.repository import InMemoryAppearanceRepository
-    from ai_comp.history.service import HistoryService
-
     repo = InMemoryAppearanceRepository()
     repo.save(appearance("q1-a1", "q1", "exam-1", 1))
     repo.save(appearance("q2-a1", "q2", "exam-2", 2))
