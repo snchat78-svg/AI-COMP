@@ -24,3 +24,10 @@ class DocumentStorage:
         if not path.exists():
             path.write_bytes(content)
         return path
+
+    def read(self, document: FetchedDocument) -> bytes:
+        path = self.path_for(document)
+        content = path.read_bytes()
+        if sha256(content).hexdigest() != document.sha256:
+            raise ValueError("stored content hash does not match document metadata")
+        return content
