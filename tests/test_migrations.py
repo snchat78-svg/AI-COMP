@@ -50,7 +50,7 @@ class MigrationConnection:
     def execute(self, sql, params=()):
         self.events.append((sql, params))
         if sql.strip().startswith("SELECT version, checksum"):
-            return type("Result", (), {"fetchall": lambda self: list(owner.applied.items())})()
+            return type("Result", (), {"fetchall": lambda result_self: list(self.applied.items())})()
         return type("Result", (), {})()
 
     def transaction(self):
