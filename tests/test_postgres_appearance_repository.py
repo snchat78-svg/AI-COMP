@@ -94,9 +94,33 @@ def test_postgres_appearance_repository_inserts_and_records_source_provenance():
 
 
 def test_postgres_appearance_repository_reuses_canonical_copy_and_only_adds_provenance():
+    canonical_row = (
+        "canonical-a1",
+        "q1",
+        "exam-2024",
+        "rssb",
+        2024,
+        date(2024, 1, 1),
+        "Shift 1",
+        12,
+        "राजस्थान का उदाहरण?",
+        [["A", "एक"], ["B", "दो"]],
+        "A",
+        "https://example.gov/paper.pdf",
+        "paper-1",
+        "EXACT",
+        "v1",
+        "rssb",
+        "https://example.gov/paper.pdf",
+        "VERIFIED",
+        "OFFICIAL_PAPER",
+        datetime(2024, 1, 1, tzinfo=timezone.utc),
+        1.0,
+        "",
+    )
     conn = FakeConnection(
         FakeResult(row=None),
-        FakeResult(row=("canonical-a1",)),
+        FakeResult(row=canonical_row),
         FakeResult(),
     )
     repo = PostgresAppearanceRepository(conn)
