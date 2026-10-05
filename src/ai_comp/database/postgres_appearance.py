@@ -12,11 +12,7 @@ from ai_comp.domain.verification import (
 
 
 class PostgresAppearanceRepository:
-    """PostgreSQL implementation of the Phase 4 appearance repository.
-
-    The supplied connection must expose a transaction() context manager
-    and execute() API compatible with Psycopg 3.
-    """
+    """PostgreSQL implementation of the Phase 4 appearance repository."""
 
     def __init__(self, connection: Any) -> None:
         self._connection = connection
@@ -54,14 +50,21 @@ class PostgresAppearanceRepository:
                 ).fetchone()
 
                 if inserted is not None:
-                    canonical_id = inserted[0]
+                    canonical_id = str(inserted[0])
                 else:
-                    canonical_id = self._find_canonical_id(appearance)
-
-                if canonical_id is None:
-                    raise RepositoryError(
-                        "could not resolve canonical exam appearance after insert conflict"
-                    )
+                    existing = self._find_by_appearance_id(appearance.appearance_id)
+                    if existing is not None:
+                        if existing != appearance:
+                            raise RepositoryError(
+                                "appearance_id already exists with different data"
+                            )
+                        canonical_id = existing.appearance_id
+                    else:
+                        canonical_id = self._find_canonical_id(appearance)
+                        if canonical_id is None:
+                            raise RepositoryError(
+                                "could not resolve canonical exam appearance after insert conflict"
+                            )
 
                 self._connection.execute(
                     """
@@ -130,6 +133,41 @@ class PostgresAppearanceRepository:
             raise RepositoryError(
                 "failed to read exam appearances for question"
             ) from exc
+
+    def _find_by_appearance_id(self, appearance_id: str) -> ExamAppearance | None:
+        row = self._connection.execute(
+            """
+            SELECT
+                a.appearance_id,
+                a.question_id,
+                a.exam_id,
+                a.conducting_body_id,
+                a.year,
+                a.exam_date,
+                a.shift,
+                a.question_number,
+                a.original_question,
+                a.options,
+                a.correct_answer,
+                a.source_url,
+                a.paper_id,
+                a.match_type,
+                v.verification_id,
+                v.source_id,
+                v.source_url,
+                v.status,
+                v.evidence_type,
+                v.checked_at,
+                v.confidence,
+                v.notes
+            FROM exam_appearances AS a
+            JOIN source_verifications AS v
+              ON v.verification_id = a.verification_id
+            WHERE a.appearance_id = %s
+            """,
+            (appearance_id,),
+        ).fetchone()
+        return None if row is None else self._row_to_appearance(row)
 
     def _find_canonical_id(self, appearance: ExamAppearance) -> str | None:
         row = self._connection.execute(
