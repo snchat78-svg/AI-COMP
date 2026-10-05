@@ -42,6 +42,16 @@ class InMemoryMasterQuestionRepository:
             raise ValueError(
                 "master_question_id already exists with different data"
             )
+
+        for other in self._masters.values():
+            if (
+                other.master_question_id != master.master_question_id
+                and other.canonical_question_id == master.canonical_question_id
+            ):
+                raise ValueError(
+                    "canonical question is already owned by a different master"
+                )
+
         self._masters[master.master_question_id] = master
 
     def get_master(self, master_question_id: str) -> MasterQuestion | None:
