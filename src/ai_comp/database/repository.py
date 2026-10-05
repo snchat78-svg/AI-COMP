@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from ai_comp.database.models import RegistrySnapshot
+from ai_comp.database.models import PaperRecord, RegistrySnapshot
 from ai_comp.domain.exams import ConductingBody, Exam, PaperCategory
 from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
 from ai_comp.domain.sources import SourceRecord
@@ -30,6 +30,13 @@ class RegistryRepository(Protocol):
     def get_verifications(self, source_id: str) -> tuple[SourceVerification, ...]: ...
 
     def snapshot(self) -> RegistrySnapshot: ...
+
+
+class PaperRepository(Protocol):
+    """Persistence contract for canonical paper metadata."""
+
+    def save(self, paper: PaperRecord) -> None: ...
+    def get(self, paper_id: str) -> PaperRecord | None: ...
 
 
 class QuestionRepository(Protocol):
