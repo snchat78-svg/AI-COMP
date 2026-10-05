@@ -68,11 +68,19 @@ def test_master_query_filters_status_and_concept_and_bounds_page():
             stem="question q3",
             options=(QuestionOption("A", "एक"),),
             kind=QuestionKind.MCQ,
-            status=MasterQuestionStatus.RETIRED,
-            merged_into_master_id=None,
         )
     )
     repo.save_membership(membership("m3", "q3", MasterMembershipType.CANONICAL))
+    repo.save_master(
+        MasterQuestion(
+            master_question_id="m3",
+            canonical_question_id="q3",
+            stem="question q3",
+            options=(QuestionOption("A", "एक"),),
+            kind=QuestionKind.MCQ,
+            status=MasterQuestionStatus.RETIRED,
+        )
+    )
 
     views = MasterQuestionReadService(repo).list_views(
         MasterQuestionQuery(
