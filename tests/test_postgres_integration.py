@@ -12,12 +12,14 @@ from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
 from ai_comp.database.postgres_answer_resolution import PostgresAnswerResolutionRepository
 from ai_comp.database.postgres_embedding import PostgresEmbeddingRepository
 from ai_comp.database.postgres_match import PostgresMatchRepository
+from ai_comp.database.postgres_master_question import PostgresMasterQuestionRepository
 from ai_comp.database.postgres_concept import PostgresConceptRepository
 from ai_comp.database.postgres_paper import PostgresPaperRepository
 from ai_comp.database.postgres_question import PostgresQuestionRepository
 from ai_comp.database.postgres_registry import PostgresRegistryRepository
 from ai_comp.database.postgres_research import PostgresResearchRepository
 from ai_comp.domain.exams import ConductingBody, Exam, ExamLevel, PaperCategory
+from ai_comp.domain.master_questions import MasterAssignmentStatus
 from ai_comp.domain.answers import AnswerKeyResolver
 from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import ConceptRecord, MatchEvidence, MatchType, QuestionMatch
@@ -34,6 +36,7 @@ from ai_comp.domain.verification import (
     VerificationStatus,
 )
 from ai_comp.history.service import HistoryService
+from ai_comp.master.service import MasterQuestionService
 from ai_comp.research.paper import DocumentFormat, FetchedDocument, PaperCandidate
 from ai_comp.research.processing import (
     ExtractionMethod,
@@ -113,7 +116,7 @@ def test_full_phase4_postgres_round_trip():
     with connect_postgres(dsn) as connection:
         migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
         applied = MigrationRunner(migrations_dir).apply(connection)
-        assert applied == ("0001", "0002", "0003", "0004")
+        assert applied == ("0001", "0002", "0003", "0004", "0005")
         assert MigrationRunner(migrations_dir).apply(connection) == ()
 
         registry = PostgresRegistryRepository(connection)
@@ -286,6 +289,22 @@ B. दो""",
 
         assert history.verified_appearance_count == 1
         assert len(history.exact_appearances) == 1
+
+        master_repo = PostgresMasterQuestionRepository(connection)
+        master_service = MasterQuestionService(master_repo)
+        created = master_service.assign(q_repo.get("q1"))
+        assigned = master_service.assign(
+            q_repo.get("q2"),
+            (QuestionMatch("q2", "q1", MatchType.EXACT, 1.0),),
+        )
+
+        assert created.status is MasterAssignmentStatus.CREATED
+        assert assigned.status is MasterAssignmentStatus.ASSIGNED
+        assert assigned.master_question_id == created.master_question_id
+        assert len(master_repo.get_memberships_for_master(created.master_question_id)) == 2
+        loaded_master = master_repo.get_master(created.master_question_id)
+        assert loaded_master is not None
+        assert loaded_master.canonical_question_id == "q1"
 
         embeddings = PostgresEmbeddingRepository(connection)
         embeddings.save_model(
