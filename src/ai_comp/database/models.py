@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from ai_comp.domain.exams import ConductingBody, Exam, PaperCategory
 from ai_comp.domain.sources import SourceRecord
 from ai_comp.domain.verification import SourceVerification
-from ai_comp.research.paper import DocumentFormat
 
 
 @dataclass(frozen=True)
@@ -28,3 +27,19 @@ class PaperRecord:
     canonical_url: str | None = None
     year: int | None = None
     shift: str | None = None
+
+
+@dataclass(frozen=True)
+class EmbeddingModelRecord:
+    """Persistent identity/configuration of an embedding model."""
+
+    model_id: str
+    provider: str
+    model_name: str
+    dimensions: int
+    version: str = ""
+    active: bool = True
+
+    def __post_init__(self) -> None:
+        if self.dimensions < 1:
+            raise ValueError("embedding dimensions must be positive")
