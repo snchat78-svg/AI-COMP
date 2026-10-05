@@ -1,0 +1,294 @@
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+
+import pytest
+
+from ai_comp.database.connection import connect_postgres
+from ai_comp.database.models import EmbeddingModelRecord, PaperRecord
+from ai_comp.database.postgres_appearance import PostgresAppearanceRepository
+from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
+from ai_comp.database.postgres_embedding import PostgresEmbeddingRepository
+from ai_comp.database.postgres_match import PostgresMatchRepository
+from ai_comp.database.postgres_paper import PostgresPaperRepository
+from ai_comp.database.postgres_question import PostgresQuestionRepository
+from ai_comp.database.postgres_registry import PostgresRegistryRepository
+from ai_comp.database.postgres_research import PostgresResearchRepository
+from ai_comp.domain.exams import ConductingBody, Exam, ExamLevel, PaperCategory
+from ai_comp.domain.history import ExamAppearance
+from ai_comp.domain.matching import MatchEvidence, MatchType, QuestionMatch
+from ai_comp.domain.questions import (
+    AnswerKeyEntry,
+    QuestionCandidate,
+    QuestionKind,
+    QuestionOption,
+)
+from ai_comp.domain.sources import SourcePriority, SourceRecord, SourceType
+from ai_comp.domain.verification import (
+    EvidenceType,
+    SourceVerification,
+    VerificationStatus,
+)
+from ai_comp.history.service import HistoryService
+from ai_comp.research.paper import DocumentFormat, FetchedDocument, PaperCandidate
+from ai_comp.research.processing import (
+    ExtractionMethod,
+    NormalizedDocument,
+)
+from ai_comp.research.metadata import StoredDocumentMetadata
+
+
+pytestmark = pytest.mark.integration
+
+
+def database_url() -> str:
+    value = os.getenv("AI_COMP_DATABASE_URL", "").strip()
+    if not value:
+        pytest.skip("AI_COMP_DATABASE_URL is not configured")
+    return value
+
+
+def apply_migrations(connection) -> None:
+    root = Path(__file__).resolve().parents[1] / "database" / "migrations"
+    for path in sorted(root.glob("*.sql")):
+        sql = path.read_text(encoding="utf-8")
+        for statement in sql.split(";"):
+            statement = statement.strip()
+            if statement:
+                connection.execute(statement)
+    connection.commit()
+
+
+def question(question_id: str, stem: str) -> QuestionCandidate:
+    return QuestionCandidate(
+        question_id=question_id,
+        document_id="doc-1",
+        document_sha256="a" * 64,
+        question_number=1,
+        stem=stem,
+        options=(
+            QuestionOption("A", "एक"),
+            QuestionOption("B", "दो"),
+        ),
+        kind=QuestionKind.MCQ,
+        raw_text=stem,
+        start_line=1,
+        end_line=3,
+    )
+
+
+def verification(verification_id: str, status=VerificationStatus.VERIFIED):
+    return SourceVerification(
+        verification_id=verification_id,
+        source_id="rssb",
+        source_url="https://rssb.example/paper.pdf",
+        status=status,
+        evidence_type=EvidenceType.OFFICIAL_PAPER,
+        checked_at=datetime(2024, 1, 2, tzinfo=timezone.utc),
+        confidence=1.0,
+    )
+
+
+def appearance(
+    appearance_id: str,
+    question_id: str,
+    *,
+    source_url: str,
+    match_type: str = "EXACT",
+) -> ExamAppearance:
+    return ExamAppearance(
+        appearance_id=appearance_id,
+        question_id=question_id,
+        exam_id="cet-2024",
+        conducting_body_id="rssb",
+        year=2024,
+        exam_date="2024-01-10",
+        shift="Shift 1",
+        question_number=1,
+        original_question="राजस्थान का उदाहरण?",
+        options=(("A", "एक"), ("B", "दो")),
+        correct_answer="A",
+        source_url=source_url,
+        paper_id="paper-1",
+        verification=verification("v1"),
+        match_type=match_type,
+    )
+
+
+def test_full_phase4_postgres_round_trip():
+    dsn = database_url()
+    with connect_postgres(dsn) as connection:
+        connection.autocommit = True
+        apply_migrations(connection)
+
+        registry = PostgresRegistryRepository(connection)
+        registry.save_body(
+            ConductingBody(
+                body_id="rssb",
+                name="RSSB",
+                level=ExamLevel.STATE,
+                state="RJ",
+                official_domains=("rssb.rajasthan.gov.in",),
+            )
+        )
+        registry.save_exam(
+            Exam(
+                exam_id="cet-2024",
+                name="CET 2024",
+                conducting_body_id="rssb",
+                level=ExamLevel.STATE,
+                state="RJ",
+            )
+        )
+        registry.save_category(
+            PaperCategory(
+                category_id="cet-general",
+                name="General",
+                exam_id="cet-2024",
+            )
+        )
+        registry.save_source(
+            SourceRecord(
+                source_id="rssb-source",
+                name="RSSB Official",
+                base_url="https://rssb.rajasthan.gov.in",
+                source_type=SourceType.OFFICIAL_PAPER,
+                priority=SourcePriority.OFFICIAL,
+                conducting_body_id="rssb",
+            )
+        )
+
+        verification_record = SourceVerification(
+            verification_id="v1",
+            source_id="rssb-source",
+            source_url="https://rssb.rajasthan.gov.in/paper.pdf",
+            status=VerificationStatus.VERIFIED,
+            evidence_type=EvidenceType.OFFICIAL_PAPER,
+            checked_at=datetime(2024, 1, 2, tzinfo=timezone.utc),
+            confidence=1.0,
+        )
+        registry.save_verification(verification_record)
+
+        research = PostgresResearchRepository(connection)
+        candidate = PaperCandidate(
+            candidate_id="candidate-1",
+            source_id="rssb-source",
+            url="https://rssb.rajasthan.gov.in/paper.pdf",
+            title="CET 2024",
+            format=DocumentFormat.PDF,
+            category_id="cet-general",
+            discovered_at="2024-01-01T00:00:00+00:00",
+        )
+        research.save_candidate(candidate)
+
+        PostgresPaperRepository(connection).save(
+            PaperRecord(
+                paper_id="paper-1",
+                candidate_id="candidate-1",
+                title="CET 2024",
+                exam_id="cet-2024",
+                category_id="cet-general",
+                source_id="rssb-source",
+                canonical_url=candidate.url,
+                year=2024,
+                shift="Shift 1",
+            )
+        )
+
+        document = FetchedDocument(
+            document_id="doc-1",
+            candidate_id="candidate-1",
+            source_url=candidate.url,
+            content_type="application/pdf",
+            sha256="a" * 64,
+            size_bytes=10,
+            storage_key="a" * 64,
+            format=DocumentFormat.PDF,
+        )
+        research.save_document(document)
+
+        normalized = NormalizedDocument(
+            document=document,
+            metadata=StoredDocumentMetadata(
+                document_id="doc-1",
+                candidate_id="candidate-1",
+                source_url=candidate.url,
+                content_type="application/pdf",
+                sha256="a" * 64,
+                size_bytes=10,
+                storage_key="a" * 64,
+                declared_format=DocumentFormat.PDF,
+                detected_format=DocumentFormat.PDF,
+            ),
+            text="1. राजस्थान का उदाहरण?
+A. एक
+B. दो",
+            extraction_method=ExtractionMethod.PDF_TEXT,
+        )
+        research.save_normalized_document(normalized)
+
+        q_repo = PostgresQuestionRepository(connection)
+        q_repo.save(question("q1", "राजस्थान का उदाहरण?"))
+        q_repo.save(question("q2", "राजस्थान का उदाहरण?"))
+        answer_repo = PostgresAnswerKeyRepository(connection)
+        answer_repo.save_many(
+            "doc-1",
+            (AnswerKeyEntry(1, "A", "1-A", 10),),
+        )
+
+        match_repo = PostgresMatchRepository(connection)
+        match_repo.save(
+            QuestionMatch(
+                "q1",
+                "q2",
+                MatchType.EXACT,
+                1.0,
+                (MatchEvidence("normalized_text_sha256"),),
+            )
+        )
+
+        appearance_repo = PostgresAppearanceRepository(connection)
+        appearance_repo.save(
+            appearance(
+                "a1",
+                "q1",
+                source_url="https://rssb.rajasthan.gov.in/paper.pdf",
+            )
+        )
+        appearance_repo.save(
+            appearance(
+                "a2",
+                "q2",
+                source_url="https://secondary.example/paper.pdf",
+            )
+        )
+
+        history = HistoryService(
+            appearance_repo,
+            match_repository=match_repo,
+        ).get_history_view("q1")
+
+        assert history.verified_appearance_count == 1
+        assert len(history.exact_appearances) == 1
+
+        embeddings = PostgresEmbeddingRepository(connection)
+        embeddings.save_model(
+            EmbeddingModelRecord(
+                model_id="model-v1",
+                provider="test",
+                model_name="test-embedding",
+                dimensions=3,
+                version="1",
+            )
+        )
+        embeddings.save_embedding("q1", "model-v1", (0.1, 0.2, 0.3))
+        assert embeddings.get_embedding("q1", "model-v1") == (0.1, 0.2, 0.3)
+
+        source = registry.get_source("rssb-source")
+        assert source is not None
+        assert registry.get_exam("cet-2024") is not None
+        assert len(registry.get_verifications("rssb-source")) == 1
+        assert q_repo.get("q1") is not None
+        assert len(answer_repo.get_for_document("doc-1")) == 1
+        assert len(match_repo.get_for_question("q1")) == 1
+        assert PostgresPaperRepository(connection).get("paper-1") is not None
