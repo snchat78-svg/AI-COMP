@@ -95,6 +95,25 @@ The batch flow:
 
 The batch API is deterministic with respect to question metadata and does not depend on the caller's input order.
 
+## Phase 5.4 — Verified Ingestion Orchestration
+
+`VerifiedIngestionOrchestrator` is the application-level lifecycle boundary:
+
+`NormalizedDocument → QuestionExtraction → QuestionPersistence → AnswerKeyPersistence → AnswerResolution → MatchPersistence → MasterAssignment → VerifiedHistory`
+
+Important safety rules:
+
+- extracted questions are persisted even when historical verification is insufficient;
+- answer-key mappings are deterministic and never invented;
+- matching is persisted independently of historical appearance creation;
+- only `VerificationStatus.VERIFIED` can create historical `ExamAppearance` records;
+- unresolved/invalid answer keys remain visible as unresolved rather than becoming guessed answers;
+- `SAME_CONCEPT` and `RELATED_TOPIC` never become historical-equivalent master identity;
+- appearance identity is deterministic from exam/year/shift/question number, so copied source pages cannot create additional exam occurrences;
+- master assignment determines whether the current appearance is canonical/exact/rephrased relative to the master.
+
+This keeps source evidence, extraction, matching, master identity and exam history as separate auditable layers.
+
 ## Next step
 
-Connect batch master assignment to the verified ingestion orchestration: normalized document → question extraction → answer-key resolution → matching persistence → exam appearance → master assignment, with one auditable lifecycle.
+Add the durable ingestion transaction/outbox boundary and batch document lifecycle so a fetched paper can be processed exactly once, retried safely, and resumed after partial failure.
