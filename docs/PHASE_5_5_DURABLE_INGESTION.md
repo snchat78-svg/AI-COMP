@@ -1,87 +1,125 @@
-# Phase 5.5.2 — Durable Resume & Partial-Failure Recovery
+# Phase 5.5 — Durable Ingestion, Recovery & Batch Lifecycle
 
-## Completed baseline: Phase 5.5.1
+## Verified baseline
 
-Phase 5.5.1 established:
+Phase 5.4 provides the auditable ingestion lifecycle:
 
-- durable ingestion job identity;
-- idempotency key based on document SHA-256 + exam/paper/year/shift;
-- optimistic job version;
-- transactional job-state + outbox writes;
-- retryable and terminal failure states.
+NormalizedDocument
+-> QuestionExtraction
+-> QuestionPersistence
+-> AnswerResolution
+-> MatchPersistence
+-> MasterAssignment
+-> Verified ExamAppearance
 
-CI Run #192 verified that baseline with all tests green.
+Only VERIFIED source evidence can create historical exam appearances.
 
-## Stage checkpoints
+## Phase 5.5.1 — Durable job identity
 
-Phase 5.5.2 now activates the stage lifecycle:
+A durable IngestionJob is keyed by a SHA-256 idempotency key derived from:
 
-DISCOVERED
--> FETCHED
--> PROCESSING
--> EXTRACTED
--> MATCHED
--> MASTERED
--> HISTORICAL_RECORDED
--> COMPLETED
+- document SHA-256;
+- exam ID;
+- paper ID;
+- year;
+- shift.
 
-The durable job status represents the last completed ingestion checkpoint.
+Source URL is excluded so the same document discovered through a mirror does not create a second logical job.
 
-## Resume rules
+Job state is versioned for optimistic concurrency. Job state and its lifecycle outbox event are committed together.
 
-On failure:
+## Phase 5.5.2 — Resume & partial-failure recovery
 
-- the current durable checkpoint is preserved;
-- the job becomes RETRYABLE until the configured attempt limit;
-- resume_after records the last successful checkpoint.
+The job lifecycle now persists these checkpoints:
 
-On retry:
+DISCOVERED -> FETCHED -> PROCESSING -> EXTRACTED -> MATCHED -> MASTERED -> HISTORICAL_RECORDED -> COMPLETED
 
-- the job transitions back to PROCESSING;
-- the processor receives resume_after;
-- EXTRACTED resumes from persisted questions/answer-key data;
-- MATCHED resumes from persisted question matches;
-- MASTERED resumes from persisted master memberships;
-- HISTORICAL_RECORDED only needs the final job completion transition.
+A retry carries the last durable checkpoint as resume_after.
 
-Earlier persistence operations remain idempotent so a crash between a side effect and its checkpoint transition can safely replay that one stage.
+Examples:
 
-## Partial-failure examples
+- EXTRACTED committed -> matching fails -> retry resumes from persisted questions.
+- MATCHED committed -> master assignment fails -> retry reuses persisted matches.
+- MASTERED committed -> history write fails -> retry reuses existing memberships and deterministic appearance IDs.
 
-Extraction succeeds -> EXTRACTED is committed -> matching fails.
+The implementation does not claim physical exactly-once execution. It guarantees one logical job per idempotency key and restart-safe convergence through idempotent persistence and versioned transitions.
 
-Retry resumes from EXTRACTED; question extraction is not repeated.
+## Phase 5.5.3 — Batch paper lifecycle
 
-Matching succeeds -> MATCHED is committed -> master assignment fails.
+An IngestionBatch groups the logical jobs produced from one discovered paper set.
 
-Retry resumes from MATCHED; persisted matches are reused.
+### Batch identity
 
-Master assignment succeeds -> MASTERED is committed -> history write fails.
+Batch idempotency is the SHA-256 digest of the sorted logical job idempotency keys.
 
-Retry resumes from MASTERED; existing master memberships are reused and deterministic appearance IDs keep history logically single.
+Therefore:
 
-## Exactly-once logical processing
+- request order does not change the batch identity;
+- duplicate mirror URLs for the same logical paper do not increase batch size;
+- one real paper maps to one logical job inside the batch.
 
-The system may physically execute a stage more than once after a crash boundary.
+When duplicate requests share a logical job key, the canonical request prefers stronger source verification (VERIFIED > SECONDARY_LIKELY > UNVERIFIED) and then deterministic source URL ordering.
 
-The logical guarantee is stronger:
+### Batch states
 
-- one ingestion job per idempotency key;
-- versioned transitions prevent silent concurrent overwrites;
-- each transition has one deterministic outbox dedupe key;
-- question, match, master and appearance persistence already use idempotent/deduplicated identities;
-- retries converge on one logical paper/history state.
+DISCOVERED -> RUNNING -> COMPLETED
 
-No claim is made that an external message broker provides exactly-once delivery. Outbox consumers must remain idempotent.
+RUNNING -> PARTIAL_FAILURE
 
-## Current scope
+RUNNING -> FAILED
 
-Implemented:
+PARTIAL_FAILURE -> RUNNING -> COMPLETED / PARTIAL_FAILURE / FAILED
 
-- durable stage checkpoints;
-- checkpoint-aware resume;
-- partial-failure recovery tests;
-- reuse of persisted questions, matches and master memberships;
-- retry-safe continuation of verified history.
+PARTIAL_FAILURE is resumable. FAILED is terminal when every item is terminally failed.
 
-Next: **Phase 5.5.3 — durable batch paper lifecycle**, where a discovered paper set becomes a batch with its own idempotency, aggregate progress, partial-success status and restart-safe batch resume.
+### Aggregate progress
+
+The batch persists:
+
+- total_jobs
+- completed_jobs
+- retryable_jobs
+- failed_jobs
+- pending_jobs (derived)
+
+A batch refresh reads the durable job state for every item. If the process crashes after a job completes but before the batch refresh commits, the next run recomputes the counts safely.
+
+### Restart behavior
+
+On rerun:
+
+- COMPLETED jobs are skipped;
+- RETRYABLE jobs are retried through the existing IngestionJobService;
+- FAILED jobs are retained as terminal failures;
+- the batch recomputes aggregate progress before deciding its next state.
+
+Batch state and batch outbox events use an optimistic version and deterministic dedupe key.
+
+### Exactly-once logical processing boundary
+
+The platform now has two nested idempotency levels:
+
+Batch idempotency
+-> one stable paper-set aggregate
+
+Job idempotency
+-> one stable logical paper-processing aggregate
+
+The physical processor may run again after a crash, but the durable job/batch state and downstream deduplication prevent duplicate logical history from being counted.
+
+The outbox is a durable event-intent store. External delivery remains an at-least-once concern and consumers must be idempotent.
+
+## Phase 5.5 completion
+
+The requested durable chain is now covered:
+
+Durable Transaction Boundary
+-> Ingestion Job
+-> Idempotency Key
+-> Outbox Event
+-> Retry / Resume
+-> Partial Failure Recovery
+-> Exactly-once logical processing
+-> Batch Paper Lifecycle
+
+Next major product phase: Phase 6 — AI Material Analysis, while continuous exam-research scheduling can later consume the same durable batch lifecycle.

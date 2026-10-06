@@ -255,3 +255,38 @@ class OutboxEvent:
             },
             created_at=now,
         )
+
+
+    @classmethod
+    def for_batch_update(
+        cls,
+        *,
+        batch,
+        previous_status,
+        event_type: str,
+        now: datetime,
+    ) -> "OutboxEvent":
+        dedupe_key = f"{batch.batch_id}:{batch.version}:{event_type}"
+        digest = sha256(dedupe_key.encode("utf-8")).hexdigest()
+        return cls(
+            event_id=f"outbox:{digest[:32]}",
+            dedupe_key=dedupe_key,
+            aggregate_type="ingestion_batch",
+            aggregate_id=batch.batch_id,
+            aggregate_version=batch.version,
+            event_type=event_type,
+            payload={
+                "batch_id": batch.batch_id,
+                "idempotency_key": batch.idempotency_key,
+                "previous_status": (
+                    None if previous_status is None else previous_status.value
+                ),
+                "status": batch.status.value,
+                "version": batch.version,
+                "total_jobs": batch.total_jobs,
+                "completed_jobs": batch.completed_jobs,
+                "retryable_jobs": batch.retryable_jobs,
+                "failed_jobs": batch.failed_jobs,
+            },
+            created_at=now,
+        )

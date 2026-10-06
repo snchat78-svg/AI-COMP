@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, Protocol, TypeVar
 
 from ai_comp.domain.ingestion import IngestionJob, OutboxEvent
+from ai_comp.domain.ingestion_batch import IngestionBatch
 
 
 class IngestionConcurrencyError(RuntimeError):
@@ -66,4 +67,40 @@ class IngestionTransactionBoundary(Protocol):
     def execute(
         self,
         operation: Callable[[IngestionRepositories], _T],
+    ) -> _T: ...
+
+
+
+class IngestionBatchRepository(Protocol):
+    def get(self, batch_id: str) -> IngestionBatch | None: ...
+
+    def get_by_idempotency_key(
+        self,
+        idempotency_key: str,
+    ) -> IngestionBatch | None: ...
+
+    def create_if_absent(
+        self,
+        batch: IngestionBatch,
+    ) -> tuple[IngestionBatch, bool]: ...
+
+    def save(
+        self,
+        batch: IngestionBatch,
+        *,
+        expected_version: int,
+    ) -> None: ...
+
+
+@dataclass(frozen=True)
+class BatchIngestionRepositories:
+    jobs: IngestionJobRepository
+    batches: IngestionBatchRepository
+    outbox: OutboxRepository
+
+
+class IngestionBatchTransactionBoundary(Protocol):
+    def execute(
+        self,
+        operation: Callable[[BatchIngestionRepositories], _T],
     ) -> _T: ...
