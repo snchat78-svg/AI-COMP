@@ -21,7 +21,7 @@ class GenerationSpecification:
     material_id: str
     fact_ids: tuple[str, ...]
     concept_ids: tuple[str, ...]
-    existing_master_question_ids: tuple[str, ...]
+    existing_master_question_ids: tuple[str, ...] = ()
     requested_count: int = 1
     difficulty: str = "MEDIUM"
     language: str = "hi"
