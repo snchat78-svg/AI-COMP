@@ -84,9 +84,6 @@ class GeneratedMCQ:
             raise ValueError("importance_score must be between 0 and 1")
         if not 0.0 <= self.quality_score <= 1.0:
             raise ValueError("quality_score must be between 0 and 1")
-        if self.answer_verification is AnswerVerificationStatus.VERIFIED:
-            if self.status is not GeneratedQuestionStatus.ACCEPTED:
-                raise ValueError("verified answer is required for accepted question")
         if self.status is GeneratedQuestionStatus.ACCEPTED:
             if self.answer_verification is not AnswerVerificationStatus.VERIFIED:
                 raise ValueError("accepted question requires verified answer")
