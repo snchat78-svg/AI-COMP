@@ -84,7 +84,7 @@ historical links.
 
 ### Current scale boundary
 
-The in-memory service retrieves a bounded set of active masters and filters them
+The in-memory service retrieves a bounded set (maximum 1000 in the current repository contract) of active masters and filters them
 by verified appearance. This is deterministic and safe for the current phase.
 For production scale, the next data-layer optimization should replace this
 candidate scan with a persistent verified-master/vector retrieval index.

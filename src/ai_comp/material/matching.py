@@ -36,7 +36,7 @@ class MaterialMatchingPolicy:
     min_rephrased_confidence: float = 0.94
     min_confidence_margin: float = 0.05
     min_related_topic_confidence: float = 0.85
-    max_master_candidates: int = 5000
+    max_master_candidates: int = 1000
 
     def __post_init__(self) -> None:
         if not 0.0 < self.min_rephrased_confidence <= 1.0:
@@ -45,8 +45,8 @@ class MaterialMatchingPolicy:
             raise ValueError("min_confidence_margin must be between 0 and 1")
         if not 0.0 < self.min_related_topic_confidence <= 1.0:
             raise ValueError("min_related_topic_confidence must be between 0 and 1")
-        if self.max_master_candidates < 1:
-            raise ValueError("max_master_candidates must be positive")
+        if self.max_master_candidates < 1 or self.max_master_candidates > 1000:
+            raise ValueError("max_master_candidates must be between 1 and 1000")
 
 
 class MaterialQuestionProbeExtractor:
