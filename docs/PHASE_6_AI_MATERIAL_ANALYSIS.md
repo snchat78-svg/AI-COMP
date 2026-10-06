@@ -1,77 +1,67 @@
 # Phase 6 — AI Material Analysis
 
-## Phase 6.1 — Material intake and normalized material foundation
+## Phase 6.2 — Content Understanding, Concept Extraction and Important Facts
 
-Phase 6 reuses the Phase 2 document-processing foundation instead of creating a second OCR/PDF pipeline.
+Phase 6.2 consumes only NormalizedMaterial produced by Phase 6.1.
 
-User input:
-
-Photo / PDF / Notes
--> SHA-256 content identity
--> content-addressed storage
--> format detection
--> direct text extraction or OCR
--> existing text normalization
--> NormalizedMaterial
-
-### Supported material types
-
-- user text notes;
-- uploaded PDF;
-- uploaded image/photo.
-
-The material contract is separate from official research papers. User material is study input only; it is not historical exam evidence.
-
-### Content identity and duplicate handling
-
-material_id is derived from the SHA-256 of the bytes. The same bytes uploaded under different filenames resolve to one logical material identity and one stored object.
-
-The filename remains presentation metadata and is never part of content identity.
-
-### OCR boundary
-
-Photo/image input uses the existing injectable OCRAdapter.
-
-This keeps OCR provider selection independent from the material domain. OCR output is treated as extracted text and is not automatically considered a verified fact.
-
-### Phase 6 pipeline boundary
-
-6.1 intentionally stops after normalized text.
-
-Next layers are independent:
+Pipeline:
 
 NormalizedMaterial
 -> Content Understanding
--> Concept Extraction
--> Important Facts
--> Verified Exam DB Matching
--> Existing Question Detection
--> AI Question Generation
--> Duplicate / Quality Control
--> Difficulty / Importance
--> Test Engine
+-> Proposed Concepts
+-> Source-grounded Important Facts
 
-This separation prevents AI-generated content from being confused with historical evidence.
+### Content understanding
 
-### Non-negotiable rules preserved
+ContentUnderstanding captures:
 
-1. User uploads cannot create ExamAppearance.
-2. User material cannot upgrade an unverified claim into verified historical evidence.
-3. AI-generated questions remain separate from observed previous-exam questions.
-4. Historical claims continue to depend on the verified exam database and source records.
-5. Matching will consult the existing question/master database rather than embedding historical claims inside the material model.
+- language;
+- summary;
+- key points;
+- subject hints;
+- topic hints;
+- model confidence.
 
-## Current status
+This is an analysis result, not a verified historical record.
 
-Phase 6.1 implementation:
+### Concept extraction
 
-- MaterialInput
-- NormalizedMaterial
-- MaterialStorage
-- MaterialProcessor
-- note, PDF/image-compatible intake
-- OCR injection
-- content deduplication
-- unit tests
+Concepts are represented as ProposedConcept.
 
-Next: Phase 6.2 — Content Understanding + Concept Extraction + Important Facts, with explicit provider-neutral interfaces and structured outputs before connecting an actual LLM.
+A proposed concept deliberately does not receive a permanent database concept_id at this layer. Its label and taxonomy hints are candidates that a later concept resolver can map to the existing canonical concept database.
+
+Each proposed concept must carry evidence_text that occurs in the normalized material text.
+
+### Important facts
+
+ImportantFact captures:
+
+- fact text;
+- exact source evidence;
+- importance score;
+- extraction confidence;
+- fact type.
+
+Facts are grounded in the material text. The pipeline rejects a provider result when its evidence_text is not present in the source material.
+
+This prevents an LLM adapter from silently turning an unsupported claim into a study fact.
+
+### Provider boundary
+
+MaterialAnalysisProvider is intentionally provider-neutral.
+
+Three explicit operations are required:
+
+1. understand;
+2. extract_concepts;
+3. extract_facts.
+
+A deterministic StaticMaterialAnalysisProvider is included for tests and local development. It is not presented as the final AI implementation.
+
+### Historical-data separation
+
+Phase 6.2 does not create ExamAppearance records, previous-exam claims or verified answer records.
+
+Later matching may compare extracted concepts/facts against the verified question database, but that comparison cannot upgrade user material into historical evidence.
+
+Next: Phase 6.3 — connect an actual LLM provider through this contract, enforce structured output/schema validation, then add verified-database matching for material concepts and existing questions.
