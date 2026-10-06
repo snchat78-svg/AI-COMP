@@ -12,6 +12,7 @@ from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
 from ai_comp.database.postgres_answer_resolution import PostgresAnswerResolutionRepository
 from ai_comp.database.postgres_embedding import PostgresEmbeddingRepository
 from ai_comp.database.postgres_match import PostgresMatchRepository
+from ai_comp.database.postgres_material_match import PostgresMaterialQuestionMatchRepository
 from ai_comp.database.postgres_master_question import PostgresMasterQuestionRepository
 from ai_comp.database.postgres_concept import PostgresConceptRepository
 from ai_comp.database.postgres_paper import PostgresPaperRepository
@@ -23,6 +24,7 @@ from ai_comp.domain.master_questions import MasterAssignmentStatus, MasterMember
 from ai_comp.domain.answers import AnswerKeyResolver
 from ai_comp.domain.history import ExamAppearance
 from ai_comp.domain.matching import ConceptRecord, MatchEvidence, MatchType, QuestionMatch
+from ai_comp.domain.material_matching import MaterialProbeType, MaterialQuestionMatch
 from ai_comp.domain.questions import (
     AnswerKeyEntry,
     QuestionCandidate,
@@ -303,6 +305,21 @@ B. दो""",
         assert created.status is MasterAssignmentStatus.CREATED
         assert assigned.status is MasterAssignmentStatus.ASSIGNED
         assert assigned.master_question_id == created.master_question_id
+
+        material_match_repo = PostgresMaterialQuestionMatchRepository(connection)
+        material_match_repo.save(
+            MaterialQuestionMatch(
+                material_id="material:phase64",
+                probe_id="probe:integration",
+                probe_type=MaterialProbeType.QUESTION_TEXT,
+                master_question_id=created.master_question_id,
+                match_type=MatchType.EXACT,
+                confidence=1.0,
+                verified_appearance_count=1,
+                evidence=(MatchEvidence("normalized_question_text", 1.0),),
+            )
+        )
+        assert len(material_match_repo.get_for_material("material:phase64")) == 1
         assert len(master_repo.get_memberships_for_master(created.master_question_id)) == 2
         loaded_master = master_repo.get_master(created.master_question_id)
         assert loaded_master is not None
