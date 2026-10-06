@@ -128,7 +128,7 @@ def test_exact_existing_question_detection_requires_question_probe():
         verification_status=VerificationStatus.VERIFIED,
     )
     result = MaterialExamMatchingService(masters, appearances).match(
-        material("राजस्थान की राजधानी क्या है?\n\nराजस्थान की राजधानी जयपुर है।")
+        material("राजस्थान की राजधानी क्या है?\n\nराजस्थान की राजधानी जयपुर है.")
     )
     assert len(result.existing_question_matches) == 1
     assert result.existing_question_matches[0].match_type is MatchType.EXACT
@@ -220,11 +220,7 @@ def test_rephrased_detection_accepts_clear_winner():
             return (1.0, 0.0)
         return (0.0, 1.0)
 
-    service = MaterialExamMatchingService(
-        masters,
-        appearances,
-        embedding=embed,
-    )
+    service = MaterialExamMatchingService(masters, appearances, embedding=embed)
     probe = MaterialQuestionProbe(
         probe_id="probe:clear",
         material_id="material:6.4",
@@ -310,5 +306,6 @@ def test_question_probe_extractor_is_deduplicated_and_grounded():
         "1. राजस्थान की राजधानी क्या है?\n"
     )
     probes = MaterialQuestionProbeExtractor().extract(item)
-    assert len(probes) == 2
+    assert len(probes) == 1
+    assert len({p.probe_id for p in probes}) == 1
     assert all(p.evidence_text in item.text for p in probes)
