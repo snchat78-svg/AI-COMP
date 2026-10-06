@@ -97,6 +97,18 @@ class GenerationQualityController:
         if answer.confidence < self.policy.min_answer_confidence:
             reasons.append("answer verification confidence is below threshold")
 
+        if answer.status is AnswerVerificationStatus.VERIFIED:
+            allowed_evidence = {
+                item
+                for fact in source_facts
+                for item in (fact.fact_text, fact.evidence_text)
+            }
+            if any(item not in allowed_evidence for item in answer.evidence):
+                reasons.append("answer verification evidence is not grounded in source facts")
+
+        if [option.key.strip().upper() for option in question.options] != ["A", "B", "C", "D"]:
+            reasons.append("generated MCQ options must use A, B, C, D")
+
         if duplicate_master_id and self.policy.reject_if_duplicate:
             reasons.append("generated question duplicates an existing master question")
 
@@ -250,6 +262,65 @@ class StaticQuestionGenerationProvider:
 
     def generate(self, specification, facts, concepts):
         return self.questions
+
+
+class MasterQuestionDuplicateFinder:
+    """Deterministic duplicate finder; semantic matching is optional and fail-closed."""
+
+    def __init__(self, master_repository, *, embedding=None, threshold: float = 0.97, margin: float = 0.05):
+        self.master_repository = master_repository
+        self.embedding = embedding
+        self.threshold = threshold
+        self.margin = margin
+        if not 0.0 < threshold <= 1.0:
+            raise ValueError("threshold must be between 0 and 1")
+        if not 0.0 <= margin <= 1.0:
+            raise ValueError("margin must be between 0 and 1")
+
+    def __call__(self, question: GeneratedMCQ) -> str | None:
+        from ai_comp.domain.master_questions import MasterQuestionStatus
+        masters = self.master_repository.list_masters(
+            status=MasterQuestionStatus.ACTIVE,
+            limit=1000,
+        )
+        key = normalize_question_text(question.stem)
+        exact = sorted(
+            master.master_question_id
+            for master in masters
+            if normalize_question_text(master.stem) == key
+        )
+        if exact:
+            return exact[0]
+
+        if self.embedding is None:
+            return None
+
+        scored = sorted(
+            (
+                (self._cosine(self.embedding(question.stem), self.embedding(master.stem)), master)
+                for master in masters
+            ),
+            key=lambda item: (-item[0], item[1].master_question_id),
+        )
+        eligible = [item for item in scored if item[0] >= self.threshold]
+        if not eligible:
+            return None
+        best_score, best = eligible[0]
+        second_score = eligible[1][0] if len(eligible) > 1 else 0.0
+        if len(eligible) > 1 and best_score - second_score < self.margin:
+            return None
+        return best.master_question_id
+
+    @staticmethod
+    def _cosine(a, b) -> float:
+        if not a or not b or len(a) != len(b):
+            raise ValueError("embedding vectors must be non-empty and same length")
+        dot = sum(x * y for x, y in zip(a, b))
+        na = sum(x * x for x in a) ** 0.5
+        nb = sum(y * y for y in b) ** 0.5
+        if na == 0.0 or nb == 0.0:
+            return 0.0
+        return dot / (na * nb)
 
 
 class FactGroundedAnswerVerifier:

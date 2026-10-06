@@ -7,6 +7,7 @@ from ai_comp.material.gemini import (
 from ai_comp.material.generation import (
     FactGroundedAnswerVerifier,
     GenerationQualityPolicy,
+    MasterQuestionDuplicateFinder,
     GeneratedQuestionService,
     GeminiAnswerVerifier,
     GeminiQuestionGenerationError,
@@ -17,6 +18,7 @@ from ai_comp.material.generation import (
 __all__ = [
     "FactGroundedAnswerVerifier",
     "GenerationQualityPolicy",
+    "MasterQuestionDuplicateFinder",
     "GeneratedQuestionService",
     "GeminiAnswerVerifier",
     "GeminiMaterialAnalysisConfig",
