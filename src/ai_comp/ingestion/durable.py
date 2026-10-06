@@ -13,8 +13,8 @@ from ai_comp.domain.ingestion import (
 )
 from ai_comp.ingestion.repository import (
     IngestionConcurrencyError,
-    IngestionTransactionBoundary,
     IngestionRepositories,
+    IngestionTransactionBoundary,
 )
 
 
@@ -175,7 +175,14 @@ class IngestionJobRunResult:
 
 
 class IngestionJobService:
-    """Creates and executes idempotent ingestion jobs around Phase 5.4."""
+    """Creates and executes idempotent, checkpoint-aware ingestion jobs."""
+
+    _RESUMABLE_STATUSES = {
+        IngestionJobStatus.PROCESSING,
+        IngestionJobStatus.EXTRACTED,
+        IngestionJobStatus.MATCHED,
+        IngestionJobStatus.MASTERED,
+    }
 
     def __init__(
         self,
@@ -259,19 +266,51 @@ class IngestionJobService:
                 error=job.last_error or "ingestion job is terminally failed",
             )
 
+        if job.status is IngestionJobStatus.HISTORICAL_RECORDED:
+            completed = self._transition(
+                job,
+                IngestionJobStatus.COMPLETED,
+                checkpoint={"resume_after": None},
+                last_error=None,
+            )
+            return IngestionJobRunResult(
+                job=completed,
+                ingestion_result=None,
+                replayed=True,
+            )
+
+        resume_after = self._resume_after(job)
+
         if job.status is IngestionJobStatus.DISCOVERED:
             job = self._transition(job, IngestionJobStatus.FETCHED)
 
-        if job.status in {
-            IngestionJobStatus.FETCHED,
-            IngestionJobStatus.RETRYABLE,
-        }:
-            job = self._transition(job, IngestionJobStatus.PROCESSING)
+        if job.status is not IngestionJobStatus.PROCESSING:
+            job = self._transition(
+                job,
+                IngestionJobStatus.PROCESSING,
+                checkpoint={
+                    "resume_after": (
+                        None
+                        if resume_after is None
+                        else resume_after.value
+                    )
+                },
+            )
 
         try:
-            result = self.processor.ingest(request)
+            result = self.processor.ingest(
+                request,
+                resume_after=resume_after,
+                progress_callback=self._progress_callback(job.job_id),
+            )
         except Exception as exc:
             current = self._reload(job.job_id)
+            stored_resume = current.checkpoint.get("resume_after")
+            resume_marker = (
+                stored_resume
+                if isinstance(stored_resume, str) and stored_resume
+                else current.status.value
+            )
             target = (
                 IngestionJobStatus.FAILED
                 if current.attempt_count >= self.max_attempts
@@ -281,7 +320,7 @@ class IngestionJobService:
                 current,
                 target,
                 checkpoint={
-                    "resume_after": current.status.value,
+                    "resume_after": resume_marker,
                     "failure_attempt": current.attempt_count,
                 },
                 last_error=f"{type(exc).__name__}: {exc}",
@@ -296,7 +335,10 @@ class IngestionJobService:
         completed = self._transition(
             self._reload(job.job_id),
             IngestionJobStatus.COMPLETED,
-            checkpoint=self._result_checkpoint(result),
+            checkpoint={
+                **self._result_checkpoint(result),
+                "resume_after": None,
+            },
             last_error=None,
         )
         return IngestionJobRunResult(
@@ -305,8 +347,43 @@ class IngestionJobService:
             replayed=not created,
         )
 
+    def _progress_callback(self, job_id: str):
+        def callback(
+            status: IngestionJobStatus,
+            checkpoint: Mapping[str, object],
+        ) -> None:
+            current = self._reload(job_id)
+            if current.status is status:
+                return
+            self._transition(
+                current,
+                status,
+                checkpoint=checkpoint,
+                last_error=None,
+            )
+
+        return callback
+
+    @staticmethod
+    def _resume_after(job: IngestionJob) -> IngestionJobStatus | None:
+        raw = job.checkpoint.get("resume_after")
+        if isinstance(raw, str) and raw:
+            try:
+                return IngestionJobStatus(raw)
+            except ValueError:
+                return None
+        if job.status in {
+            IngestionJobStatus.EXTRACTED,
+            IngestionJobStatus.MATCHED,
+            IngestionJobStatus.MASTERED,
+        }:
+            return job.status
+        return None
+
     def _reload(self, job_id: str) -> IngestionJob:
-        job = self.boundary.execute(lambda repositories: repositories.jobs.get(job_id))
+        job = self.boundary.execute(
+            lambda repositories: repositories.jobs.get(job_id)
+        )
         if job is None:
             raise IngestionConcurrencyError(
                 f"ingestion job not found: {job_id}"

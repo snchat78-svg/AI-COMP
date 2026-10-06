@@ -1,84 +1,87 @@
-# Phase 5.5.1 — Durable Ingestion Job, Idempotency & Transactional Outbox
+# Phase 5.5.2 — Durable Resume & Partial-Failure Recovery
 
-## Purpose
+## Completed baseline: Phase 5.5.1
 
-Phase 5.5 starts the durable paper-processing lifecycle after Phase 5.4.
+Phase 5.5.1 established:
 
-The first increment establishes a durable identity for an ingestion attempt and an atomic job-state + outbox-event transaction boundary.
+- durable ingestion job identity;
+- idempotency key based on document SHA-256 + exam/paper/year/shift;
+- optimistic job version;
+- transactional job-state + outbox writes;
+- retryable and terminal failure states.
 
-## Durable job identity
+CI Run #192 verified that baseline with all tests green.
 
-The idempotency key is derived from:
+## Stage checkpoints
 
-- document SHA-256
-- exam ID
-- paper ID
-- year
-- shift
+Phase 5.5.2 now activates the stage lifecycle:
 
-The source URL is intentionally excluded. Therefore, a copy of the same document discovered from another website resolves to the same logical ingestion job instead of creating another processing record.
+DISCOVERED
+-> FETCHED
+-> PROCESSING
+-> EXTRACTED
+-> MATCHED
+-> MASTERED
+-> HISTORICAL_RECORDED
+-> COMPLETED
 
-The job table also carries an optimistic version. A transition can only update the version it previously read, which prevents two workers from silently overwriting one another.
+The durable job status represents the last completed ingestion checkpoint.
 
-## Job lifecycle
+## Resume rules
 
-Defined statuses:
+On failure:
 
-DISCOVERED -> FETCHED -> PROCESSING -> EXTRACTED -> MATCHED -> MASTERED -> HISTORICAL_RECORDED -> COMPLETED
+- the current durable checkpoint is preserved;
+- the job becomes RETRYABLE until the configured attempt limit;
+- resume_after records the last successful checkpoint.
 
-Failure states:
+On retry:
 
-RETRYABLE
+- the job transitions back to PROCESSING;
+- the processor receives resume_after;
+- EXTRACTED resumes from persisted questions/answer-key data;
+- MATCHED resumes from persisted question matches;
+- MASTERED resumes from persisted master memberships;
+- HISTORICAL_RECORDED only needs the final job completion transition.
 
-FAILED
+Earlier persistence operations remain idempotent so a crash between a side effect and its checkpoint transition can safely replay that one stage.
 
-The current 5.5.1 runner activates the durable coarse-grained path:
+## Partial-failure examples
 
-DISCOVERED -> FETCHED -> PROCESSING -> COMPLETED
+Extraction succeeds -> EXTRACTED is committed -> matching fails.
 
-The finer extraction/matching/master/history checkpoints are defined now and will be activated by the next resume increment.
+Retry resumes from EXTRACTED; question extraction is not repeated.
 
-## Transactional outbox
+Matching succeeds -> MATCHED is committed -> master assignment fails.
 
-Every durable lifecycle transition writes:
+Retry resumes from MATCHED; persisted matches are reused.
 
-1. the new ingestion job version;
-2. one deterministic outbox event for that version;
+Master assignment succeeds -> MASTERED is committed -> history write fails.
 
-inside the same transaction.
-
-If the transaction fails, neither the job transition nor its outbox event remains committed.
-
-Outbox delivery is intentionally separate from the transaction. The stored event can later be published by a worker and marked published_at. A real external broker still requires idempotent consumers; the outbox itself guarantees durable event intent, not exactly-once delivery to an external system.
+Retry resumes from MASTERED; existing master memberships are reused and deterministic appearance IDs keep history logically single.
 
 ## Exactly-once logical processing
 
-This phase does not claim that the processor never executes twice.
+The system may physically execute a stage more than once after a crash boundary.
 
-The guarantee being established is:
+The logical guarantee is stronger:
 
-- one logical job per idempotency key;
-- completed jobs are not processed again;
-- retryable jobs may be executed again;
-- persistence uses deterministic/idempotent keys so future retries can converge to one logical paper/history record.
+- one ingestion job per idempotency key;
+- versioned transitions prevent silent concurrent overwrites;
+- each transition has one deterministic outbox dedupe key;
+- question, match, master and appearance persistence already use idempotent/deduplicated identities;
+- retries converge on one logical paper/history state.
 
-## Scope of this increment
+No claim is made that an external message broker provides exactly-once delivery. Outbox consumers must remain idempotent.
+
+## Current scope
 
 Implemented:
 
-- IngestionJob
-- status model and versioned transitions
-- deterministic idempotency key
-- transactional job + outbox boundary
-- PostgreSQL persistence
-- in-memory rollback tests
-- retryable/terminal failure state
-- durable result checkpoint
+- durable stage checkpoints;
+- checkpoint-aware resume;
+- partial-failure recovery tests;
+- reuse of persisted questions, matches and master memberships;
+- retry-safe continuation of verified history.
 
-Next increment, Phase 5.5.2:
-
-- stage-by-stage checkpoints from Phase 5.4
-- true resume from EXTRACTED / MATCHED / MASTERED / HISTORICAL_RECORDED
-- partial-failure recovery
-- restart-safe continuation
-- batch paper lifecycle with durable batch state
+Next: **Phase 5.5.3 — durable batch paper lifecycle**, where a discovered paper set becomes a batch with its own idempotency, aggregate progress, partial-success status and restart-safe batch resume.

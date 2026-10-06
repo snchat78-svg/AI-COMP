@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from hashlib import sha256
-from collections.abc import Iterable
+from typing import Mapping
 
 from ai_comp.database.repository import (
     AnswerKeyRepository,
@@ -10,19 +13,23 @@ from ai_comp.database.repository import (
 )
 from ai_comp.domain.answers import AnswerKeyResolver, AnswerResolution
 from ai_comp.domain.history import ExamAppearance
-from ai_comp.domain.master_questions import MasterAssignmentResult
-from ai_comp.domain.matching import MatchType, QuestionMatch
+from ai_comp.domain.ingestion import IngestionJobStatus
+from ai_comp.domain.master_questions import (
+    MasterAssignmentResult,
+    MasterAssignmentStatus,
+    MasterMembershipType,
+)
+from ai_comp.domain.matching import QuestionMatch
 from ai_comp.domain.questions import QuestionCandidate
 from ai_comp.domain.verification import (
     SourceVerification,
-    VerificationStatus,
     is_historical_evidence_allowed,
 )
 from ai_comp.extraction.question_extractor import QuestionExtractor
+from ai_comp.history.builder import ExamAppearanceBuilder
 from ai_comp.master.batch import MasterQuestionBatchService
 from ai_comp.matching.index import CandidatePairIndex
 from ai_comp.matching.service import MatchingService
-from ai_comp.history.builder import ExamAppearanceBuilder
 from ai_comp.research.processing import NormalizedDocument
 
 
@@ -55,7 +62,15 @@ class IngestionResult:
 
 
 class VerifiedIngestionOrchestrator:
-    """Runs one auditable extracted-paper lifecycle."""
+    """Runs one auditable extracted-paper lifecycle with resumable checkpoints."""
+
+    _CHECKPOINT_ORDER = {
+        IngestionJobStatus.PROCESSING: 0,
+        IngestionJobStatus.EXTRACTED: 1,
+        IngestionJobStatus.MATCHED: 2,
+        IngestionJobStatus.MASTERED: 3,
+        IngestionJobStatus.HISTORICAL_RECORDED: 4,
+    }
 
     def __init__(
         self,
@@ -87,38 +102,71 @@ class VerifiedIngestionOrchestrator:
     def ingest(
         self,
         request: VerifiedIngestionRequest,
+        *,
+        resume_after: IngestionJobStatus | None = None,
+        progress_callback: Callable[
+            [IngestionJobStatus, Mapping[str, object]], None
+        ] | None = None,
     ) -> IngestionResult:
-        extraction = self.question_extractor.extract(request.document)
-        questions = extraction.questions
-        entries = extraction.answer_key_entries
+        if self._at_least(resume_after, IngestionJobStatus.EXTRACTED):
+            questions = self.question_repository.get_for_document(
+                request.document.document_id
+            )
+            entries = self.answer_key_repository.get_for_document(
+                request.document.document_id
+            )
+            if not questions:
+                raise ValueError(
+                    "cannot resume after EXTRACTED: no persisted questions"
+                )
+            for question in questions:
+                self.candidate_index.add(question)
+        else:
+            extraction = self.question_extractor.extract(request.document)
+            questions = extraction.questions
+            entries = extraction.answer_key_entries
 
-        self.answer_key_repository.save_many(
-            request.document.document_id,
-            entries,
-        )
-        for question in questions:
-            self.question_repository.save(question)
-            self.candidate_index.add(question)
+            self.answer_key_repository.save_many(
+                request.document.document_id,
+                entries,
+            )
+            for question in questions:
+                self.question_repository.save(question)
+                self.candidate_index.add(question)
 
-        resolutions = self.answer_resolver.resolve_many(
-            questions,
-            entries,
-        )
-        resolved = tuple(
-            item for item in resolutions if item.question_id
-        )
-        unresolved = tuple(
-            item for item in resolutions if not item.question_id
-            or item.selected_option_key is None
-        )
-        for resolution in resolved:
-            self.answer_resolution_repository.save(resolution)
+            self._progress(
+                progress_callback,
+                IngestionJobStatus.EXTRACTED,
+                {
+                    "question_count": len(questions),
+                    "answer_key_count": len(entries),
+                },
+            )
 
-        matches = self._match_and_persist(questions)
-        assignments = self.master_service.assign_many(
-            questions,
-            matches,
-        )
+        resolved, unresolved = self._resolve_answers(questions, entries)
+
+        if self._at_least(resume_after, IngestionJobStatus.MATCHED):
+            matches = self._load_matches(questions)
+        else:
+            matches = self._match_and_persist(questions)
+            self._progress(
+                progress_callback,
+                IngestionJobStatus.MATCHED,
+                {"match_count": len(matches)},
+            )
+
+        if self._at_least(resume_after, IngestionJobStatus.MASTERED):
+            assignments = self._load_assignments(questions)
+        else:
+            assignments = self.master_service.assign_many(
+                questions,
+                matches,
+            )
+            self._progress(
+                progress_callback,
+                IngestionJobStatus.MASTERED,
+                {"master_assignment_count": len(assignments)},
+            )
 
         allowed = is_historical_evidence_allowed(
             request.verification.status
@@ -135,6 +183,11 @@ class VerifiedIngestionOrchestrator:
             )
             for appearance in appearances:
                 self.appearance_repository.save(appearance)
+            self._progress(
+                progress_callback,
+                IngestionJobStatus.HISTORICAL_RECORDED,
+                {"appearance_count": len(appearances)},
+            )
         else:
             skip_reason = (
                 "source verification is not VERIFIED; "
@@ -156,17 +209,124 @@ class VerifiedIngestionOrchestrator:
             unresolved_answers=unresolved,
         )
 
+    def _resolve_answers(
+        self,
+        questions: tuple[QuestionCandidate, ...],
+        entries,
+    ) -> tuple[tuple[AnswerResolution, ...], tuple[AnswerResolution, ...]]:
+        resolutions = self.answer_resolver.resolve_many(questions, entries)
+        for resolution in resolutions:
+            if resolution.question_id:
+                self.answer_resolution_repository.save(resolution)
+
+        resolved = tuple(
+            resolution
+            for resolution in resolutions
+            if resolution.question_id
+            and resolution.selected_option_key is not None
+        )
+        unresolved = tuple(
+            resolution
+            for resolution in resolutions
+            if not resolution.question_id
+            or resolution.selected_option_key is None
+        )
+        return resolved, unresolved
+
     def _match_and_persist(
         self,
         questions: tuple[QuestionCandidate, ...],
     ) -> tuple[QuestionMatch, ...]:
         result: list[QuestionMatch] = []
+        seen: set[tuple[str, str, str]] = set()
         for question in questions:
             batch = self.matching_service.match_question(question)
             for match in batch.matches:
+                key = (
+                    min(match.left_question_id, match.right_question_id),
+                    max(match.left_question_id, match.right_question_id),
+                    match.match_type.value,
+                )
+                if key in seen:
+                    continue
+                seen.add(key)
                 self.match_repository.save(match)
                 result.append(match)
         return tuple(result)
+
+    def _load_matches(
+        self,
+        questions: tuple[QuestionCandidate, ...],
+    ) -> tuple[QuestionMatch, ...]:
+        result: list[QuestionMatch] = []
+        seen: set[tuple[str, str]] = set()
+        for question in questions:
+            for match in self.match_repository.get_for_question(
+                question.question_id
+            ):
+                key = tuple(
+                    sorted(
+                        (match.left_question_id, match.right_question_id)
+                    )
+                )
+                if key in seen:
+                    continue
+                seen.add(key)
+                result.append(match)
+        return tuple(result)
+
+    def _load_assignments(
+        self,
+        questions: tuple[QuestionCandidate, ...],
+    ) -> tuple[MasterAssignmentResult, ...]:
+        results = []
+        for question in questions:
+            membership = (
+                self.master_service.repository.get_membership_for_question(
+                    question.question_id
+                )
+            )
+            if membership is None:
+                raise ValueError(
+                    "cannot resume after MASTERED: missing master membership "
+                    f"for {question.question_id}"
+                )
+            results.append(
+                MasterAssignmentResult(
+                    question_id=question.question_id,
+                    status=MasterAssignmentStatus.ALREADY_ASSIGNED,
+                    master_question_id=membership.master_question_id,
+                    relationship=membership.relationship,
+                    reason="restored from durable master membership",
+                )
+            )
+        return tuple(results)
+
+    @classmethod
+    def _at_least(
+        cls,
+        completed: IngestionJobStatus | None,
+        target: IngestionJobStatus,
+    ) -> bool:
+        if completed is None:
+            return False
+        return (
+            completed in cls._CHECKPOINT_ORDER
+            and target in cls._CHECKPOINT_ORDER
+            and cls._CHECKPOINT_ORDER[completed]
+            >= cls._CHECKPOINT_ORDER[target]
+        )
+
+    @staticmethod
+    def _progress(
+        callback: Callable[
+            [IngestionJobStatus, Mapping[str, object]], None
+        ] | None,
+        status: IngestionJobStatus,
+        checkpoint: Mapping[str, object],
+    ) -> None:
+        if callback is not None:
+            callback(status, checkpoint)
 
     def _build_appearances(
         self,
@@ -183,9 +343,11 @@ class VerifiedIngestionOrchestrator:
         for question in questions:
             assignment = by_assignment.get(question.question_id)
             match_type = "EXACT"
-            if assignment is not None:
-                if assignment.relationship is not None:
-                    match_type = assignment.relationship.value
+            if (
+                assignment is not None
+                and assignment.relationship is MasterMembershipType.REPHRASED
+            ):
+                match_type = "REPHRASED"
 
             resolution = by_question.get(question.question_id)
             appearances.append(

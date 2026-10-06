@@ -42,6 +42,7 @@ _ALLOWED_TRANSITIONS: dict[IngestionJobStatus, frozenset[IngestionJobStatus]] = 
         IngestionJobStatus.FAILED,
     }),
     IngestionJobStatus.EXTRACTED: frozenset({
+        IngestionJobStatus.PROCESSING,
         IngestionJobStatus.MATCHED,
         IngestionJobStatus.MASTERED,
         IngestionJobStatus.HISTORICAL_RECORDED,
@@ -50,6 +51,7 @@ _ALLOWED_TRANSITIONS: dict[IngestionJobStatus, frozenset[IngestionJobStatus]] = 
         IngestionJobStatus.FAILED,
     }),
     IngestionJobStatus.MATCHED: frozenset({
+        IngestionJobStatus.PROCESSING,
         IngestionJobStatus.MASTERED,
         IngestionJobStatus.HISTORICAL_RECORDED,
         IngestionJobStatus.COMPLETED,
@@ -57,6 +59,7 @@ _ALLOWED_TRANSITIONS: dict[IngestionJobStatus, frozenset[IngestionJobStatus]] = 
         IngestionJobStatus.FAILED,
     }),
     IngestionJobStatus.MASTERED: frozenset({
+        IngestionJobStatus.PROCESSING,
         IngestionJobStatus.HISTORICAL_RECORDED,
         IngestionJobStatus.COMPLETED,
         IngestionJobStatus.RETRYABLE,

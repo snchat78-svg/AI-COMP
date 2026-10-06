@@ -34,11 +34,50 @@ class FakeProcessor:
         self.calls = 0
         self.fail_times = 0
 
-    def ingest(self, request):
+    def ingest(self, request, *, resume_after=None, progress_callback=None):
         self.calls += 1
         if self.fail_times:
             self.fail_times -= 1
             raise RuntimeError("temporary failure")
+        return IngestionResult(
+            document_id=request.document.document.document_id,
+            question_count=10,
+            answer_resolution_count=9,
+            unresolved_answer_count=1,
+            match_count=8,
+            appearance_count=0,
+            master_assignment_count=10,
+            historical_ingestion_allowed=False,
+            history_skip_reason="not verified",
+            master_assignments=(),
+            unresolved_answers=(),
+        )
+
+
+class StageAwareProcessor(FakeProcessor):
+    def __init__(self):
+        super().__init__()
+        self.resume_markers = []
+
+    def ingest(self, request, *, resume_after=None, progress_callback=None):
+        self.calls += 1
+        self.resume_markers.append(resume_after)
+        if progress_callback is not None:
+            progress_callback(
+                IngestionJobStatus.EXTRACTED,
+                {"question_count": 10},
+            )
+            progress_callback(
+                IngestionJobStatus.MATCHED,
+                {"match_count": 8},
+            )
+            if self.fail_times:
+                self.fail_times -= 1
+                raise RuntimeError("failure after MATCHED")
+            progress_callback(
+                IngestionJobStatus.MASTERED,
+                {"master_assignment_count": 10},
+            )
         return IngestionResult(
             document_id=request.document.document.document_id,
             question_count=10,
@@ -115,13 +154,25 @@ def test_failure_is_durable_and_can_be_retried():
     assert processor.calls == 2
     assert second.job.attempt_count == 2
 
-    statuses = [
-        event.payload["status"]
-        for event in store.outbox_by_id.values()
-        if event.aggregate_id == second.job.job_id
+
+def test_partial_failure_resumes_from_last_durable_stage():
+    processor = StageAwareProcessor()
+    processor.fail_times = 1
+    service, _, processor = make_service(processor)
+
+    first = service.run(Request())
+
+    assert first.job.status is IngestionJobStatus.RETRYABLE
+    assert first.job.checkpoint["resume_after"] == "MATCHED"
+
+    second = service.run(Request())
+
+    assert second.job.status is IngestionJobStatus.COMPLETED
+    assert processor.resume_markers == [
+        None,
+        IngestionJobStatus.MATCHED,
     ]
-    assert IngestionJobStatus.RETRYABLE.value in statuses
-    assert IngestionJobStatus.COMPLETED.value in statuses
+    assert second.job.attempt_count == 2
 
 
 def test_failed_transaction_rolls_back_job_and_outbox_together():
