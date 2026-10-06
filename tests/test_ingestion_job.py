@@ -40,7 +40,7 @@ class FakeProcessor:
             self.fail_times -= 1
             raise RuntimeError("temporary failure")
         return IngestionResult(
-            document_id=request.document.document_id,
+            document_id=request.document.document.document_id,
             question_count=10,
             answer_resolution_count=9,
             unresolved_answer_count=1,
