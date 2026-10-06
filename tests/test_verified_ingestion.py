@@ -103,22 +103,36 @@ def verification(status):
 
 
 def build_document():
-    from ai_comp.research.processing import NormalizedDocument
-    from ai_comp.research.paper import FetchedDocument
+    from ai_comp.research.metadata import StoredDocumentMetadata
+    from ai_comp.research.paper import DocumentFormat, FetchedDocument
+    from ai_comp.research.processing import ExtractionMethod, NormalizedDocument
 
     fetched = FetchedDocument(
         document_id="doc-1",
-        paper_id="paper-1",
-        url="https://example.gov/paper.pdf",
+        candidate_id="candidate-1",
+        source_url="https://example.gov/paper.pdf",
         content_type="application/pdf",
         sha256="a" * 64,
-        content=b"pdf",
+        size_bytes=3,
+        storage_key="a" * 64,
+        format=DocumentFormat.PDF,
+    )
+    metadata = StoredDocumentMetadata(
+        document_id="doc-1",
+        candidate_id="candidate-1",
+        source_url="https://example.gov/paper.pdf",
+        content_type="application/pdf",
+        sha256="a" * 64,
+        size_bytes=3,
+        storage_key="a" * 64,
+        declared_format=DocumentFormat.PDF,
+        detected_format=DocumentFormat.PDF,
     )
     return NormalizedDocument(
         document=fetched,
+        metadata=metadata,
         text="1. भारत की राजधानी क्या है?\nA. दिल्ली\nB. मुंबई",
-        normalized_text="1. भारत की राजधानी क्या है?\nA. दिल्ली\nB. मुंबई",
-        extraction_method="TEXT",
+        extraction_method=ExtractionMethod.DIRECT_TEXT,
     )
 
 
