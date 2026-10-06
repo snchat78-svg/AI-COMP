@@ -9,6 +9,8 @@ description = "AI Competitive Exam Intelligence Platform"
 requires-python = ">=3.11"
 dependencies = [
     "pypdf>=5.0",
+    "google-genai==2.28.0",
+    "pydantic>=2.12,<3.0",
 ]
 
 [project.optional-dependencies]
