@@ -4,18 +4,26 @@ from ai_comp.material.gemini import (
     GeminiMaterialAnalysisError,
     GeminiMaterialAnalysisProvider,
 )
-from ai_comp.material.matching import (
-    MaterialExamMatchingService,
-    MaterialMatchingPolicy,
-    MaterialQuestionProbeExtractor,
+from ai_comp.material.generation import (
+    FactGroundedAnswerVerifier,
+    GenerationQualityPolicy,
+    GeneratedQuestionService,
+    GeminiAnswerVerifier,
+    GeminiQuestionGenerationError,
+    GeminiQuestionGenerationProvider,
+    StaticQuestionGenerationProvider,
 )
 
 __all__ = [
+    "FactGroundedAnswerVerifier",
+    "GenerationQualityPolicy",
+    "GeneratedQuestionService",
+    "GeminiAnswerVerifier",
     "GeminiMaterialAnalysisConfig",
     "GeminiMaterialAnalysisError",
     "GeminiMaterialAnalysisProvider",
-    "MaterialExamMatchingService",
-    "MaterialMatchingPolicy",
-    "MaterialQuestionProbeExtractor",
+    "GeminiQuestionGenerationError",
+    "GeminiQuestionGenerationProvider",
     "StaticMaterialAnalysisProvider",
+    "StaticQuestionGenerationProvider",
 ]
