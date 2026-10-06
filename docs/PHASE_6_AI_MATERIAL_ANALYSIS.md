@@ -1,114 +1,103 @@
 # Phase 6 — AI Material Analysis
 
-## Phase 6.1 — Material ingestion
+## Phase 6.4 — Verified Exam DB Matching + Existing Question Detection
 
-Phase 6.1 consumes Photo/PDF/Notes input, stores content by SHA-256, extracts text,
-and provides OCR fallback through the existing document-processing contract.
+Phase 6.4 consumes the grounded Phase 6.2 analysis result and matches it only
+against **ACTIVE master questions that have at least one VERIFIED exam appearance**.
 
-User material is study input only. It is not official evidence and cannot create
-ExamAppearance records.
+### Matching boundary
 
-## Phase 6.2 — Content understanding, concepts and important facts
-
-Phase 6.2 defines the provider-neutral material-analysis contract:
-
+\`\`\`
 NormalizedMaterial
--> Content Understanding
--> Proposed Concepts
--> Source-grounded Important Facts
+  -> MaterialAnalysisResult
+       -> explicit question probes
+       -> proposed concepts
+  -> verified ACTIVE master-question candidates
+  -> exact existing-question detection
+  -> conservative rephrased detection
+  -> same-concept matches
+  -> related-topic matches
+  -> persistence of accepted match decisions
+\`\`\`
 
-The pipeline requires each concept/fact evidence_text to be an exact substring of
-the normalized material. This is a deterministic anti-hallucination boundary.
+### Existing-question detection
 
-A StaticMaterialAnalysisProvider is retained for deterministic tests and local
-development.
+A plain study fact is **never** converted into a previous-exam question match merely
+because embeddings are similar.
 
-## Phase 6.3 — Real LLM provider and structured output
+EXACT/REPHRASED detection is performed only for question-text probes. The default
+probe extractor requires an explicit question mark (\`?\` or \`？\`) and preserves the
+source text as evidence.
 
-Phase 6.3 connects the provider contract to Google's Gen AI SDK.
+EXACT uses normalized question-stem equality.
 
-### Production provider
+REPHRASED uses an injected embedding function and two safety gates:
 
-GeminiMaterialAnalysisProvider uses:
+- minimum similarity \`0.94\`;
+- winning-candidate margin \`0.05\` over the second eligible candidate.
 
-- environment variable GEMINI_API_KEY by default;
-- model gemini-3.8-flash by default;
-- high Gemini thinking level by default;
-- JSON structured output validated by a closed Pydantic schema;
-- one model request per material, reused for understanding/concepts/facts;
-- deterministic IDs generated locally for extracted concepts/facts.
+When the winner is ambiguous, the result is left unmatched. No guessing is allowed.
 
-The provider deliberately does not place an API key in source code, prompts,
-tests, or Git history.
+### Verified evidence gate
 
-### Accuracy and fail-closed rules
+For every candidate master question, Phase 6.4 counts only VERIFIED
+\`ExamAppearance\` records and deduplicates the real exam occurrence by:
 
-The provider:
+\`exam_id + year + shift + question_number\`
 
-1. does not truncate oversized material;
-2. rejects oversized material before an API call;
-3. asks the model to use only the supplied material;
-4. requires exact source-substring evidence for every concept/fact;
-5. rejects malformed structured responses;
-6. rejects unexpected schema fields;
-7. validates confidence and importance scores in the range 0..1;
-8. deduplicates identical extracted concept/fact pairs;
-9. never creates ExamAppearance records or historical claims.
+A master question with zero verified appearances is not a search candidate.
 
-A failed or invalid LLM response raises GeminiMaterialAnalysisError. The system
-does not silently fall back to invented content.
+Therefore:
 
-### Dependency and runtime setup
+- a user note cannot create historical evidence;
+- an unverified website copy cannot make a question historical;
+- SAME_CONCEPT is not previous-question equivalence;
+- RELATED_TOPIC is not previous-question equivalence.
 
-The project pins google-genai==2.28.0 for reproducible CI and declares Pydantic
-as a runtime dependency.
+### Concept and topic matching
 
-For local execution, provide the API key through the environment:
+\`ProposedConcept\` is resolved through an injected canonical concept resolver.
+Only an explicit canonical concept ID may produce SAME_CONCEPT.
 
-GEMINI_API_KEY=<secret>
+RELATED_TOPIC is also provider-injected. A score below the configured threshold
+(\`0.85\`) is ignored. SAME_CONCEPT takes precedence over RELATED_TOPIC for the
+same material concept/master pair.
 
-Do not commit .env files or API keys.
+No keyword guessing is used.
 
-### Structured response boundary
+### Persistence
 
-The SDK is asked for:
+Accepted matches are stored in \`material_question_matches\`.
 
-- application/json;
-- the _GeminiMaterialAnalysis Pydantic schema;
-- Gemini high thinking.
+The record contains:
 
-The application validates the returned structure again before converting it into
-the Phase 6.2 domain objects. This preserves the architecture:
+- material ID;
+- probe ID and probe type;
+- master-question ID;
+- match type;
+- confidence;
+- verified appearance count;
+- machine-readable evidence.
 
-MaterialAnalysisProvider
--> structured LLM adapter
--> deterministic domain validation
--> later verified-database matching
+NO_MATCH and AMBIGUOUS results are intentionally not persisted as positive
+historical links.
 
-The provider is therefore an implementation detail; future providers can implement
-the same MaterialAnalysisProvider protocol without changing the domain layer.
+### Current scale boundary
 
-### CI policy
+The in-memory service retrieves a bounded set of active masters and filters them
+by verified appearance. This is deterministic and safe for the current phase.
+For production scale, the next data-layer optimization should replace this
+candidate scan with a persistent verified-master/vector retrieval index.
 
-CI runs only deterministic provider tests and does not require a live Gemini API
-key. A live integration test is intentionally kept outside normal CI so builds do
-not become dependent on external quota, network availability, or secret exposure.
+### Next phase
 
-## Historical-data separation
+Phase 6.5 should take the verified matching result as a hard input boundary and
+implement AI question generation:
 
-Nothing in Phase 6.1–6.3 promotes user material into previous-exam history.
+ImportantFact/ProposedConcept
+  -> generation specification
+  -> structured MCQ generation
+  -> answer verification
+  -> duplicate/master/history safety checks
 
-Historical exam appearances remain governed by the Phase 4/5 verification gate:
-actual official/trusted source evidence must be persisted separately.
-
-## Next
-
-Phase 6.4 should connect extracted concepts/facts to the verified master question
-database and separate:
-
-- exact previous-question detection;
-- rephrased previous-question detection;
-- same-concept matches;
-- related-topic matches;
-
-before any AI question generation is allowed.
+Generated questions must never be represented as previous-exam questions.

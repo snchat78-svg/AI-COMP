@@ -4,10 +4,18 @@ from ai_comp.material.gemini import (
     GeminiMaterialAnalysisError,
     GeminiMaterialAnalysisProvider,
 )
+from ai_comp.material.matching import (
+    MaterialExamMatchingService,
+    MaterialMatchingPolicy,
+    MaterialQuestionProbeExtractor,
+)
 
 __all__ = [
     "GeminiMaterialAnalysisConfig",
     "GeminiMaterialAnalysisError",
     "GeminiMaterialAnalysisProvider",
+    "MaterialExamMatchingService",
+    "MaterialMatchingPolicy",
+    "MaterialQuestionProbeExtractor",
     "StaticMaterialAnalysisProvider",
 ]
