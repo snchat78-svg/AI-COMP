@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from ai_comp.domain.material_generation import (
+    AnswerVerificationStatus,
     GeneratedMCQ,
     GeneratedOption,
     GeneratedQuestionStatus,
@@ -29,6 +30,12 @@ class FakeClock:
 
 
 def question(question_id: str, correct: str = "B", status=GeneratedQuestionStatus.ACCEPTED):
+    answer_status = (
+        AnswerVerificationStatus.VERIFIED
+        if status is GeneratedQuestionStatus.ACCEPTED
+        else AnswerVerificationStatus.UNCERTAIN
+    )
+    evidence = ("सत्यापित स्रोत तथ्य",) if answer_status is AnswerVerificationStatus.VERIFIED else ()
     return GeneratedMCQ(
         generated_question_id=question_id,
         generation_id="generation:test",
@@ -46,6 +53,8 @@ def question(question_id: str, correct: str = "B", status=GeneratedQuestionStatu
         concept_ids=("concept-1",),
         difficulty="MEDIUM",
         importance_score=0.90,
+        answer_verification=answer_status,
+        answer_verification_evidence=evidence,
         status=status,
         quality_score=0.95,
     )

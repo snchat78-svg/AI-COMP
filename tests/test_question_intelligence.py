@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from ai_comp.domain.material_generation import (
+    AnswerVerificationStatus,
     GeneratedMCQ,
     GeneratedOption,
     GeneratedQuestionStatus,
@@ -33,6 +34,8 @@ def question(question_id: str, difficulty: str = "MEDIUM") -> GeneratedMCQ:
         concept_ids=("concept-1",),
         difficulty=difficulty,
         importance_score=0.90,
+        answer_verification=AnswerVerificationStatus.VERIFIED,
+        answer_verification_evidence=("सत्यापित स्रोत तथ्य",),
         status=GeneratedQuestionStatus.ACCEPTED,
         quality_score=0.95,
     )
