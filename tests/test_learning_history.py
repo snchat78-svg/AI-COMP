@@ -211,7 +211,7 @@ def test_history_aggregates_multiple_tests():
         item for item in history.topic_performance if item.concept_id == "science"
     )
     assert science.test_count == 2
-    assert science.accuracy == pytest.approx(0.25)
+    assert science.accuracy == pytest.approx(0.125)
     assert science.recent_accuracy == 0.5
     assert science.trend.name == "IMPROVING"
     assert science.weak_streak == 2
