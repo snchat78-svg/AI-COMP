@@ -15,10 +15,10 @@ from ai_comp.domain.question_intelligence import (
 )
 from ai_comp.domain.test_engine import (
     ScoringPolicy,
-    TestSessionStatus,
-    TestSpecification,
+    TestSessionStatus as SessionStatus,
+    TestSpecification as TestSpec,
 )
-from ai_comp.test_engine import TestEngine
+from ai_comp.test_engine import TestEngine as Engine
 
 
 class FakeClock:
@@ -74,11 +74,11 @@ def candidate(question_id: str, rank: int) -> RankedQuestionCandidate:
 
 
 def make_engine():
-    return TestEngine(clock=FakeClock())
+    return Engine(clock=FakeClock())
 
 
 def make_test(shuffle=False):
-    return TestSpecification(
+    return TestSpec(
         test_id="test:1",
         title="प्रैक्टिस टेस्ट",
         question_count=3,
@@ -89,7 +89,7 @@ def make_test(shuffle=False):
     )
 
 
-def setup_session(engine, specification=None):
+def setup_session(engine, specification=None, session_id="session:1"):
     specification = specification or make_test()
     questions = tuple(question(f"q-{i}") for i in range(1, 5))
     candidates = tuple(candidate(f"q-{i}", i) for i in range(1, 5))
@@ -97,7 +97,7 @@ def setup_session(engine, specification=None):
         specification,
         candidates,
         questions,
-        session_id="session:1",
+        session_id=session_id,
     )
 
 
@@ -108,15 +108,15 @@ def test_session_selects_top_ranked_candidates():
 
 
 def test_shuffle_is_deterministic_for_same_seed():
-    first = setup_session(make_engine(), make_test(shuffle=True))
-    second = setup_session(make_engine(), make_test(shuffle=True))
+    first = setup_session(make_engine(), make_test(shuffle=True), "session:shuffle-1")
+    second = setup_session(make_engine(), make_test(shuffle=True), "session:shuffle-2")
     assert first.question_ids == second.question_ids
     assert first.question_ids != ("q-1", "q-2", "q-3")
 
 
 def test_only_accepted_generated_questions_can_enter_test():
     engine = make_engine()
-    specification = TestSpecification(
+    specification = TestSpec(
         test_id="test:accepted",
         title="टेस्ट",
         question_count=1,
@@ -133,10 +133,10 @@ def test_only_accepted_generated_questions_can_enter_test():
 
 def test_start_sets_deadline_and_answer_navigation():
     clock = FakeClock()
-    engine = TestEngine(clock=clock)
+    engine = Engine(clock=clock)
     session = setup_session(engine)
     started = engine.start(session.session_id)
-    assert started.status is TestSessionStatus.IN_PROGRESS
+    assert started.status is SessionStatus.IN_PROGRESS
     assert started.deadline_at == 1060.0
 
     engine.answer(session.session_id, "b")
@@ -144,6 +144,17 @@ def test_start_sets_deadline_and_answer_navigation():
     assert moved.current_index == 1
     back = engine.previous(session.session_id)
     assert back.current_index == 0
+
+
+def test_answer_can_be_changed_before_submission():
+    engine = make_engine()
+    session = setup_session(engine)
+    engine.start(session.session_id)
+    engine.answer(session.session_id, "A")
+    engine.answer(session.session_id, "B")
+    result = engine.submit(session.session_id)
+    assert result.correct_answers == 1
+    assert result.incorrect_answers == 0
 
 
 def test_invalid_option_is_rejected():
@@ -166,9 +177,20 @@ def test_goto_and_review_toggle():
     assert unreviewed.review_question_ids == ()
 
 
+def test_navigation_boundaries_are_rejected():
+    engine = make_engine()
+    session = setup_session(engine)
+    engine.start(session.session_id)
+    with pytest.raises(ValueError, match="boundaries"):
+        engine.previous(session.session_id)
+    engine.goto(session.session_id, 3)
+    with pytest.raises(ValueError, match="boundaries"):
+        engine.next(session.session_id)
+
+
 def test_submit_scores_correct_incorrect_and_unattempted():
     clock = FakeClock()
-    engine = TestEngine(clock=clock)
+    engine = Engine(clock=clock)
     session = setup_session(engine)
     engine.start(session.session_id)
 
@@ -177,7 +199,7 @@ def test_submit_scores_correct_incorrect_and_unattempted():
     engine.answer(session.session_id, "A")
 
     result = engine.submit(session.session_id)
-    assert result.status is TestSessionStatus.SUBMITTED
+    assert result.status is SessionStatus.SUBMITTED
     assert result.total_questions == 3
     assert result.attempted_questions == 2
     assert result.correct_answers == 1
@@ -189,8 +211,8 @@ def test_submit_scores_correct_incorrect_and_unattempted():
 
 
 def test_negative_marking_can_produce_negative_percentage():
-    engine = TestEngine(clock=FakeClock())
-    specification = TestSpecification(
+    engine = Engine(clock=FakeClock())
+    specification = TestSpec(
         test_id="test:negative",
         title="नकारात्मक अंकन",
         question_count=1,
@@ -221,14 +243,14 @@ def test_submit_is_idempotent():
 
 def test_expiry_auto_submits_as_expired():
     clock = FakeClock()
-    engine = TestEngine(clock=clock)
+    engine = Engine(clock=clock)
     session = setup_session(engine)
     engine.start(session.session_id)
     engine.answer(session.session_id, "B")
 
     clock.value = 1060.0
     expired = engine.get_session(session.session_id)
-    assert expired.status is TestSessionStatus.EXPIRED
+    assert expired.status is SessionStatus.EXPIRED
     assert expired.result is not None
     assert expired.result.timed_out is True
     assert expired.result.correct_answers == 1
@@ -236,7 +258,7 @@ def test_expiry_auto_submits_as_expired():
 
 def test_answer_after_expiry_is_rejected():
     clock = FakeClock()
-    engine = TestEngine(clock=clock)
+    engine = Engine(clock=clock)
     session = setup_session(engine)
     engine.start(session.session_id)
     clock.value = 1060.0
@@ -245,9 +267,18 @@ def test_answer_after_expiry_is_rejected():
         engine.answer(session.session_id, "B")
 
 
+def test_finished_session_cannot_accept_new_answer():
+    engine = make_engine()
+    session = setup_session(engine)
+    engine.start(session.session_id)
+    engine.submit(session.session_id)
+    with pytest.raises(ValueError, match="not in progress"):
+        engine.answer(session.session_id, "B")
+
+
 def test_not_enough_questions_is_rejected():
     engine = make_engine()
-    specification = TestSpecification(
+    specification = TestSpec(
         test_id="test:small",
         title="टेस्ट",
         question_count=5,
