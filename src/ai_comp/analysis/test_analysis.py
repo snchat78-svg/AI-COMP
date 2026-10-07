@@ -11,7 +11,7 @@ from ai_comp.domain.test_analysis import (
     TopicPerformance,
     WeakTopic,
 )
-from ai_comp.domain.test_engine import TestResult, TestSession
+from ai_comp.domain.test_engine import TestResult, TestSession, TestSessionStatus
 
 
 class TestAnalysisService:
@@ -20,9 +20,10 @@ class TestAnalysisService:
     def analyze(self, session: TestSession, result: TestResult, questions: Sequence[GeneratedMCQ]) -> TestAnalysis:
         if result.session_id != session.session_id or result.test_id != session.test_id:
             raise ValueError("result does not match test session")
-        if result.status.value not in {"SUBMITTED", "EXPIRED"}:
+        if session.status not in {TestSessionStatus.SUBMITTED, TestSessionStatus.EXPIRED}:
+            raise ValueError("only finished test sessions can be analyzed")
+        if result.status not in {TestSessionStatus.SUBMITTED, TestSessionStatus.EXPIRED}:
             raise ValueError("only finished test results can be analyzed")
-
         by_id = {question.generated_question_id: question for question in questions}
         if set(session.question_ids) != set(by_id):
             raise ValueError("questions do not exactly match the test session")
@@ -107,7 +108,9 @@ class TestAnalysisService:
             if topic.performance is not PerformanceBand.WEAK:
                 continue
             unattempted_rate = topic.unattempted_count / topic.question_count
-            priority = min(1.0, (1.0 - topic.accuracy) * 0.70 + unattempted_rate * 0.30)
+            # Accuracy deficit is the primary signal. Unattempted questions add
+            # meaningful practice urgency, with the final score capped at 1.
+            priority = min(1.0, (1.0 - topic.accuracy) * 0.70 + unattempted_rate * 0.60)
             reason = (
                 "कमजोर accuracy"
                 if topic.accuracy == 0.0
