@@ -18,7 +18,8 @@ from ai_comp.domain.question_intelligence import (
 )
 from ai_comp.domain.test_analysis import (
     PerformanceBand,
-    TestAnalysis,
+    QuestionOutcome,
+    TestAnalysis as AnalysisModel,
     TopicPerformance,
     WeakTopic,
 )
@@ -66,7 +67,7 @@ def candidate(qid, rank, difficulty=DifficultyLevel.MEDIUM, score=0.9, novelty=1
 
 
 def analysis():
-    return TestAnalysis(
+    return AnalysisModel(
         test_id="t",
         session_id="s",
         total_questions=4,
@@ -78,7 +79,7 @@ def analysis():
         percentage=12.5,
         accuracy=1 / 3,
         outcomes=(
-            __import__("ai_comp.domain.test_analysis", fromlist=["QuestionOutcome"]).QuestionOutcome(
+            QuestionOutcome(
                 question_id="old-science",
                 concept_ids=("science",),
                 selected_option_key="A",
@@ -87,7 +88,7 @@ def analysis():
                 correct=False,
                 difficulty="MEDIUM",
             ),
-            __import__("ai_comp.domain.test_analysis", fromlist=["QuestionOutcome"]).QuestionOutcome(
+            QuestionOutcome(
                 question_id="old-history",
                 concept_ids=("history",),
                 selected_option_key="A",
@@ -96,7 +97,7 @@ def analysis():
                 correct=False,
                 difficulty="MEDIUM",
             ),
-            __import__("ai_comp.domain.test_analysis", fromlist=["QuestionOutcome"]).QuestionOutcome(
+            QuestionOutcome(
                 question_id="old-history-2",
                 concept_ids=("history",),
                 selected_option_key="B",
@@ -105,7 +106,7 @@ def analysis():
                 correct=True,
                 difficulty="MEDIUM",
             ),
-            __import__("ai_comp.domain.test_analysis", fromlist=["QuestionOutcome"]).QuestionOutcome(
+            QuestionOutcome(
                 question_id="old-science-2",
                 concept_ids=("science",),
                 selected_option_key=None,

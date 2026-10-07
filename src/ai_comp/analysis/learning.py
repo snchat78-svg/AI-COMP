@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from ai_comp.domain.material_generation import GeneratedMCQ, GeneratedQuestionStatus
 from ai_comp.domain.learning_recommendation import (
@@ -77,10 +77,19 @@ class WeakTopicNextTestSelector:
         selected: list[RankedQuestionCandidate] = []
         selected_ids: set[str] = set()
         focus_concepts: list[str] = []
-        focus_slots = min(question_count, max(1, int(question_count * self.policy.focus_ratio + 0.999999)))
+        focus_slots = min(
+            question_count,
+            max(1, int(question_count * self.policy.focus_ratio + 0.999999)),
+        )
 
-        for recommendation in recommendations:
-            while len(selected) < focus_slots:
+        # Round-robin across weak topics: one question per topic in each round.
+        # This preserves multi-topic coverage while still filling the focused
+        # portion when one topic is the only weak topic.
+        while len(selected) < focus_slots:
+            progress = False
+            for recommendation in recommendations:
+                if len(selected) >= focus_slots:
+                    break
                 available = [
                     candidate
                     for candidate in candidate_by_id.values()
@@ -88,7 +97,7 @@ class WeakTopicNextTestSelector:
                     and recommendation.concept_id in question_by_id[candidate.question_id].concept_ids
                 ]
                 if not available:
-                    break
+                    continue
 
                 fresh = [candidate for candidate in available if candidate.question_id not in recent_ids]
                 pool = fresh or available
@@ -108,9 +117,9 @@ class WeakTopicNextTestSelector:
                 selected_ids.add(chosen.question_id)
                 if recommendation.concept_id not in focus_concepts:
                     focus_concepts.append(recommendation.concept_id)
+                progress = True
 
-                # One question per recommendation per round keeps multiple weak
-                # topics represented instead of filling the test from one topic.
+            if not progress:
                 break
 
         remaining = [

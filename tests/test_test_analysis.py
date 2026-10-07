@@ -16,8 +16,8 @@ from ai_comp.domain.question_intelligence import (
     RankedQuestionCandidate,
     QuestionIntelligenceScore,
 )
-from ai_comp.domain.test_engine import ScoringPolicy, TestSessionStatus, TestSpecification
-from ai_comp.test_engine import TestEngine
+from ai_comp.domain.test_engine import ScoringPolicy, TestSessionStatus as SessionStatus, TestSpecification as Specification
+from ai_comp.test_engine import TestEngine as Engine
 
 
 class Clock:
@@ -71,8 +71,8 @@ def candidate(qid, rank):
 
 def make_session():
     clock = Clock()
-    engine = TestEngine(clock=clock)
-    spec = TestSpecification(
+    engine = Engine(clock=clock)
+    spec = Specification(
         test_id="test:a",
         title="विश्लेषण",
         question_count=4,
@@ -125,7 +125,7 @@ def test_weak_topics_are_ranked_by_priority():
 
 def test_finished_status_is_required():
     session, result, qs = make_session()
-    created = replace(session, status=TestSessionStatus.CREATED, result=None, submitted_at=None)
+    created = replace(session, status=SessionStatus.CREATED, result=None, submitted_at=None)
     with pytest.raises(ValueError, match="finished"):
         TestAnalysisService().analyze(created, result, qs)
 
