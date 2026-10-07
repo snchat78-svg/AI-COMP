@@ -203,7 +203,7 @@ def test_history_aggregates_multiple_tests():
     )
     service.record_analysis(
         "learner-1",
-        make_analysis("s2", "t2", 0.5, 0.5),
+        make_analysis("s2", "t2", 0.25, 0.5),
         completed_at=t0 + timedelta(days=1),
     )
     history = service.history("learner-1", generated_at=t0)
@@ -285,11 +285,7 @@ def test_different_learner_histories_are_isolated():
         make_analysis("s2", "t2", 1.0, 0.0),
         completed_at=t0,
     )
-    assert (
-        service.history("learner-a").topic_performance[0].concept_id
-        == "science"
-    )
-    assert (
-        service.history("learner-b").topic_performance[0].concept_id
-        == "history"
-    )
+    learner_a_topics = service.history("learner-a").topic_performance
+    learner_b_topics = service.history("learner-b").topic_performance
+    assert next(item for item in learner_a_topics if item.concept_id == "science").accuracy == 0.0
+    assert next(item for item in learner_b_topics if item.concept_id == "history").accuracy == 0.0
