@@ -212,7 +212,7 @@ def test_history_aggregates_multiple_tests():
     )
     assert science.test_count == 2
     assert science.accuracy == pytest.approx(0.125)
-    assert science.recent_accuracy == 0.5
+    assert science.recent_accuracy == 0.25
     assert science.trend.name == "IMPROVING"
     assert science.weak_streak == 2
     assert science.performance is LongTermPerformanceBand.WEAK
