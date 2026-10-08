@@ -6,6 +6,7 @@ from ai_comp.analysis.adaptive_difficulty import AdaptiveDifficultyService
 from ai_comp.analysis.learning_history import LearningHistoryService
 from ai_comp.analysis.question_learning import QuestionLearningHistoryService
 from ai_comp.domain.adaptive_difficulty import AdaptiveAction, MasteryStatus
+from ai_comp.domain.question_learning import LearnerQuestionHistory
 from ai_comp.domain.test_analysis import (
     PerformanceBand,
     QuestionOutcome,
@@ -199,12 +200,20 @@ def test_persistent_weakness_drives_easy_remediation():
 
 
 def test_repeated_strong_performance_advances_to_hard():
-    history, question_history = build_histories((True, True, True))
+    history, _ = build_histories((True, True, True))
+    question_history = LearnerQuestionHistory(
+        learner_id="learner",
+        outcomes=(),
+        question_performance=(),
+        revision_candidates=(),
+        repeated_concept_alerts=(),
+        generated_at=history.generated_at,
+    )
     profile = AdaptiveDifficultyService().analyze(
         "learner",
         history,
         question_history,
-        as_of=datetime(2026, 1, 9, tzinfo=timezone.utc),
+        as_of=history.generated_at,
     )
     decision = profile.decisions[0]
     assert decision.mastery is MasteryStatus.MASTERED
