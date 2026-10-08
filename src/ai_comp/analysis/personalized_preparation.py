@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from ai_comp.analysis.adaptive_difficulty import AdaptiveDifficultyService
 from ai_comp.domain.learning_history import LearnerLearningHistory
 from ai_comp.domain.learning_recommendation import (
     LearningRecommendation,
@@ -32,6 +33,7 @@ class PersonalizedPreparationService:
         self.recommendation_policy = (
             recommendation_policy or LearningRecommendationPolicy()
         )
+        self.adaptive_difficulty_service = AdaptiveDifficultyService()
 
     def build_plan(
         self,
@@ -81,6 +83,11 @@ class PersonalizedPreparationService:
             )
 
         recommendations = self._recommendations(history, current_analysis)
+        adaptive_profile = self.adaptive_difficulty_service.analyze(
+            learner_id,
+            history,
+            question_history,
+        )
         revision_pool = {
             item.question_id: item
             for item in question_history.revision_candidates
@@ -201,12 +208,25 @@ class PersonalizedPreparationService:
                 accepted,
             )
 
-        difficulty = self._recommended_difficulty(recommendations)
+        difficulty = (
+            adaptive_profile.recommended_difficulty
+            if adaptive_profile.decisions
+            else self._recommended_difficulty(recommendations)
+        )
         effective_mode = self._effective_mode(
             mode, revision_selected, focus_concepts
         )
+        retention_due_question_ids = tuple(
+            question_id
+            for question_id in adaptive_profile.retention_due_question_ids
+            if question_id in {candidate.question_id for candidate in ordered}
+        )
         reason = self._reason(
-            effective_mode, revision_selected, focus_concepts
+            effective_mode,
+            revision_selected,
+            focus_concepts,
+            adaptive_profile.recommended_difficulty,
+            bool(retention_due_question_ids),
         )
 
         specification = TestSpecification(
@@ -232,6 +252,8 @@ class PersonalizedPreparationService:
             revision_question_ids=tuple(revision_selected),
             recommendations=tuple(recommendations),
             reason=reason,
+            adaptive_decisions=adaptive_profile.decisions,
+            retention_due_question_ids=retention_due_question_ids,
         )
 
     def _recommendations(
@@ -375,14 +397,21 @@ class PersonalizedPreparationService:
         mode: PersonalizedPreparationMode,
         revision_ids: Sequence[str],
         focus_concepts: Sequence[str],
+        adaptive_difficulty: DifficultyLevel,
+        retention_due: bool,
     ) -> str:
         parts: list[str] = []
         if revision_ids:
             parts.append("previous mistakes prioritized")
         if focus_concepts:
             parts.append("weak concepts prioritized")
-        if not parts:
-            parts.append("Phase 6.6 ranked questions prioritized")
+        if retention_due:
+            parts.append("retention review due")
+        parts.append(
+            f"adaptive difficulty {adaptive_difficulty.value.lower()}"
+        )
+        if len(parts) == 1:
+            parts.insert(0, "Phase 6.6 ranked questions prioritized")
         return "; ".join(parts) + f" ({mode.value.lower()})"
 
     @staticmethod
