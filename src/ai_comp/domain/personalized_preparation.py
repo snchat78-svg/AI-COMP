@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+from ai_comp.domain.adaptive_difficulty import AdaptiveDifficultyDecision
 from ai_comp.domain.learning_recommendation import LearningRecommendation
 from ai_comp.domain.learning_history import LearnerLearningHistory
 from ai_comp.domain.question_intelligence import RankedQuestionCandidate, DifficultyLevel
@@ -48,6 +49,8 @@ class PersonalizedPreparationPlan:
     revision_question_ids: tuple[str, ...]
     recommendations: tuple[LearningRecommendation, ...]
     reason: str
+    adaptive_decisions: tuple[AdaptiveDifficultyDecision, ...] = ()
+    retention_due_question_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.learner_id.strip():
@@ -66,3 +69,10 @@ class PersonalizedPreparationPlan:
             raise ValueError("focus concept IDs must not be empty")
         if not self.reason.strip():
             raise ValueError("reason is required")
+        if len(set(self.retention_due_question_ids)) != len(self.retention_due_question_ids):
+            raise ValueError("retention due question IDs must be unique")
+        if not set(self.retention_due_question_ids).issubset(self.question_ids):
+            raise ValueError("retention due question IDs must be selected")
+        decision_ids = [decision.concept_id for decision in self.adaptive_decisions]
+        if len(decision_ids) != len(set(decision_ids)):
+            raise ValueError("adaptive decisions must have unique concepts")
