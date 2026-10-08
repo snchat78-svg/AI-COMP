@@ -52,7 +52,7 @@ class LearningRepo:
                     for item in self.topics
                     if item.learner_id == learner_id
                 ),
-                key=lambda item: (item.completed_at, item.session_id, item.concept_id),
+                key=lambda item: (item.session_id, item.concept_id),
             )
         )
 
@@ -204,7 +204,7 @@ def test_repeated_strong_performance_advances_to_hard():
         "learner",
         history,
         question_history,
-        as_of=history.generated_at + timedelta(days=8),
+        as_of=datetime(2026, 1, 9, tzinfo=timezone.utc),
     )
     decision = profile.decisions[0]
     assert decision.mastery is MasteryStatus.MASTERED
@@ -219,7 +219,7 @@ def test_mastered_topic_with_due_review_is_retention_due():
         "learner",
         history,
         question_history,
-        as_of=history.generated_at + timedelta(days=39),
+        as_of=datetime(2026, 2, 9, tzinfo=timezone.utc),
     )
     decision = profile.decisions[0]
     assert decision.mastery is MasteryStatus.RETENTION_DUE
