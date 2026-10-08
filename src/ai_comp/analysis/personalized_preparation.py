@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from datetime import datetime
 
 from ai_comp.analysis.adaptive_difficulty import AdaptiveDifficultyService
 from ai_comp.domain.learning_history import LearnerLearningHistory
@@ -53,6 +54,7 @@ class PersonalizedPreparationService:
         shuffle_questions: bool = False,
         shuffle_seed: int | None = None,
         exclude_question_ids: Sequence[str] = (),
+        as_of: datetime | None = None,
     ) -> PersonalizedPreparationPlan:
         if not learner_id.strip():
             raise ValueError("learner_id is required")
@@ -87,6 +89,7 @@ class PersonalizedPreparationService:
             learner_id,
             history,
             question_history,
+            as_of=as_of,
         )
         revision_pool = {
             item.question_id: item
