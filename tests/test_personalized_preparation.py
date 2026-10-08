@@ -231,7 +231,7 @@ def test_adaptive_combines_prior_mistakes_and_weak_topics():
 
     assert plan.mode is PersonalizedPreparationMode.MIXED
     assert len(plan.question_ids) == 4
-    assert plan.revision_question_ids == ("old-1", "old-0")
+    assert plan.revision_question_ids == ("old-0", "old-1")
     assert "current-0" not in plan.question_ids
     assert "current-1" not in plan.question_ids
     assert plan.focus_concept_ids == ("science",)
@@ -262,7 +262,7 @@ def test_revision_mode_uses_previous_mistakes():
         mode=PersonalizedPreparationMode.REVISION,
     )
 
-    assert plan.revision_question_ids == ("old-0", "old-1")
+    assert plan.revision_question_ids == ("old-1", "old-0")
     assert plan.question_ids == ("old-1", "old-0")
 
 
