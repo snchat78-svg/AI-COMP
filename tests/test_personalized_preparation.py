@@ -362,3 +362,50 @@ def test_explicit_exclusions_are_honored():
         exclude_question_ids=("new-1",),
     )
     assert plan.question_ids == ("new-2",)
+
+
+def test_adaptive_mastery_changes_recommended_difficulty_to_hard():
+    analyses = [
+        make_analysis(f"s{index}", f"t{index}", (f"q{index}",), correct_count=1)
+        for index in range(3)
+    ]
+    history_repo = InMemoryLearningHistoryRepository()
+    history_service = LearningHistoryService(history_repo)
+    question_repo = InMemoryQuestionHistoryRepository()
+    question_service = QuestionLearningHistoryService(question_repo)
+    t0 = datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+    for index, analysis in enumerate(analyses):
+        completed_at = t0 + timedelta(days=index)
+        history_service.record_analysis(
+            "learner", analysis, completed_at=completed_at
+        )
+        question_service.record_analysis(
+            "learner", analysis, completed_at=completed_at
+        )
+
+    history = history_service.history(
+        "learner", generated_at=datetime(2026, 1, 9, tzinfo=timezone.utc)
+    )
+    question_history = question_service.history(
+        "learner", generated_at=datetime(2026, 1, 9, tzinfo=timezone.utc)
+    )
+    questions = (question("new-1", difficulty="HARD"),)
+    candidates = (candidate("new-1", 1, score=1.0, difficulty=DifficultyLevel.HARD),)
+
+    plan = PersonalizedPreparationService().build_plan(
+        "learner",
+        test_id="mastery-1",
+        title="Mastery Advancement",
+        question_count=1,
+        duration_seconds=600,
+        history=history,
+        question_history=question_history,
+        candidates=candidates,
+        questions=questions,
+        as_of=datetime(2026, 1, 9, tzinfo=timezone.utc),
+    )
+
+    assert plan.recommended_difficulty is DifficultyLevel.HARD
+    assert plan.adaptive_decisions[0].mastery.value == "MASTERED"
+    assert plan.retention_due_question_ids == ()
