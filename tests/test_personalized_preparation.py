@@ -14,6 +14,7 @@ from ai_comp.domain.material_generation import (
     GeneratedQuestionStatus,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
+from ai_comp.domain.question_learning import LearnerQuestionHistory
 from ai_comp.domain.question_intelligence import (
     DifficultyLevel,
     RankedQuestionCandidate,
@@ -387,8 +388,13 @@ def test_adaptive_mastery_changes_recommended_difficulty_to_hard():
     history = history_service.history(
         "learner", generated_at=datetime(2026, 1, 9, tzinfo=timezone.utc)
     )
-    question_history = question_service.history(
-        "learner", generated_at=datetime(2026, 1, 9, tzinfo=timezone.utc)
+    question_history = LearnerQuestionHistory(
+        learner_id="learner",
+        outcomes=(),
+        question_performance=(),
+        revision_candidates=(),
+        repeated_concept_alerts=(),
+        generated_at=history.generated_at,
     )
     questions = (question("new-1", difficulty="HARD"),)
     candidates = (candidate("new-1", 1, score=1.0, difficulty=DifficultyLevel.HARD),)
