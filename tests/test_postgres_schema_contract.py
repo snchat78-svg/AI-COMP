@@ -80,3 +80,19 @@ def test_phase5_schema_enforces_one_master_per_observed_question():
 def test_phase5_schema_restricts_master_memberships_to_equivalent_relationships():
     sql = schema_text()
     assert "relationship IN ('CANONICAL', 'EXACT', 'REPHRASED')" in sql
+
+
+def test_phase625_schema_persists_immutable_strategy_audit_and_task_adjustments():
+    sql = schema_text()
+
+    assert "CREATE TABLE IF NOT EXISTS adaptive_study_strategy_audits" in sql
+    assert "CREATE TABLE IF NOT EXISTS adaptive_study_strategy_audit_adjustments" in sql
+    assert "payload_sha256 CHAR(64) NOT NULL" in sql
+    assert "source_schedule_snapshot JSONB NOT NULL" in sql
+    assert "strategy_report_snapshot JSONB NOT NULL" in sql
+    assert "resulting_schedule_snapshot JSONB NOT NULL" in sql
+    assert "previous_priority_score DOUBLE PRECISION NOT NULL" in sql
+    assert "recommended_priority_score DOUBLE PRECISION NOT NULL" in sql
+    assert "applied_priority_score DOUBLE PRECISION" in sql
+    assert "ON DELETE RESTRICT" in sql
+    assert "idx_adaptive_strategy_audit_learner_history" in sql
