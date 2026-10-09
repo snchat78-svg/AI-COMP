@@ -186,16 +186,11 @@ def test_follow_up_rejects_feedback_for_another_learner():
         )
 
 
-def test_follow_up_rejects_unfinished_feedback_snapshot():
+def test_feedback_contract_rejects_unfinished_session_snapshot():
     feedback, _ = make_completed_feedback()
-    candidates, questions = make_next_inputs()
     invalid_session = replace(feedback.session, status=TestSessionStatus.IN_PROGRESS)
-    invalid_feedback = replace(feedback, session=invalid_session)
-    service = AdaptiveLearningLoopService()
 
-    with pytest.raises(ValueError, match="completed test"):
-        service.create_next_test(
-            "learner-1", completed_feedback=invalid_feedback,
-            test_id="next-test", title="Unfinished", session_id="next-session",
-            question_count=3, duration_seconds=600, candidates=candidates, questions=questions,
-        )
+    # CompletedTestFeedback validates its invariant at construction time, so an
+    # invalid snapshot cannot reach AdaptiveLearningLoopService through normal use.
+    with pytest.raises(ValueError, match="feedback requires a finished test session"):
+        replace(feedback, session=invalid_session)
