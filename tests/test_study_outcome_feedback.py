@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date, datetime, timedelta, timezone
 from types import SimpleNamespace
 
@@ -31,7 +32,7 @@ from ai_comp.domain.study_schedule_execution import (
     StudyTaskExecutionStatus,
 )
 from ai_comp.domain.study_outcome_feedback import OutcomeEvidenceKind
-from ai_comp.domain.test_analysis import QuestionOutcome, TestAnalysis
+from ai_comp.domain.test_analysis import QuestionOutcome, TestAnalysis as Analysis
 from ai_comp.domain.test_engine import TestSessionStatus
 from ai_comp.analysis.completed_test_feedback import CompletedTestFeedback
 
@@ -141,7 +142,7 @@ def make_feedback(*, current_question_ids=("new-q1", "new-q2"), concepts=("scien
     )
     correct_count = sum(correct)
     incorrect_count = len(correct) - correct_count
-    analysis = TestAnalysis(
+    analysis = Analysis(
         test_id="follow-up-test",
         session_id="follow-up-session",
         total_questions=len(outcomes),
