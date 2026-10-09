@@ -96,10 +96,26 @@ class AdaptiveTestSessionService:
             as_of=as_of,
         )
 
+        question_by_id: dict[str, GeneratedMCQ] = {}
+        for question in questions:
+            if question.generated_question_id in question_by_id:
+                raise ValueError("duplicate generated question ID")
+            question_by_id[question.generated_question_id] = question
+
+        try:
+            selected_questions = tuple(
+                question_by_id[question_id]
+                for question_id in plan.question_ids
+            )
+        except KeyError as exc:
+            raise ValueError(
+                f"composed question is missing from input: {exc.args[0]}"
+            ) from exc
+
         session = self.test_engine.create_session(
             specification,
             plan.ranked_candidates,
-            questions,
+            selected_questions,
             session_id=session_id,
         )
         return AdaptiveTestSessionResult(
