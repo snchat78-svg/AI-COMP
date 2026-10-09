@@ -33,7 +33,7 @@ from ai_comp.domain.study_schedule_execution import (
 )
 from ai_comp.domain.study_outcome_feedback import OutcomeEvidenceKind
 from ai_comp.domain.test_analysis import QuestionOutcome, TestAnalysis as Analysis
-from ai_comp.domain.test_engine import TestSessionStatus
+from ai_comp.domain.test_engine import TestSessionStatus as SessionStatus
 from ai_comp.analysis.completed_test_feedback import CompletedTestFeedback
 
 
@@ -212,7 +212,7 @@ def make_feedback(*, current_question_ids=("new-q1", "new-q2"), concepts=("scien
     )
     session = SimpleNamespace(
         session_id="follow-up-session",
-        status=TestSessionStatus.SUBMITTED,
+        status=SessionStatus.SUBMITTED,
     )
     result = SimpleNamespace(session_id="follow-up-session")
     return CompletedTestFeedback(
@@ -318,7 +318,15 @@ def test_service_rejects_cross_learner_and_invalid_report_clock():
     repository = InMemoryExecutionRepository()
     repository.save_event(make_event(schedule))
     feedback = make_feedback()
-    wrong_learner = replace(feedback, learner_id="learner-2")
+    wrong_learner = SimpleNamespace(
+        learner_id="learner-2",
+        session=feedback.session,
+        result=feedback.result,
+        analysis=feedback.analysis,
+        attempt=feedback.attempt,
+        learning_history=feedback.learning_history,
+        question_history=feedback.question_history,
+    )
     with pytest.raises(ValueError, match="learner does not match"):
         StudyOutcomeFeedbackService(repository).evaluate(
             schedule, wrong_learner, generated_at=NOW + timedelta(minutes=1)
