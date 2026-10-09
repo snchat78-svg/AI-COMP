@@ -311,6 +311,7 @@ class AdaptiveTestCompositionService:
         if target_count <= 0 or not candidates:
             return
 
+        stage_target_total = len(selected) + target_count
         cap = max(
             1,
             self._ceil_ratio(
@@ -324,7 +325,7 @@ class AdaptiveTestCompositionService:
             if candidate.question_id not in selected_ids
         ]
 
-        while len(selected) < target_count and pool:
+        while len(selected) < stage_target_total and pool:
             concept_counts = Counter()
             for current in selected:
                 for concept_id in accepted[current.question_id].concept_ids:
