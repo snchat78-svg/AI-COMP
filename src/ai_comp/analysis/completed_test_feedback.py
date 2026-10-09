@@ -96,7 +96,7 @@ class CompletedTestFeedbackService:
 
         session = self.test_engine.get_session(session_id)
         if session.status not in _FINISHED_STATUSES:
-            raise ValueError("only submitted or expired test sessions can be processed")
+            raise ValueError("only finished (submitted or expired) test sessions can be processed")
         result = session.result
         if result is None:
             raise ValueError("finished test session is missing its result")
