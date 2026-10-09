@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime, timezone
 
 import pytest
@@ -218,3 +219,35 @@ def test_duplicate_session_id_is_rejected():
     service.create_session(**kwargs)
     with pytest.raises(ValueError, match="already exists"):
         service.create_session(**kwargs)
+
+
+def test_unselected_rejected_question_does_not_block_session():
+    history, question_history = make_histories()
+    selected = (
+        make_question("q1", "science"),
+        make_question("q2", "history"),
+    )
+    rejected = replace(
+        make_question("not-selected", "science"),
+        status=GeneratedQuestionStatus.REJECTED,
+        quality_score=0.0,
+    )
+    service = make_service()
+
+    result = service.create_session(
+        "learner-1",
+        test_id="adaptive-test-5",
+        title="Selected Questions Only",
+        session_id="session-5",
+        question_count=2,
+        duration_seconds=300,
+        learning_history=history,
+        question_history=question_history,
+        candidates=(
+            make_candidate("q1", 1),
+            make_candidate("q2", 2),
+        ),
+        questions=selected + (rejected,),
+    )
+
+    assert set(result.session.question_ids) == {"q1", "q2"}
