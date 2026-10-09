@@ -46,7 +46,7 @@ from ai_comp.domain.study_schedule import (
     StudySchedulePolicy,
     StudyTaskKind,
 )
-from ai_comp.domain.test_engine import ScoringPolicy as ScorePolicy, TestSpecification as TestSpec
+from ai_comp.domain.test_engine import ScoringPolicy as ScorePolicy, TestSpecification as Specification
 
 
 NOW = datetime(2026, 10, 9, 12, 0, tzinfo=timezone.utc)
@@ -252,7 +252,7 @@ def make_guidance() -> tuple[PreparationGuidance, tuple[GeneratedMCQ, ...]]:
             start=1,
         )
     )
-    specification = TestSpec(
+    specification = Specification(
         test_id="next-test",
         title="Next adaptive test",
         question_count=3,
