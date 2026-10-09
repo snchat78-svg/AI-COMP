@@ -20,10 +20,10 @@ from ai_comp.domain.question_intelligence import (
 )
 from ai_comp.domain.test_engine import (
     ScoringPolicy,
-    TestSessionStatus,
-    TestSpecification,
+    TestSessionStatus as SessionStatus,
+    TestSpecification as Specification,
 )
-from ai_comp.test_engine import TestEngine
+from ai_comp.test_engine import TestEngine as Engine
 
 
 class InMemoryLearningRepository:
@@ -151,8 +151,8 @@ def make_pipeline(*, fail_question_history_once=False):
         make_question("q-science-wrong", "science"),
         make_question("q-science-unattempted", "science"),
     )
-    engine = TestEngine(clock=lambda: 100.0)
-    specification = TestSpecification(
+    engine = Engine(clock=lambda: 100.0)
+    specification = Specification(
         test_id="test-phase-6-16",
         title="End-to-end feedback",
         question_count=len(questions),
@@ -174,7 +174,7 @@ def make_pipeline(*, fail_question_history_once=False):
     engine.answer("session-phase-6-16", "A")
     engine.next("session-phase-6-16")
     result = engine.submit("session-phase-6-16")
-    assert result.status is TestSessionStatus.SUBMITTED
+    assert result.status is SessionStatus.SUBMITTED
 
     learning_repo = InMemoryLearningRepository()
     question_repo = InMemoryQuestionRepository(fail_once=fail_question_history_once)
