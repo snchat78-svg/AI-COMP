@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, timedelta, datetime
 from enum import Enum
+from hashlib import sha256
+import json
 
 
 class StudyTaskKind(str, Enum):
@@ -93,6 +95,7 @@ class UnscheduledStudyWork:
     concept_ids: tuple[str, ...] = ()
     question_ids: tuple[str, ...] = ()
     deadline_date: date | None = None
+    available_from_date: date | None = None
 
     def __post_init__(self) -> None:
         for name in ("work_id", "title", "reason", "unscheduled_reason"):
@@ -191,6 +194,52 @@ class StudySchedule:
         }
         if set(scheduled_questions) & unallocated_questions:
             raise ValueError("a question cannot be both scheduled and unallocated")
+
+    @property
+    def schedule_id(self) -> str:
+        """Stable content identity for idempotent execution events and audit history."""
+        payload = {
+            "learner_id": self.learner_id,
+            "start_date": self.start_date.isoformat(),
+            "end_date": self.end_date.isoformat(),
+            "exam_date": self.exam_date.isoformat() if self.exam_date else None,
+            "generated_at": self.generated_at.isoformat(),
+            "days": [
+                {
+                    "date": day.study_date.isoformat(),
+                    "available_minutes": day.available_minutes,
+                    "tasks": [
+                        {
+                            "task_id": task.task_id,
+                            "kind": task.kind.value,
+                            "scheduled_date": task.scheduled_date.isoformat(),
+                            "estimated_minutes": task.estimated_minutes,
+                            "priority_score": task.priority_score,
+                            "concept_ids": task.concept_ids,
+                            "question_ids": task.question_ids,
+                            "deadline_date": task.deadline_date.isoformat() if task.deadline_date else None,
+                        }
+                        for task in day.tasks
+                    ],
+                }
+                for day in self.days
+            ],
+            "unscheduled_work": [
+                {
+                    "work_id": item.work_id,
+                    "kind": item.kind.value,
+                    "remaining_minutes": item.remaining_minutes,
+                    "priority_score": item.priority_score,
+                    "concept_ids": item.concept_ids,
+                    "question_ids": item.question_ids,
+                    "deadline_date": item.deadline_date.isoformat() if item.deadline_date else None,
+                    "available_from_date": item.available_from_date.isoformat() if item.available_from_date else None,
+                }
+                for item in self.unscheduled_work
+            ],
+        }
+        canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return sha256(canonical.encode("utf-8")).hexdigest()
 
     @property
     def total_available_minutes(self) -> int:
