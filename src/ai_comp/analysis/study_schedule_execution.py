@@ -4,6 +4,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 
+from ai_comp.domain.adaptive_study_strategy import (
+    AdaptiveStudyStrategyReport,
+    StudyStrategyAction,
+    StudyTaskStrategyAdjustment,
+)
 from ai_comp.domain.study_schedule import (
     ScheduledStudyTask, StudyDayPlan, StudySchedule, StudySchedulePolicy,
     StudyTaskKind, UnscheduledStudyWork,
@@ -142,6 +147,7 @@ class StudyScheduleExecutionService:
         first_day_minutes: int | None = None,
         as_of: datetime | None = None,
         exam_date: date | None = None,
+        strategy_report: AdaptiveStudyStrategyReport | None = None,
     ) -> StudySchedule:
         self._validate_minutes("daily_minutes", daily_minutes)
         if first_day_minutes is not None:
@@ -153,6 +159,13 @@ class StudyScheduleExecutionService:
         exam = schedule.exam_date if exam_date is None else exam_date
         if exam is not None and exam < start:
             raise ValueError("exam_date cannot precede replanning start date")
+        if strategy_report is not None:
+            if strategy_report.learner_id != schedule.learner_id:
+                raise ValueError("strategy report learner does not match schedule")
+            if strategy_report.schedule_id != schedule.schedule_id:
+                raise ValueError("strategy report schedule fingerprint does not match")
+            if strategy_report.generated_at > now:
+                raise ValueError("as_of cannot precede strategy report generation")
 
         events = self.repository.list_for_schedule(schedule.schedule_id, schedule.learner_id)
         tasks = {task.task_id: task for day in schedule.days for task in day.tasks}
@@ -170,6 +183,8 @@ class StudyScheduleExecutionService:
                 latest[row.task_id] = row
 
         work = self._unfinished_work(schedule, latest, start)
+        if strategy_report is not None:
+            self._apply_strategy_recommendations(work, schedule, strategy_report)
         postponed_dates = [item.available_from_date for item in work]
         requested_end = end_date if end_date is not None else max(
             [start, schedule.end_date, *postponed_dates]
@@ -271,6 +286,71 @@ class StudyScheduleExecutionService:
             unscheduled_work=unallocated,
             generated_at=now,
         )
+
+    @staticmethod
+    def _apply_strategy_recommendations(
+        work: list[_Work],
+        schedule: StudySchedule,
+        strategy_report: AdaptiveStudyStrategyReport,
+    ) -> None:
+        """Apply approved strategy advice to matching unfinished work only.
+
+        Source schedules and append-only execution events remain unchanged. Multiple
+        recommendations overlapping one work item use the highest proposed priority
+        and earliest review date, a conservative deterministic merge.
+        """
+        tasks = {
+            task.task_id: task
+            for day in schedule.days
+            for task in day.tasks
+        }
+        recommendations: list[
+            tuple[set[str], set[str], StudyTaskStrategyAdjustment]
+        ] = []
+        for adjustment in strategy_report.adjustments:
+            source_task = tasks.get(adjustment.task_id)
+            if source_task is None:
+                raise ValueError("strategy report references a task outside the schedule")
+            if source_task.kind is not adjustment.task_kind:
+                raise ValueError("strategy report task kind does not match schedule")
+            if adjustment.action is StudyStrategyAction.COLLECT_MORE_EVIDENCE:
+                continue
+            recommendations.append((
+                set(source_task.concept_ids),
+                set(source_task.question_ids),
+                adjustment,
+            ))
+
+        for item in work:
+            matched = []
+            item_concepts = set(item.concept_ids)
+            item_questions = set(item.question_ids)
+            for concepts, questions, adjustment in recommendations:
+                if concepts.intersection(item_concepts) or questions.intersection(item_questions):
+                    matched.append(adjustment)
+            if not matched:
+                continue
+
+            # On conflicts, keep the strongest focus priority and earliest review date.
+            item.priority_score = max(
+                adjustment.recommended_priority_score for adjustment in matched
+            )
+            review_dates = [
+                strategy_report.assessed_at.date()
+                + timedelta(days=adjustment.suggested_revision_interval_days)
+                for adjustment in matched
+                if adjustment.suggested_revision_interval_days is not None
+            ]
+            if review_dates:
+                target_date = min(review_dates)
+                if item.deadline_date is not None:
+                    target_date = min(target_date, item.deadline_date)
+                item.available_from_date = max(item.available_from_date, target_date)
+            action_names = ", ".join(sorted({adjustment.action.value for adjustment in matched}))
+            item.reason = (
+                f"{item.reason} Adaptive strategy applied ({action_names}); "
+                "priority and next-review timing were derived from linked assessment evidence."
+            )
 
     @staticmethod
     def _validate_minutes(name: str, value: int) -> None:
