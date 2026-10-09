@@ -241,7 +241,7 @@ def test_processing_same_completed_session_is_idempotent():
 def test_processing_is_rejected_before_a_session_is_finished():
     service, engine, questions, learning_repo, question_repo, _ = make_pipeline()
     engine.create_session(
-        TestSpecification(
+        Specification(
             test_id="not-finished",
             title="Not finished",
             question_count=1,
