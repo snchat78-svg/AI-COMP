@@ -119,9 +119,12 @@ def test_full_phase4_postgres_round_trip():
     dsn = database_url()
     with connect_postgres(dsn) as connection:
         migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
-        applied = MigrationRunner(migrations_dir).apply(connection)
-        assert applied == ("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012", "0013", "0014")
-        assert MigrationRunner(migrations_dir).apply(connection) == ()
+        migration_runner = MigrationRunner(migrations_dir)
+        expected_versions = tuple(item.version for item in migration_runner.discover())
+        assert expected_versions == ("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012", "0013", "0014")
+        # Earlier integration tests may already have applied the migrations.
+        assert set(migration_runner.apply(connection)).issubset(expected_versions)
+        assert migration_runner.apply(connection) == ()
 
         registry = PostgresRegistryRepository(connection)
         registry.save_body(
