@@ -116,6 +116,7 @@ class CurrentQuestionResponse(ContractModel):
     question_id: str
     stem: str
     options: list[QuestionOptionResponse]
+    selected_option_key: str | None = None
     review_marked: bool
     remaining_seconds: float = Field(ge=0)
 
