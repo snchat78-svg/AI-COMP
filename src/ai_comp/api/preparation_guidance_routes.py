@@ -24,6 +24,18 @@ from ai_comp.application.preparation_guidance_http import (
     PreparationGuidanceHTTPAdapter,
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
+from ai_comp.api.preparation_client_contract import (
+    AdaptivePreparationRecommendationResponse,
+    AnswerReviewResponse,
+    COMMON_API_ERROR_RESPONSES,
+    CompletedTestAnalyticsResponse,
+    CurrentQuestionResponse,
+    PreparationResultsSummaryResponse,
+    PreparationSessionHistoryResponse,
+    PreparationTestRequestResponse,
+    PreparationTestSessionResponse,
+    SubmittedTestResponse,
+)
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
 from ai_comp.domain.preparation_request import PreparationRequestStatus, PreparationTestRequest
 from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
@@ -254,7 +266,7 @@ def _request_record_payload(record) -> dict[str, object]:
     }
 
 
-@router.post("/{learner_id}/preparation-requests", status_code=201, name="create_preparation_request")
+@router.post("/{learner_id}/preparation-requests", status_code=201, name="create_preparation_request", responses={**COMMON_API_ERROR_RESPONSES, 201: {"model": PreparationTestRequestResponse, "description": "Persisted active preparation request."}})
 def create_preparation_request(
     learner_id: str,
     payload: PreparationRequestPayload,
@@ -296,6 +308,7 @@ def create_preparation_request(
     "/{learner_id}/preparation-recommendations",
     status_code=201,
     name="create_adaptive_practice_recommendation",
+    responses={**COMMON_API_ERROR_RESPONSES, 201: {"model": AdaptivePreparationRecommendationResponse, "description": "Adaptive request saved for the authenticated learner."}},
 )
 def create_adaptive_practice_recommendation(
     learner_id: str,
@@ -444,7 +457,7 @@ def create_adaptive_practice_recommendation(
     return _json_response(HTTPStatus.CREATED, response_payload)
 
 
-@router.get("/{learner_id}/preparation-requests/active", name="get_active_preparation_request")
+@router.get("/{learner_id}/preparation-requests/active", name="get_active_preparation_request", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestRequestResponse, "description": "Current saved preparation request."}})
 def get_active_preparation_request(learner_id: str, request: Request) -> Response:
     """Read back the authenticated learner's durable active preparation settings."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
@@ -786,7 +799,7 @@ def _session_exception_response(exc: Exception) -> Response:
     })
 
 
-@router.post("/{learner_id}/preparation-sessions", status_code=201, name="create_preparation_session")
+@router.post("/{learner_id}/preparation-sessions", status_code=201, name="create_preparation_session", responses={**COMMON_API_ERROR_RESPONSES, 201: {"model": PreparationTestSessionResponse, "description": "A persisted test session and selected-question snapshot."}})
 def create_preparation_session(learner_id: str, request: Request) -> Response:
     """Create a persisted, ready-to-start session from active saved settings."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
@@ -976,7 +989,7 @@ def _learner_session_repository(learner_id: str, request: Request):
         })
 
 
-@router.get("/{learner_id}/preparation-sessions", name="list_preparation_sessions")
+@router.get("/{learner_id}/preparation-sessions", name="list_preparation_sessions", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationSessionHistoryResponse, "description": "Paginated learner session history."}})
 def list_preparation_sessions(learner_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1012,7 +1025,7 @@ def list_preparation_sessions(learner_id: str, request: Request) -> Response:
     })
 
 
-@router.get("/{learner_id}/preparation-results", name="list_preparation_results")
+@router.get("/{learner_id}/preparation-results", name="list_preparation_results", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationSessionHistoryResponse, "description": "Paginated completed-test result history."}})
 def list_preparation_results(learner_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1056,7 +1069,7 @@ def list_preparation_results(learner_id: str, request: Request) -> Response:
     })
 
 
-@router.get("/{learner_id}/preparation-results/summary", name="get_preparation_results_summary")
+@router.get("/{learner_id}/preparation-results/summary", name="get_preparation_results_summary", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationResultsSummaryResponse, "description": "Aggregate saved test results."}})
 def get_preparation_results_summary(learner_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1079,7 +1092,7 @@ def get_preparation_results_summary(learner_id: str, request: Request) -> Respon
     })
 
 
-@router.get("/{learner_id}/preparation-sessions/{session_id}", name="get_preparation_session")
+@router.get("/{learner_id}/preparation-sessions/{session_id}", name="get_preparation_session", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Persisted session state without answer keys."}})
 def get_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1096,7 +1109,7 @@ def get_preparation_session(learner_id: str, session_id: str, request: Request) 
         return _session_exception_response(exc)
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/start", name="start_preparation_session")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/start", name="start_preparation_session", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Started session with remaining time."}})
 def start_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1113,7 +1126,7 @@ def start_preparation_session(learner_id: str, session_id: str, request: Request
         return _session_exception_response(exc)
 
 
-@router.get("/{learner_id}/preparation-sessions/{session_id}/current-question", name="get_preparation_session_question")
+@router.get("/{learner_id}/preparation-sessions/{session_id}/current-question", name="get_preparation_session_question", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": CurrentQuestionResponse, "description": "Current question and options; answer keys are never included."}})
 def get_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1138,7 +1151,7 @@ def get_preparation_session_question(learner_id: str, session_id: str, request: 
         return _session_exception_response(exc)
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/answer", name="answer_preparation_session_question")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/answer", name="answer_preparation_session_question", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Updated session state after recording a selected option."}})
 def answer_preparation_session_question(
     learner_id: str, session_id: str, payload: TestSessionAnswerPayload, request: Request
 ) -> Response:
@@ -1182,22 +1195,22 @@ def _navigate_preparation_session(
         return _session_exception_response(exc)
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/next", name="next_preparation_session_question")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/next", name="next_preparation_session_question", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Updated session state after moving to the next question."}})
 def next_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
     return _navigate_preparation_session(learner_id, session_id, request, direction="next")
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/previous", name="previous_preparation_session_question")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/previous", name="previous_preparation_session_question", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Updated session state after moving to the previous question."}})
 def previous_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
     return _navigate_preparation_session(learner_id, session_id, request, direction="previous")
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/review", name="toggle_preparation_session_review")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/review", name="toggle_preparation_session_review", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": PreparationTestSessionResponse, "description": "Updated session state after toggling a review marker."}})
 def toggle_preparation_session_review(learner_id: str, session_id: str, request: Request) -> Response:
     return _navigate_preparation_session(learner_id, session_id, request, direction="review")
 
 
-@router.post("/{learner_id}/preparation-sessions/{session_id}/submit", name="submit_preparation_session")
+@router.post("/{learner_id}/preparation-sessions/{session_id}/submit", name="submit_preparation_session", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": SubmittedTestResponse, "description": "Submitted session and persisted result."}})
 def submit_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
@@ -1230,6 +1243,7 @@ def submit_preparation_session(learner_id: str, session_id: str, request: Reques
 @router.get(
     "/{learner_id}/preparation-sessions/{session_id}/answer-review",
     name="get_preparation_session_answer_review",
+    responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": AnswerReviewResponse, "description": "Review with correct answers, only after submission/expiry."}},
 )
 def get_preparation_session_answer_review(
     learner_id: str, session_id: str, request: Request
@@ -1331,7 +1345,7 @@ def get_preparation_session_answer_review(
         return _session_exception_response(exc)
 
 
-@router.get("/{learner_id}/preparation-results/analytics", name="get_preparation_results_analytics")
+@router.get("/{learner_id}/preparation-results/analytics", name="get_preparation_results_analytics", responses={**COMMON_API_ERROR_RESPONSES, 200: {"model": CompletedTestAnalyticsResponse, "description": "Analytics calculated from persisted learner outcomes."}})
 def get_preparation_results_analytics(learner_id: str, request: Request) -> Response:
     """Return weak topics and revision priorities from persisted learner outcomes."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
