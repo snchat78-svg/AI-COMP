@@ -80,12 +80,14 @@ class AiCompApiClient {
       switch (method) {
         case 'GET':
           response = await _httpClient.get(uri, headers: headers);
+          break;
         case 'POST':
           response = await _httpClient.post(
             uri,
             headers: headers,
             body: body == null ? null : jsonEncode(body),
           );
+          break;
         default:
           throw StateError('Unsupported HTTP method: $method');
       }
