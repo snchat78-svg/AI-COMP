@@ -100,6 +100,13 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert initial["preparation_request_id"] == created_request.json()["request_id"]
         assert initial["question_count"] == 2
         assert len(initial["question_ids"]) == 2
+        with connect_postgres(dsn) as connection:
+            snapshot_size = connection.execute(
+                "SELECT jsonb_array_length(question_snapshot) "
+                "FROM preparation_test_sessions WHERE session_id = %s",
+                (session_id,),
+            ).fetchone()[0]
+        assert snapshot_size == 2
 
         saved = client.get(f"{sessions_url}/{session_id}")
         assert saved.status_code == 200, saved.text

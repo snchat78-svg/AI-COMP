@@ -635,14 +635,6 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
                 }
             })
         session_id = f"session-{uuid4().hex}"
-        repository = session_factory(
-            authenticated_learner_id,
-            preparation_request_id=active_request.request_id,
-            specification=spec,
-            questions=tuple(context["questions"]),
-            new_session_id=session_id,
-        )
-        engine = TestEngine(repository=repository, clock=time.time)
         plan = PersonalizedPreparationService().build_plan(
             authenticated_learner_id,
             test_id=spec.test_id,
@@ -667,6 +659,15 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
         selected_questions = tuple(
             question_by_id[question_id] for question_id in plan.question_ids
         )
+        # Persist only the composed test snapshot, not the entire eligible pool.
+        repository = session_factory(
+            authenticated_learner_id,
+            preparation_request_id=active_request.request_id,
+            specification=plan.test_specification,
+            questions=selected_questions,
+            new_session_id=session_id,
+        )
+        engine = TestEngine(repository=repository, clock=time.time)
         session = engine.create_session(
             plan.test_specification,
             plan.ranked_candidates,
