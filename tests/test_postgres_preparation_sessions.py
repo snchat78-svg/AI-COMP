@@ -140,6 +140,10 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         first_answer = client.post(f"{sessions_url}/{session_id}/answer", json={"option_key": "A"})
         assert first_answer.status_code == 200, first_answer.text
         assert first_answer.json()["answered_question_count"] == 1
+        restored_choice = client.get(f"{sessions_url}/{session_id}/current-question")
+        assert restored_choice.status_code == 200, restored_choice.text
+        assert restored_choice.json()["selected_option_key"] == "A"
+        assert "correct_option_key" not in restored_choice.json()
 
         moved = client.post(f"{sessions_url}/{session_id}/next")
         assert moved.status_code == 200, moved.text

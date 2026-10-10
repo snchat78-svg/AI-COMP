@@ -205,8 +205,10 @@ def test_session_contract_can_represent_saved_state_without_answer_key():
         "question_id": "question-1",
         "stem": "Choose the correct option",
         "options": [{"key": "A", "text": "One"}, {"key": "B", "text": "Two"}],
+        "selected_option_key": "B",
         "review_marked": False,
         "remaining_seconds": 298.0,
     })
     assert question.options[0].key == "A"
+    assert question.selected_option_key == "B"
     assert "correct_option_key" not in question.model_dump()

@@ -1,0 +1,36 @@
+name: Flutter mobile client
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/mobile/**"
+      - ".github/workflows/flutter-mobile.yml"
+      - "src/ai_comp/api/preparation_guidance_routes.py"
+      - "src/ai_comp/api/preparation_client_contract.py"
+  pull_request:
+    paths:
+      - "apps/mobile/**"
+      - ".github/workflows/flutter-mobile.yml"
+      - "src/ai_comp/api/preparation_guidance_routes.py"
+      - "src/ai_comp/api/preparation_client_contract.py"
+  workflow_dispatch:
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+      - name: Analyze Dart and Flutter sources
+        run: flutter analyze
+      - name: Run mobile client tests
+        run: flutter test
