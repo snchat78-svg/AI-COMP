@@ -9,6 +9,11 @@ from ai_comp.api.dependencies import (
     PreparationContextProvider,
 )
 from ai_comp.api.preparation_guidance_routes import router
+from ai_comp.api.postgres_preparation_context import (
+    ConnectionScopedPreparationTestRequestRepository,
+    PostgresPreparationContextProvider,
+    PostgresStoredPreparationTestRequestProvider,
+)
 from ai_comp.application.preparation_guidance_api import PreparationGuidanceAPIService
 
 
@@ -17,6 +22,7 @@ def create_app(
     preparation_guidance_api_service: PreparationGuidanceAPIService | Any | None = None,
     learner_identity_provider: LearnerIdentityProvider | None = None,
     preparation_context_provider: PreparationContextProvider | None = None,
+    preparation_test_request_repository: Any | None = None,
 ) -> FastAPI:
     """Create a FastAPI app with explicitly injected trusted host dependencies.
 
@@ -32,6 +38,7 @@ def create_app(
     app.state.preparation_guidance_api_service = preparation_guidance_api_service
     app.state.learner_identity_provider = learner_identity_provider
     app.state.preparation_context_provider = preparation_context_provider
+    app.state.preparation_test_request_repository = preparation_test_request_repository
 
     @app.middleware("http")
     async def api_security_headers(request: Request, call_next):
@@ -49,7 +56,7 @@ def create_postgres_app(
     *,
     dsn: str,
     learner_identity_provider: LearnerIdentityProvider,
-    preparation_test_request_provider: Any,
+    preparation_test_request_provider: Any | None = None,
     question_pool_limit: int = 5000,
 ) -> FastAPI:
     """Compose a database-backed API with short-lived PostgreSQL connections.
@@ -74,18 +81,25 @@ def create_postgres_app(
     audit_repository = ConnectionScopedAdaptiveStudyStrategyAuditRepository(
         connection_factory
     )
+    request_repository = ConnectionScopedPreparationTestRequestRepository(
+        connection_factory
+    )
     service = PreparationGuidanceAPIService(
         strategy_history_service=AdaptiveStudyStrategyHistoryService(audit_repository)
     )
+    request_provider = preparation_test_request_provider or (
+        PostgresStoredPreparationTestRequestProvider(request_repository)
+    )
     context_provider = PostgresPreparationContextProvider(
         connection_factory,
-        preparation_test_request_provider,
+        request_provider,
         question_pool_limit=question_pool_limit,
     )
     return create_app(
         preparation_guidance_api_service=service,
         learner_identity_provider=learner_identity_provider,
         preparation_context_provider=context_provider,
+        preparation_test_request_repository=request_repository,
     )
 
 

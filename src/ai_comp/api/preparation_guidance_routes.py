@@ -4,8 +4,10 @@ import json
 from collections.abc import Mapping
 from http import HTTPStatus
 from urllib.parse import parse_qs
+from uuid import uuid4
 
 from fastapi import APIRouter, Request
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from starlette.responses import Response
 
 from ai_comp.application.preparation_guidance_http import (
@@ -13,6 +15,9 @@ from ai_comp.application.preparation_guidance_http import (
     PreparationGuidanceHTTPAdapter,
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
+from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
+from ai_comp.domain.preparation_request import PreparationTestRequest
+from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
 
 
 router = APIRouter(prefix="/api/v1/learners", tags=["preparation-guidance"])
@@ -82,6 +87,212 @@ def _validate_query_string(query_string: str) -> Response | None:
             }
         })
     return None
+
+
+class PreparationRequestPayload(BaseModel):
+    """Untrusted user choices validated before they become a durable request."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    title: str = Field(min_length=1, max_length=200)
+    question_count: int = Field(ge=1, le=500)
+    duration_seconds: int = Field(ge=1, le=86400)
+    correct_marks: float = Field(default=1.0, gt=0.0, le=1000.0)
+    incorrect_marks: float = Field(default=-0.25, le=0.0, ge=-1000.0)
+    unattempted_marks: float = Field(default=0.0, le=0.0, ge=-1000.0)
+    mode: PersonalizedPreparationMode = PersonalizedPreparationMode.ADAPTIVE
+    concept_ids: list[str] = Field(default_factory=list, max_length=100)
+    exclude_question_ids: list[str] = Field(default_factory=list, max_length=2000)
+    shuffle_questions: bool = False
+    shuffle_seed: int | None = None
+    exam_id: str | None = Field(default=None, min_length=1, max_length=128)
+    subject_id: str | None = Field(default=None, min_length=1, max_length=128)
+
+    @field_validator("title")
+    @classmethod
+    def title_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("title must not be blank")
+        return value.strip()
+
+    @field_validator("concept_ids", "exclude_question_ids")
+    @classmethod
+    def ids_must_be_trimmed_and_unique(cls, values: list[str]) -> list[str]:
+        if any(not value.strip() or value != value.strip() for value in values):
+            raise ValueError("IDs must be non-empty trimmed strings")
+        if len(set(values)) != len(values):
+            raise ValueError("IDs must be unique")
+        return values
+
+    @field_validator("exam_id", "subject_id")
+    @classmethod
+    def optional_labels_must_be_trimmed(cls, value: str | None) -> str | None:
+        if value is not None and (not value.strip() or value != value.strip()):
+            raise ValueError("metadata IDs must be non-empty trimmed strings")
+        return value
+
+    @model_validator(mode="after")
+    def validate_shuffle_settings(self):
+        if self.shuffle_questions and self.shuffle_seed is None:
+            raise ValueError("shuffle_seed is required when shuffle_questions is enabled")
+        return self
+
+    def to_request(self, learner_id: str, request_id: str) -> PreparationTestRequest:
+        specification = TestSpecification(
+            test_id=f"prep-{request_id}",
+            title=self.title,
+            question_count=self.question_count,
+            duration_seconds=self.duration_seconds,
+            scoring=ScoringPolicy(
+                correct_marks=self.correct_marks,
+                incorrect_marks=self.incorrect_marks,
+                unattempted_marks=self.unattempted_marks,
+            ),
+            shuffle_questions=self.shuffle_questions,
+            shuffle_seed=self.shuffle_seed,
+        )
+        return PreparationTestRequest(
+            learner_id=learner_id,
+            specification=specification,
+            mode=self.mode,
+            concept_ids=tuple(self.concept_ids),
+            exclude_question_ids=tuple(self.exclude_question_ids),
+            exam_id=self.exam_id,
+            subject_id=self.subject_id,
+        )
+
+
+def _authenticated_learner_or_error(
+    learner_id: str,
+    request: Request,
+) -> tuple[str | None, Response | None]:
+    if not _valid_learner_id(learner_id):
+        return None, _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_LEARNER_ID", "message": "Learner ID format is invalid."}
+        })
+    identity_provider = request.app.state.learner_identity_provider
+    if identity_provider is None:
+        return None, _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {"code": "AUTHENTICATION_REQUIRED", "message": "Authentication is required."}
+        })
+    try:
+        authenticated_learner_id = identity_provider(request)
+    except Exception:
+        return None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {"code": "AUTHENTICATION_UNAVAILABLE", "message": "Authentication could not be verified."}
+        })
+    if (
+        not isinstance(authenticated_learner_id, str)
+        or not authenticated_learner_id
+        or not authenticated_learner_id.strip()
+        or authenticated_learner_id != authenticated_learner_id.strip()
+    ):
+        return None, _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {"code": "AUTHENTICATION_REQUIRED", "message": "Authentication is required."}
+        })
+    if learner_id != authenticated_learner_id:
+        return None, _json_response(HTTPStatus.FORBIDDEN, {
+            "error": {"code": "LEARNER_SCOPE_MISMATCH", "message": "Requested learner is not authorized."}
+        })
+    return authenticated_learner_id, None
+
+
+def _request_record_payload(record) -> dict[str, object]:
+    spec = record.request.specification
+    return {
+        "request_id": record.request_id,
+        "learner_id": record.request.learner_id,
+        "status": record.status.value,
+        "test_id": spec.test_id,
+        "title": spec.title,
+        "question_count": spec.question_count,
+        "duration_seconds": spec.duration_seconds,
+        "scoring": {
+            "correct_marks": spec.scoring.correct_marks,
+            "incorrect_marks": spec.scoring.incorrect_marks,
+            "unattempted_marks": spec.scoring.unattempted_marks,
+        },
+        "mode": record.request.mode.value,
+        "concept_ids": list(record.request.concept_ids),
+        "exclude_question_ids": list(record.request.exclude_question_ids),
+        "shuffle_questions": spec.shuffle_questions,
+        "shuffle_seed": spec.shuffle_seed,
+        "exam_id": record.request.exam_id,
+        "subject_id": record.request.subject_id,
+        "created_at": record.created_at.isoformat(),
+        "updated_at": record.updated_at.isoformat(),
+    }
+
+
+@router.post("/{learner_id}/preparation-requests", status_code=201, name="create_preparation_request")
+def create_preparation_request(
+    learner_id: str,
+    payload: PreparationRequestPayload,
+    request: Request,
+) -> Response:
+    """Persist validated settings as the learner's new active preparation request."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    repository = request.app.state.preparation_test_request_repository
+    if repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_NOT_CONFIGURED",
+                "message": "Preparation request storage is not configured.",
+            }
+        })
+
+    request_id = uuid4().hex
+    try:
+        domain_request = payload.to_request(authenticated_learner_id, request_id)
+        record = repository.save_active(request_id, domain_request)
+    except ValueError as exc:
+        return _json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {
+            "error": {"code": "INVALID_PREPARATION_REQUEST", "message": str(exc)}
+        })
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Unable to save preparation settings.",
+            }
+        })
+    return _json_response(HTTPStatus.CREATED, _request_record_payload(record))
+
+
+@router.get("/{learner_id}/preparation-requests/active", name="get_active_preparation_request")
+def get_active_preparation_request(learner_id: str, request: Request) -> Response:
+    """Read back the authenticated learner's durable active preparation settings."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    repository = request.app.state.preparation_test_request_repository
+    if repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_NOT_CONFIGURED",
+                "message": "Preparation request storage is not configured.",
+            }
+        })
+    try:
+        record = repository.get_active_for_learner(authenticated_learner_id)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Unable to load preparation settings.",
+            }
+        })
+    if record is None:
+        return _json_response(HTTPStatus.NOT_FOUND, {
+            "error": {
+                "code": "NO_ACTIVE_PREPARATION_REQUEST",
+                "message": "Save preparation settings before requesting guidance.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, _request_record_payload(record))
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")

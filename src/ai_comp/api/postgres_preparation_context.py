@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Protocol
 
@@ -17,6 +16,8 @@ from ai_comp.database.postgres_adaptive_study_strategy_audit import (
 from ai_comp.database.postgres_generated_question import PostgresGeneratedQuestionRepository
 from ai_comp.database.postgres_learning_history import PostgresLearningHistoryRepository
 from ai_comp.database.postgres_question_learning import PostgresQuestionLearningHistoryRepository
+from ai_comp.database.postgres_preparation_test_request import PostgresPreparationTestRequestRepository
+from ai_comp.domain.preparation_request import PreparationTestRequest
 from ai_comp.domain.adaptive_study_strategy_audit import AdaptiveStudyStrategyAudit
 from ai_comp.domain.material_generation import GeneratedMCQ
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
@@ -32,37 +33,47 @@ from ai_comp.material.intelligence import QuestionIntelligenceService
 ConnectionFactory = Callable[[], Any]
 
 
-@dataclass(frozen=True)
-class PreparationTestRequest:
-    """A server-resolved test specification for one authenticated learner.
 
-    A host-owned provider must resolve this from trusted application/session state.
-    It is deliberately not parsed from arbitrary query parameters or request body.
-    """
 
-    learner_id: str
-    specification: TestSpecification
-    mode: PersonalizedPreparationMode = PersonalizedPreparationMode.ADAPTIVE
-    concept_ids: tuple[str, ...] = ()
-    exclude_question_ids: tuple[str, ...] = ()
-    as_of: datetime | None = None
+class ConnectionScopedPreparationTestRequestRepository:
+    """Repository facade which opens and closes a PostgreSQL connection per call."""
 
-    def __post_init__(self) -> None:
-        if not self.learner_id.strip():
-            raise ValueError("learner_id is required")
-        if len(set(self.concept_ids)) != len(self.concept_ids):
-            raise ValueError("concept_ids must be unique")
-        if any(not item.strip() for item in self.concept_ids):
-            raise ValueError("concept_ids must not be empty")
-        if len(set(self.exclude_question_ids)) != len(self.exclude_question_ids):
-            raise ValueError("exclude_question_ids must be unique")
-        if any(not item.strip() for item in self.exclude_question_ids):
-            raise ValueError("exclude_question_ids must not be empty")
-        if self.as_of is not None and (
-            self.as_of.tzinfo is None or self.as_of.utcoffset() is None
-        ):
-            raise ValueError("as_of must be timezone-aware when supplied")
+    def __init__(self, connection_factory: ConnectionFactory) -> None:
+        self._connection_factory = connection_factory
 
+    def _run(self, operation: str, *args: Any, **kwargs: Any) -> Any:
+        connection = self._connection_factory()
+        try:
+            repository = PostgresPreparationTestRequestRepository(connection)
+            return getattr(repository, operation)(*args, **kwargs)
+        finally:
+            close = getattr(connection, "close", None)
+            if callable(close):
+                close()
+
+    def save_active(self, request_id: str, request: PreparationTestRequest):
+        return self._run("save_active", request_id, request)
+
+    def get_active_for_learner(self, learner_id: str):
+        return self._run("get_active_for_learner", learner_id)
+
+    def get_for_learner(self, learner_id: str, request_id: str):
+        return self._run("get_for_learner", learner_id, request_id)
+
+
+class PostgresStoredPreparationTestRequestProvider:
+    """Reads durable active settings instead of trusting client-supplied context."""
+
+    def __init__(self, repository: ConnectionScopedPreparationTestRequestRepository) -> None:
+        self._repository = repository
+
+    def load_request(self, learner_id: str, *, request: Request) -> PreparationTestRequest:
+        record = self._repository.get_active_for_learner(learner_id)
+        if record is None:
+            raise PreparationContextUnavailable("learner has not saved a preparation request")
+        if record.request.learner_id != learner_id or record.status.value != "ACTIVE":
+            raise PreparationContextUnavailable("stored preparation request is outside learner scope")
+        return record.request
 
 class PreparationTestRequestProvider(Protocol):
     """Resolve a current test request from trusted server-side application state."""
