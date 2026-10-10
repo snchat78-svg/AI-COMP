@@ -222,6 +222,26 @@ class AiCompApiClient {
     return ResultsSummary.fromJson(json);
   }
 
+  Future<List<TestHistoryItem>> getSessions({
+    int limit = 10,
+    int offset = 0,
+    String? status,
+  }) async {
+    final query = <String, String>{'limit': '$limit', 'offset': '$offset'};
+    if (status != null && status.isNotEmpty) query['status'] = status;
+    final json = await _send(
+      'GET',
+      '$_learnerPath/preparation-sessions',
+      query: query,
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(TestHistoryItem.fromJson)
+        .toList(growable: false);
+  }
+
   Future<List<TestHistoryItem>> getResults({int limit = 10, int offset = 0}) async {
     final json = await _send(
       'GET',
