@@ -117,6 +117,11 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert started.json()["status"] == "IN_PROGRESS"
         assert started.json()["remaining_seconds"] > 0
 
+        hidden_review = client.get(f"{sessions_url}/{session_id}/answer-review")
+        assert hidden_review.status_code == 409, hidden_review.text
+        assert hidden_review.json()["error"]["code"] == "ANSWER_REVIEW_NOT_AVAILABLE"
+        assert "correct_option_key" not in hidden_review.text
+
         current = client.get(f"{sessions_url}/{session_id}/current-question")
         assert current.status_code == 200, current.text
         assert len(current.json()["options"]) == 4
@@ -143,6 +148,25 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert result["incorrect_answers"] == 1
         assert result["raw_score"] == 1.5
         assert result["max_score"] == 4.0
+
+        answer_review = client.get(f"{sessions_url}/{session_id}/answer-review")
+        assert answer_review.status_code == 200, answer_review.text
+        review_payload = answer_review.json()
+        assert review_payload["status"] == "SUBMITTED"
+        assert review_payload["summary"] == {
+            "total_questions": 2,
+            "correct_answers": 1,
+            "incorrect_answers": 1,
+            "unattempted_questions": 0,
+        }
+        assert {item["outcome"] for item in review_payload["questions"]} == {"CORRECT", "INCORRECT"}
+        correct_review = next(item for item in review_payload["questions"] if item["outcome"] == "CORRECT")
+        incorrect_review = next(item for item in review_payload["questions"] if item["outcome"] == "INCORRECT")
+        assert correct_review["selected_option_key"] == correct_review["correct_option_key"] == "A"
+        assert incorrect_review["selected_option_key"] == "B"
+        assert incorrect_review["correct_option_key"] == "A"
+        assert all(item["explanation"] for item in review_payload["questions"])
+        assert all(item["answer_verification"] == "VERIFIED" for item in review_payload["questions"])
 
         history = client.get(f"{sessions_url}?status=SUBMITTED")
         assert history.status_code == 200, history.text
@@ -208,6 +232,10 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
             f"/api/v1/learners/phase634-other/preparation-sessions/{session_id}"
         )
         assert forbidden.status_code == 404
+        forbidden_review = other_client.get(
+            f"/api/v1/learners/phase634-other/preparation-sessions/{session_id}/answer-review"
+        )
+        assert forbidden_review.status_code == 404
     finally:
         with connect_postgres(dsn) as connection:
             connection.execute("DELETE FROM learner_test_attempts WHERE learner_id = %s", (learner_id,))

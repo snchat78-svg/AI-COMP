@@ -1058,6 +1058,110 @@ def submit_preparation_session(learner_id: str, session_id: str, request: Reques
         return _session_exception_response(exc)
 
 
+@router.get(
+    "/{learner_id}/preparation-sessions/{session_id}/answer-review",
+    name="get_preparation_session_answer_review",
+)
+def get_preparation_session_answer_review(
+    learner_id: str, session_id: str, request: Request
+) -> Response:
+    """Return the saved answer key and explanations only after test completion."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, record, error = _session_engine_for_learner(
+        authenticated_learner_id, session_id, request
+    )
+    if error is not None:
+        return error
+
+    try:
+        session = engine.get_session(session_id)
+        if (
+            session.status not in (TestSessionStatus.SUBMITTED, TestSessionStatus.EXPIRED)
+            or session.result is None
+        ):
+            return _json_response(HTTPStatus.CONFLICT, {
+                "error": {
+                    "code": "ANSWER_REVIEW_NOT_AVAILABLE",
+                    "message": "Answer review is available after a test has been submitted or expires.",
+                }
+            })
+
+        questions_by_id = {
+            question.generated_question_id: question
+            for question in record["questions"]
+        }
+        answers_by_id = {answer.question_id: answer for answer in session.answers}
+        items: list[dict[str, object]] = []
+        for index, question_id in enumerate(session.question_ids):
+            question = questions_by_id.get(question_id)
+            if question is None:
+                return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+                    "error": {
+                        "code": "PREPARATION_SESSION_SNAPSHOT_INVALID",
+                        "message": "The saved question snapshot is incomplete.",
+                    }
+                })
+
+            answer = answers_by_id.get(question_id)
+            selected_key = answer.selected_option_key if answer is not None else None
+            selected_text = (
+                next((option.text for option in question.options if option.key == selected_key), None)
+                if selected_key is not None else None
+            )
+            correct_key = question.correct_option_key
+            correct_text = next(
+                (option.text for option in question.options if option.key == correct_key),
+                None,
+            )
+            outcome = (
+                "UNATTEMPTED" if answer is None
+                else "CORRECT" if selected_key == correct_key
+                else "INCORRECT"
+            )
+            items.append({
+                "question_number": index + 1,
+                "question_id": question_id,
+                "stem": question.stem,
+                "options": [{"key": option.key, "text": option.text} for option in question.options],
+                "selected_option_key": selected_key,
+                "selected_option_text": selected_text,
+                "correct_option_key": correct_key,
+                "correct_option_text": correct_text,
+                "outcome": outcome,
+                "explanation": question.explanation,
+                "fact_ids": list(question.fact_ids),
+                "concept_ids": list(question.concept_ids),
+                "difficulty": question.difficulty,
+                "answer_verification": question.answer_verification.value,
+                "answer_verification_evidence": list(question.answer_verification_evidence),
+                "review_marked": question_id in session.review_question_ids,
+                "answered_at_seconds": (
+                    answer.answered_at_seconds if answer is not None else None
+                ),
+            })
+
+        result = _test_result_payload(session.result)
+        return _json_response(HTTPStatus.OK, {
+            "session_id": session_id,
+            "test_id": session.test_id,
+            "status": session.status.value,
+            "title": record["specification"].title,
+            "submitted_at": session.submitted_at,
+            "result": result,
+            "summary": {
+                "total_questions": len(items),
+                "correct_answers": sum(item["outcome"] == "CORRECT" for item in items),
+                "incorrect_answers": sum(item["outcome"] == "INCORRECT" for item in items),
+                "unattempted_questions": sum(item["outcome"] == "UNATTEMPTED" for item in items),
+            },
+            "questions": items,
+        })
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
 def get_preparation_guidance(learner_id: str, request: Request) -> Response:
     """Mount the Phase 6.29 HTTP contract on a real FastAPI route."""
