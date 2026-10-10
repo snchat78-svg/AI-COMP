@@ -6,6 +6,12 @@ from dataclasses import replace
 import pytest
 
 from ai_comp.analysis.preparation_guidance import PreparationGuidanceService
+from ai_comp.domain.adaptive_study_strategy import StudyStrategyAction
+from ai_comp.domain.adaptive_study_strategy_history import (
+    AdaptiveStudyStrategyHistoryReport,
+    ConceptStrategyHistory,
+    StrategyHistoryScopeKind,
+)
 from ai_comp.domain.learning_history import (
     LearnerLearningHistory,
     LearnerTopicPerformance,
@@ -26,6 +32,7 @@ from ai_comp.domain.question_intelligence import (
     RankedQuestionCandidate,
     QuestionIntelligenceScore,
 )
+from ai_comp.domain.study_schedule import StudyTaskKind
 from ai_comp.domain.question_learning import (
     LearnerQuestionAttemptRecord,
     LearnerQuestionHistory,
@@ -296,3 +303,73 @@ def test_guidance_enforces_learner_scope_and_preserves_question_exclusions():
     )
     assert "science-new-1" not in guidance.preparation_plan.question_ids
     assert len(guidance.preparation_plan.question_ids) == 2
+
+
+
+def make_repeated_decline_strategy_history(*, learner_id="learner-1", assessment_count=3):
+    scope = ConceptStrategyHistory(
+        scope_kind=StrategyHistoryScopeKind.CONCEPTS,
+        scope_ids=("science",),
+        task_kind=StudyTaskKind.STUDY_WEAK_TOPIC,
+        decision_count=3,
+        assessment_count=assessment_count,
+        improving_count=0,
+        declining_count=2,
+        stable_count=1,
+        insufficient_data_count=0,
+        mean_baseline_accuracy_percentage=70.0,
+        mean_follow_up_accuracy_percentage=60.0,
+        mean_delta_percentage_points=-10.0,
+        mean_recommended_priority_delta=0.15,
+        mean_applied_priority_delta=0.15,
+        latest_action=StudyStrategyAction.REINFORCE_WEAK_AREA,
+        latest_recorded_at=NOW,
+    )
+    return AdaptiveStudyStrategyHistoryReport(
+        learner_id=learner_id,
+        entries=(),
+        scopes=(scope,),
+        generated_at=NOW,
+    )
+
+
+def test_guidance_uses_prior_strategy_history_only_after_evidence_threshold():
+    learning, question_history = make_histories()
+    before = build(learning, question_history)
+    guidance = build(
+        learning,
+        question_history,
+        strategy_history_report=make_repeated_decline_strategy_history(),
+    )
+
+    assert guidance.preparation_plan.question_ids == before.preparation_plan.question_ids
+    action = next(
+        item for item in guidance.actions
+        if item.kind is PreparationActionKind.REVISIT_STUDY_APPROACH
+    )
+    assert action.concept_ids == ("science",)
+    assert action.priority_score == pytest.approx(0.88)
+    assert "does not prove" in action.reason
+
+
+def test_guidance_ignores_strategy_history_that_does_not_meet_assessment_threshold():
+    learning, question_history = make_histories()
+    guidance = build(
+        learning,
+        question_history,
+        strategy_history_report=make_repeated_decline_strategy_history(
+            assessment_count=2
+        ),
+    )
+
+    assert PreparationActionKind.REVISIT_STUDY_APPROACH not in {
+        action.kind for action in guidance.actions
+    }
+
+
+def test_guidance_rejects_strategy_history_from_another_learner():
+    learning, question_history = make_histories()
+    wrong_report = make_repeated_decline_strategy_history(learner_id="learner-2")
+
+    with pytest.raises(ValueError, match="strategy history learner does not match"):
+        build(learning, question_history, strategy_history_report=wrong_report)

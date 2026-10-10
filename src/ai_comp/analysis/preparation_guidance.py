@@ -4,12 +4,15 @@ from datetime import datetime, timezone
 from collections.abc import Sequence
 
 from ai_comp.analysis.adaptive_difficulty import AdaptiveDifficultyService
+from ai_comp.analysis.adaptive_study_strategy_feedback import AdaptiveStudyStrategyFeedbackService
 from ai_comp.analysis.learning_progress import LearningProgressService
 from ai_comp.analysis.personalized_preparation import PersonalizedPreparationService
 from ai_comp.domain.learning_history import (
     LearnerLearningHistory,
     LearningTrend,
 )
+from ai_comp.domain.adaptive_study_strategy_feedback import AdaptiveStudyStrategyFeedbackReport
+from ai_comp.domain.adaptive_study_strategy_history import AdaptiveStudyStrategyHistoryReport
 from ai_comp.domain.learning_progress import LearnerProgressReport
 from ai_comp.domain.material_generation import GeneratedMCQ
 from ai_comp.domain.personalized_preparation import (
@@ -41,6 +44,7 @@ class PreparationGuidanceService:
         preparation_service: PersonalizedPreparationService | None = None,
         progress_service: LearningProgressService | None = None,
         adaptive_difficulty_service: AdaptiveDifficultyService | None = None,
+        strategy_feedback_service: AdaptiveStudyStrategyFeedbackService | None = None,
     ) -> None:
         self.preparation_service = (
             preparation_service or PersonalizedPreparationService()
@@ -49,6 +53,9 @@ class PreparationGuidanceService:
         self.adaptive_difficulty_service = (
             adaptive_difficulty_service
             or self.preparation_service.adaptive_difficulty_service
+        )
+        self.strategy_feedback_service = (
+            strategy_feedback_service or AdaptiveStudyStrategyFeedbackService()
         )
 
     def build_guidance(
@@ -70,6 +77,7 @@ class PreparationGuidanceService:
         shuffle_seed: int | None = None,
         exclude_question_ids: Sequence[str] = (),
         as_of: datetime | None = None,
+        strategy_history_report: AdaptiveStudyStrategyHistoryReport | None = None,
         generated_at: datetime | None = None,
     ) -> PreparationGuidance:
         if not learner_id.strip():
@@ -114,7 +122,22 @@ class PreparationGuidanceService:
             adaptive_profile=adaptive_profile,
             generated_at=report_time,
         )
-        actions = self._actions(progress, plan, history, question_history)
+        strategy_feedback = None
+        if strategy_history_report is not None:
+            if strategy_history_report.learner_id != learner_id:
+                raise ValueError("strategy history learner does not match")
+            strategy_feedback = self.strategy_feedback_service.build_report(
+                strategy_history_report,
+                generated_at=report_time,
+            )
+
+        actions = self._actions(
+            progress,
+            plan,
+            history,
+            question_history,
+            strategy_feedback_report=strategy_feedback,
+        )
 
         return PreparationGuidance(
             learner_id=learner_id,
@@ -130,6 +153,8 @@ class PreparationGuidanceService:
         plan: PersonalizedPreparationPlan,
         history: LearnerLearningHistory,
         question_history: LearnerQuestionHistory,
+        *,
+        strategy_feedback_report: AdaptiveStudyStrategyFeedbackReport | None = None,
     ) -> tuple[PreparationGuidanceAction, ...]:
         actions: list[PreparationGuidanceAction] = []
         revision_ids = plan.revision_question_ids
@@ -269,6 +294,32 @@ class PreparationGuidanceService:
                     "targeted practice and compare similarly composed tests."
                 ),
                 priority_score=0.58 if progress.trend is LearningTrend.IMPROVING else 0.50,
+            ))
+
+        if strategy_feedback_report is not None and strategy_feedback_report.findings:
+            findings = strategy_feedback_report.findings
+            concept_ids = tuple(sorted({
+                item for finding in findings
+                if finding.scope_kind.value == "CONCEPTS"
+                for item in finding.scope_ids
+            }))
+            question_ids = tuple(sorted({
+                item for finding in findings
+                if finding.scope_kind.value == "QUESTIONS"
+                for item in finding.scope_ids
+            }))
+            reason_parts = tuple(dict.fromkeys(finding.reason for finding in findings[:2]))
+            actions.append(PreparationGuidanceAction(
+                kind=PreparationActionKind.REVISIT_STUDY_APPROACH,
+                title="Try a different study approach for recurring declines",
+                reason=(
+                    "Historical strategy evidence meets the repeated-decline threshold. "
+                    + " ".join(reason_parts)
+                    + " Keep the next comparison as similar as practical."
+                ),
+                priority_score=max(finding.priority_score for finding in findings),
+                concept_ids=concept_ids,
+                question_ids=question_ids,
             ))
 
         if not actions:
