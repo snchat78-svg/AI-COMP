@@ -1137,6 +1137,10 @@ def get_preparation_session_question(learner_id: str, session_id: str, request: 
     try:
         session = engine.get_session(session_id)
         question = engine.current_question(session_id)
+        saved_answer = next(
+            (answer for answer in session.answers if answer.question_id == question.generated_question_id),
+            None,
+        )
         return _json_response(HTTPStatus.OK, {
             "session_id": session_id,
             "question_number": session.current_index + 1,
@@ -1144,6 +1148,8 @@ def get_preparation_session_question(learner_id: str, session_id: str, request: 
             "question_id": question.generated_question_id,
             "stem": question.stem,
             "options": [{"key": option.key, "text": option.text} for option in question.options],
+            # Return only the learner's own saved choice, never the correct answer.
+            "selected_option_key": saved_answer.selected_option_key if saved_answer is not None else None,
             "review_marked": question.generated_question_id in session.review_question_ids,
             "remaining_seconds": max(0.0, (session.deadline_at or 0.0) - time.time()),
         })
