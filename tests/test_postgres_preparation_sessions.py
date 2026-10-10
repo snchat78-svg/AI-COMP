@@ -371,13 +371,19 @@ def test_adaptive_preparation_loop_uses_completed_result_to_build_next_session()
         )
         assert active_request.status_code == 200, active_request.text
         assert active_request.json()["request_id"] == recommendation["request_id"]
+        assert active_request.json()["mode"] == "ADAPTIVE"
 
         next_session = client.post(sessions_url)
         assert next_session.status_code == 201, next_session.text
         next_session_payload = next_session.json()
         next_session_id = next_session_payload["session_id"]
         assert next_session_payload["preparation_request_id"] == recommendation["request_id"]
-        assert next_session_payload["mode"] == "ADAPTIVE"
+        # The stored request remains ADAPTIVE; the canonical composer reports
+        # MIXED for this session because it selected both mistake revision and
+        # weak-topic focus from the persisted learner history.
+        assert next_session_payload["mode"] == "MIXED"
+        assert next_session_payload["focus_concept_ids"] == [concept_id]
+        assert next_session_payload["revision_question_ids"]
         assert next_session_payload["question_count"] == 1
 
         started_next = client.post(f"{sessions_url}/{next_session_id}/start")

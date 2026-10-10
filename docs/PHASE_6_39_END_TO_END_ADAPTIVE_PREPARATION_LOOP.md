@@ -13,7 +13,7 @@ The integration test in tests/test_postgres_preparation_sessions.py exercises on
 3. Read Phase 6.37 analytics and confirm the weak-topic and previous-mistake signals came from the saved result.
 4. Call POST /api/v1/learners/{learner_id}/preparation-recommendations.
 5. Confirm the recommendation is ADAPTIVE, focuses on the persisted weak concept, includes revision-question evidence, and is now the active saved request.
-6. Create a second session through the ordinary preparation-sessions endpoint; confirm it uses the recommended request.
+6. Create a second session through the ordinary preparation-sessions endpoint; confirm it uses the recommended request. The saved request remains ADAPTIVE; when the composer selects both prior-mistake revision and weak-topic focus, the returned session's effective mode is MIXED.
 7. Submit the second session and confirm the result appears in persisted analytics, with completed-test and question-outcome counts incremented.
 8. Confirm a different authenticated learner cannot use the first learner's recommendation endpoint.
 
