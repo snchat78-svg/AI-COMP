@@ -283,6 +283,164 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
             connection.execute("DELETE FROM generated_questions WHERE generated_question_id = ANY(%s)", (question_ids,))
 
 
+
+def test_adaptive_preparation_loop_uses_completed_result_to_build_next_session():
+    """Prove submitted outcomes drive the next saved adaptive test using PostgreSQL."""
+    dsn = database_url()
+    apply_migrations(dsn)
+    suffix = uuid4().hex
+    learner_id = f"phase639-learner-{suffix}"
+    concept_id = f"phase639-weak-topic-{suffix}"
+    question_ids = [f"phase639-question-{suffix}-{index}" for index in range(1, 4)]
+    client = TestClient(create_postgres_app(
+        dsn=dsn,
+        learner_identity_provider=lambda _request: learner_id,
+    ))
+    requests_url = f"/api/v1/learners/{learner_id}/preparation-requests"
+    recommendations_url = f"/api/v1/learners/{learner_id}/preparation-recommendations"
+    sessions_url = f"/api/v1/learners/{learner_id}/preparation-sessions"
+    analytics_url = f"/api/v1/learners/{learner_id}/preparation-results/analytics"
+
+    with connect_postgres(dsn) as connection:
+        question_repo = PostgresGeneratedQuestionRepository(connection)
+        for question_id in question_ids:
+            question_repo.save(accepted_question(question_id, concept_id))
+
+    try:
+        # Create and submit a baseline test with two verified wrong answers.
+        saved_request = client.post(requests_url, json={
+            "title": "Phase 6.39 baseline diagnostic",
+            "question_count": 2,
+            "duration_seconds": 900,
+            "mode": "MIXED",
+            "concept_ids": [concept_id],
+        })
+        assert saved_request.status_code == 201, saved_request.text
+
+        baseline_session = client.post(sessions_url)
+        assert baseline_session.status_code == 201, baseline_session.text
+        baseline_session_id = baseline_session.json()["session_id"]
+        started = client.post(f"{sessions_url}/{baseline_session_id}/start")
+        assert started.status_code == 200, started.text
+
+        for question_number in range(2):
+            current = client.get(f"{sessions_url}/{baseline_session_id}/current-question")
+            assert current.status_code == 200, current.text
+            answered = client.post(
+                f"{sessions_url}/{baseline_session_id}/answer",
+                json={"option_key": "B"},
+            )
+            assert answered.status_code == 200, answered.text
+            if question_number == 0:
+                moved = client.post(f"{sessions_url}/{baseline_session_id}/next")
+                assert moved.status_code == 200, moved.text
+
+        baseline_result = client.post(f"{sessions_url}/{baseline_session_id}/submit")
+        assert baseline_result.status_code == 200, baseline_result.text
+        assert baseline_result.json()["result"]["incorrect_answers"] == 2
+
+        before = client.get(analytics_url)
+        assert before.status_code == 200, before.text
+        before_analytics = before.json()
+        assert before_analytics["summary"]["completed_test_count"] == 1
+        assert before_analytics["summary"]["question_outcome_count"] == 2
+        assert any(
+            topic["concept_id"] == concept_id and topic["performance"] == "WEAK"
+            for topic in before_analytics["weak_topics"]
+        )
+        assert before_analytics["revision_candidates"]
+
+        # The recommendation must be derived from that persisted history, then
+        # become the active request used by the ordinary session-creation route.
+        recommendation_response = client.post(recommendations_url, json={
+            "question_count": 1,
+            "duration_seconds": 300,
+            "max_concepts": 4,
+        })
+        assert recommendation_response.status_code == 201, recommendation_response.text
+        recommendation = recommendation_response.json()
+        assert recommendation["status"] == "ACTIVE"
+        assert recommendation["mode"] == "ADAPTIVE"
+        assert recommendation["question_count"] == 1
+        assert concept_id in recommendation["recommendation"]["focus_concept_ids"]
+        assert recommendation["recommendation"]["revision_question_ids"]
+        assert recommendation["recommendation"]["source"] == "PERSISTED_LEARNER_TEST_HISTORY"
+
+        active_request = client.get(
+            f"/api/v1/learners/{learner_id}/preparation-requests/active"
+        )
+        assert active_request.status_code == 200, active_request.text
+        assert active_request.json()["request_id"] == recommendation["request_id"]
+
+        next_session = client.post(sessions_url)
+        assert next_session.status_code == 201, next_session.text
+        next_session_payload = next_session.json()
+        next_session_id = next_session_payload["session_id"]
+        assert next_session_payload["preparation_request_id"] == recommendation["request_id"]
+        assert next_session_payload["mode"] == "ADAPTIVE"
+        assert next_session_payload["question_count"] == 1
+
+        started_next = client.post(f"{sessions_url}/{next_session_id}/start")
+        assert started_next.status_code == 200, started_next.text
+        next_question = client.get(f"{sessions_url}/{next_session_id}/current-question")
+        assert next_question.status_code == 200, next_question.text
+        # Option A is the verified correct answer for these integration fixtures.
+        next_answer = client.post(
+            f"{sessions_url}/{next_session_id}/answer",
+            json={"option_key": "A"},
+        )
+        assert next_answer.status_code == 200, next_answer.text
+        next_result = client.post(f"{sessions_url}/{next_session_id}/submit")
+        assert next_result.status_code == 200, next_result.text
+        assert next_result.json()["result"]["correct_answers"] == 1
+        assert next_result.json()["result"]["attempted_questions"] == 1
+
+        after = client.get(analytics_url)
+        assert after.status_code == 200, after.text
+        after_analytics = after.json()
+        assert after_analytics["summary"]["completed_test_count"] == 2
+        assert after_analytics["summary"]["question_outcome_count"] == 3
+
+        with connect_postgres(dsn) as connection:
+            attempts = connection.execute(
+                "SELECT COUNT(*) FROM learner_test_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()[0]
+            outcomes = connection.execute(
+                "SELECT COUNT(*) FROM learner_question_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()[0]
+        assert attempts == 2
+        assert outcomes == 3
+
+        # A different authenticated learner cannot request recommendations
+        # against this learner's saved analytics.
+        other_client = TestClient(create_postgres_app(
+            dsn=dsn,
+            learner_identity_provider=lambda _request: "phase639-other",
+        ))
+        forbidden = other_client.post(recommendations_url, json={})
+        assert forbidden.status_code == 403
+        assert forbidden.json()["error"]["code"] == "LEARNER_SCOPE_MISMATCH"
+    finally:
+        with connect_postgres(dsn) as connection:
+            connection.execute(
+                "DELETE FROM learner_test_attempts WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM preparation_test_sessions WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM preparation_test_requests WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM generated_questions WHERE generated_question_id = ANY(%s)",
+                (question_ids,),
+            )
+
 def test_session_creation_requires_active_saved_request():
     dsn = database_url()
     apply_migrations(dsn)
