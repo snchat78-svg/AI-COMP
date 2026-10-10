@@ -39,7 +39,7 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
   void initState() {
     super.initState();
     _session = widget.initialSession;
-    _startAndLoad();
+    unawaited(_startAndLoad());
   }
 
   @override
@@ -80,7 +80,7 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
       if (_remainingSeconds <= 1) {
         timer.cancel();
         setState(() => _remainingSeconds = 0);
-        _submit(expired: true);
+        unawaited(_submit(expired: true));
       } else {
         setState(() => _remainingSeconds -= 1);
       }
@@ -304,7 +304,7 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
                               : (value) {
                                   if (value == null) return;
                                   setState(() => _selectedOptionKey = value);
-                                  _saveAnswer();
+                                  unawaited(_saveAnswer());
                                 },
                           title: Text(option.text),
                           subtitle: Text('Option ${option.key}'),
