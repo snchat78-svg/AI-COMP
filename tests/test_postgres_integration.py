@@ -121,7 +121,7 @@ def test_full_phase4_postgres_round_trip():
         migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
         migration_runner = MigrationRunner(migrations_dir)
         expected_versions = tuple(item.version for item in migration_runner.discover())
-        assert expected_versions == tuple(f"{version:04d}" for version in range(1, 16))
+        assert expected_versions == tuple(f"{version:04d}" for version in range(1, 17))
         # Earlier integration tests may already have applied the migrations.
         assert set(migration_runner.apply(connection)).issubset(expected_versions)
         assert migration_runner.apply(connection) == ()

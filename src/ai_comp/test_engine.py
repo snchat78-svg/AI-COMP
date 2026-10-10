@@ -32,6 +32,25 @@ class TestEngine:
         self._questions: dict[str, GeneratedMCQ] = {}
         self._specifications: dict[str, TestSpecification] = {}
 
+
+    def restore_context(
+        self,
+        specification: TestSpecification,
+        questions: Sequence[GeneratedMCQ],
+    ) -> None:
+        """Restore persisted specification/question snapshots for a later HTTP request."""
+        if not isinstance(specification, TestSpecification):
+            raise TypeError("specification must be a TestSpecification")
+        restored: dict[str, GeneratedMCQ] = {}
+        for question in questions:
+            if question.status is not GeneratedQuestionStatus.ACCEPTED:
+                raise ValueError("restored test context accepts only accepted questions")
+            if question.generated_question_id in restored:
+                raise ValueError("restored question IDs must be unique")
+            restored[question.generated_question_id] = question
+        self._questions.update(restored)
+        self._specifications[specification.test_id] = specification
+
     def create_session(
         self,
         specification: TestSpecification,

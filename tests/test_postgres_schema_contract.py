@@ -96,3 +96,11 @@ def test_phase625_schema_persists_immutable_strategy_audit_and_task_adjustments(
     assert "applied_priority_score DOUBLE PRECISION" in sql
     assert "ON DELETE RESTRICT" in sql
     assert "idx_adaptive_strategy_audit_learner_history" in sql
+
+def test_phase634_schema_persists_test_session_state_and_question_snapshots():
+    sql = schema_text()
+    assert "CREATE TABLE IF NOT EXISTS preparation_test_sessions" in sql
+    assert "preparation_request_id TEXT NOT NULL" in sql
+    assert "question_snapshot JSONB NOT NULL" in sql
+    assert "session_state JSONB NOT NULL" in sql
+    assert "idx_preparation_test_sessions_learner_history" in sql

@@ -23,6 +23,7 @@ def create_app(
     learner_identity_provider: LearnerIdentityProvider | None = None,
     preparation_context_provider: PreparationContextProvider | None = None,
     preparation_test_request_repository: Any | None = None,
+    preparation_test_session_repository_factory: Any | None = None,
 ) -> FastAPI:
     """Create a FastAPI app with explicitly injected trusted host dependencies.
 
@@ -39,6 +40,7 @@ def create_app(
     app.state.learner_identity_provider = learner_identity_provider
     app.state.preparation_context_provider = preparation_context_provider
     app.state.preparation_test_request_repository = preparation_test_request_repository
+    app.state.preparation_test_session_repository_factory = preparation_test_session_repository_factory
 
     @app.middleware("http")
     async def api_security_headers(request: Request, call_next):
@@ -76,6 +78,7 @@ def create_postgres_app(
         PostgresPreparationContextProvider,
     )
     from ai_comp.database.connection import connect_postgres
+    from ai_comp.database.postgres_preparation_session import PostgresPreparationTestSessionRepository
 
     connection_factory = lambda: connect_postgres(dsn)
     audit_repository = ConnectionScopedAdaptiveStudyStrategyAuditRepository(
@@ -84,6 +87,23 @@ def create_postgres_app(
     request_repository = ConnectionScopedPreparationTestRequestRepository(
         connection_factory
     )
+
+    def session_repository_factory(
+        learner_id: str,
+        *,
+        preparation_request_id: str | None = None,
+        specification=None,
+        questions=(),
+        new_session_id: str | None = None,
+    ):
+        return PostgresPreparationTestSessionRepository(
+            connection_factory,
+            learner_id=learner_id,
+            preparation_request_id=preparation_request_id,
+            specification=specification,
+            questions=questions,
+            new_session_id=new_session_id,
+        )
     service = PreparationGuidanceAPIService(
         strategy_history_service=AdaptiveStudyStrategyHistoryService(audit_repository)
     )
@@ -100,6 +120,7 @@ def create_postgres_app(
         learner_identity_provider=learner_identity_provider,
         preparation_context_provider=context_provider,
         preparation_test_request_repository=request_repository,
+        preparation_test_session_repository_factory=session_repository_factory,
     )
 
 

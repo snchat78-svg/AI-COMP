@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+import time
 from http import HTTPStatus
 from urllib.parse import parse_qs
 from uuid import uuid4
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from ai_comp.analysis.adaptive_test_session import AdaptiveTestSessionService
+from ai_comp.domain.test_engine import TestResult, TestSession, TestSessionStatus
+from ai_comp.test_engine import TestEngine
 from starlette.responses import Response
 
 from ai_comp.application.preparation_guidance_http import (
@@ -478,6 +482,343 @@ def cancel_preparation_request(
             }
         })
     return _json_response(HTTPStatus.OK, _request_record_payload(record))
+
+
+
+class TestSessionAnswerPayload(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    option_key: str = Field(min_length=1, max_length=10)
+
+
+def _test_result_payload(result: TestResult | None) -> dict[str, object] | None:
+    if result is None:
+        return None
+    return {
+        "test_id": result.test_id,
+        "session_id": result.session_id,
+        "status": result.status.value,
+        "total_questions": result.total_questions,
+        "attempted_questions": result.attempted_questions,
+        "correct_answers": result.correct_answers,
+        "incorrect_answers": result.incorrect_answers,
+        "unattempted_questions": result.unattempted_questions,
+        "raw_score": result.raw_score,
+        "max_score": result.max_score,
+        "percentage": result.percentage,
+        "accuracy": result.accuracy,
+        "timed_out": result.timed_out,
+    }
+
+
+def _test_session_payload(session: TestSession, *, remaining_seconds: float | None = None) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "session_id": session.session_id,
+        "test_id": session.test_id,
+        "status": session.status.value,
+        "question_count": len(session.question_ids),
+        "question_ids": list(session.question_ids),
+        "current_question_number": session.current_index + 1,
+        "answered_question_count": len(session.answers),
+        "review_question_count": len(session.review_question_ids),
+        "review_question_ids": list(session.review_question_ids),
+        "started_at": session.started_at,
+        "deadline_at": session.deadline_at,
+        "submitted_at": session.submitted_at,
+        "result": _test_result_payload(session.result),
+    }
+    if remaining_seconds is not None:
+        payload["remaining_seconds"] = max(0.0, remaining_seconds)
+    return payload
+
+
+def _session_engine_for_learner(learner_id: str, session_id: str, request: Request):
+    factory = request.app.state.preparation_test_session_repository_factory
+    if factory is None:
+        return None, None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_STORE_NOT_CONFIGURED",
+                "message": "Preparation session storage is not configured.",
+            }
+        })
+    try:
+        repository = factory(learner_id)
+        record = repository.get_record_for_learner(session_id)
+        if record is None:
+            return None, None, _json_response(HTTPStatus.NOT_FOUND, {
+                "error": {
+                    "code": "PREPARATION_SESSION_NOT_FOUND",
+                    "message": "Preparation session was not found.",
+                }
+            })
+        engine = TestEngine(repository=repository, clock=time.time)
+        engine.restore_context(record["specification"], record["questions"])
+        return engine, record, None
+    except KeyError:
+        return None, None, _json_response(HTTPStatus.NOT_FOUND, {
+            "error": {
+                "code": "PREPARATION_SESSION_NOT_FOUND",
+                "message": "Preparation session was not found.",
+            }
+        })
+    except Exception:
+        return None, None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_STORE_UNAVAILABLE",
+                "message": "Unable to load preparation session.",
+            }
+        })
+
+
+def _session_exception_response(exc: Exception) -> Response:
+    message = str(exc).lower()
+    if isinstance(exc, ValueError):
+        invalid_answer = "option" in message
+        status = HTTPStatus.UNPROCESSABLE_ENTITY if invalid_answer else HTTPStatus.CONFLICT
+        code = "INVALID_TEST_ANSWER" if invalid_answer else "TEST_SESSION_STATE_CONFLICT"
+        detail = (
+            "Selected option is not valid for the current question."
+            if invalid_answer else "The requested action is not valid for the current test state."
+        )
+        return _json_response(status, {"error": {"code": code, "message": detail}})
+    return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+        "error": {
+            "code": "PREPARATION_SESSION_UNAVAILABLE",
+            "message": "The preparation session could not be updated.",
+        }
+    })
+
+
+@router.post("/{learner_id}/preparation-sessions", status_code=201, name="create_preparation_session")
+def create_preparation_session(learner_id: str, request: Request) -> Response:
+    """Create a persisted, ready-to-start session from active saved settings."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    context_provider = request.app.state.preparation_context_provider
+    request_repository = request.app.state.preparation_test_request_repository
+    session_factory = request.app.state.preparation_test_session_repository_factory
+    if context_provider is None or request_repository is None or session_factory is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_NOT_CONFIGURED",
+                "message": "Preparation session creation is not configured.",
+            }
+        })
+
+    try:
+        active_request = request_repository.get_active_for_learner(authenticated_learner_id)
+        if active_request is None or active_request.status is not PreparationRequestStatus.ACTIVE:
+            return _json_response(HTTPStatus.CONFLICT, {
+                "error": {
+                    "code": "NO_ACTIVE_PREPARATION_REQUEST",
+                    "message": "Save or activate preparation settings before creating a test.",
+                }
+            })
+        context = context_provider.load_context(authenticated_learner_id, request=request)
+        required = {
+            "test_id", "title", "question_count", "duration_seconds",
+            "history", "question_history", "candidates", "questions",
+        }
+        if not isinstance(context, Mapping) or required - set(context):
+            return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+                "error": {
+                    "code": "PREPARATION_CONTEXT_UNAVAILABLE",
+                    "message": "Verified question and learner context is not ready.",
+                }
+            })
+        spec = active_request.request.specification
+        if context["test_id"] != spec.test_id:
+            return _json_response(HTTPStatus.CONFLICT, {
+                "error": {
+                    "code": "PREPARATION_REQUEST_CHANGED",
+                    "message": "Preparation settings changed during test creation; retry with the active request.",
+                }
+            })
+        session_id = f"session-{uuid4().hex}"
+        repository = session_factory(
+            authenticated_learner_id,
+            preparation_request_id=active_request.request_id,
+            specification=spec,
+            questions=tuple(context["questions"]),
+            new_session_id=session_id,
+        )
+        engine = TestEngine(repository=repository, clock=time.time)
+        result = AdaptiveTestSessionService(test_engine=engine).create_session(
+            authenticated_learner_id,
+            test_id=spec.test_id,
+            title=spec.title,
+            session_id=session_id,
+            question_count=spec.question_count,
+            duration_seconds=spec.duration_seconds,
+            learning_history=context["history"],
+            question_history=context["question_history"],
+            candidates=context["candidates"],
+            questions=context["questions"],
+            scoring=spec.scoring,
+            shuffle_questions=spec.shuffle_questions,
+            shuffle_seed=spec.shuffle_seed,
+            exclude_question_ids=active_request.request.exclude_question_ids,
+            as_of=active_request.request.as_of,
+        )
+        return _json_response(HTTPStatus.CREATED, _test_session_payload(result.session))
+    except PreparationContextUnavailable:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_CONTEXT_UNAVAILABLE",
+                "message": "Verified question and learner context is not ready.",
+            }
+        })
+    except ValueError:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "TEST_COMPOSITION_UNAVAILABLE",
+                "message": "A complete eligible question set could not be composed.",
+            }
+        })
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_CREATION_FAILED",
+                "message": "Unable to create a preparation session.",
+            }
+        })
+
+
+@router.get("/{learner_id}/preparation-sessions/{session_id}", name="get_preparation_session")
+def get_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        session = engine.get_session(session_id)
+        return _json_response(HTTPStatus.OK, _test_session_payload(
+            session, remaining_seconds=engine.remaining_seconds(session_id)
+        ))
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/start", name="start_preparation_session")
+def start_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        session = engine.start(session_id)
+        return _json_response(HTTPStatus.OK, _test_session_payload(
+            session, remaining_seconds=engine.remaining_seconds(session_id)
+        ))
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
+@router.get("/{learner_id}/preparation-sessions/{session_id}/current-question", name="get_preparation_session_question")
+def get_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        session = engine.get_session(session_id)
+        question = engine.current_question(session_id)
+        return _json_response(HTTPStatus.OK, {
+            "session_id": session_id,
+            "question_number": session.current_index + 1,
+            "question_count": len(session.question_ids),
+            "question_id": question.generated_question_id,
+            "stem": question.stem,
+            "options": [{"key": option.key, "text": option.text} for option in question.options],
+            "review_marked": question.generated_question_id in session.review_question_ids,
+            "remaining_seconds": max(0.0, (session.deadline_at or 0.0) - time.time()),
+        })
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/answer", name="answer_preparation_session_question")
+def answer_preparation_session_question(
+    learner_id: str, session_id: str, payload: TestSessionAnswerPayload, request: Request
+) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        session = engine.answer(session_id, payload.option_key)
+        return _json_response(HTTPStatus.OK, _test_session_payload(
+            session, remaining_seconds=engine.remaining_seconds(session_id)
+        ))
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
+def _navigate_preparation_session(
+    learner_id: str, session_id: str, request: Request, *, direction: str
+) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        if direction == "next":
+            session = engine.next(session_id)
+        elif direction == "previous":
+            session = engine.previous(session_id)
+        elif direction == "review":
+            session = engine.toggle_review(session_id)
+        else:
+            raise ValueError("unsupported navigation")
+        return _json_response(HTTPStatus.OK, _test_session_payload(
+            session, remaining_seconds=engine.remaining_seconds(session_id)
+        ))
+    except Exception as exc:
+        return _session_exception_response(exc)
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/next", name="next_preparation_session_question")
+def next_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
+    return _navigate_preparation_session(learner_id, session_id, request, direction="next")
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/previous", name="previous_preparation_session_question")
+def previous_preparation_session_question(learner_id: str, session_id: str, request: Request) -> Response:
+    return _navigate_preparation_session(learner_id, session_id, request, direction="previous")
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/review", name="toggle_preparation_session_review")
+def toggle_preparation_session_review(learner_id: str, session_id: str, request: Request) -> Response:
+    return _navigate_preparation_session(learner_id, session_id, request, direction="review")
+
+
+@router.post("/{learner_id}/preparation-sessions/{session_id}/submit", name="submit_preparation_session")
+def submit_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    engine, _, error = _session_engine_for_learner(authenticated_learner_id, session_id, request)
+    if error is not None:
+        return error
+    try:
+        result = engine.submit(session_id)
+        final_session = engine.get_session(session_id)
+        return _json_response(HTTPStatus.OK, {
+            "session": _test_session_payload(final_session),
+            "result": _test_result_payload(result),
+        })
+    except Exception as exc:
+        return _session_exception_response(exc)
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
