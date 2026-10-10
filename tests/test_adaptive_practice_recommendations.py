@@ -15,7 +15,6 @@ from ai_comp.domain.preparation_request import (
     PreparationRequestStatus,
     PreparationTestRequestRecord,
 )
-from ai_comp.domain.test_engine import TestSpecification
 
 
 def analytics_report(learner_id: str = "learner-1") -> dict[str, object]:
