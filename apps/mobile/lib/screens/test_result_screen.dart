@@ -27,7 +27,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
   @override
   void initState() {
     super.initState();
-    _loadReview();
+    unawaited(_loadReview());
   }
 
   Future<void> _loadReview() async {
