@@ -10,6 +10,10 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from ai_comp.analysis.personalized_preparation import PersonalizedPreparationService
+from ai_comp.application.adaptive_practice_recommendations import (
+    AdaptivePracticeRecommendationPlanner,
+    NoAdaptivePracticeSignal,
+)
 
 from ai_comp.domain.test_engine import TestResult, TestSession, TestSessionStatus
 from ai_comp.test_engine import TestEngine
@@ -167,6 +171,19 @@ class PreparationRequestPayload(BaseModel):
         )
 
 
+class AdaptivePracticeRecommendationPayload(BaseModel):
+    """Only test settings come from the client; learner history remains server-owned."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    question_count: int = Field(default=20, ge=1, le=500)
+    duration_seconds: int = Field(default=1800, ge=1, le=86400)
+    correct_marks: float = Field(default=1.0, gt=0.0, le=1000.0)
+    incorrect_marks: float = Field(default=-0.25, le=0.0, ge=-1000.0)
+    unattempted_marks: float = Field(default=0.0, le=0.0, ge=-1000.0)
+    max_concepts: int = Field(default=8, ge=1, le=20)
+
+
 def _authenticated_learner_or_error(
     learner_id: str,
     request: Request,
@@ -273,6 +290,158 @@ def create_preparation_request(
             }
         })
     return _json_response(HTTPStatus.CREATED, _request_record_payload(record))
+
+
+@router.post(
+    "/{learner_id}/preparation-recommendations",
+    status_code=201,
+    name="create_adaptive_practice_recommendation",
+)
+def create_adaptive_practice_recommendation(
+    learner_id: str,
+    payload: AdaptivePracticeRecommendationPayload,
+    request: Request,
+) -> Response:
+    """Persist a next-test request derived from this learner's saved outcomes.
+
+    Existing analytics, question-pool eligibility, and adaptive composition remain
+    the sources of truth; this endpoint only connects those existing contracts.
+    """
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    analytics_provider = request.app.state.completed_test_analytics_provider
+    context_provider = request.app.state.preparation_context_provider
+    request_repository = request.app.state.preparation_test_request_repository
+    count_eligible = getattr(context_provider, "count_eligible_questions", None)
+    if (
+        analytics_provider is None
+        or request_repository is None
+        or not callable(count_eligible)
+    ):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "ADAPTIVE_PRACTICE_NOT_CONFIGURED",
+                "message": "Adaptive recommendations require learner analytics, eligible question-pool counting, and request storage.",
+            }
+        })
+
+    try:
+        report = analytics_provider.build_report(authenticated_learner_id)
+        if not isinstance(report, Mapping) or report.get("learner_id") != authenticated_learner_id:
+            raise ValueError("analytics report is outside the authenticated learner scope")
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_ANALYTICS_UNAVAILABLE",
+                "message": "Saved learner performance could not be analyzed.",
+            }
+        })
+
+    try:
+        recommendation = AdaptivePracticeRecommendationPlanner().plan(
+            authenticated_learner_id,
+            report,
+            max_concepts=payload.max_concepts,
+        )
+    except NoAdaptivePracticeSignal:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_ADAPTIVE_PRACTICE_SIGNAL",
+                "message": "Complete a test first; there is not enough saved performance or mistake history to recommend focused practice.",
+            }
+        })
+    except (TypeError, ValueError):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_ANALYTICS_INVALID",
+                "message": "Saved learner analytics did not satisfy the recommendation contract.",
+            }
+        })
+
+    try:
+        available_count = count_eligible(recommendation.concept_ids)
+        if (
+            isinstance(available_count, bool)
+            or not isinstance(available_count, int)
+            or available_count < 0
+        ):
+            raise ValueError("eligible question count is invalid")
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "ADAPTIVE_QUESTION_POOL_UNAVAILABLE",
+                "message": "Eligible verified questions could not be counted.",
+            }
+        })
+
+    if available_count == 0:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_ELIGIBLE_ADAPTIVE_QUESTIONS",
+                "message": "No accepted, answer-verified, non-duplicate questions are available for the recommended concepts. Existing preparation settings were not changed.",
+            }
+        })
+
+    # Match the user's request when possible; otherwise use every eligible
+    # question in the bounded pool rather than inventing or duplicating items.
+    effective_count = min(payload.question_count, available_count)
+    request_id = uuid4().hex
+    specification = TestSpecification(
+        test_id=f"adaptive-{request_id}",
+        title="Adaptive practice — weak topics and previous mistakes",
+        question_count=effective_count,
+        duration_seconds=payload.duration_seconds,
+        scoring=ScoringPolicy(
+            correct_marks=payload.correct_marks,
+            incorrect_marks=payload.incorrect_marks,
+            unattempted_marks=payload.unattempted_marks,
+        ),
+    )
+    domain_request = PreparationTestRequest(
+        learner_id=authenticated_learner_id,
+        specification=specification,
+        mode=PersonalizedPreparationMode.ADAPTIVE,
+        concept_ids=recommendation.concept_ids,
+    )
+    try:
+        record = request_repository.save_active(request_id, domain_request)
+    except ValueError:
+        return _json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {
+            "error": {
+                "code": "INVALID_ADAPTIVE_PREPARATION_REQUEST",
+                "message": "The generated adaptive practice request was invalid.",
+            }
+        })
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "The recommendation was calculated but could not be saved.",
+            }
+        })
+
+    response_payload = _request_record_payload(record)
+    response_payload["recommendation"] = {
+        "strategy": "WEAK_TOPICS_THEN_REPEATED_CONCEPTS_THEN_PREVIOUS_MISTAKES",
+        "source": "PERSISTED_LEARNER_TEST_HISTORY",
+        "focus_concept_ids": list(recommendation.concept_ids),
+        "focus_reasons": {
+            concept_id: list(reasons)
+            for concept_id, reasons in recommendation.focus_reasons
+        },
+        "revision_question_ids": list(recommendation.revision_question_ids),
+        "completed_test_count": recommendation.completed_test_count,
+        "weak_topic_count": recommendation.weak_topic_count,
+        "repeated_concept_count": recommendation.repeated_concept_count,
+        "requested_question_count": payload.question_count,
+        "eligible_question_count_in_configured_pool": available_count,
+        "effective_question_count": effective_count,
+        "question_count_adjusted": effective_count != payload.question_count,
+        "availability_scope": "configured_accepted_question_pool",
+    }
+    return _json_response(HTTPStatus.CREATED, response_payload)
 
 
 @router.get("/{learner_id}/preparation-requests/active", name="get_active_preparation_request")

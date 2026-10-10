@@ -1,0 +1,36 @@
+# Master Roadmap Coverage Audit
+
+Last reconciled against the repository tree on 2026-10-10 at commit fd38d3853dcccb803f1193b941572219b888fc8a, before Phase 6.38 changes.
+
+## How to read this audit
+
+“Foundation present” means source files/tests/docs for the capability exist. It does not prove that every target exam, source, language, production deployment, or real-world paper has complete coverage. “Partial / verification required” is intentionally used wherever the repository alone does not prove end-to-end production readiness. Do not repeat a capability merely because a later phase wants to integrate it.
+
+## Roadmap coverage map
+
+| Master roadmap area | Existing implementation evidence | Current assessment and non-duplicate next work |
+| --- | --- | --- |
+| Phase 1 — source/exam registry | src/ai_comp/database/postgres_registry.py; docs/PHASE_1.md; docs/PHASE_1_COMPLETION.md | Registry foundation exists. Audit source/domain completeness and live operational data before adding registries again. |
+| Phase 2 — controlled research, discovery, fetching, hashes, storage, extraction/OCR | src/ai_comp/database/postgres_research.py; src/ai_comp/database/postgres_ingestion.py; src/ai_comp/database/postgres_ingestion_batch.py; docs/PHASE_2_RESEARCH_PIPELINE.md; docs/PHASE_2_LIVE_OFFICIAL_DISCOVERY.md; docs/PHASE_2_DOCUMENT_PROCESSING.md | Research/ingestion/document-processing foundations exist. Production-wide scheduler coverage, source-specific permissions, real official-source discovery reliability, OCR language quality, and operational monitoring require separate evidence. Do not build another generic downloader or hash store. |
+| Phase 3 — structured question extraction and answer verification | src/ai_comp/database/postgres_question.py; src/ai_comp/database/postgres_answer_key.py; src/ai_comp/database/postgres_answer_resolution.py; src/ai_comp/database/postgres_ingestion.py; docs/PHASE_3_QUESTION_EXTRACTION.md | Structured-question and answer-resolution foundations exist. Validate extraction quality, flexible option formats, source provenance, and actual paper/answer-key pair coverage against fixtures and real sources. |
+| Phase 4 — exact/semantic/concept matching, identity, appearance history | src/ai_comp/database/postgres_match.py; src/ai_comp/database/postgres_appearance.py; src/ai_comp/database/postgres_embedding.py; src/ai_comp/database/postgres_concept.py; docs/PHASE_4_MATCHING_HISTORY.md; docs/PHASE_4_POSTGRES_SCHEMA.md | Matching/history data model exists. Preserve distinct website duplicates vs exam appearances and verified/secondary/unverified evidence. Do not claim complete historical coverage without sourced records. |
+| Phase 5 — uploaded material understanding and question generation | src/ai_comp/database/postgres_material_match.py; src/ai_comp/database/postgres_generated_question.py; docs/PHASE_6_AI_MATERIAL_ANALYSIS.md; docs/PHASE_5_MASTER_QUESTION_IDENTITY.md | Material matching, generated-question storage, and master-question identity foundations exist. Validate the full photo/PDF/OCR-to-question workflow and ensure generated questions stay distinct from historical appearances. |
+| Phase 6 — test engine and personalization APIs | docs/PHASE_6_7_TEST_ENGINE.md; docs/PHASE_6_8_LEARNING_RECOMMENDATIONS.md; docs/PHASE_6_9_LEARNING_HISTORY_PERSONALIZATION.md; docs/PHASE_6_10_QUESTION_LEARNING_MEMORY.md; docs/PHASE_6_11_PERSONALIZED_PREPARATION_ORCHESTRATION.md; docs/PHASE_6_12_SPACED_REVISION.md; docs/PHASE_6_13_ADAPTIVE_DIFFICULTY_RETENTION.md; docs/PHASE_6_14_ADAPTIVE_TEST_COMPOSITION.md; docs/PHASE_6_15_ADAPTIVE_TEST_SESSION_ORCHESTRATION.md; docs/PHASE_6_16_COMPLETED_TEST_FEEDBACK_INTEGRATION.md; docs/PHASE_6_17_ADAPTIVE_LEARNING_FEEDBACK_LOOP.md | Test, learning-history, retention, difficulty, composition, and feedback logic already exist. Extend through integration and contracts rather than reimplementing those services. |
+| Phase 7 — results and analytics | src/ai_comp/database/postgres_preparation_session.py; src/ai_comp/application/completed_test_session_learning.py; src/ai_comp/application/completed_test_analytics.py; docs/PHASE_6_34_PERSISTED_TEST_SESSIONS.md; docs/PHASE_6_35_TEST_RESULT_HISTORY.md; docs/PHASE_6_36_POST_TEST_ANSWER_REVIEW.md; docs/PHASE_6_37_COMPLETED_TEST_ANALYTICS.md | Persistent sessions, results, answer review, and weak-topic analytics exist. Treat them as sources of truth; avoid a second results schema or analytics service. |
+| Phase 8 — personalized/adaptive preparation | src/ai_comp/analysis/adaptive_test_composition.py; src/ai_comp/analysis/adaptive_test_session.py; src/ai_comp/analysis/adaptive_learning_loop.py; src/ai_comp/analysis/question_learning.py; docs/PHASE_6_14_ADAPTIVE_TEST_COMPOSITION.md; docs/PHASE_6_17_ADAPTIVE_LEARNING_FEEDBACK_LOOP.md | Core algorithms exist but API-level recommendation orchestration was incomplete. Phase 6.38 wires persisted outcomes to a saved adaptive preparation request and reuses the existing composer. Remaining follow-up should validate end-to-end repeat-test behavior and client integration rather than add another composer. |
+| Phase 9 — continuous exam research | src/ai_comp/database/postgres_ingestion.py; src/ai_comp/database/postgres_ingestion_batch.py; src/ai_comp/database/postgres_study_schedule_execution.py; docs/PHASE_5_5_DURABLE_INGESTION.md; docs/PHASE_6_21_STUDY_SCHEDULE_EXECUTION_REPLANNING.md | Durable ingestion and scheduled study execution foundations exist, but they do not by themselves prove continuously running official-paper research. Verify scheduler deployment, source registry completeness, retries, auditability, and new-paper-to-verified-question end-to-end tests before claiming this complete. |
+
+## Explicit non-duplication rules
+
+1. Use CompletedTestAnalyticsProvider and existing learning-history repositories for learner outcomes.
+2. Use PostgresPreparationContextProvider and QuestionIntelligenceService for eligible stored-question discovery and ranking.
+3. Use PersonalizedPreparationService / AdaptiveTestCompositionService for selecting test questions.
+4. Use PostgresPreparationTestRequestRepository and PostgresPreparationTestSessionRepository for persistence.
+5. Keep official appearance verification and generated-question identity in the existing question/history pipeline; adaptive practice must not create exam-history claims.
+6. Before adding any future migration, API, repository, or service, search the current tree and applicable phase docs first. Extend a present contract when possible; document why a truly new abstraction is required otherwise.
+
+## Important coverage limitations
+
+- Repository artifacts do not prove current production deployment, the actual count of verified RSSB/RPSC/SSC/RRB appearances, the completeness of all government-exam coverage, or live scheduled crawling.
+- A passing CI test suite verifies tested contracts only. It does not validate all official sources or certify every OCR/extraction answer.
+- The project remains an evolving platform: roadmap rows above distinguish existing code foundations from remaining end-to-end and operational validation.

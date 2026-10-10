@@ -235,6 +235,40 @@ class PostgresPreparationContextProvider:
             "as_of": test_request.as_of,
         }
 
+    def count_eligible_questions(self, concept_ids: Sequence[str]) -> int:
+        """Count scoreable questions for a proposed focus without mutating saved requests.
+
+        The count uses the same accepted/verified/non-duplicate/difficulty gates as
+        session creation and is bounded by question_pool_limit.
+        """
+        selected_concepts = tuple(concept_ids)
+        if (
+            not selected_concepts
+            or any(not isinstance(item, str) or not item.strip() or item != item.strip()
+                   for item in selected_concepts)
+            or len(set(selected_concepts)) != len(selected_concepts)
+        ):
+            raise ValueError("concept_ids must be non-empty, trimmed, and unique")
+
+        connection = self._connection_factory()
+        try:
+            with connection.transaction():
+                stored_questions = PostgresGeneratedQuestionRepository(
+                    connection
+                ).list_accepted(
+                    limit=self.question_pool_limit,
+                    concept_ids=selected_concepts,
+                )
+            _, candidates = self._rank_accepted_questions(
+                stored_questions,
+                target_concept_ids=selected_concepts,
+            )
+            return len(candidates)
+        finally:
+            close = getattr(connection, "close", None)
+            if callable(close):
+                close()
+
     def _rank_accepted_questions(
         self,
         stored_questions: Sequence[GeneratedMCQ],
