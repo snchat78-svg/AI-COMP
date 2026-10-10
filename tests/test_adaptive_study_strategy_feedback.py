@@ -77,7 +77,7 @@ def test_repeated_decline_after_reinforcement_suggests_changing_approach():
     "changes",
     [
         {"assessment_count": 2},
-        {"decision_count": 2, "assessment_count": 2},
+        {"decision_count": 2, "assessment_count": 2, "declining_count": 2, "stable_count": 0},
         {"declining_count": 1, "stable_count": 2},
         {"mean_delta_percentage_points": -4.9},
         {"improving_count": 2, "declining_count": 1, "stable_count": 0},
