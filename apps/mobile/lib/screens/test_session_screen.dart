@@ -33,7 +33,6 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
   bool _loading = true;
   bool _savingAnswer = false;
   bool _submitting = false;
-  bool _autoSubmitStarted = false;
   Timer? _timer;
 
   @override
@@ -166,7 +165,7 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
 
   Future<void> _submit({bool expired = false}) async {
     final session = _session;
-    if (session == null || _submitting) return;
+    if (session == null || _submitting || _savingAnswer || (!expired && _loading)) return;
     if (!expired) {
       final confirmed = await showDialog<bool>(
         context: context,
@@ -353,7 +352,9 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
                   ],
                   const SizedBox(height: 20),
                   FilledButton.icon(
-                    onPressed: _submitting ? null : () => _submit(),
+                    onPressed: _submitting || _savingAnswer || _loading
+                        ? null
+                        : () => _submit(),
                     icon: const Icon(Icons.check_circle_outline),
                     label: Text(_submitting ? 'Submitting...' : 'Submit test'),
                   ),
