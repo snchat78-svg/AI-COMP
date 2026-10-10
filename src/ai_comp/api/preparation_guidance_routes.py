@@ -16,7 +16,7 @@ from ai_comp.application.preparation_guidance_http import (
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
-from ai_comp.domain.preparation_request import PreparationTestRequest
+from ai_comp.domain.preparation_request import PreparationRequestStatus, PreparationTestRequest
 from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
 
 
@@ -197,6 +197,14 @@ def _authenticated_learner_or_error(
     return authenticated_learner_id, None
 
 
+def _valid_request_id(request_id: str) -> bool:
+    return (
+        bool(request_id)
+        and len(request_id) <= 128
+        and all(ch.isalnum() or ch in "-_." for ch in request_id)
+    )
+
+
 def _request_record_payload(record) -> dict[str, object]:
     spec = record.request.specification
     return {
@@ -290,6 +298,183 @@ def get_active_preparation_request(learner_id: str, request: Request) -> Respons
             "error": {
                 "code": "NO_ACTIVE_PREPARATION_REQUEST",
                 "message": "Save preparation settings before requesting guidance.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, _request_record_payload(record))
+
+
+
+@router.get("/{learner_id}/preparation-requests", name="list_preparation_requests")
+def list_preparation_requests(learner_id: str, request: Request) -> Response:
+    """Return bounded, learner-scoped preparation request history."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    try:
+        query = parse_qs(request.url.query, keep_blank_values=True, strict_parsing=False)
+    except ValueError:
+        query = {"__invalid__": ["1"]}
+    if (
+        set(query) - {"limit", "offset", "status"}
+        or any(len(values) != 1 for values in query.values())
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {
+                "code": "INVALID_REQUEST_HISTORY_QUERY",
+                "message": "Only one limit, offset, and status parameter is supported.",
+            }
+        })
+    try:
+        limit = int(query.get("limit", ["50"])[0])
+        offset = int(query.get("offset", ["0"])[0])
+    except (TypeError, ValueError):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {
+                "code": "INVALID_REQUEST_HISTORY_QUERY",
+                "message": "limit and offset must be integers.",
+            }
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {
+                "code": "INVALID_REQUEST_HISTORY_QUERY",
+                "message": "limit must be 1-100 and offset must be 0-100000.",
+            }
+        })
+    status = None
+    if "status" in query:
+        try:
+            status = PreparationRequestStatus(query["status"][0])
+        except ValueError:
+            return _json_response(HTTPStatus.BAD_REQUEST, {
+                "error": {
+                    "code": "INVALID_REQUEST_STATUS",
+                    "message": "status must be ACTIVE, SUPERSEDED, or CANCELLED.",
+                }
+            })
+
+    repository = request.app.state.preparation_test_request_repository
+    if repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_NOT_CONFIGURED",
+                "message": "Preparation request storage is not configured.",
+            }
+        })
+    try:
+        records = repository.list_for_learner(
+            authenticated_learner_id, limit=limit + 1, offset=offset, status=status
+        )
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Unable to load preparation request history.",
+            }
+        })
+    selected = records[:limit]
+    return _json_response(HTTPStatus.OK, {
+        "items": [_request_record_payload(record) for record in selected],
+        "pagination": {
+            "limit": limit,
+            "offset": offset,
+            "returned": len(selected),
+            "has_more": len(records) > limit,
+        },
+    })
+
+
+@router.post(
+    "/{learner_id}/preparation-requests/{request_id}/activate",
+    name="activate_preparation_request",
+)
+def activate_preparation_request(
+    learner_id: str,
+    request_id: str,
+    request: Request,
+) -> Response:
+    """Reactivate a superseded request; cancelled requests are terminal."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not _valid_request_id(request_id):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_REQUEST_ID", "message": "Request ID format is invalid."}
+        })
+    repository = request.app.state.preparation_test_request_repository
+    if repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_NOT_CONFIGURED",
+                "message": "Preparation request storage is not configured.",
+            }
+        })
+    try:
+        record = repository.activate_for_learner(authenticated_learner_id, request_id)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Unable to activate preparation settings.",
+            }
+        })
+    if record is None:
+        return _json_response(HTTPStatus.NOT_FOUND, {
+            "error": {
+                "code": "PREPARATION_REQUEST_NOT_FOUND",
+                "message": "Preparation request was not found.",
+            }
+        })
+    if record.status is PreparationRequestStatus.CANCELLED:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "CANCELLED_PREPARATION_REQUEST",
+                "message": "Cancelled requests cannot be reactivated; create a new request.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, _request_record_payload(record))
+
+
+@router.post(
+    "/{learner_id}/preparation-requests/{request_id}/cancel",
+    name="cancel_preparation_request",
+)
+def cancel_preparation_request(
+    learner_id: str,
+    request_id: str,
+    request: Request,
+) -> Response:
+    """Cancel an active or historical request; repeated cancellation is idempotent."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not _valid_request_id(request_id):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_REQUEST_ID", "message": "Request ID format is invalid."}
+        })
+    repository = request.app.state.preparation_test_request_repository
+    if repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_NOT_CONFIGURED",
+                "message": "Preparation request storage is not configured.",
+            }
+        })
+    try:
+        record = repository.cancel_for_learner(authenticated_learner_id, request_id)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Unable to cancel preparation settings.",
+            }
+        })
+    if record is None:
+        return _json_response(HTTPStatus.NOT_FOUND, {
+            "error": {
+                "code": "PREPARATION_REQUEST_NOT_FOUND",
+                "message": "Preparation request was not found.",
             }
         })
     return _json_response(HTTPStatus.OK, _request_record_payload(record))

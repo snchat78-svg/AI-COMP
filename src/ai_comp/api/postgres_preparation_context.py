@@ -60,6 +60,24 @@ class ConnectionScopedPreparationTestRequestRepository:
     def get_for_learner(self, learner_id: str, request_id: str):
         return self._run("get_for_learner", learner_id, request_id)
 
+    def list_for_learner(
+        self,
+        learner_id: str,
+        *,
+        limit: int = 50,
+        offset: int = 0,
+        status=None,
+    ):
+        return self._run(
+            "list_for_learner", learner_id, limit=limit, offset=offset, status=status
+        )
+
+    def activate_for_learner(self, learner_id: str, request_id: str):
+        return self._run("activate_for_learner", learner_id, request_id)
+
+    def cancel_for_learner(self, learner_id: str, request_id: str):
+        return self._run("cancel_for_learner", learner_id, request_id)
+
 
 class PostgresStoredPreparationTestRequestProvider:
     """Reads durable active settings instead of trusting client-supplied context."""

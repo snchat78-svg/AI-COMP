@@ -151,6 +151,69 @@ def test_post_creates_persistent_request_and_guidance_uses_saved_settings():
             )
 
 
+
+def test_request_history_activation_and_cancellation_persist_transitions():
+    dsn = database_url()
+    apply_migrations(dsn)
+    learner_id = f"phase633-lifecycle-{uuid4().hex}"
+    client = TestClient(create_postgres_app(
+        dsn=dsn,
+        learner_identity_provider=lambda _request: learner_id,
+    ))
+    endpoint = f"/api/v1/learners/{learner_id}/preparation-requests"
+    payload = {
+        "title": "Lifecycle test",
+        "question_count": 1,
+        "duration_seconds": 600,
+    }
+    try:
+        first = client.post(endpoint, json=payload)
+        second = client.post(endpoint, json={**payload, "title": "Second request"})
+        assert first.status_code == 201, first.text
+        assert second.status_code == 201, second.text
+        first_id = first.json()["request_id"]
+        second_id = second.json()["request_id"]
+
+        history = client.get(f"{endpoint}?limit=10")
+        assert history.status_code == 200, history.text
+        assert history.json()["pagination"]["returned"] == 2
+        statuses = {item["request_id"]: item["status"] for item in history.json()["items"]}
+        assert statuses == {first_id: "SUPERSEDED", second_id: "ACTIVE"}
+
+        superseded = client.get(f"{endpoint}?status=SUPERSEDED")
+        assert superseded.status_code == 200
+        assert [item["request_id"] for item in superseded.json()["items"]] == [first_id]
+
+        activated = client.post(f"{endpoint}/{first_id}/activate")
+        assert activated.status_code == 200, activated.text
+        assert activated.json()["status"] == "ACTIVE"
+        active = client.get(f"{endpoint}/active")
+        assert active.status_code == 200
+        assert active.json()["request_id"] == first_id
+
+        cancelled = client.post(f"{endpoint}/{first_id}/cancel")
+        assert cancelled.status_code == 200, cancelled.text
+        assert cancelled.json()["status"] == "CANCELLED"
+        assert client.post(f"{endpoint}/{first_id}/cancel").json()["status"] == "CANCELLED"
+        assert client.get(f"{endpoint}/active").status_code == 404
+
+        terminal = client.post(f"{endpoint}/{first_id}/activate")
+        assert terminal.status_code == 409
+        assert terminal.json()["error"]["code"] == "CANCELLED_PREPARATION_REQUEST"
+
+        all_cancelled = client.post(f"{endpoint}/{second_id}/cancel")
+        assert all_cancelled.status_code == 200
+        history_cancelled = client.get(f"{endpoint}?status=CANCELLED")
+        assert history_cancelled.status_code == 200
+        assert history_cancelled.json()["pagination"]["returned"] == 2
+    finally:
+        with connect_postgres(dsn) as connection:
+            connection.execute(
+                "DELETE FROM preparation_test_requests WHERE learner_id = %s",
+                (learner_id,),
+            )
+
+
 def test_preparation_request_validation_and_learner_scope_fail_closed():
     dsn = database_url()
     apply_migrations(dsn)

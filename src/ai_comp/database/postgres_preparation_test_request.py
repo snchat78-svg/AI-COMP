@@ -128,6 +128,155 @@ class PostgresPreparationTestRequestRepository:
             raise RepositoryError("failed to load preparation request") from exc
         return None if row is None else self._from_row(row)
 
+
+    def list_for_learner(
+        self,
+        learner_id: str,
+        *,
+        limit: int = 50,
+        offset: int = 0,
+        status: PreparationRequestStatus | None = None,
+    ) -> tuple[PreparationTestRequestRecord, ...]:
+        if not learner_id.strip():
+            raise ValueError("learner_id is required")
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 101:
+            raise ValueError("limit must be between 1 and 101")
+        if isinstance(offset, bool) or not isinstance(offset, int) or not 0 <= offset <= 100000:
+            raise ValueError("offset must be between 0 and 100000")
+        if status is not None and not isinstance(status, PreparationRequestStatus):
+            raise ValueError("status must be a PreparationRequestStatus")
+        query = f"""
+            SELECT {self.COLUMNS}
+            FROM preparation_test_requests
+            WHERE learner_id = %s
+        """
+        parameters: list[object] = [learner_id]
+        if status is not None:
+            query += " AND status = %s"
+            parameters.append(status.value)
+        query += " ORDER BY created_at DESC, request_id DESC LIMIT %s OFFSET %s"
+        parameters.extend((limit, offset))
+        try:
+            rows = self._connection.execute(query, tuple(parameters)).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to list preparation request history") from exc
+        return tuple(self._from_row(row) for row in rows)
+
+    def activate_for_learner(
+        self,
+        learner_id: str,
+        request_id: str,
+        *,
+        now: datetime | None = None,
+    ) -> PreparationTestRequestRecord | None:
+        if not learner_id.strip() or not request_id.strip():
+            raise ValueError("learner_id and request_id are required")
+        timestamp = now or datetime.now(timezone.utc)
+        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+            raise ValueError("now must be timezone-aware")
+        try:
+            with self._connection.transaction():
+                # Serialize all lifecycle transitions with save_active(), so
+                # reactivating an older request cannot race another replacement.
+                self._connection.execute(
+                    "LOCK TABLE preparation_test_requests IN SHARE ROW EXCLUSIVE MODE"
+                )
+                row = self._connection.execute(
+                    f"""
+                    SELECT {self.COLUMNS}
+                    FROM preparation_test_requests
+                    WHERE learner_id = %s AND request_id = %s
+                    FOR UPDATE
+                    """,
+                    (learner_id, request_id),
+                ).fetchone()
+                if row is None:
+                    return None
+                current = self._from_row(row)
+                if current.status in (
+                    PreparationRequestStatus.ACTIVE,
+                    PreparationRequestStatus.CANCELLED,
+                ):
+                    # Activating the active row is idempotent; cancellation is
+                    # terminal and requires creating a fresh request instead.
+                    return current
+                self._connection.execute(
+                    """
+                    UPDATE preparation_test_requests
+                    SET status = 'SUPERSEDED', updated_at = %s
+                    WHERE learner_id = %s AND status = 'ACTIVE'
+                    """,
+                    (timestamp, learner_id),
+                )
+                activated = self._connection.execute(
+                    f"""
+                    UPDATE preparation_test_requests
+                    SET status = 'ACTIVE', updated_at = %s
+                    WHERE learner_id = %s AND request_id = %s
+                      AND status = 'SUPERSEDED'
+                    RETURNING {self.COLUMNS}
+                    """,
+                    (timestamp, learner_id, request_id),
+                ).fetchone()
+                if activated is None:
+                    raise RepositoryError("preparation request changed during activation")
+            return self._from_row(activated)
+        except RepositoryError:
+            raise
+        except Exception as exc:
+            raise RepositoryError("failed to activate preparation request") from exc
+
+    def cancel_for_learner(
+        self,
+        learner_id: str,
+        request_id: str,
+        *,
+        now: datetime | None = None,
+    ) -> PreparationTestRequestRecord | None:
+        if not learner_id.strip() or not request_id.strip():
+            raise ValueError("learner_id and request_id are required")
+        timestamp = now or datetime.now(timezone.utc)
+        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+            raise ValueError("now must be timezone-aware")
+        try:
+            with self._connection.transaction():
+                self._connection.execute(
+                    "LOCK TABLE preparation_test_requests IN SHARE ROW EXCLUSIVE MODE"
+                )
+                row = self._connection.execute(
+                    f"""
+                    SELECT {self.COLUMNS}
+                    FROM preparation_test_requests
+                    WHERE learner_id = %s AND request_id = %s
+                    FOR UPDATE
+                    """,
+                    (learner_id, request_id),
+                ).fetchone()
+                if row is None:
+                    return None
+                current = self._from_row(row)
+                if current.status is PreparationRequestStatus.CANCELLED:
+                    # Repeated cancellation is safe and preserves the original
+                    # transition timestamp.
+                    return current
+                cancelled = self._connection.execute(
+                    f"""
+                    UPDATE preparation_test_requests
+                    SET status = 'CANCELLED', updated_at = %s
+                    WHERE learner_id = %s AND request_id = %s
+                      AND status IN ('ACTIVE', 'SUPERSEDED')
+                    RETURNING {self.COLUMNS}
+                    """,
+                    (timestamp, learner_id, request_id),
+                ).fetchone()
+                if cancelled is None:
+                    raise RepositoryError("preparation request changed during cancellation")
+            return self._from_row(cancelled)
+        except RepositoryError:
+            raise
+        except Exception as exc:
+            raise RepositoryError("failed to cancel preparation request") from exc
+
     @staticmethod
     def _from_row(row: Sequence[object]) -> PreparationTestRequestRecord:
         spec = TestSpecification(
