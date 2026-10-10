@@ -22,6 +22,14 @@ flutter run --dart-define=AI_COMP_API_BASE_URL=https://your-api.example.com --da
 
 The API URL and learner ID are optional compile-time defaults; both can also be entered on the first screen. Enter the access token in the screen. The token is held in memory and is not written to disk by this app.
 
+Before the first device run, generate the Android runner outside this package, then copy it in (this avoids overwriting the committed `lib/` sources):
+
+```sh
+flutter create --platforms=android --project-name ai_comp_mobile --org com.aicomp /tmp/ai_comp_mobile_scaffold
+cp -R /tmp/ai_comp_mobile_scaffold/android ./android
+flutter run --dart-define=AI_COMP_API_BASE_URL=https://your-api.example.com --dart-define=AI_COMP_LEARNER_ID=your-learner-id
+```
+
 For an Android emulator connecting to a development API running on the host computer, the base URL is commonly `http://10.0.2.2:8000`. Use HTTPS for real deployments; do not send production access tokens over plain HTTP. Your server may need its development network/firewall configured to permit emulator access.
 
 This repository has no mobile login endpoint. The client therefore accepts a token issued by the host application's existing authentication system; it does not mint credentials or bypass server-side learner-scope checks.
@@ -38,4 +46,4 @@ The backend also exposes OpenAPI at `/openapi.json` and interactive docs at `/do
 
 ## Platform scaffolding
 
-The first commit adds the Flutter package, Dart screens, and tests. Platform-specific Android/iOS runner files are not generated in this phase. To generate local platform runners without overwriting the client sources, create a temporary Flutter scaffold and copy the desired platform directory into this package, or use the next Android packaging phase to add and verify the platform project. The committed CI currently validates the Dart/Flutter package with `flutter analyze` and `flutter test`; it does not claim that an APK has been built.
+The committed files contain the Flutter/Dart package, screens, and tests. Platform-specific Android/iOS runner files are not checked in yet; the Android command above creates a local runner without overwriting client sources. The committed CI validates the Dart/Flutter package with `flutter analyze` and `flutter test`; it does not claim that an APK has been built.
