@@ -426,7 +426,7 @@ def test_api_application_service_returns_versioned_json_payload_and_reuses_canon
     assert payload["schema_version"] == "1.0"
     assert payload["learner_id"] == "learner-1"
     assert payload["generated_at"] == NOW.isoformat()
-    assert payload["strategy_history"]["audit_count"] == 0
+    assert payload["strategy_history"]["summary"]["audit_count"] == 0
     assert payload["strategy_feedback"]["findings"] == []
     assert "science-new-1" not in payload["guidance"]["preparation_plan"]["question_ids"]
     assert isinstance(encoded, str)

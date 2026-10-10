@@ -78,12 +78,22 @@ class PreparationGuidanceAPIResponse:
 
     def to_payload(self) -> dict[str, Any]:
         """Return a JSON-compatible response dictionary for a transport adapter."""
+        history_payload = to_json_value(self.strategy_history)
+        # These are stable read-model aggregates implemented as domain properties,
+        # so expose them explicitly instead of assuming they are dataclass fields.
+        history_payload["summary"] = {
+            "audit_count": self.strategy_history.audit_count,
+            "decision_count": self.strategy_history.decision_count,
+            "adapted_task_count": self.strategy_history.adapted_task_count,
+            "evidence_limited_count": self.strategy_history.evidence_limited_count,
+            "scope_count": len(self.strategy_history.scopes),
+        }
         return {
             "schema_version": self.schema_version,
             "learner_id": self.learner_id,
             "generated_at": self.generated_at.isoformat(),
             "guidance": to_json_value(self.guidance),
-            "strategy_history": to_json_value(self.strategy_history),
+            "strategy_history": history_payload,
             "strategy_feedback": to_json_value(self.strategy_feedback),
         }
 
