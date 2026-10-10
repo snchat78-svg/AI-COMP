@@ -294,22 +294,32 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    for (final option in question.options)
-                      Card(
-                        child: RadioListTile<String>(
-                          value: option.key,
-                          groupValue: _selectedOptionKey,
-                          onChanged: _remainingSeconds <= 0 || _savingAnswer
-                              ? null
-                              : (value) {
-                                  if (value == null) return;
-                                  setState(() => _selectedOptionKey = value);
-                                  unawaited(_saveAnswer());
-                                },
-                          title: Text(option.text),
-                          subtitle: Text('Option ${option.key}'),
-                        ),
+                    RadioGroup<String>(
+                      groupValue: _selectedOptionKey,
+                      onChanged: (value) {
+                        if (value == null ||
+                            _remainingSeconds <= 0 ||
+                            _savingAnswer ||
+                            _loading) {
+                          return;
+                        }
+                        setState(() => _selectedOptionKey = value);
+                        unawaited(_saveAnswer());
+                      },
+                      child: Column(
+                        children: [
+                          for (final option in question.options)
+                            Card(
+                              child: RadioListTile<String>(
+                                value: option.key,
+                                enabled: _remainingSeconds > 0 && !_savingAnswer && !_loading,
+                                title: Text(option.text),
+                                subtitle: Text('Option ${option.key}'),
+                              ),
+                            ),
+                        ],
                       ),
+                    ),
                     const SizedBox(height: 8),
                     if (_savingAnswer) ...[
                       const LinearProgressIndicator(),
