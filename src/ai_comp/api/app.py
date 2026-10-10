@@ -24,6 +24,7 @@ def create_app(
     preparation_context_provider: PreparationContextProvider | None = None,
     preparation_test_request_repository: Any | None = None,
     preparation_test_session_repository_factory: Any | None = None,
+    completed_test_learning_recorder: Any | None = None,
 ) -> FastAPI:
     """Create a FastAPI app with explicitly injected trusted host dependencies.
 
@@ -41,6 +42,7 @@ def create_app(
     app.state.preparation_context_provider = preparation_context_provider
     app.state.preparation_test_request_repository = preparation_test_request_repository
     app.state.preparation_test_session_repository_factory = preparation_test_session_repository_factory
+    app.state.completed_test_learning_recorder = completed_test_learning_recorder
 
     @app.middleware("http")
     async def api_security_headers(request: Request, call_next):
@@ -78,6 +80,7 @@ def create_postgres_app(
         PostgresPreparationContextProvider,
     )
     from ai_comp.database.connection import connect_postgres
+    from ai_comp.application.completed_test_session_learning import CompletedTestSessionLearningRecorder
     from ai_comp.database.postgres_preparation_session import PostgresPreparationTestSessionRepository
 
     connection_factory = lambda: connect_postgres(dsn)
@@ -121,6 +124,7 @@ def create_postgres_app(
         preparation_context_provider=context_provider,
         preparation_test_request_repository=request_repository,
         preparation_test_session_repository_factory=session_repository_factory,
+        completed_test_learning_recorder=CompletedTestSessionLearningRecorder(connection_factory),
     )
 
 

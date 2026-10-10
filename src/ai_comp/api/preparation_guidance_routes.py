@@ -10,6 +10,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from ai_comp.analysis.personalized_preparation import PersonalizedPreparationService
+
 from ai_comp.domain.test_engine import TestResult, TestSession, TestSessionStatus
 from ai_comp.test_engine import TestEngine
 from starlette.responses import Response
@@ -531,6 +532,30 @@ def _test_session_payload(session: TestSession, *, remaining_seconds: float | No
     return payload
 
 
+
+def _sync_finished_session_learning(
+    learner_id: str,
+    session: TestSession,
+    record: dict[str, object],
+    request: Request,
+) -> Response | None:
+    if session.status not in (TestSessionStatus.SUBMITTED, TestSessionStatus.EXPIRED) or session.result is None:
+        return None
+    recorder = request.app.state.completed_test_learning_recorder
+    if recorder is None:
+        return None
+    try:
+        recorder.record(learner_id, session, record["questions"])
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "LEARNING_HISTORY_SYNC_UNAVAILABLE",
+                "message": "Test result is saved, but learner history synchronization is unavailable; retry the request.",
+            }
+        })
+    return None
+
+
 def _session_engine_for_learner(learner_id: str, session_id: str, request: Request):
     factory = request.app.state.preparation_test_session_repository_factory
     if factory is None:
@@ -552,6 +577,10 @@ def _session_engine_for_learner(learner_id: str, session_id: str, request: Reque
             })
         engine = TestEngine(repository=repository, clock=time.time)
         engine.restore_context(record["specification"], record["questions"])
+        current_session = engine.get_session(session_id)
+        sync_error = _sync_finished_session_learning(learner_id, current_session, record, request)
+        if sync_error is not None:
+            return None, None, sync_error
         return engine, record, None
     except KeyError:
         return None, None, _json_response(HTTPStatus.NOT_FOUND, {
@@ -703,6 +732,184 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
         })
 
 
+
+def _session_history_item(record: dict[str, object]) -> dict[str, object]:
+    session = record["session"]
+    specification = record["specification"]
+    return {
+        "session_id": session.session_id,
+        "preparation_request_id": record["preparation_request_id"],
+        "test_id": session.test_id,
+        "title": specification.title,
+        "mode": record["mode"],
+        "status": session.status.value,
+        "question_count": len(session.question_ids),
+        "answered_question_count": len(session.answers),
+        "review_question_count": len(session.review_question_ids),
+        "created_at": record["created_at"].isoformat(),
+        "updated_at": record["updated_at"].isoformat(),
+        "started_at": session.started_at,
+        "submitted_at": session.submitted_at,
+        "result": _test_result_payload(session.result),
+    }
+
+
+def _parse_session_history_query(request: Request):
+    try:
+        query = parse_qs(request.url.query, keep_blank_values=True, strict_parsing=False)
+    except ValueError:
+        return None, _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SESSION_HISTORY_QUERY", "message": "Invalid history query."}
+        })
+    if set(query) - {"limit", "offset", "status"} or any(len(values) != 1 for values in query.values()):
+        return None, _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SESSION_HISTORY_QUERY", "message": "Only one limit, offset, and status parameter is supported."}
+        })
+    try:
+        limit = int(query.get("limit", ["50"])[0])
+        offset = int(query.get("offset", ["0"])[0])
+    except (TypeError, ValueError):
+        return None, _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SESSION_HISTORY_QUERY", "message": "limit and offset must be integers."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return None, _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SESSION_HISTORY_QUERY", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    status = None
+    if "status" in query:
+        try:
+            status = TestSessionStatus(query["status"][0])
+        except ValueError:
+            return None, _json_response(HTTPStatus.BAD_REQUEST, {
+                "error": {"code": "INVALID_SESSION_STATUS", "message": "status must be CREATED, IN_PROGRESS, SUBMITTED, EXPIRED, or CANCELLED."}
+            })
+    return {"limit": limit, "offset": offset, "status": status}, None
+
+
+def _learner_session_repository(learner_id: str, request: Request):
+    factory = request.app.state.preparation_test_session_repository_factory
+    if factory is None:
+        return None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_STORE_NOT_CONFIGURED",
+                "message": "Preparation session storage is not configured.",
+            }
+        })
+    try:
+        return factory(learner_id), None
+    except Exception:
+        return None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_STORE_UNAVAILABLE",
+                "message": "Unable to load preparation sessions.",
+            }
+        })
+
+
+@router.get("/{learner_id}/preparation-sessions", name="list_preparation_sessions")
+def list_preparation_sessions(learner_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    query, error = _parse_session_history_query(request)
+    if error is not None:
+        return error
+    repository, error = _learner_session_repository(authenticated_learner_id, request)
+    if error is not None:
+        return error
+    try:
+        records = repository.list_for_learner(
+            limit=query["limit"] + 1,
+            offset=query["offset"],
+            status=query["status"],
+        )
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_SESSION_HISTORY_UNAVAILABLE",
+                "message": "Unable to load test session history.",
+            }
+        })
+    selected = records[:query["limit"]]
+    return _json_response(HTTPStatus.OK, {
+        "items": [_session_history_item(record) for record in selected],
+        "pagination": {
+            "limit": query["limit"],
+            "offset": query["offset"],
+            "returned": len(selected),
+            "has_more": len(records) > query["limit"],
+        },
+    })
+
+
+@router.get("/{learner_id}/preparation-results", name="list_preparation_results")
+def list_preparation_results(learner_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    query, error = _parse_session_history_query(request)
+    if error is not None:
+        return error
+    if query["status"] not in (None, TestSessionStatus.SUBMITTED, TestSessionStatus.EXPIRED):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {
+                "code": "INVALID_RESULT_STATUS",
+                "message": "Results only support SUBMITTED or EXPIRED session status.",
+            }
+        })
+    repository, error = _learner_session_repository(authenticated_learner_id, request)
+    if error is not None:
+        return error
+    try:
+        records = repository.list_for_learner(
+            limit=query["limit"] + 1,
+            offset=query["offset"],
+            status=query["status"],
+            results_only=True,
+        )
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_RESULTS_UNAVAILABLE",
+                "message": "Unable to load completed test results.",
+            }
+        })
+    selected = records[:query["limit"]]
+    return _json_response(HTTPStatus.OK, {
+        "items": [_session_history_item(record) for record in selected],
+        "pagination": {
+            "limit": query["limit"],
+            "offset": query["offset"],
+            "returned": len(selected),
+            "has_more": len(records) > query["limit"],
+        },
+    })
+
+
+@router.get("/{learner_id}/preparation-results/summary", name="get_preparation_results_summary")
+def get_preparation_results_summary(learner_id: str, request: Request) -> Response:
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    repository, error = _learner_session_repository(authenticated_learner_id, request)
+    if error is not None:
+        return error
+    try:
+        summary = repository.get_history_summary()
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_RESULTS_UNAVAILABLE",
+                "message": "Unable to aggregate test results.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, {
+        "learner_id": authenticated_learner_id,
+        **summary,
+    })
+
+
 @router.get("/{learner_id}/preparation-sessions/{session_id}", name="get_preparation_session")
 def get_preparation_session(learner_id: str, session_id: str, request: Request) -> Response:
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
@@ -832,6 +1039,17 @@ def submit_preparation_session(learner_id: str, session_id: str, request: Reques
     try:
         result = engine.submit(session_id)
         final_session = engine.get_session(session_id)
+        record = engine.repository.get_record_for_learner(session_id)
+        if record is None:
+            return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+                "error": {
+                    "code": "PREPARATION_SESSION_STORE_UNAVAILABLE",
+                    "message": "Test was saved but its snapshot could not be reloaded.",
+                }
+            })
+        sync_error = _sync_finished_session_learning(learner_id, final_session, record, request)
+        if sync_error is not None:
+            return sync_error
         return _json_response(HTTPStatus.OK, {
             "session": _test_session_payload(final_session),
             "result": _test_result_payload(result),

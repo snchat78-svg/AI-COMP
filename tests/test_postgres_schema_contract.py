@@ -104,3 +104,9 @@ def test_phase634_schema_persists_test_session_state_and_question_snapshots():
     assert "question_snapshot JSONB NOT NULL" in sql
     assert "session_state JSONB NOT NULL" in sql
     assert "idx_preparation_test_sessions_learner_history" in sql
+
+def test_phase635_schema_reuses_persisted_learning_history_contracts():
+    sql = schema_text()
+    assert "CREATE TABLE IF NOT EXISTS learner_test_attempts" in sql
+    assert "CREATE TABLE IF NOT EXISTS learner_topic_attempts" in sql
+    assert "CREATE TABLE IF NOT EXISTS learner_question_attempts" in sql

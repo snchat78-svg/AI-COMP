@@ -144,6 +144,52 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert result["raw_score"] == 1.5
         assert result["max_score"] == 4.0
 
+        history = client.get(f"{sessions_url}?status=SUBMITTED")
+        assert history.status_code == 200, history.text
+        assert history.json()["pagination"]["returned"] == 1
+        history_item = history.json()["items"][0]
+        assert history_item["session_id"] == session_id
+        assert history_item["mode"] == "MIXED"
+        assert history_item["result"]["percentage"] == 37.5
+
+        results = client.get(f"/api/v1/learners/{learner_id}/preparation-results")
+        assert results.status_code == 200, results.text
+        assert results.json()["pagination"]["returned"] == 1
+        assert results.json()["items"][0]["result"]["correct_answers"] == 1
+
+        summary = client.get(f"/api/v1/learners/{learner_id}/preparation-results/summary")
+        assert summary.status_code == 200, summary.text
+        assert summary.json()["completed_test_count"] == 1
+        assert summary.json()["total_session_count"] == 1
+        assert summary.json()["average_percentage"] == 37.5
+        assert summary.json()["correct_answers"] == 1
+        assert summary.json()["incorrect_answers"] == 1
+
+        with connect_postgres(dsn) as connection:
+            attempt = connection.execute(
+                "SELECT COUNT(*), MAX(percentage) FROM learner_test_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()
+            outcomes = connection.execute(
+                "SELECT COUNT(*), COUNT(*) FILTER (WHERE outcome = 'CORRECT') "
+                "FROM learner_question_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()
+        assert attempt == (1, 37.5)
+        assert outcomes == (2, 1)
+
+        again = client.get(f"/api/v1/learners/{learner_id}/preparation-results")
+        assert again.status_code == 200
+        with connect_postgres(dsn) as connection:
+            assert connection.execute(
+                "SELECT COUNT(*) FROM learner_test_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()[0] == 1
+            assert connection.execute(
+                "SELECT COUNT(*) FROM learner_question_attempts WHERE learner_id = %s",
+                (learner_id,),
+            ).fetchone()[0] == 2
+
         reloaded = client.get(f"{sessions_url}/{session_id}")
         assert reloaded.status_code == 200
         assert reloaded.json()["status"] == "SUBMITTED"
@@ -164,6 +210,7 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert forbidden.status_code == 404
     finally:
         with connect_postgres(dsn) as connection:
+            connection.execute("DELETE FROM learner_test_attempts WHERE learner_id = %s", (learner_id,))
             connection.execute("DELETE FROM preparation_test_sessions WHERE learner_id = %s", (learner_id,))
             connection.execute("DELETE FROM preparation_test_requests WHERE learner_id = %s", (learner_id,))
             connection.execute("DELETE FROM generated_questions WHERE generated_question_id = ANY(%s)", (question_ids,))

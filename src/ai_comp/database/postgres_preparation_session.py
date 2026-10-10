@@ -187,6 +187,118 @@ class PostgresPreparationTestSessionRepository:
             "updated_at": row[8],
         }
 
+
+    def list_for_learner(
+        self,
+        *,
+        limit: int = 50,
+        offset: int = 0,
+        status: TestSessionStatus | None = None,
+        results_only: bool = False,
+    ) -> tuple[dict[str, Any], ...]:
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 101:
+            raise ValueError("limit must be between 1 and 101")
+        if isinstance(offset, bool) or not isinstance(offset, int) or not 0 <= offset <= 100000:
+            raise ValueError("offset must be between 0 and 100000")
+        if status is not None and not isinstance(status, TestSessionStatus):
+            raise ValueError("status must be a TestSessionStatus")
+        query = """
+            SELECT s.session_id, s.preparation_request_id, s.test_id,
+                   s.specification, s.session_state, s.session_status,
+                   s.created_at, s.updated_at, r.mode
+            FROM preparation_test_sessions AS s
+            JOIN preparation_test_requests AS r
+              ON r.request_id = s.preparation_request_id
+             AND r.learner_id = s.learner_id
+            WHERE s.learner_id = %s
+        """
+        parameters: list[object] = [self.learner_id]
+        if status is not None:
+            query += " AND s.session_status = %s"
+            parameters.append(status.value)
+        if results_only:
+            query += """
+                AND s.session_status IN ('SUBMITTED', 'EXPIRED')
+                AND s.session_state -> 'result' IS NOT NULL
+                AND s.session_state -> 'result' <> 'null'::jsonb
+            """
+        query += " ORDER BY s.created_at DESC, s.session_id DESC LIMIT %s OFFSET %s"
+        parameters.extend((limit, offset))
+        def read(connection):
+            return connection.execute(query, tuple(parameters)).fetchall()
+        try:
+            rows = self._run(read)
+        except Exception as exc:
+            raise RepositoryError("failed to list learner preparation sessions") from exc
+        return tuple(
+            {
+                "session_id": str(row[0]),
+                "preparation_request_id": str(row[1]),
+                "test_id": str(row[2]),
+                "specification": self._specification_from_payload(self._json_object(row[3])),
+                "session": self._session_from_payload(self._json_object(row[4])),
+                "status": TestSessionStatus(str(row[5])),
+                "created_at": row[6],
+                "updated_at": row[7],
+                "mode": str(row[8]),
+            }
+            for row in rows
+        )
+
+    def get_history_summary(self) -> dict[str, int | float]:
+        completed = """
+            session_status IN ('SUBMITTED', 'EXPIRED')
+            AND session_state -> 'result' IS NOT NULL
+            AND session_state -> 'result' <> 'null'::jsonb
+        """
+        query = f"""
+            SELECT
+                COUNT(*)::BIGINT,
+                COUNT(*) FILTER (WHERE {completed})::BIGINT,
+                COALESCE(AVG(
+                    NULLIF(session_state -> 'result' ->> 'percentage', '')::DOUBLE PRECISION
+                ) FILTER (WHERE {completed}), 0.0),
+                COALESCE(MAX(
+                    NULLIF(session_state -> 'result' ->> 'percentage', '')::DOUBLE PRECISION
+                ) FILTER (WHERE {completed}), 0.0),
+                COALESCE(SUM(
+                    NULLIF(session_state -> 'result' ->> 'total_questions', '')::BIGINT
+                ) FILTER (WHERE {completed}), 0)::BIGINT,
+                COALESCE(SUM(
+                    NULLIF(session_state -> 'result' ->> 'attempted_questions', '')::BIGINT
+                ) FILTER (WHERE {completed}), 0)::BIGINT,
+                COALESCE(SUM(
+                    NULLIF(session_state -> 'result' ->> 'correct_answers', '')::BIGINT
+                ) FILTER (WHERE {completed}), 0)::BIGINT,
+                COALESCE(SUM(
+                    NULLIF(session_state -> 'result' ->> 'incorrect_answers', '')::BIGINT
+                ) FILTER (WHERE {completed}), 0)::BIGINT,
+                COALESCE(SUM(
+                    NULLIF(session_state -> 'result' ->> 'unattempted_questions', '')::BIGINT
+                ) FILTER (WHERE {completed}), 0)::BIGINT
+            FROM preparation_test_sessions
+            WHERE learner_id = %s
+        """
+        def read(connection):
+            return connection.execute(query, (self.learner_id,)).fetchone()
+        try:
+            row = self._run(read)
+        except Exception as exc:
+            raise RepositoryError("failed to aggregate learner preparation results") from exc
+        if row is None:
+            raise RepositoryError("failed to aggregate learner preparation results")
+        return {
+            "total_session_count": int(row[0]),
+            "completed_test_count": int(row[1]),
+            "average_percentage": float(row[2]),
+            "best_percentage": float(row[3]),
+            "total_questions": int(row[4]),
+            "attempted_questions": int(row[5]),
+            "correct_answers": int(row[6]),
+            "incorrect_answers": int(row[7]),
+            "unattempted_questions": int(row[8]),
+        }
+
     @staticmethod
     def _json_object(value: object) -> dict[str, Any]:
         result = json.loads(value) if isinstance(value, str) else value
