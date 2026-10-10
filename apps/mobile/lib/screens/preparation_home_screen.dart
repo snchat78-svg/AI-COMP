@@ -25,7 +25,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   AiCompApiClient? _api;
   LearnerAnalytics? _analytics;
   ResultsSummary? _summary;
-  List<TestHistoryItem> _recentResults = const [];
+  List<TestHistoryItem> _recentSessions = const [];
   bool _loading = false;
   String? _error;
   bool _hideToken = true;
@@ -67,7 +67,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       );
       final analytics = await candidate.getAnalytics();
       final summary = await candidate.getResultsSummary();
-      final results = await candidate.getResults(limit: 5);
+      final sessions = await candidate.getSessions(limit: 8);
       final previous = _api;
       _api = candidate;
       candidate = null;
@@ -76,7 +76,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       setState(() {
         _analytics = analytics;
         _summary = summary;
-        _recentResults = results;
+        _recentSessions = sessions;
         _loading = false;
         _error = null;
       });
@@ -98,12 +98,12 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     try {
       final analytics = await api.getAnalytics();
       final summary = await api.getResultsSummary();
-      final results = await api.getResults(limit: 5);
+      final sessions = await api.getSessions(limit: 8);
       if (!mounted) return;
       setState(() {
         _analytics = analytics;
         _summary = summary;
-        _recentResults = results;
+        _recentSessions = sessions;
       });
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
@@ -174,6 +174,37 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     }
   }
 
+  Future<void> _resumeSession(TestHistoryItem item) async {
+    final api = _api;
+    if (api == null || _loading) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final session = await api.getSession(item.sessionId);
+      if (!mounted) return;
+      setState(() => _loading = false);
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => TestSessionScreen(
+            api: api,
+            initialSession: session,
+            title: item.title,
+            focusConceptIds: session.focusConceptIds,
+          ),
+        ),
+      );
+      if (mounted) await _refreshDashboard();
+    } on ApiException catch (error) {
+      _setError(_friendlyError(error));
+    } catch (_) {
+      _setError('Saved test session resume nahi ho saki. Dobara try karein.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   String _friendlyError(ApiException error) {
     switch (error.code) {
       case 'AUTHENTICATION_REQUIRED':
@@ -239,7 +270,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             const SizedBox(height: 16),
             _buildWeakTopics(theme),
             const SizedBox(height: 16),
-            _buildRecentResults(theme),
+            _buildRecentSessions(theme),
             const SizedBox(height: 24),
             Text(
               'Security: access token sirf is screen ke memory mein rakha gaya hai; disk par save nahi hota.',
@@ -435,7 +466,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     );
   }
 
-  Widget _buildRecentResults(ThemeData theme) {
+  Widget _buildRecentSessions(ThemeData theme) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -446,21 +477,26 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             const SizedBox(height: 8),
             if (!_connected)
               const Text('Recent results yahan dikhai denge.')
-            else if (_recentResults.isEmpty)
-              const Text('Abhi koi completed test nahi hai.')
+            else if (_recentSessions.isEmpty)
+              const Text('Abhi koi test session nahi hai.')
             else
-              for (final item in _recentResults)
+              for (final item in _recentSessions)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.assignment_turned_in_outlined),
                   title: Text(item.title),
                   subtitle: Text(item.status),
-                  trailing: Text(
-                    item.percentage == null
-                        ? '—'
-                        : '${item.percentage!.toStringAsFixed(1)}%',
-                    style: theme.textTheme.titleSmall,
-                  ),
+                  trailing: item.status == 'IN_PROGRESS' || item.status == 'CREATED'
+                      ? TextButton(
+                          onPressed: _loading ? null : () => _resumeSession(item),
+                          child: const Text('Continue'),
+                        )
+                      : Text(
+                          item.percentage == null
+                              ? '—'
+                              : '${item.percentage!.toStringAsFixed(1)}%',
+                          style: theme.textTheme.titleSmall,
+                        ),
                 ),
           ],
         ),
