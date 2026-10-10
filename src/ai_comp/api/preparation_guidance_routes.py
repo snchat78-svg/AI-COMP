@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-from ai_comp.analysis.adaptive_test_session import AdaptiveTestSessionService
+from ai_comp.analysis.personalized_preparation import PersonalizedPreparationService
 from ai_comp.domain.test_engine import TestResult, TestSession, TestSessionStatus
 from ai_comp.test_engine import TestEngine
 from starlette.responses import Response
@@ -643,24 +643,42 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
             new_session_id=session_id,
         )
         engine = TestEngine(repository=repository, clock=time.time)
-        result = AdaptiveTestSessionService(test_engine=engine).create_session(
+        plan = PersonalizedPreparationService().build_plan(
             authenticated_learner_id,
             test_id=spec.test_id,
             title=spec.title,
-            session_id=session_id,
             question_count=spec.question_count,
             duration_seconds=spec.duration_seconds,
-            learning_history=context["history"],
+            history=context["history"],
             question_history=context["question_history"],
             candidates=context["candidates"],
             questions=context["questions"],
+            mode=active_request.request.mode,
             scoring=spec.scoring,
             shuffle_questions=spec.shuffle_questions,
             shuffle_seed=spec.shuffle_seed,
             exclude_question_ids=active_request.request.exclude_question_ids,
             as_of=active_request.request.as_of,
         )
-        return _json_response(HTTPStatus.CREATED, _test_session_payload(result.session))
+        question_by_id = {
+            question.generated_question_id: question
+            for question in context["questions"]
+        }
+        selected_questions = tuple(
+            question_by_id[question_id] for question_id in plan.question_ids
+        )
+        session = engine.create_session(
+            plan.test_specification,
+            plan.ranked_candidates,
+            selected_questions,
+            session_id=session_id,
+        )
+        response_payload = _test_session_payload(session)
+        response_payload["preparation_request_id"] = active_request.request_id
+        response_payload["mode"] = plan.mode.value
+        response_payload["focus_concept_ids"] = list(plan.focus_concept_ids)
+        response_payload["revision_question_ids"] = list(plan.revision_question_ids)
+        return _json_response(HTTPStatus.CREATED, response_payload)
     except PreparationContextUnavailable:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {

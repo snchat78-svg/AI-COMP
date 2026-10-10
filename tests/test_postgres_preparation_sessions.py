@@ -86,6 +86,7 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
             "duration_seconds": 900,
             "correct_marks": 2.0,
             "incorrect_marks": -0.5,
+            "mode": "MIXED",
             "concept_ids": [concept_id],
         })
         assert created_request.status_code == 201, created_request.text
@@ -95,6 +96,8 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         initial = created_session.json()
         session_id = initial["session_id"]
         assert initial["status"] == "CREATED"
+        assert initial["mode"] == "MIXED"
+        assert initial["preparation_request_id"] == created_request.json()["request_id"]
         assert initial["question_count"] == 2
         assert len(initial["question_ids"]) == 2
 
