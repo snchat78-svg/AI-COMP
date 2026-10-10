@@ -20,7 +20,7 @@ Each context load uses a short-lived connection and closes it even on failure. T
 
 ## Ranking evidence and history rules
 
-The ranker uses the persisted generated-question importance score and concept overlap against the trusted test request. Historical verified appearances and fact/concept confidence are not fabricated when the generated-question record does not contain that evidence. Accepted questions with unsupported difficulty metadata are excluded from the candidate pool. The existing domain rule that accepted questions must have verified answers and cannot be known duplicates remains in force.
+The ranker uses the persisted generated-question importance score and concept overlap against the trusted test request. When a concept scope is supplied, PostgreSQL filters to questions intersecting that scope before the pool limit is applied; unrelated questions are never used just to fill the requested count. Historical verified appearances and fact/concept confidence are not fabricated when the generated-question record does not contain that evidence. Accepted questions with unsupported difficulty metadata are excluded from the candidate pool. The existing domain rule that accepted questions must have verified answers and cannot be known duplicates remains in force.
 
 ## Context request boundary
 

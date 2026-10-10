@@ -19,7 +19,7 @@ from ai_comp.domain.material_generation import (
     GeneratedQuestionStatus,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
-from ai_comp.domain.test_engine import TestSpecification
+from ai_comp.domain.test_engine import TestSpecification as PreparationSpecification
 
 
 pytestmark = pytest.mark.integration
@@ -95,7 +95,7 @@ def test_postgres_context_drives_fastapi_guidance_from_verified_question_store()
     try:
         test_request = PreparationTestRequest(
             learner_id=learner_id,
-            specification=TestSpecification(
+            specification=PreparationSpecification(
                 test_id=f"phase631-test-{suffix}",
                 title="Rajasthan practice",
                 question_count=1,
@@ -130,7 +130,7 @@ def test_postgres_context_returns_unavailable_when_question_pool_is_too_small():
     learner_id = f"phase631-short-{suffix}"
     test_request = PreparationTestRequest(
         learner_id=learner_id,
-        specification=TestSpecification(
+        specification=PreparationSpecification(
             test_id=f"phase631-large-test-{suffix}",
             title="Pool bound check",
             question_count=2,
@@ -151,7 +151,7 @@ def test_postgres_context_returns_unavailable_when_question_pool_is_too_small():
 def test_provider_rejects_test_request_for_another_learner_without_database_access():
     request_spec = PreparationTestRequest(
         learner_id="learner-b",
-        specification=TestSpecification(
+        specification=PreparationSpecification(
             test_id="test-b",
             title="Scoped test",
             question_count=1,

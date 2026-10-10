@@ -86,28 +86,48 @@ class PostgresGeneratedQuestionRepository:
             raise RepositoryError("failed to read generated question") from exc
         return None if row is None else self._from_row(row)
 
-    def list_accepted(self, *, limit: int = 5000) -> tuple[GeneratedMCQ, ...]:
-        """List a bounded pool of accepted, answer-verified, non-duplicate questions."""
+    def list_accepted(
+        self,
+        *,
+        limit: int = 5000,
+        concept_ids: Sequence[str] | None = None,
+    ) -> tuple[GeneratedMCQ, ...]:
+        """List accepted verified questions, optionally scoped to concepts.
+
+        Concept filtering happens in SQL before the limit is applied, so a large
+        unrelated pool cannot hide matching questions or fill a scoped test with
+        questions from the wrong topic.
+        """
         if (
             isinstance(limit, bool)
             or not isinstance(limit, int)
             or not 1 <= limit <= 10000
         ):
             raise ValueError("limit must be between 1 and 10000")
+        scoped_ids = tuple(concept_ids or ())
+        if len(set(scoped_ids)) != len(scoped_ids) or any(
+            not isinstance(item, str) or not item.strip() for item in scoped_ids
+        ):
+            raise ValueError("concept_ids must be unique non-empty strings")
         try:
-            rows = self._connection.execute(
-                f"""
+            query = f"""
                 SELECT {self._SELECT_COLUMNS}
                 FROM generated_questions
                 WHERE status = 'ACCEPTED'
                   AND answer_verification_status = 'VERIFIED'
                   AND duplicate_of_master_question_id IS NULL
+            """
+            params: list[Any] = []
+            if scoped_ids:
+                query += " AND concept_ids ?| %s::text[]"
+                params.append(list(scoped_ids))
+            query += """
                 ORDER BY importance_score DESC, quality_score DESC,
                          generated_question_id ASC
                 LIMIT %s
-                """,
-                (limit,),
-            ).fetchall()
+            """
+            params.append(limit)
+            rows = self._connection.execute(query, tuple(params)).fetchall()
         except Exception as exc:
             raise RepositoryError("failed to list accepted generated questions") from exc
         return tuple(self._from_row(row) for row in rows)

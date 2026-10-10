@@ -170,7 +170,10 @@ class PostgresPreparationContextProvider:
                 ).history(learner_id)
                 stored_questions = PostgresGeneratedQuestionRepository(
                     connection
-                ).list_accepted(limit=self.question_pool_limit)
+                ).list_accepted(
+                    limit=self.question_pool_limit,
+                    concept_ids=test_request.concept_ids,
+                )
         finally:
             close = getattr(connection, "close", None)
             if callable(close):
