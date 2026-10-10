@@ -26,10 +26,10 @@ def to_json_value(value: Any) -> Any:
     Enum values use their stable wire string and dates use ISO-8601. This helper
     rejects unknown objects rather than leaking repr() strings into API payloads.
     """
-    if value is None or isinstance(value, (str, int, float, bool)):
-        return value
     if isinstance(value, Enum):
         return value.value
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
     if isinstance(value, (datetime, date)):
         return value.isoformat()
     if is_dataclass(value) and not isinstance(value, type):

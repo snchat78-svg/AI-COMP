@@ -433,6 +433,7 @@ def test_api_application_service_returns_versioned_json_payload_and_reuses_canon
     assert payload["guidance"]["actions"][0]["kind"] in {
         action.kind.value for action in response.guidance.actions
     }
+    assert type(payload["guidance"]["actions"][0]["kind"]) is str
 
 
 def test_api_application_service_delivers_qualified_strategy_feedback_in_same_response():
