@@ -300,25 +300,21 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
                           groupValue: _selectedOptionKey,
                           onChanged: _remainingSeconds <= 0 || _savingAnswer
                               ? null
-                              : (value) => setState(() => _selectedOptionKey = value),
+                              : (value) {
+                                  if (value == null) return;
+                                  setState(() => _selectedOptionKey = value);
+                                  _saveAnswer();
+                                },
                           title: Text(option.text),
                           subtitle: Text('Option ${option.key}'),
                         ),
                       ),
                     const SizedBox(height: 8),
-                    OutlinedButton.icon(
-                      onPressed: _savingAnswer || _selectedOptionKey == null || _remainingSeconds <= 0
-                          ? null
-                          : _saveAnswer,
-                      icon: const Icon(Icons.save_outlined),
-                      label: Text(
-                        _savingAnswer
-                            ? 'Saving...'
-                            : question.selectedOptionKey == null
-                                ? 'Save answer'
-                                : 'Update answer',
-                      ),
-                    ),
+                    if (_savingAnswer) ...[
+                      const LinearProgressIndicator(),
+                      const SizedBox(height: 8),
+                      const Text('Answer save ho raha hai...'),
+                    ],
                     const SizedBox(height: 8),
                     Row(
                       children: [
