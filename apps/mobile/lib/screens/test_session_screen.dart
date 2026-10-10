@@ -51,7 +51,9 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
 
   Future<void> _startAndLoad() async {
     try {
-      final session = await widget.api.startSession(widget.initialSession.sessionId);
+      final session = widget.initialSession.status == 'IN_PROGRESS'
+          ? await widget.api.getSession(widget.initialSession.sessionId)
+          : await widget.api.startSession(widget.initialSession.sessionId);
       if (!mounted) return;
       setState(() {
         _session = session;
