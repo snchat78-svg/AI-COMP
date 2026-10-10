@@ -35,7 +35,9 @@ def apply_migrations(dsn: str) -> None:
         MigrationRunner(migrations_dir).apply(connection)
 
 
-def accepted_question(question_id: str, concept_id: str) -> GeneratedMCQ:
+def accepted_question(
+    question_id: str, concept_id: str, additional_concept_ids: tuple[str, ...] = ()
+) -> GeneratedMCQ:
     return GeneratedMCQ(
         generated_question_id=question_id,
         generation_id=f"generation-{question_id}",
@@ -50,7 +52,7 @@ def accepted_question(question_id: str, concept_id: str) -> GeneratedMCQ:
         correct_option_key="A",
         explanation="Saved source-backed explanation.",
         fact_ids=(f"fact-{question_id}",),
-        concept_ids=(concept_id,),
+        concept_ids=(concept_id, *additional_concept_ids),
         difficulty="MEDIUM",
         importance_score=0.9,
         answer_verification=AnswerVerificationStatus.VERIFIED,
@@ -66,6 +68,8 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
     suffix = uuid4().hex
     learner_id = f"phase634-learner-{suffix}"
     concept_id = f"phase634-concept-{suffix}"
+    strong_concept_id = f"phase634-strong-{suffix}"
+    weak_concept_id = f"phase634-weak-{suffix}"
     question_ids = [f"phase634-question-{suffix}-{index}" for index in range(1, 4)]
     client = TestClient(create_postgres_app(
         dsn=dsn,
@@ -76,8 +80,15 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
 
     with connect_postgres(dsn) as connection:
         question_repo = PostgresGeneratedQuestionRepository(connection)
-        for question_id in question_ids:
-            question_repo.save(accepted_question(question_id, concept_id))
+        for index, question_id in enumerate(question_ids):
+            additional_concepts = (
+                (strong_concept_id,) if index == 0
+                else (weak_concept_id,) if index == 1
+                else ()
+            )
+            question_repo.save(
+                accepted_question(question_id, concept_id, additional_concepts)
+            )
 
     try:
         created_request = client.post(request_url, json={
@@ -189,6 +200,29 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
         assert summary.json()["correct_answers"] == 1
         assert summary.json()["incorrect_answers"] == 1
 
+        analytics = client.get(
+            f"/api/v1/learners/{learner_id}/preparation-results/analytics"
+        )
+        assert analytics.status_code == 200, analytics.text
+        analytics_payload = analytics.json()
+        assert analytics_payload["schema_version"] == "1.0"
+        assert analytics_payload["summary"]["completed_test_count"] == 1
+        assert analytics_payload["summary"]["question_outcome_count"] == 2
+        assert analytics_payload["summary"]["weak_topic_count"] == 1
+        weak_topic = next(
+            item for item in analytics_payload["weak_topics"]
+            if item["concept_id"] == weak_concept_id
+        )
+        assert weak_topic["performance"] == "WEAK"
+        assert weak_topic["accuracy_percentage"] == 0.0
+        assert weak_topic["recommended_action"] == "REMEDIATE_AND_PRACTICE"
+        assert any(
+            item["concept_id"] == strong_concept_id and item["performance"] == "STRONG"
+            for item in analytics_payload["topic_performance"]
+        )
+        assert analytics_payload["revision_candidates"]
+        assert analytics_payload["revision_candidates"][0]["mistake_count"] >= 1
+
         with connect_postgres(dsn) as connection:
             attempt = connection.execute(
                 "SELECT COUNT(*), MAX(percentage) FROM learner_test_attempts WHERE learner_id = %s",
@@ -236,6 +270,11 @@ def test_saved_request_creates_persistent_session_that_can_be_resumed_and_submit
             f"/api/v1/learners/phase634-other/preparation-sessions/{session_id}/answer-review"
         )
         assert forbidden_review.status_code == 404
+        forbidden_analytics = other_client.get(
+            f"/api/v1/learners/{learner_id}/preparation-results/analytics"
+        )
+        assert forbidden_analytics.status_code == 403
+        assert forbidden_analytics.json()["error"]["code"] == "LEARNER_SCOPE_MISMATCH"
     finally:
         with connect_postgres(dsn) as connection:
             connection.execute("DELETE FROM learner_test_attempts WHERE learner_id = %s", (learner_id,))

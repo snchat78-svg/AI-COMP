@@ -1162,6 +1162,36 @@ def get_preparation_session_answer_review(
         return _session_exception_response(exc)
 
 
+@router.get("/{learner_id}/preparation-results/analytics", name="get_preparation_results_analytics")
+def get_preparation_results_analytics(learner_id: str, request: Request) -> Response:
+    """Return weak topics and revision priorities from persisted learner outcomes."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    provider = request.app.state.completed_test_analytics_provider
+    if provider is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_ANALYTICS_NOT_CONFIGURED",
+                "message": "Completed-test analytics are not configured for this server.",
+            }
+        })
+
+    try:
+        report = provider.build_report(authenticated_learner_id)
+        if not isinstance(report, dict) or report.get("learner_id") != authenticated_learner_id:
+            raise ValueError("analytics provider returned an invalid learner report")
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_ANALYTICS_UNAVAILABLE",
+                "message": "Unable to calculate completed-test analytics.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, report)
+
+
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
 def get_preparation_guidance(learner_id: str, request: Request) -> Response:
     """Mount the Phase 6.29 HTTP contract on a real FastAPI route."""
