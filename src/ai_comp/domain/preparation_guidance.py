@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
+from ai_comp.domain.adaptive_study_strategy_feedback import AdaptiveStudyStrategyFeedbackReport
 from ai_comp.domain.learning_progress import LearnerProgressReport
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationPlan
 
@@ -53,6 +54,7 @@ class PreparationGuidance:
     preparation_plan: PersonalizedPreparationPlan
     actions: tuple[PreparationGuidanceAction, ...]
     generated_at: datetime
+    strategy_feedback_report: AdaptiveStudyStrategyFeedbackReport | None = None
 
     def __post_init__(self) -> None:
         if not self.learner_id.strip():
@@ -68,6 +70,11 @@ class PreparationGuidance:
             raise ValueError("preparation action kinds must be unique")
         if self.generated_at.tzinfo is None or self.generated_at.utcoffset() is None:
             raise ValueError("generated_at must be timezone-aware")
+        if self.strategy_feedback_report is not None:
+            if self.strategy_feedback_report.learner_id != self.learner_id:
+                raise ValueError("strategy feedback learner does not match")
+            if self.strategy_feedback_report.generated_at > self.generated_at:
+                raise ValueError("strategy feedback cannot be generated after guidance")
 
 
 __all__ = [

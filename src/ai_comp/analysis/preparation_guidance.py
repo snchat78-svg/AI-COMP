@@ -145,6 +145,7 @@ class PreparationGuidanceService:
             preparation_plan=plan,
             actions=actions,
             generated_at=report_time,
+            strategy_feedback_report=strategy_feedback,
         )
 
     @staticmethod

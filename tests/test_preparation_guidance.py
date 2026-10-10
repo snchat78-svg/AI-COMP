@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+import json
 from dataclasses import replace
 
 import pytest
 
+from ai_comp.analysis.adaptive_study_strategy_history import AdaptiveStudyStrategyHistoryService
 from ai_comp.analysis.preparation_guidance import PreparationGuidanceService
+from ai_comp.application.preparation_guidance_api import PreparationGuidanceAPIService
 from ai_comp.domain.adaptive_study_strategy import StudyStrategyAction
 from ai_comp.domain.adaptive_study_strategy_history import (
     AdaptiveStudyStrategyHistoryReport,
@@ -373,3 +376,119 @@ def test_guidance_rejects_strategy_history_from_another_learner():
 
     with pytest.raises(ValueError, match="strategy history learner does not match"):
         build(learning, question_history, strategy_history_report=wrong_report)
+
+
+
+class EmptyStrategyAuditRepository:
+    def list_for_learner(self, learner_id, *, limit=50):
+        return ()
+
+
+class FixedStrategyHistoryService:
+    def __init__(self, report):
+        self.report = report
+        self.calls = []
+
+    def build_report(self, learner_id, *, limit=50, generated_at=None):
+        self.calls.append((learner_id, limit, generated_at))
+        if self.report.learner_id != learner_id:
+            raise ValueError("audit history learner mismatch")
+        return replace(self.report, generated_at=generated_at)
+
+
+def test_api_application_service_returns_versioned_json_payload_and_reuses_canonical_plan():
+    learning, question_history = make_histories()
+    candidates, questions = inputs()
+    app = PreparationGuidanceAPIService(
+        strategy_history_service=AdaptiveStudyStrategyHistoryService(
+            EmptyStrategyAuditRepository()
+        ),
+        guidance_service=PreparationGuidanceService(),
+    )
+    response = app.build_response(
+        "learner-1",
+        test_id="api-test",
+        title="API guided practice",
+        question_count=3,
+        duration_seconds=1800,
+        history=learning,
+        question_history=question_history,
+        candidates=candidates,
+        questions=questions,
+        exclude_question_ids=("science-new-1",),
+        history_limit=25,
+        as_of=NOW,
+        generated_at=NOW,
+    )
+
+    payload = response.to_payload()
+    encoded = json.dumps(payload, ensure_ascii=False)
+    assert payload["schema_version"] == "1.0"
+    assert payload["learner_id"] == "learner-1"
+    assert payload["generated_at"] == NOW.isoformat()
+    assert payload["strategy_history"]["audit_count"] == 0
+    assert payload["strategy_feedback"]["findings"] == []
+    assert "science-new-1" not in payload["guidance"]["preparation_plan"]["question_ids"]
+    assert isinstance(encoded, str)
+    assert payload["guidance"]["actions"][0]["kind"] in {
+        action.kind.value for action in response.guidance.actions
+    }
+
+
+def test_api_application_service_delivers_qualified_strategy_feedback_in_same_response():
+    learning, question_history = make_histories()
+    candidates, questions = inputs()
+    history_report = make_repeated_decline_strategy_history()
+    history_service = FixedStrategyHistoryService(history_report)
+    app = PreparationGuidanceAPIService(
+        strategy_history_service=history_service,
+        guidance_service=PreparationGuidanceService(),
+    )
+
+    response = app.build_response(
+        "learner-1",
+        test_id="api-feedback-test",
+        title="API feedback",
+        question_count=3,
+        duration_seconds=1800,
+        history=learning,
+        question_history=question_history,
+        candidates=candidates,
+        questions=questions,
+        as_of=NOW,
+        generated_at=NOW,
+    )
+
+    assert history_service.calls == [("learner-1", 50, NOW)]
+    assert len(response.strategy_feedback.findings) == 1
+    assert response.guidance.strategy_feedback_report == response.strategy_feedback
+    action = next(
+        action for action in response.guidance.actions
+        if action.kind is PreparationActionKind.REVISIT_STUDY_APPROACH
+    )
+    assert action.concept_ids == ("science",)
+    assert response.to_payload()["strategy_feedback"]["findings"][0]["kind"] == "CHANGE_APPROACH"
+
+
+def test_api_application_service_validates_learner_and_shared_clock():
+    learning, question_history = make_histories()
+    candidates, questions = inputs()
+    app = PreparationGuidanceAPIService(
+        strategy_history_service=AdaptiveStudyStrategyHistoryService(
+            EmptyStrategyAuditRepository()
+        )
+    )
+
+    with pytest.raises(ValueError, match="learner_id"):
+        app.build_response(
+            " ", test_id="x", title="x", question_count=1, duration_seconds=60,
+            history=learning, question_history=question_history,
+            candidates=candidates, questions=questions, generated_at=NOW,
+        )
+    with pytest.raises(ValueError, match="timezone-aware"):
+        app.build_response(
+            "learner-1", test_id="x", title="x", question_count=1, duration_seconds=60,
+            history=learning, question_history=question_history,
+            candidates=candidates, questions=questions,
+            generated_at=datetime(2026, 10, 9),
+        )
