@@ -1,8 +1,17 @@
-"""FastAPI transport runtime for AI-COMP.
+"""FastAPI transport runtime for AI-COMP."""
 
-Import this package only when the optional server dependencies are installed.
-"""
+from ai_comp.api.app import app, create_app, create_postgres_app
+from ai_comp.api.postgres_preparation_context import (
+    PreparationTestRequest,
+    PreparationTestRequestProvider,
+    PostgresPreparationContextProvider,
+)
 
-from ai_comp.api.app import app, create_app
-
-__all__ = ["app", "create_app"]
+__all__ = [
+    "PreparationTestRequest",
+    "PreparationTestRequestProvider",
+    "PostgresPreparationContextProvider",
+    "app",
+    "create_app",
+    "create_postgres_app",
+]
