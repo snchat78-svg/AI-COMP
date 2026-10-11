@@ -9,9 +9,11 @@ class AiCompApiClient {
     required String baseUrl,
     required this.learnerId,
     String accessToken = '',
+    Future<String?> Function()? accessTokenProvider,
     http.Client? httpClient,
   })  : _baseUri = _normalizeBaseUri(baseUrl),
         _accessToken = accessToken.trim(),
+        _accessTokenProvider = accessTokenProvider,
         _httpClient = httpClient ?? http.Client(),
         _ownsHttpClient = httpClient == null {
     if (learnerId.trim().isEmpty || learnerId != learnerId.trim()) {
@@ -22,6 +24,7 @@ class AiCompApiClient {
   final Uri _baseUri;
   final String learnerId;
   final String _accessToken;
+  final Future<String?> Function()? _accessTokenProvider;
   final http.Client _httpClient;
   final bool _ownsHttpClient;
 
@@ -53,12 +56,16 @@ class AiCompApiClient {
     );
   }
 
-  Map<String, String> get _headers {
+  Future<Map<String, String>> get _headers async {
     final headers = <String, String>{
       'Accept': 'application/json',
     };
-    if (_accessToken.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $_accessToken';
+    final suppliedToken = _accessTokenProvider == null
+        ? _accessToken
+        : (await _accessTokenProvider()) ?? '';
+    final token = suppliedToken.trim();
+    if (token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
     }
     return headers;
   }
@@ -70,7 +77,7 @@ class AiCompApiClient {
     Map<String, Object?>? body,
   }) async {
     final uri = _uri(path, query);
-    final headers = _headers;
+    final headers = await _headers;
     if (body != null) {
       headers['Content-Type'] = 'application/json; charset=utf-8';
     }

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('dashboard starts with connection setup and disabled test action', (tester) async {
-    await tester.pumpWidget(const AiCompMobileApp());
+    await tester.pumpWidget(const AiCompMobileApp(firebaseEnabled: false));
 
     expect(find.text('AI-COMP तैयारी'), findsOneWidget);
     expect(find.text('API base URL'), findsOneWidget);
