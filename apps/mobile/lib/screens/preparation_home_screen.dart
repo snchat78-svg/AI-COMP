@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../api/ai_comp_api_client.dart';
@@ -5,7 +6,9 @@ import '../models/preparation_models.dart';
 import 'test_session_screen.dart';
 
 class PreparationHomeScreen extends StatefulWidget {
-  const PreparationHomeScreen({super.key});
+  const PreparationHomeScreen({super.key, this.firebaseUser});
+
+  final User? firebaseUser;
 
   @override
   State<PreparationHomeScreen> createState() => _PreparationHomeScreenState();
@@ -33,6 +36,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   bool get _connected => _api != null;
 
   @override
+  void initState() {
+    super.initState();
+    final user = widget.firebaseUser;
+    if (user != null) _learnerIdController.text = user.uid;
+  }
+
+  @override
   void dispose() {
     _api?.close();
     _baseUrlController.dispose();
@@ -45,11 +55,14 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
 
   Future<void> _connectAndRefresh() async {
     final baseUrl = _baseUrlController.text.trim();
-    final learnerId = _learnerIdController.text.trim();
+    final user = widget.firebaseUser;
+    final learnerId = user?.uid ?? _learnerIdController.text.trim();
     final token = _tokenController.text.trim();
-    if (baseUrl.isEmpty || learnerId.isEmpty || token.isEmpty) {
+    if (baseUrl.isEmpty || learnerId.isEmpty || (user == null && token.isEmpty)) {
       setState(() {
-        _error = 'API URL, learner ID aur access token teeno bharna zaroori hai.';
+        _error = user == null
+            ? 'API URL, learner ID aur access token teeno bharna zaroori hai.'
+            : 'API base URL bharna zaroori hai.';
       });
       return;
     }
@@ -64,6 +77,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         baseUrl: baseUrl,
         learnerId: learnerId,
         accessToken: token,
+        accessTokenProvider: user == null ? null : () => user.getIdToken(),
       );
       final analytics = await candidate.getAnalytics();
       final summary = await candidate.getResultsSummary();
@@ -90,6 +104,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       candidate?.close();
       _setError('Connect nahi ho saka. API URL, token aur network check karein.');
     }
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   Future<void> _refreshDashboard() async {
@@ -242,6 +260,12 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             onPressed: _loading || !_connected ? null : _refreshDashboard,
             icon: const Icon(Icons.refresh),
           ),
+          if (widget.firebaseUser != null)
+            IconButton(
+              tooltip: 'Sign out',
+              onPressed: _loading ? null : _signOut,
+              icon: const Icon(Icons.logout),
+            ),
         ],
       ),
       body: SafeArea(
@@ -303,33 +327,42 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            TextField(
-              controller: _learnerIdController,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                labelText: 'Learner ID',
-                prefixIcon: Icon(Icons.person_outline),
-                border: OutlineInputBorder(),
+            if (widget.firebaseUser != null)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.verified_user_outlined),
+                title: const Text('Firebase account'),
+                subtitle: Text(widget.firebaseUser!.email ?? widget.firebaseUser!.uid),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _tokenController,
-              obscureText: _hideToken,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration: InputDecoration(
-                labelText: 'Access token',
-                helperText: 'Server ke configured authentication ke mutabik token dein.',
-                prefixIcon: const Icon(Icons.key_outlined),
-                suffixIcon: IconButton(
-                  tooltip: _hideToken ? 'Show token' : 'Hide token',
-                  onPressed: () => setState(() => _hideToken = !_hideToken),
-                  icon: Icon(_hideToken ? Icons.visibility : Icons.visibility_off),
+            if (widget.firebaseUser == null) ...[
+              TextField(
+                controller: _learnerIdController,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  labelText: 'Learner ID',
+                  prefixIcon: Icon(Icons.person_outline),
+                  border: OutlineInputBorder(),
                 ),
-                border: const OutlineInputBorder(),
               ),
-            ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _tokenController,
+                obscureText: _hideToken,
+                autocorrect: false,
+                enableSuggestions: false,
+                decoration: InputDecoration(
+                  labelText: 'Access token',
+                  helperText: 'Server ke configured authentication ke mutabik token dein.',
+                  prefixIcon: const Icon(Icons.key_outlined),
+                  suffixIcon: IconButton(
+                    tooltip: _hideToken ? 'Show token' : 'Hide token',
+                    onPressed: () => setState(() => _hideToken = !_hideToken),
+                    icon: Icon(_hideToken ? Icons.visibility : Icons.visibility_off),
+                  ),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
