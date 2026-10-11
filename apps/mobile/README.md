@@ -1,15 +1,16 @@
 # AI-COMP Flutter Mobile Client
 
-This folder contains the first Flutter client slice for adaptive exam preparation. The client uses the existing FastAPI endpoints; it does not create a second learning engine or local score store.
+This package contains the Flutter adaptive-exam preparation client and the checked-in Android runner. The client uses the existing FastAPI endpoints; it does not create a second learning engine or local score store.
 
 ## Requirements
 
-- Flutter stable and a Dart SDK bundled with Flutter.
+- Flutter stable and its bundled Dart SDK.
+- Android SDK and Java 17 for local Android builds.
 - A reachable AI-COMP API base URL.
 - A learner ID recognized by that deployment and an access token that the deployment's configured authentication provider understands.
 - The authenticated server must map the supplied access token to the same learner as the route's learner ID. A learner ID by itself is not authentication.
 
-## Run
+## Run and validate
 
 From this directory:
 
@@ -20,19 +21,17 @@ flutter test
 flutter run --dart-define=AI_COMP_API_BASE_URL=https://your-api.example.com --dart-define=AI_COMP_LEARNER_ID=your-learner-id
 ```
 
-The API URL and learner ID are optional compile-time defaults; both can also be entered on the first screen. Enter the access token in the screen. The token is held in memory and is not written to disk by this app.
-
-Before the first device run, generate the Android runner outside this package, then copy it in (this avoids overwriting the committed `lib/` sources):
+For a fresh Flutter SDK checkout, Flutter may need to generate local wrapper files ignored by Git. Run the following once from this directory if the Android/Gradle wrapper is missing:
 
 ```sh
-flutter create --platforms=android --project-name ai_comp_mobile --org com.aicomp /tmp/ai_comp_mobile_scaffold
-cp -R /tmp/ai_comp_mobile_scaffold/android ./android
-flutter run --dart-define=AI_COMP_API_BASE_URL=https://your-api.example.com --dart-define=AI_COMP_LEARNER_ID=your-learner-id
+flutter create --platforms=android --project-name ai_comp_mobile --org com.aicomp --no-pub .
 ```
 
-For an Android emulator connecting to a development API running on the host computer, the base URL is commonly `http://10.0.2.2:8000`. Use HTTPS for real deployments; do not send production access tokens over plain HTTP. Your server may need its development network/firewall configured to permit emulator access.
+The API URL and learner ID are optional compile-time defaults; both can also be entered on the first screen. Enter the access token in the screen. The token is held in memory and is not written to disk by this app.
 
-This repository has no mobile login endpoint. The client therefore accepts a token issued by the host application's existing authentication system; it does not mint credentials or bypass server-side learner-scope checks.
+For an Android emulator connecting to a development API running on the host computer, the base URL is commonly `http://10.0.2.2:8000`. Cleartext HTTP is permitted only by the debug Android manifest; release builds retain Android's cleartext restrictions. Use HTTPS for real deployments and never send production access tokens over plain HTTP. Your server may need its development network/firewall configured to permit emulator access.
+
+This repository has no mobile login endpoint. The client accepts a token issued by the host application's existing authentication system; it does not mint credentials or bypass server-side learner-scope checks.
 
 ## Current workflow
 
@@ -44,6 +43,14 @@ This repository has no mobile login endpoint. The client therefore accepts a tok
 
 The backend also exposes OpenAPI at `/openapi.json` and interactive docs at `/docs` when running in a configured server environment. Client response models are aligned with `src/ai_comp/api/preparation_client_contract.py`.
 
-## Platform scaffolding
+## Android build and artifact
 
-The committed files contain the Flutter/Dart package, screens, and tests. Platform-specific Android/iOS runner files are not checked in yet; the Android command above creates a local runner without overwriting client sources. The committed CI validates the Dart/Flutter package with `flutter analyze` and `flutter test`; it does not claim that an APK has been built.
+The checked-in `android/` directory includes the application Gradle configuration, manifest/Internet permission, Kotlin activity, and launch themes. Flutter-generated local properties and wrapper files remain untracked by design.
+
+The GitHub Actions workflow runs dependency resolution, `flutter analyze`, `flutter test`, and `flutter build apk --release`. On a successful run, download the `ai-comp-mobile-android-apk` artifact from that workflow run (retained for 14 days). Install on a connected test device with:
+
+```sh
+adb install -r app-release.apk
+```
+
+The CI APK is a release-mode test build signed with Flutter's local debug key. It is **not** a production-signed store release. No keystore, API URL, learner ID, or access token is embedded in the repository or build workflow. Production distribution requires a separately configured private signing key and release process.
