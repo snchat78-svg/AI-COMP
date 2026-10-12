@@ -131,8 +131,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       Text(
                         _verified
                             ? 'Your email address has been verified. Sign in again to open your dashboard.'
-                            : 'We sent a verification link to ${widget.user.email ?? 'your email address'}. '
-                                'Open that email, select the verification link, then return to this screen. '
+                            : 'To verify ${widget.user.email ?? 'your email address'}, open the verification link from your inbox. '
+                                'If you have not received a link, select "Resend verification email" below. '
                                 'You must verify your email before you can sign in to AI-COMP.',
                         textAlign: TextAlign.center,
                       ),
