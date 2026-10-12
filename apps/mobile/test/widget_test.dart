@@ -6,7 +6,7 @@ void main() {
   testWidgets('dashboard starts with connection setup and disabled test action', (tester) async {
     await tester.pumpWidget(const AiCompMobileApp(firebaseEnabled: false));
 
-    expect(find.text('AI-COMP तैयारी'), findsOneWidget);
+    expect(find.text('AI-COMP Preparation'), findsOneWidget);
     expect(find.text('API base URL'), findsOneWidget);
     expect(find.text('Learner ID'), findsOneWidget);
     expect(find.text('Access token'), findsOneWidget);
