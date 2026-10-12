@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/email_auth_screen.dart';
+import 'screens/email_verification_screen.dart';
 import 'screens/preparation_home_screen.dart';
 
 Future<void> main() async {
@@ -64,6 +65,7 @@ class _FirebaseAuthGate extends StatelessWidget {
         }
         final user = snapshot.data;
         if (user == null) return const EmailAuthScreen();
+        if (!user.emailVerified) return EmailVerificationScreen(user: user);
         return PreparationHomeScreen(firebaseUser: user);
       },
     );
@@ -83,9 +85,9 @@ class FirebaseInitializationFailureApp extends StatelessWidget {
           padding: EdgeInsets.all(24),
           child: Center(
             child: Text(
-              'Firebase initialize nahi ho saka. GitHub Actions mein '
-              'GOOGLE_SERVICES_JSON_BASE64 secret aur Firebase Android package '
-              'com.aicomp.ai_comp_mobile ko check karein.',
+              'Firebase could not initialize. Check the '
+              'GOOGLE_SERVICES_JSON_BASE64 GitHub Actions secret and confirm that '
+              'the Firebase Android app uses package ID com.aicomp.ai_comp_mobile.',
               textAlign: TextAlign.center,
             ),
           ),
