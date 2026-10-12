@@ -7,7 +7,7 @@ This package contains the Flutter adaptive-exam preparation client and the check
 - Flutter stable and its bundled Dart SDK.
 - Android SDK and Java 17 for local Android builds.
 - A reachable AI-COMP API base URL.
-- A learner ID recognized by that deployment and an access token that the deployment's configured authentication provider understands.
+- A learner ID recognized by that deployment. The signed-in mobile client uses the Firebase UID as its learner ID and sends a Firebase ID token as a Bearer token; the deployed API must verify it.
 - The authenticated server must map the supplied access token to the same learner as the route's learner ID. A learner ID by itself is not authentication.
 
 ## Run and validate
@@ -31,7 +31,7 @@ The API URL and learner ID are optional compile-time defaults; both can also be 
 
 For an Android emulator connecting to a development API running on the host computer, the base URL is commonly `http://10.0.2.2:8000`. Cleartext HTTP is permitted only by the debug Android manifest; release builds retain Android's cleartext restrictions. Use HTTPS for real deployments and never send production access tokens over plain HTTP. Your server may need its development network/firewall configured to permit emulator access.
 
-This repository has no mobile login endpoint. The client accepts a token issued by the host application's existing authentication system; it does not mint credentials or bypass server-side learner-scope checks.
+The mobile app signs users in with Firebase Authentication (Email/Password), requires verified email, and obtains a Firebase ID token for API requests. The production API must independently verify that token with the Firebase Admin SDK and confirm the requested learner ID matches the verified UID. Client-side login is not a substitute for backend authentication. Until the configured PostgreSQL/Firebase API runtime is deployed, there is no real API base URL to enter.
 
 ## Current workflow
 
