@@ -69,6 +69,24 @@ def test_runtime_factory_requires_environment_configuration(monkeypatch: pytest.
 
     monkeypatch.delenv("AI_COMP_DATABASE_URL", raising=False)
     monkeypatch.delenv("FIREBASE_PROJECT_ID", raising=False)
+    monkeypatch.delenv("FIREBASE_AUTH_EMULATOR_HOST", raising=False)
 
     with pytest.raises(RuntimeError, match="AI_COMP_DATABASE_URL"):
+        create_runtime_app()
+
+
+@pytest.mark.parametrize("emulator_host", ["127.0.0.1:9099", ""])
+def test_runtime_factory_rejects_firebase_auth_emulator_mode(
+    monkeypatch: pytest.MonkeyPatch,
+    emulator_host: str,
+) -> None:
+    from ai_comp.api.runtime import create_runtime_app
+
+    # Reject the setting even before other environment configuration is checked,
+    # and before Firebase Admin or the database runtime can be initialized.
+    monkeypatch.setenv("FIREBASE_AUTH_EMULATOR_HOST", emulator_host)
+    monkeypatch.delenv("AI_COMP_DATABASE_URL", raising=False)
+    monkeypatch.delenv("FIREBASE_PROJECT_ID", raising=False)
+
+    with pytest.raises(RuntimeError, match="FIREBASE_AUTH_EMULATOR_HOST"):
         create_runtime_app()
