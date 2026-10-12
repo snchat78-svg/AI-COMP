@@ -19,6 +19,15 @@ def create_runtime_app() -> FastAPI:
     Cloud Run should provide application default credentials to Firebase Admin SDK;
     no service-account private key belongs in source control or the APK.
     """
+    # The Firebase Admin SDK treats this environment variable as permission to
+    # accept emulator-issued (including unsigned) ID tokens. This factory is a
+    # production boundary, so reject emulator mode before initializing Firebase
+    # or creating the database-backed app.
+    if "FIREBASE_AUTH_EMULATOR_HOST" in os.environ:
+        raise RuntimeError(
+            "FIREBASE_AUTH_EMULATOR_HOST must not be set for the production API runtime."
+        )
+
     dsn = os.environ.get("AI_COMP_DATABASE_URL", "").strip()
     project_id = os.environ.get("FIREBASE_PROJECT_ID", "").strip()
     if not dsn:
