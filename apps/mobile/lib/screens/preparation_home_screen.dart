@@ -61,8 +61,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     if (baseUrl.isEmpty || learnerId.isEmpty || (user == null && token.isEmpty)) {
       setState(() {
         _error = user == null
-            ? 'API URL, learner ID aur access token teeno bharna zaroori hai.'
-            : 'API base URL bharna zaroori hai.';
+            ? 'API URL, learner ID, and access token are required.'
+            : 'The API base URL is required.';
       });
       return;
     }
@@ -99,10 +99,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       _setError(_friendlyError(error));
     } on ArgumentError catch (error) {
       candidate?.close();
-      _setError(error.message?.toString() ?? 'API configuration sahi nahi hai.');
+      _setError(error.message?.toString() ?? 'API configuration is invalid.');
     } catch (_) {
       candidate?.close();
-      _setError('Connect nahi ho saka. API URL, token aur network check karein.');
+      _setError('Could not connect. Check the API URL, access token, and network connection.');
     }
   }
 
@@ -126,26 +126,26 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
     } catch (_) {
-      _setError('Latest progress load nahi hua. Refresh karke dobara try karein.');
+      _setError('Could not load the latest progress. Refresh and try again.');
     }
   }
 
   Future<void> _startAdaptivePractice() async {
     final api = _api;
     if (api == null) {
-      _setError('Pehle API se connect karein.');
+      _setError('Connect to the API first.');
       return;
     }
     final questionCount = int.tryParse(_questionCountController.text.trim());
     final durationMinutes = int.tryParse(_durationMinutesController.text.trim());
     if (questionCount == null || questionCount < 1 || questionCount > 500) {
-      _setError('Questions ki sankhya 1 se 500 ke beech honi chahiye.');
+      _setError('Enter between 1 and 500 questions.');
       return;
     }
     if (durationMinutes == null ||
         durationMinutes < 1 ||
         durationMinutes > 1440) {
-      _setError('Duration 1 se 1440 minutes ke beech honi chahiye.');
+      _setError('Enter a duration between 1 and 1,440 minutes.');
       return;
     }
 
@@ -165,7 +165,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Question pool ke hisaab se ${recommendation.questionCount} questions ka test banega.',
+              'The available question pool supports ${recommendation.questionCount} questions for this test.',
             ),
           ),
         );
@@ -186,7 +186,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
     } catch (_) {
-      _setError('Adaptive test create nahi ho saka. Progress save hui hai ya nahi, dashboard refresh karke check karein.');
+      _setError('Could not create an adaptive test. Refresh the dashboard to check whether your progress was saved.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -217,7 +217,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
     } catch (_) {
-      _setError('Saved test session resume nahi ho saki. Dobara try karein.');
+      _setError('Could not resume the saved test session. Please try again.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -226,15 +226,15 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   String _friendlyError(ApiException error) {
     switch (error.code) {
       case 'AUTHENTICATION_REQUIRED':
-        return 'Authentication required: server ke liye sahi access token dein.';
+        return 'Authentication is required. Provide a valid access token for this server.';
       case 'LEARNER_SCOPE_MISMATCH':
-        return 'Yeh learner ID current token se authorized nahi hai.';
+        return 'This learner ID is not authorized for the current token.';
       case 'NO_ADAPTIVE_PRACTICE_SIGNAL':
-        return 'Adaptive recommendation ke liye pehle ek test complete karein.';
+        return 'Complete a test first to enable adaptive recommendations.';
       case 'NO_ELIGIBLE_ADAPTIVE_QUESTIONS':
-        return 'Recommended topics ke liye abhi eligible verified questions nahi hain.';
+        return 'There are no eligible verified questions for the recommended topics yet.';
       case 'NETWORK_UNAVAILABLE':
-        return 'API tak pahunch nahi hui. Base URL aur network check karein.';
+        return 'Could not reach the API. Check the base URL and network connection.';
       default:
         return error.message;
     }
@@ -253,7 +253,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI-COMP तैयारी'),
+        title: const Text('AI-COMP Preparation'),
         actions: [
           IconButton(
             tooltip: 'Refresh progress',
@@ -273,12 +273,12 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'आपकी तैयारी, आपकी प्रगति के अनुसार',
+              'Your preparation, guided by your progress',
               style: theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
             Text(
-              'Weak topics aur pichhli galtiyon se agla practice test banayein.',
+              'Build your next practice test around weak topics and previous mistakes.',
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 20),
@@ -297,7 +297,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             _buildRecentSessions(theme),
             const SizedBox(height: 24),
             Text(
-              'Security: access token sirf is screen ke memory mein rakha gaya hai; disk par save nahi hota.',
+              'Security: the access token is kept only in memory on this screen and is not saved to disk.',
               style: theme.textTheme.bodySmall,
             ),
           ],
@@ -352,7 +352,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 enableSuggestions: false,
                 decoration: InputDecoration(
                   labelText: 'Access token',
-                  helperText: 'Server ke configured authentication ke mutabik token dein.',
+                  helperText: 'Enter a token accepted by this API server.',
                   prefixIcon: const Icon(Icons.key_outlined),
                   suffixIcon: IconButton(
                     tooltip: _hideToken ? 'Show token' : 'Hide token',
@@ -387,7 +387,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           children: [
             Text('Adaptive practice test', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            const Text('Server saved test history se focus topics choose karega.'),
+            const Text('Focus topics are selected using your saved test history.'),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -481,9 +481,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             Text('Focus topics', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             if (!_connected)
-              const Text('Progress dekhne ke liye API connect karein.')
+              const Text('Connect to the API to view your progress.')
             else if (topics.isEmpty)
-              const Text('Saved history mein koi weak topic report nahi hua.')
+              const Text('No weak topics have been reported in your saved history.')
             else
               for (final topic in topics.take(5))
                 ListTile(
@@ -509,9 +509,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             Text('Recent tests', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             if (!_connected)
-              const Text('Recent results yahan dikhai denge.')
+              const Text('Recent results will appear here.')
             else if (_recentSessions.isEmpty)
-              const Text('Abhi koi test session nahi hai.')
+              const Text('You do not have any test sessions yet.')
             else
               for (final item in _recentSessions)
                 ListTile(
