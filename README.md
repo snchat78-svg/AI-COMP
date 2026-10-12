@@ -8,6 +8,8 @@ AI-COMP is a Python/FastAPI backend for competitive-exam paper research, verifie
 - Phase 6.40 publishes client-facing OpenAPI response contracts at `/openapi.json`.
 - Phase 6.41 adds the initial Flutter client package under `apps/mobile/`: adaptive-preparation dashboard, timed question session, answer autosave/recovery, result review, and session resume.
 - Phase 6.42 adds Android runner configuration and CI build verification; successful Flutter Actions runs publish a test APK artifact.
+- Phase 6.44 adds Firebase email/password registration, confirmation, email verification gating, password-reset email, and English auth/dashboard copy.
+- Phase 6.45 adds a fail-closed Firebase ID-token identity adapter, a configured PostgreSQL/Firebase runtime factory, an explicit migration CLI, and a Cloud Run-ready container. A production API URL still requires database provisioning and deployment.
 
 ## Backend tests
 
@@ -30,5 +32,6 @@ See [apps/mobile/README.md](apps/mobile/README.md) for requirements, local setup
 - [Phase 6.40 client/API contract](docs/PHASE_6_40_ADAPTIVE_PREPARATION_CLIENT_API_CONTRACT.md)
 - [Phase 6.41 Flutter client foundation](docs/PHASE_6_41_FLUTTER_ADAPTIVE_PREPARATION_CLIENT.md)
 - [Phase 6.42 Android platform and APK build](docs/PHASE_6_42_ANDROID_PLATFORM_AND_APK_BUILD.md)
+- [Phase 6.45 Firebase API authentication and runtime](docs/PHASE_6_45_FIREBASE_API_AUTH.md)
 
 A passing test suite proves the tested contracts; it does not imply full official-exam source coverage or production deployment.
