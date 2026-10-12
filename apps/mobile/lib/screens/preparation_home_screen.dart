@@ -61,8 +61,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     if (baseUrl.isEmpty || learnerId.isEmpty || (user == null && token.isEmpty)) {
       setState(() {
         _error = user == null
-            ? 'API URL, learner ID aur access token teeno bharna zaroori hai.'
-            : 'API base URL bharna zaroori hai.';
+            ? 'API URL, learner ID, and access token are required.'
+            : 'The API base URL is required.';
       });
       return;
     }
@@ -139,13 +139,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     final questionCount = int.tryParse(_questionCountController.text.trim());
     final durationMinutes = int.tryParse(_durationMinutesController.text.trim());
     if (questionCount == null || questionCount < 1 || questionCount > 500) {
-      _setError('Questions ki sankhya 1 se 500 ke beech honi chahiye.');
+      _setError('Enter between 1 and 500 questions.');
       return;
     }
     if (durationMinutes == null ||
         durationMinutes < 1 ||
         durationMinutes > 1440) {
-      _setError('Duration 1 se 1440 minutes ke beech honi chahiye.');
+      _setError('Enter a duration between 1 and 1,440 minutes.');
       return;
     }
 
@@ -165,7 +165,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Question pool ke hisaab se ${recommendation.questionCount} questions ka test banega.',
+              'The available question pool supports ${recommendation.questionCount} questions for this test.',
             ),
           ),
         );
@@ -352,7 +352,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 enableSuggestions: false,
                 decoration: InputDecoration(
                   labelText: 'Access token',
-                  helperText: 'Server ke configured authentication ke mutabik token dein.',
+                  helperText: 'Enter a token accepted by this API server.',
                   prefixIcon: const Icon(Icons.key_outlined),
                   suffixIcon: IconButton(
                     tooltip: _hideToken ? 'Show token' : 'Hide token',
@@ -509,7 +509,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             Text('Recent tests', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             if (!_connected)
-              const Text('Recent results yahan dikhai denge.')
+              const Text('Recent results will appear here.')
             else if (_recentSessions.isEmpty)
               const Text('You do not have any test sessions yet.')
             else
