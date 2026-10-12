@@ -43,7 +43,9 @@ def create_runtime_app() -> FastAPI:
         )
 
     actual_project_id = firebase_app.project_id
-    if actual_project_id and actual_project_id != project_id:
+    if not actual_project_id:
+        raise RuntimeError("The Firebase Admin app has no resolved project ID.")
+    if actual_project_id != project_id:
         raise RuntimeError(
             "FIREBASE_PROJECT_ID does not match the initialized Firebase Admin app."
         )
