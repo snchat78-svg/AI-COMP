@@ -9,7 +9,8 @@ AI-COMP is a Python/FastAPI backend for competitive-exam paper research, verifie
 - Phase 6.41 adds the initial Flutter client package under `apps/mobile/`: adaptive-preparation dashboard, timed question session, answer autosave/recovery, result review, and session resume.
 - Phase 6.42 adds Android runner configuration and CI build verification; successful Flutter Actions runs publish a test APK artifact.
 - Phase 6.44 adds Firebase email/password registration, confirmation, email verification gating, password-reset email, and English auth/dashboard copy.
-- Phase 6.45 adds a fail-closed Firebase ID-token identity adapter, a configured PostgreSQL/Firebase runtime factory, an explicit migration CLI, and a Cloud Run-ready container. A production API URL still requires database provisioning and deployment.
+- Phase 6.45 adds fail-closed Firebase ID-token verification, the configured PostgreSQL/Firebase API runtime, explicit migrations, and a Cloud Run-ready container.
+- Phase 6.46 adds a Render Free Blueprint and a manually triggered GitHub Actions database-migration workflow. It prepares a free-tier deployment path but does not create cloud resources or claim the API is deployed.
 
 ## Backend tests
 
@@ -26,6 +27,10 @@ PostgreSQL integration tests use `AI_COMP_DATABASE_URL`; GitHub Actions supplies
 
 See [apps/mobile/README.md](apps/mobile/README.md) for requirements, local setup, authentication expectations, device-run instructions, and APK artifact retrieval. Mobile CI runs `flutter analyze`, `flutter test`, and `flutter build apk --release`. The generated APK is for testing and uses a debug signing key; production signing and iOS scaffolding are not claimed as complete.
 
+## Hosting readiness
+
+Read [Phase 6.46 — Free-Tier Cloud Hosting Readiness](docs/PHASE_6_46_FREE_HOSTING_READINESS.md) before creating resources. Never commit database credentials or Firebase service-account JSON. Render Free services may sleep and Supabase Free projects may pause; check the current provider limits before public launch. API URL configuration in the APK must wait for a real HTTPS service.
+
 ## Roadmap and evidence
 
 - [Master roadmap coverage audit](docs/MASTER_ROADMAP_COVERAGE_AUDIT.md)
@@ -33,5 +38,6 @@ See [apps/mobile/README.md](apps/mobile/README.md) for requirements, local setup
 - [Phase 6.41 Flutter client foundation](docs/PHASE_6_41_FLUTTER_ADAPTIVE_PREPARATION_CLIENT.md)
 - [Phase 6.42 Android platform and APK build](docs/PHASE_6_42_ANDROID_PLATFORM_AND_APK_BUILD.md)
 - [Phase 6.45 Firebase API authentication and runtime](docs/PHASE_6_45_FIREBASE_API_AUTH.md)
+- [Phase 6.46 free-tier hosting readiness](docs/PHASE_6_46_FREE_HOSTING_READINESS.md)
 
 A passing test suite proves the tested contracts; it does not imply full official-exam source coverage or production deployment.
