@@ -1,0 +1,51 @@
+name: Apply database migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_apply:
+        description: "Select APPLY only after verifying the target database"
+        type: choice
+        options:
+          - DO_NOT_RUN
+          - APPLY
+        default: DO_NOT_RUN
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-database-migrations
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    if: ${{ inputs.confirm_apply == 'APPLY' }}
+    runs-on: ubuntu-latest
+    env:
+      AI_COMP_DATABASE_URL: ${{ secrets.AI_COMP_DATABASE_URL }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate database secret
+        shell: bash
+        run: |
+          if [ -z "${AI_COMP_DATABASE_URL}" ]; then
+            echo "::error::Add the repository Actions secret AI_COMP_DATABASE_URL before running migrations."
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[postgres,server]"
+
+      - name: Apply controlled database migrations
+        run: python -m ai_comp.database.migrate_cli

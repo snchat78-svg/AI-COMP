@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ai-comp-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /openapi.json
+    envVars:
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: AI_COMP_DATABASE_URL
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/firebase-service-account.json
