@@ -16,7 +16,10 @@ class PreparationHomeScreen extends StatefulWidget {
 
 class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   final _baseUrlController = TextEditingController(
-    text: const String.fromEnvironment('AI_COMP_API_BASE_URL'),
+    text: const String.fromEnvironment(
+      'AI_COMP_API_BASE_URL',
+      defaultValue: 'https://ai-comp-api.onrender.com',
+    ),
   );
   final _learnerIdController = TextEditingController(
     text: const String.fromEnvironment('AI_COMP_LEARNER_ID'),
