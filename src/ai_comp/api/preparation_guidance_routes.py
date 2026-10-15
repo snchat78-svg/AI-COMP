@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import Mapping
 import time
 from http import HTTPStatus
@@ -211,7 +212,13 @@ def _authenticated_learner_or_error(
         })
     try:
         authenticated_learner_id = identity_provider(request)
-    except Exception:
+    except Exception as exc:
+        # Log only the exception class: never include Authorization headers,
+        # bearer tokens, learner IDs, or exception messages in production logs.
+        logging.getLogger(__name__).warning(
+            "Learner authentication verification unavailable (exception_type=%s)",
+            type(exc).__name__,
+        )
         return None, _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {"code": "AUTHENTICATION_UNAVAILABLE", "message": "Authentication could not be verified."}
         })
