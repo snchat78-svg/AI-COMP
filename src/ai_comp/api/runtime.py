@@ -8,6 +8,42 @@ from ai_comp.api.app import create_postgres_app
 from ai_comp.api.firebase_auth import FirebaseIdTokenLearnerIdentityProvider
 
 
+def _initialize_firebase_app(project_id: str):
+    """Initialize Firebase Admin using the explicitly configured service key.
+
+    Render Secret Files are mounted at a known path. Loading that file directly
+    avoids relying on google.auth.default() to discover credentials later during
+    token verification, where such discovery errors otherwise become opaque 503s.
+    If no file path is configured, environments such as Cloud Run may still use
+    Application Default Credentials.
+    """
+    from firebase_admin import credentials, get_app, initialize_app
+
+    credential_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+    firebase_credential = None
+    if credential_path:
+        if not os.path.isfile(credential_path) or not os.access(credential_path, os.R_OK):
+            raise RuntimeError(
+                "The configured Firebase service-account file is missing or unreadable."
+            )
+        try:
+            firebase_credential = credentials.Certificate(credential_path)
+        except Exception:
+            # Never surface JSON/private-key parser details in startup logs.
+            raise RuntimeError("The configured Firebase service-account file is invalid.") from None
+
+    try:
+        firebase_app = get_app()
+    except ValueError:
+        options = {"projectId": project_id, "httpTimeout": 10}
+        if firebase_credential is not None:
+            firebase_app = initialize_app(credential=firebase_credential, options=options)
+        else:
+            firebase_app = initialize_app(options=options)
+
+    return firebase_app
+
+
 def create_runtime_app() -> FastAPI:
     """Build the configured production API from runtime environment variables.
 
@@ -16,8 +52,7 @@ def create_runtime_app() -> FastAPI:
 
     The existing create_app() factory remains unchanged and fail-closed for tests
     and unconfigured hosts. This factory is the explicit production composition.
-    Cloud Run should provide application default credentials to Firebase Admin SDK;
-    no service-account private key belongs in source control or the APK.
+    No service-account private key belongs in source control or the APK.
     """
     # The Firebase Admin SDK treats this environment variable as permission to
     # accept emulator-issued (including unsigned) ID tokens. This factory is a
@@ -37,19 +72,13 @@ def create_runtime_app() -> FastAPI:
 
     # Import the Admin SDK only when this configured runtime is started.
     try:
-        from firebase_admin import auth, get_app, initialize_app
+        from firebase_admin import auth
     except ImportError as exc:  # pragma: no cover - exercised in the deployment environment.
         raise RuntimeError(
             "Install the server extras, including firebase-admin, to run the configured API."
         ) from exc
 
-    try:
-        firebase_app = get_app()
-    except ValueError:
-        # Application Default Credentials are supplied by the hosting environment.
-        firebase_app = initialize_app(
-            options={"projectId": project_id, "httpTimeout": 10}
-        )
+    firebase_app = _initialize_firebase_app(project_id)
 
     actual_project_id = firebase_app.project_id
     if not actual_project_id:
