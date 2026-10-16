@@ -451,6 +451,103 @@ def test_adaptive_preparation_loop_uses_completed_result_to_build_next_session()
                 (question_ids,),
             )
 
+def test_session_creation_caps_requested_count_to_available_verified_questions():
+    dsn = database_url()
+    apply_migrations(dsn)
+    suffix = uuid4().hex
+    learner_id = f"phase651-small-pool-{suffix}"
+    concept_id = f"phase651-concept-{suffix}"
+    question_id = f"phase651-question-{suffix}"
+    client = TestClient(create_postgres_app(
+        dsn=dsn,
+        learner_identity_provider=lambda _request: learner_id,
+    ))
+    request_url = f"/api/v1/learners/{learner_id}/preparation-requests"
+    sessions_url = f"/api/v1/learners/{learner_id}/preparation-sessions"
+
+    with connect_postgres(dsn) as connection:
+        PostgresGeneratedQuestionRepository(connection).save(
+            accepted_question(question_id, concept_id)
+        )
+
+    try:
+        saved_request = client.post(request_url, json={
+            "title": "First mixed practice",
+            "question_count": 20,
+            "duration_seconds": 1800,
+            "mode": "MIXED",
+            "concept_ids": [],
+        })
+        assert saved_request.status_code == 201, saved_request.text
+
+        created = client.post(sessions_url)
+        assert created.status_code == 201, created.text
+        payload = created.json()
+        assert payload["question_count"] == 1
+        assert payload["requested_question_count"] == 20
+        assert payload["question_count_adjusted"] is True
+        assert len(payload["question_ids"]) == 1
+
+        current = client.post(f'{sessions_url}/{payload["session_id"]}/start')
+        assert current.status_code == 200, current.text
+        question = client.get(
+            f'{sessions_url}/{payload["session_id"]}/current-question'
+        )
+        assert question.status_code == 200, question.text
+        assert question.json()["question_count"] == 1
+    finally:
+        with connect_postgres(dsn) as connection:
+            connection.execute(
+                "DELETE FROM preparation_test_sessions WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM preparation_test_requests WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM generated_questions WHERE generated_question_id = %s",
+                (question_id,),
+            )
+
+
+def test_session_creation_returns_actionable_error_when_verified_pool_is_empty():
+    dsn = database_url()
+    apply_migrations(dsn)
+    learner_id = f"phase651-empty-pool-{uuid4().hex}"
+    client = TestClient(create_postgres_app(
+        dsn=dsn,
+        learner_identity_provider=lambda _request: learner_id,
+    ))
+    request_url = f"/api/v1/learners/{learner_id}/preparation-requests"
+    sessions_url = f"/api/v1/learners/{learner_id}/preparation-sessions"
+
+    saved_request = client.post(request_url, json={
+        "title": "First mixed practice",
+        "question_count": 20,
+        "duration_seconds": 1800,
+        "mode": "MIXED",
+        "concept_ids": [],
+    })
+    assert saved_request.status_code == 201, saved_request.text
+
+    try:
+        created = client.post(sessions_url)
+        assert created.status_code == 409, created.text
+        assert created.json()["error"]["code"] == "NO_ELIGIBLE_PREPARATION_QUESTIONS"
+        assert "verified question bank" in created.json()["error"]["message"]
+    finally:
+        with connect_postgres(dsn) as connection:
+            connection.execute(
+                "DELETE FROM preparation_test_sessions WHERE learner_id = %s",
+                (learner_id,),
+            )
+            connection.execute(
+                "DELETE FROM preparation_test_requests WHERE learner_id = %s",
+                (learner_id,),
+            )
+
+
 def test_session_creation_requires_active_saved_request():
     dsn = database_url()
     apply_migrations(dsn)
