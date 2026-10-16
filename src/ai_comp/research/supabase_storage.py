@@ -105,7 +105,22 @@ class SupabaseObjectStorage:
                 or b"bucketalreadyexists" in body_lower
             )
         ):
-            # Existing buckets remain private; do not change their access model.
+            # Never assume a pre-existing bucket is private. Confirm it before
+            # storing exam documents there.
+            verify_status, verify_body = self._request(
+                "GET",
+                f"{self.base_url}/storage/v1/bucket/{quote(self.bucket, safe='')}",
+                body=b"",
+                content_type="application/json",
+            )
+            try:
+                existing_bucket = json.loads(verify_body.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                existing_bucket = {}
+            if verify_status != 200 or existing_bucket.get("public") is not False:
+                raise ObjectStorageError(
+                    "Existing storage bucket is not confirmed private"
+                )
             self._bucket_ready = True
             return
         raise ObjectStorageError(
@@ -168,7 +183,8 @@ class SupabaseObjectStorage:
             "User-Agent": "AI-COMP/phase2.3",
         }
         headers.update(additional_headers or {})
-        request = Request(url, data=body, headers=headers, method=method)
+        request_body = None if method in {"GET", "HEAD"} else body
+        request = Request(url, data=request_body, headers=headers, method=method)
         try:
             with urlopen(request, timeout=self.timeout_seconds) as response:
                 return int(response.status), response.read(2048)
