@@ -5,6 +5,7 @@ from hashlib import sha256
 from time import sleep
 from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
+from urllib.request import HTTPRedirectHandler
 
 from ai_comp.domain.sources import CrawlPolicy, SourceRecord
 from ai_comp.research.discovery import PaperDiscovery
@@ -19,18 +20,66 @@ class HttpResponse:
     content: str
     content_type: str = ""
 
+class _SameHostRedirectHandler(HTTPRedirectHandler):
+    """Reject cross-host redirects before urllib follows them."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urlparse(newurl).netloc.lower() != urlparse(req.full_url).netloc.lower():
+            raise ResearchPolicyError("cross_host_redirect_blocked")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 class HttpTransport:
+    """Small bounded HTTP transport with retries for transient network failures."""
+
+    def __init__(
+        self,
+        *,
+        timeout_seconds: float = 15.0,
+        retries: int = 2,
+        retry_delay_seconds: float = 0.5,
+    ) -> None:
+        if timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be positive")
+        if retries < 0:
+            raise ValueError("retries cannot be negative")
+        if retry_delay_seconds < 0:
+            raise ValueError("retry_delay_seconds cannot be negative")
+        self.timeout_seconds = timeout_seconds
+        self.retries = retries
+        self.retry_delay_seconds = retry_delay_seconds
+
     def get(self, url: str) -> HttpResponse:
-        from urllib.error import HTTPError
-        from urllib.request import Request, urlopen
+        from urllib.error import HTTPError, URLError
+        from urllib.request import Request, build_opener
+
         request = Request(url, headers={"User-Agent": "AI-COMP/phase2"})
-        try:
-            with urlopen(request, timeout=15) as response:
+        opener = build_opener(_SameHostRedirectHandler())
+        for attempt in range(self.retries + 1):
+            try:
+                with opener.open(request, timeout=self.timeout_seconds) as response:
+                    body = response.read()
+                    return HttpResponse(
+                        response.geturl(),
+                        response.status,
+                        body.decode("utf-8", errors="replace"),
+                        response.headers.get("Content-Type", ""),
+                    )
+            except HTTPError as response:
+                # HTTP status responses are not transport failures. Preserve
+                # existing policy handling for 403/404/429 and other statuses.
                 body = response.read()
-                return HttpResponse(response.geturl(), response.status, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
-        except HTTPError as response:
-            body = response.read()
-            return HttpResponse(response.geturl(), response.code, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
+                return HttpResponse(
+                    response.geturl(),
+                    response.code,
+                    body.decode("utf-8", errors="replace"),
+                    response.headers.get("Content-Type", ""),
+                )
+            except (URLError, TimeoutError, OSError):
+                if attempt >= self.retries:
+                    raise
+                sleep(self.retry_delay_seconds * (2**attempt))
+        raise RuntimeError("unreachable HTTP retry state")
 
 @dataclass(frozen=True)
 class LiveDiscoveryResult:
@@ -57,6 +106,7 @@ class LiveOfficialSourceDiscovery:
         source_id = source_id or source.source_id
         robots_url = urljoin(source.base_url, "/robots.txt")
         robots = self.transport.get(robots_url)
+        self._ensure_registered_host(source, robots_url, robots)
         if robots.status_code >= 400:
             raise ResearchPolicyError("robots_unavailable")
         parser = RobotFileParser()
@@ -64,14 +114,28 @@ class LiveOfficialSourceDiscovery:
         parser.parse(robots.content.splitlines())
         declared_seeds = list(parser.site_maps() or [])
         seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
-        # RPSC publishes its previous-paper archive at a stable route outside
-        # the generic sitemap/feed paths. Include this registered adapter seed
-        # even when the robots file declares a sitemap, subject to robots rules.
-        if source.source_id == "RPSC_OFFICIAL":
+        # Registered official archive pages supplement generic sitemap/feed
+        # discovery. All seeds still pass through robots.txt and same-host gates.
+        if source.source_id == "RSSB_OFFICIAL":
+            # These are official RSSB archive pages currently used for question
+            # papers and answer keys. They remain subject to the same robots.txt
+            # and same-host gates as sitemap-discovered URLs.
             seeds.extend((
-                urljoin(source.base_url, "previousquestionpapers.aspx"),
-                urljoin(source.base_url, "answerkeys.aspx"),
-                urljoin(source.base_url, "Static/AnswerKeys/"),
+                urljoin(
+                    source.base_url,
+                    "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default",
+                ),
+                urljoin(
+                    source.base_url,
+                    "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red",
+                ),
+            ))
+        if source.source_id == "RPSC_OFFICIAL":
+            # Current RPSC navigation exposes Question Papers and Answer Keys
+            # through these slice routes; older .aspx routes now return 404.
+            seeds.extend((
+                urljoin(source.base_url, "viewcommon?Slice=QP"),
+                urljoin(source.base_url, "viewcommon?Slice=AK"),
             ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
@@ -86,6 +150,7 @@ class LiveOfficialSourceDiscovery:
             if len(seen) > 1 and policy.rate_limit_seconds > 0:
                 sleep(policy.rate_limit_seconds)
             response = self.transport.get(url)
+            self._ensure_registered_host(source, url, response)
             if response.status_code >= 400:
                 continue
             is_xml = "xml" in response.content_type.lower() or url.lower().endswith((".xml", ".rss", ".atom"))
@@ -137,6 +202,14 @@ class LiveOfficialSourceDiscovery:
             for candidate in candidates
         )
         return LiveDiscoveryResult(robots_url, tuple(dict.fromkeys(sitemap_urls)), tuple(dict.fromkeys(feed_urls)), tuple(dict.fromkeys(archive_urls)), candidates)
+
+    def _ensure_registered_host(self, source, requested_url, response):
+        """Refuse redirects that leave the registered official host."""
+        expected_host = urlparse(source.base_url).netloc.lower()
+        final_url = response.url or requested_url
+        parsed = urlparse(final_url)
+        if parsed.scheme not in {"http", "https"} or parsed.netloc.lower() != expected_host:
+            raise ResearchPolicyError("cross_host_redirect_blocked")
 
     def _configured_seeds(self, source: SourceRecord) -> tuple[str, ...]:
         base = source.base_url.rstrip("/") + "/"

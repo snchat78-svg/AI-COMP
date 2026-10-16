@@ -87,11 +87,11 @@ def build_initial_registry() -> SourceRegistry:
     registry.add_source(SourceRecord(
         source_id="RSSB_OFFICIAL",
         name="RSSB Official",
-        base_url="https://rssb.rajasthan.gov.in/",
+        base_url="https://rsmssb.rajasthan.gov.in/",
         source_type=SourceType.OFFICIAL_WEBSITE,
         priority=SourcePriority.OFFICIAL,
         conducting_body_id="RSSB",
-        notes="Discovery must remain subject to robots.txt, terms and access restrictions.",
+        notes="Use the current official RSSB/RSMSSB host; discovery remains subject to robots.txt, terms and access restrictions.",
     ))
     registry.add_source(SourceRecord(
         source_id="RPSC_OFFICIAL",
