@@ -49,6 +49,41 @@ def build_initial_registry() -> SourceRegistry:
         exam_id="RSSB_CET",
     ))
 
+    # Expand the Rajasthan exam registry additively. These IDs are the
+    # canonical matching targets for explicit exam names in official archive
+    # labels; a generic board archive alone is never enough to infer an exam.
+    additional_exams = (
+        ("RSSB_PATWAR", "Rajasthan Patwar Examination", "RSSB"),
+        ("RSSB_LDC", "Rajasthan Lower Division Clerk Examination", "RSSB"),
+        ("RSSB_VDO", "Rajasthan Village Development Officer Examination", "RSSB"),
+        ("RSSB_JUNIOR_ASSISTANT", "Rajasthan Junior Assistant Examination", "RSSB"),
+        ("RSSB_LAB_ASSISTANT", "Rajasthan Lab Assistant Examination", "RSSB"),
+        ("RPSC_RAS", "Rajasthan State and Subordinate Services Combined Competitive Examination (RAS)", "RPSC"),
+        ("RPSC_SI", "RPSC Sub Inspector Combined Competitive Examination", "RPSC"),
+        ("RPSC_SCHOOL_LECTURER", "RPSC School Lecturer Examination", "RPSC"),
+        ("RPSC_SENIOR_TEACHER", "RPSC Senior Teacher Examination", "RPSC"),
+        ("RPSC_ASSISTANT_PROFESSOR", "RPSC Assistant Professor (College Education) Examination", "RPSC"),
+    )
+    for exam_id, exam_name, body_id in additional_exams:
+        registry.add_exam(Exam(
+            exam_id=exam_id,
+            name=exam_name,
+            conducting_body_id=body_id,
+            level=ExamLevel.STATE,
+            state="Rajasthan",
+            categories=("QUESTION_PAPER", "ANSWER_KEY"),
+        ))
+        registry.add_category(PaperCategory(
+            category_id=f"{exam_id}_QUESTION_PAPER",
+            name="Question Paper",
+            exam_id=exam_id,
+        ))
+        registry.add_category(PaperCategory(
+            category_id=f"{exam_id}_ANSWER_KEY",
+            name="Answer Key",
+            exam_id=exam_id,
+        ))
+
     registry.add_source(SourceRecord(
         source_id="RSSB_OFFICIAL",
         name="RSSB Official",
