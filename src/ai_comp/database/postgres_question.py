@@ -147,6 +147,72 @@ class PostgresQuestionRepository:
         except Exception as exc:
             raise RepositoryError("failed to read document questions") from exc
 
+    def list_recent(
+        self,
+        *,
+        limit: int = 5000,
+        exclude_document_id: str | None = None,
+    ) -> tuple[QuestionCandidate, ...]:
+        """Load a bounded, option-complete cross-paper question matching pool."""
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 10000:
+            raise ValueError("limit must be between 1 and 10000")
+        conditions = ""
+        params: list[object] = []
+        if exclude_document_id is not None:
+            conditions = "WHERE document_id <> %s"
+            params.append(exclude_document_id)
+        params.append(limit)
+        try:
+            rows = self._connection.execute(
+                f"""
+                WITH chosen AS (
+                    SELECT
+                        question_id, document_id, document_sha256,
+                        question_number, stem, kind, raw_text,
+                        start_line, end_line, created_at
+                    FROM questions
+                    {conditions}
+                    ORDER BY created_at DESC, question_id
+                    LIMIT %s
+                )
+                SELECT
+                    q.question_id, q.document_id, q.document_sha256,
+                    q.question_number, q.stem, q.kind, q.raw_text,
+                    q.start_line, q.end_line,
+                    o.option_key, o.option_text, o.option_order
+                FROM chosen q
+                LEFT JOIN question_options o ON o.question_id = q.question_id
+                ORDER BY q.created_at DESC, q.question_number, q.question_id,
+                         o.option_order
+                """,
+                tuple(params),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to load cross-paper question pool") from exc
+
+        result: list[QuestionCandidate] = []
+        current_id: str | None = None
+        current_row: tuple[object, ...] | None = None
+        options: list[tuple[str, str]] = []
+
+        def flush() -> None:
+            if current_row is None:
+                return
+            result.append(self._from_rows(current_row, options))
+
+        for row in rows:
+            question_id = str(row[0])
+            if question_id != current_id:
+                flush()
+                current_id = question_id
+                current_row = tuple(row[:9])
+                options = []
+            if row[9] is not None:
+                options.append((str(row[9]), str(row[10])))
+
+        flush()
+        return tuple(result)
+
     @staticmethod
     def _from_rows(row, options) -> QuestionCandidate:
         return QuestionCandidate(
