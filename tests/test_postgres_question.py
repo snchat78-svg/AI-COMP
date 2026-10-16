@@ -70,3 +70,24 @@ def test_question_repository_reads_domain_question():
     assert loaded is not None
     assert loaded.question_id == "q1"
     assert loaded.options == (QuestionOption("A", "एक"), QuestionOption("B", "दो"))
+
+
+def test_question_repository_lists_questions_with_ordered_options():
+    conn = Connection()
+    conn.results = [
+        Result(rows=[
+            ("q1", "doc1", "a" * 64, 1, "प्रश्न 1?", "MCQ", "raw1", 1, 3, "A", "एक", 1),
+            ("q1", "doc1", "a" * 64, 1, "प्रश्न 1?", "MCQ", "raw1", 1, 3, "B", "दो", 2),
+            ("q2", "doc2", "b" * 64, 2, "प्रश्न 2?", "MCQ", "raw2", 4, 6, "A", "तीन", 1),
+        ])
+    ]
+
+    loaded = PostgresQuestionRepository(conn).list_recent(limit=10)
+
+    assert [item.question_id for item in loaded] == ["q1", "q2"]
+    assert loaded[0].options == (
+        QuestionOption("A", "एक"),
+        QuestionOption("B", "दो"),
+    )
+    assert loaded[1].options == (QuestionOption("A", "तीन"),)
+    assert "WITH chosen AS" in conn.calls[0][0]
