@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 from typing import Mapping
 
@@ -48,6 +48,7 @@ class VerifiedIngestionRequest:
     # persisted entries here. The entries remain stored against the answer-key
     # document; they are not copied into the question-paper document.
     answer_key_entries: tuple[AnswerKeyEntry, ...] | None = None
+    answer_key_document_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -153,7 +154,11 @@ class VerifiedIngestionOrchestrator:
                 },
             )
 
-        resolved, unresolved = self._resolve_answers(questions, entries)
+        resolved, unresolved = self._resolve_answers(
+            questions,
+            entries,
+            source_answer_key_document_id=request.answer_key_document_id,
+        )
 
         if self._at_least(resume_after, IngestionJobStatus.MATCHED):
             matches = self._load_matches(questions)
@@ -223,8 +228,18 @@ class VerifiedIngestionOrchestrator:
         self,
         questions: tuple[QuestionCandidate, ...],
         entries,
+        *,
+        source_answer_key_document_id: str | None = None,
     ) -> tuple[tuple[AnswerResolution, ...], tuple[AnswerResolution, ...]]:
         resolutions = self.answer_resolver.resolve_many(questions, entries)
+        if source_answer_key_document_id is not None:
+            resolutions = tuple(
+                replace(
+                    resolution,
+                    source_answer_key_document_id=source_answer_key_document_id,
+                )
+                for resolution in resolutions
+            )
         for resolution in resolutions:
             if resolution.question_id:
                 self.answer_resolution_repository.save(resolution)
