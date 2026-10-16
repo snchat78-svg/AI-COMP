@@ -20,7 +20,7 @@ from ai_comp.domain.master_questions import (
     MasterMembershipType,
 )
 from ai_comp.domain.matching import QuestionMatch
-from ai_comp.domain.questions import QuestionCandidate
+from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
 from ai_comp.domain.verification import (
     SourceVerification,
     is_historical_evidence_allowed,
@@ -44,6 +44,10 @@ class VerifiedIngestionRequest:
     paper_id: str
     source_url: str
     verification: SourceVerification
+    # When an official answer-key document is paired separately, provide its
+    # persisted entries here. The entries remain stored against the answer-key
+    # document; they are not copied into the question-paper document.
+    answer_key_entries: tuple[AnswerKeyEntry, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -112,8 +116,12 @@ class VerifiedIngestionOrchestrator:
             questions = self.question_repository.get_for_document(
                 request.document.document_id
             )
-            entries = self.answer_key_repository.get_for_document(
-                request.document.document_id
+            entries = (
+                request.answer_key_entries
+                if request.answer_key_entries is not None
+                else self.answer_key_repository.get_for_document(
+                    request.document.document_id
+                )
             )
             if not questions:
                 raise ValueError(
@@ -124,12 +132,14 @@ class VerifiedIngestionOrchestrator:
         else:
             extraction = self.question_extractor.extract(request.document)
             questions = extraction.questions
-            entries = extraction.answer_key_entries
-
-            self.answer_key_repository.save_many(
-                request.document.document_id,
-                entries,
-            )
+            if request.answer_key_entries is None:
+                entries = extraction.answer_key_entries
+                self.answer_key_repository.save_many(
+                    request.document.document_id,
+                    entries,
+                )
+            else:
+                entries = request.answer_key_entries
             for question in questions:
                 self.question_repository.save(question)
                 self.candidate_index.add(question)
