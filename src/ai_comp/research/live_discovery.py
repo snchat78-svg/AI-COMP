@@ -63,6 +63,14 @@ class LiveOfficialSourceDiscovery:
         parser.parse(robots.content.splitlines())
         declared_seeds = list(parser.site_maps() or [])
         seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
+        # RPSC publishes its previous-paper archive at a stable route outside
+        # the generic sitemap/feed paths. Include this registered adapter seed
+        # even when the robots file declares a sitemap, subject to robots rules.
+        if source.source_id == "RPSC_OFFICIAL":
+            seeds.extend((
+                urljoin(source.base_url, "previousquestionpapers.aspx"),
+                urljoin(source.base_url, "Static/AnswerKeys/"),
+            ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
         pending = [(url, 0) for url in seeds]
