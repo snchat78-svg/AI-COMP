@@ -43,3 +43,39 @@ def test_live_discovery_fails_closed_when_robots_missing():
         assert str(exc) == "robots_unavailable"
     else:
         raise AssertionError("expected robots_unavailable")
+
+def test_live_candidate_ids_are_stable_when_sitemap_order_changes():
+    base = "https://rssb.rajasthan.gov.in/"
+    robots = HttpResponse(
+        base + "robots.txt",
+        200,
+        "User-agent: AI-COMP/phase2\nSitemap: " + base + "sitemap.xml\n",
+        "text/plain",
+    )
+    first_map = (
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"<url><loc>{base}papers/a.pdf</loc></url>"
+        f"<url><loc>{base}papers/b.pdf</loc></url>"
+        "</urlset>"
+    )
+    second_map = (
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"<url><loc>{base}papers/b.pdf</loc></url>"
+        f"<url><loc>{base}papers/a.pdf</loc></url>"
+        "</urlset>"
+    )
+    discovery = LiveOfficialSourceDiscovery
+    policy = CrawlPolicy(True, rate_limit_seconds=0)
+    first = discovery(FakeTransport({
+        base + "robots.txt": robots,
+        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, first_map, "application/xml"),
+    })).run(source(), policy)
+    second = discovery(FakeTransport({
+        base + "robots.txt": robots,
+        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, second_map, "application/xml"),
+    })).run(source(), policy)
+
+    first_ids = {candidate.url: candidate.candidate_id for candidate in first.candidates}
+    second_ids = {candidate.url: candidate.candidate_id for candidate in second.candidates}
+    assert first_ids == second_ids
+    assert all(candidate.discovered_at for candidate in first.candidates)
