@@ -15,6 +15,8 @@ def meta(candidate_id, role, *, exam_id="RSSB_CET", year=2024, shift=None, ready
         category_id=None,
         ready_for_pairing=ready,
         reason="test",
+        question_count=1 if role is PaperArtifactRole.QUESTION_PAPER else 0,
+        answer_key_entry_count=1 if role is PaperArtifactRole.ANSWER_KEY else 0,
     )
 
 
@@ -60,6 +62,34 @@ def test_different_exam_or_year_never_pair():
     ))
 
     assert decisions == ()
+
+
+def test_empty_question_or_answer_key_extractions_are_not_auto_paired():
+    paper = ResolvedPaperMetadata(
+        candidate_id="paper",
+        role=PaperArtifactRole.QUESTION_PAPER,
+        exam_id="RSSB_CET",
+        year=2024,
+        shift=None,
+        category_id=None,
+        ready_for_pairing=True,
+        reason="label matched but extraction is empty",
+        question_count=0,
+        answer_key_entry_count=0,
+    )
+    key = ResolvedPaperMetadata(
+        candidate_id="key",
+        role=PaperArtifactRole.ANSWER_KEY,
+        exam_id="RSSB_CET",
+        year=2024,
+        shift=None,
+        category_id=None,
+        ready_for_pairing=True,
+        reason="label matched but extraction is empty",
+        question_count=0,
+        answer_key_entry_count=0,
+    )
+    assert decide_answer_key_pairs((paper, key)) == ()
 
 
 def test_unready_metadata_is_excluded_from_pairing():
