@@ -5,6 +5,7 @@ from hashlib import sha256
 from time import sleep
 from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
+from urllib.request import HTTPRedirectHandler
 
 from ai_comp.domain.sources import CrawlPolicy, SourceRecord
 from ai_comp.research.discovery import PaperDiscovery
@@ -19,7 +20,7 @@ class HttpResponse:
     content: str
     content_type: str = ""
 
-class _SameHostRedirectHandler(__import__("urllib.request", fromlist=["HTTPRedirectHandler"]).HTTPRedirectHandler):
+class _SameHostRedirectHandler(HTTPRedirectHandler):
     """Reject cross-host redirects before urllib follows them."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
