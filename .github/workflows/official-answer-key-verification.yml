@@ -1,0 +1,118 @@
+name: official-answer-key-verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Registered official source ID or all"
+        required: true
+        default: "all"
+        type: string
+      limit:
+        description: "Processed official candidates to reconcile (1-5000)"
+        required: true
+        default: "500"
+        type: string
+  schedule:
+    - cron: "15 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-official-answer-key-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      AI_COMP_DATABASE_URL: ${{ secrets.AI_COMP_DATABASE_URL }}
+      VERIFY_SOURCE: ${{ github.event.inputs.source || 'all' }}
+      VERIFY_LIMIT: ${{ github.event.inputs.limit || '500' }}
+    steps:
+      - name: Check required repository secret
+        id: config
+        shell: bash
+        run: |
+          if [ -z "$AI_COMP_DATABASE_URL" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Verification skipped"
+              echo
+              echo "The repository secret AI_COMP_DATABASE_URL is not configured."
+              echo "No secret values were printed."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository
+        if: steps.config.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: steps.config.outputs.ready == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install database dependencies
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[postgres]"
+
+      - name: Reconcile official papers and answer keys
+        if: steps.config.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m ai_comp.research.verify_cli \
+            --source "$VERIFY_SOURCE" \
+            --limit "$VERIFY_LIMIT" | tee official-verification-summary.json
+
+      - name: Publish safe summary
+        if: steps.config.outputs.ready == 'true' && always() && hashFiles('official-verification-summary.json') != ''
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          source = Path("official-verification-summary.json")
+          if not source.exists() or not source.stat().st_size:
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+                  handle.write("\nVerification CLI returned no JSON summary. Review the prior step for its safe error.\n")
+              raise SystemExit(0)
+
+          data = json.loads(source.read_text(encoding="utf-8"))
+          summary = [
+              "# AI-COMP official answer-key verification",
+              "",
+              f"- Processed candidates: {data.get('selected_candidates', 0)}",
+              f"- Explicit metadata ready: {data.get('metadata_ready', 0)}",
+              f"- Candidates needing review: {data.get('needs_review', 0)}",
+              f"- Unambiguous paper/key pairs: {data.get('pairs_matched', 0)}",
+              f"- Ambiguous pairs kept for review: {data.get('pairs_needs_review', 0)}",
+              f"- Historical appearances processed: {data.get('history_records_written', 0)}",
+              f"- Extracted questions reviewed: {data.get('extracted_questions_seen', 0)}",
+              f"- Official answer-key entries reviewed: {data.get('answer_key_entries_seen', 0)}",
+              f"- Failures: {data.get('failed', 0)}",
+              "",
+              "> " + data.get("trust_boundary", ""),
+              "",
+              "## Candidate outcomes",
+          ]
+          for item in data.get("items", []):
+              summary.append(
+                  f"- {item.get('candidate_id', 'unknown')} — "
+                  f"{item.get('role', 'UNKNOWN')}; {item.get('state', 'UNKNOWN')}; "
+                  f"exam={item.get('exam_id') or 'unresolved'}; year={item.get('year') or 'unresolved'}; "
+                  f"questions={item.get('question_count', 0)}; appearances={item.get('appearance_count', 0)}"
+              )
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write("\n".join(summary) + "\n")
+          PY
