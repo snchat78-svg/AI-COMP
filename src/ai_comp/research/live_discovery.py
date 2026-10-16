@@ -95,6 +95,7 @@ class LiveOfficialSourceDiscovery:
         source_id = source_id or source.source_id
         robots_url = urljoin(source.base_url, "/robots.txt")
         robots = self.transport.get(robots_url)
+        self._ensure_registered_host(source, robots_url, robots)
         if robots.status_code >= 400:
             raise ResearchPolicyError("robots_unavailable")
         parser = RobotFileParser()
@@ -138,6 +139,7 @@ class LiveOfficialSourceDiscovery:
             if len(seen) > 1 and policy.rate_limit_seconds > 0:
                 sleep(policy.rate_limit_seconds)
             response = self.transport.get(url)
+            self._ensure_registered_host(source, url, response)
             if response.status_code >= 400:
                 continue
             is_xml = "xml" in response.content_type.lower() or url.lower().endswith((".xml", ".rss", ".atom"))
@@ -189,6 +191,14 @@ class LiveOfficialSourceDiscovery:
             for candidate in candidates
         )
         return LiveDiscoveryResult(robots_url, tuple(dict.fromkeys(sitemap_urls)), tuple(dict.fromkeys(feed_urls)), tuple(dict.fromkeys(archive_urls)), candidates)
+
+    def _ensure_registered_host(self, source, requested_url, response):
+        """Refuse redirects that leave the registered official host."""
+        expected_host = urlparse(source.base_url).netloc.lower()
+        final_url = response.url or requested_url
+        parsed = urlparse(final_url)
+        if parsed.scheme not in {"http", "https"} or parsed.netloc.lower() != expected_host:
+            raise ResearchPolicyError("cross_host_redirect_blocked")
 
     def _configured_seeds(self, source: SourceRecord) -> tuple[str, ...]:
         base = source.base_url.rstrip("/") + "/"
