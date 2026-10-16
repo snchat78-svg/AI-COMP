@@ -1,5 +1,6 @@
 from ai_comp.domain.sources import CrawlPolicy, SourcePriority, SourceRecord, SourceType
-from ai_comp.research.live_discovery import HttpResponse, LiveOfficialSourceDiscovery
+from ai_comp.research.live_discovery import HttpResponse, HttpTransport, LiveOfficialSourceDiscovery
+from ai_comp.research.seed_registry import build_initial_registry
 
 class FakeTransport:
     def __init__(self, pages):
@@ -10,13 +11,13 @@ class FakeTransport:
         return self.pages.get(url, HttpResponse(url, 404, "", "text/plain"))
 
 def source():
-    return SourceRecord("RSSB", "RSSB", "https://rssb.rajasthan.gov.in/", SourceType.OFFICIAL_WEBSITE, SourcePriority.OFFICIAL, allowed_paths=("/papers/", "/archive/"))
+    return SourceRecord("RSSB", "RSSB", "https://rsmssb.rajasthan.gov.in/", SourceType.OFFICIAL_WEBSITE, SourcePriority.OFFICIAL, allowed_paths=("/papers/", "/archive/"))
 
 def test_live_discovery_uses_robots_sitemap_and_creates_candidates():
-    base = "https://rssb.rajasthan.gov.in/"
+    base = "https://rsmssb.rajasthan.gov.in/"
     transport = FakeTransport({
-        base + "robots.txt": HttpResponse(base + "robots.txt", 200, "User-agent: AI-COMP/phase2\nSitemap: https://rssb.rajasthan.gov.in/sitemap.xml\n", "text/plain"),
-        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://rssb.rajasthan.gov.in/papers/a.pdf</loc></url><url><loc>https://evil.example/x.pdf</loc></url></urlset>', "application/xml"),
+        base + "robots.txt": HttpResponse(base + "robots.txt", 200, "User-agent: AI-COMP/phase2\nSitemap: https://rsmssb.rajasthan.gov.in/sitemap.xml\n", "text/plain"),
+        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://rsmssb.rajasthan.gov.in/papers/a.pdf</loc></url><url><loc>https://evil.example/x.pdf</loc></url></urlset>', "application/xml"),
     })
     result = LiveOfficialSourceDiscovery(transport).run(source(), CrawlPolicy(True, rate_limit_seconds=0))
     assert [c.url for c in result.candidates] == [base + "papers/a.pdf"]
@@ -24,18 +25,18 @@ def test_live_discovery_uses_robots_sitemap_and_creates_candidates():
     assert base + "sitemap.xml" in transport.requested
 
 def test_live_discovery_handles_sitemap_index_with_bound():
-    base = "https://rssb.rajasthan.gov.in/"
+    base = "https://rsmssb.rajasthan.gov.in/"
     transport = FakeTransport({
-        base + "robots.txt": HttpResponse(base + "robots.txt", 200, "User-agent: AI-COMP/phase2\nSitemap: https://rssb.rajasthan.gov.in/sitemap_index.xml\n", "text/plain"),
-        base + "sitemap_index.xml": HttpResponse(base + "sitemap_index.xml", 200, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://rssb.rajasthan.gov.in/sitemap-1.xml</loc></sitemap></sitemapindex>', "application/xml"),
-        base + "sitemap-1.xml": HttpResponse(base + "sitemap-1.xml", 200, '<urlset><url><loc>https://rssb.rajasthan.gov.in/papers/b.pdf</loc></url></urlset>', "application/xml"),
+        base + "robots.txt": HttpResponse(base + "robots.txt", 200, "User-agent: AI-COMP/phase2\nSitemap: https://rsmssb.rajasthan.gov.in/sitemap_index.xml\n", "text/plain"),
+        base + "sitemap_index.xml": HttpResponse(base + "sitemap_index.xml", 200, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://rsmssb.rajasthan.gov.in/sitemap-1.xml</loc></sitemap></sitemapindex>', "application/xml"),
+        base + "sitemap-1.xml": HttpResponse(base + "sitemap-1.xml", 200, '<urlset><url><loc>https://rsmssb.rajasthan.gov.in/papers/b.pdf</loc></url></urlset>', "application/xml"),
     })
     result = LiveOfficialSourceDiscovery(transport).run(source(), CrawlPolicy(True, max_depth=2, rate_limit_seconds=0))
     assert [c.url for c in result.candidates] == [base + "papers/b.pdf"]
     assert base + "sitemap-1.xml" in transport.requested
 
 def test_live_discovery_fails_closed_when_robots_missing():
-    base = "https://rssb.rajasthan.gov.in/"
+    base = "https://rsmssb.rajasthan.gov.in/"
     transport = FakeTransport({base + "robots.txt": HttpResponse(base + "robots.txt", 404, "", "text/plain")})
     try:
         LiveOfficialSourceDiscovery(transport).run(source(), CrawlPolicy(True, rate_limit_seconds=0))
@@ -45,7 +46,7 @@ def test_live_discovery_fails_closed_when_robots_missing():
         raise AssertionError("expected robots_unavailable")
 
 def test_live_candidate_ids_are_stable_when_sitemap_order_changes():
-    base = "https://rssb.rajasthan.gov.in/"
+    base = "https://rsmssb.rajasthan.gov.in/"
     robots = HttpResponse(
         base + "robots.txt",
         200,
@@ -130,3 +131,107 @@ def test_rpsc_discovery_includes_registered_previous_paper_archive():
     assert titles[base + "Static/AnswerKeys/final-key.pdf"] == "Final answer key"
     assert base + "previousquestionpapers.aspx" in transport.requested
     assert base + "robots.txt" in transport.requested
+
+
+
+def test_rssb_registry_uses_current_official_host():
+    rssb = next(
+        source
+        for source in build_initial_registry().sources()
+        if source.source_id == "RSSB_OFFICIAL"
+    )
+    assert rssb.base_url == "https://rsmssb.rajasthan.gov.in/"
+
+
+def test_rssb_discovery_includes_official_question_and_answer_key_archives():
+    base = "https://rsmssb.rajasthan.gov.in/"
+    source = SourceRecord(
+        "RSSB_OFFICIAL",
+        "RSSB Official",
+        base,
+        SourceType.OFFICIAL_WEBSITE,
+        SourcePriority.OFFICIAL,
+    )
+    question_archive = (
+        base + "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default"
+    )
+    answer_archive = (
+        base + "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red"
+    )
+    sitemap = base + "sitemap.xml"
+    transport = FakeTransport({
+        base + "robots.txt": HttpResponse(
+            base + "robots.txt",
+            200,
+            "User-agent: *\\nAllow: /\\nSitemap: " + sitemap + "\\n",
+            "text/plain",
+        ),
+        sitemap: HttpResponse(sitemap, 200, "<urlset></urlset>", "application/xml"),
+        question_archive: HttpResponse(
+            question_archive,
+            200,
+            '<a href="/files/Patwar-2021-question-paper.pdf">Patwar 2021 Master Question Paper</a>',
+            "text/html",
+        ),
+        answer_archive: HttpResponse(
+            answer_archive,
+            200,
+            '<a href="/files/Patwar-2021-final-answer-key.pdf">Patwar 2021 Final Answer Key</a>',
+            "text/html",
+        ),
+    })
+
+    result = LiveOfficialSourceDiscovery(transport).run(
+        source,
+        CrawlPolicy(True, rate_limit_seconds=0),
+    )
+
+    by_url = {candidate.url: candidate.title for candidate in result.candidates}
+    assert base + "files/Patwar-2021-question-paper.pdf" in by_url
+    assert base + "files/Patwar-2021-final-answer-key.pdf" in by_url
+    assert question_archive in transport.requested
+    assert answer_archive in transport.requested
+
+
+def test_http_transport_retries_transient_network_failures(monkeypatch):
+    from urllib.error import URLError
+
+    calls = []
+
+    class FakeResponse:
+        status = 200
+        headers = {"Content-Type": "text/plain"}
+
+        def __init__(self, url):
+            self.url = url
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def geturl(self):
+            return self.url
+
+        def read(self):
+            return b"ok"
+
+    def fake_urlopen(request, timeout):
+        calls.append((request.full_url, timeout))
+        if len(calls) == 1:
+            raise URLError("temporary network failure")
+        return FakeResponse(request.full_url)
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setattr("ai_comp.research.live_discovery.sleep", lambda _delay: None)
+
+    response = HttpTransport(
+        timeout_seconds=3,
+        retries=1,
+        retry_delay_seconds=0,
+    ).get("https://rsmssb.rajasthan.gov.in/robots.txt")
+
+    assert response.status_code == 200
+    assert response.content == "ok"
+    assert len(calls) == 2
