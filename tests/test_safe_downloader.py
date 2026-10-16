@@ -109,7 +109,7 @@ def test_redirect_handler_blocks_cross_host_redirect():
 
     with pytest.raises(URLError, match="outside registered source"):
         handler.redirect_request(
-            request=__import__("urllib.request", fromlist=["Request"]).Request(
+            req=__import__("urllib.request", fromlist=["Request"]).Request(
                 "https://rssb.rajasthan.gov.in/papers/a.pdf"
             ),
             fp=None,
