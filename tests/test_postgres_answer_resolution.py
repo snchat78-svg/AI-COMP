@@ -47,6 +47,7 @@ def test_answer_resolution_repository_round_trip_contract():
                 "DIRECT_OPTION_KEY",
                 10,
                 "",
+                None,
             )
         ]
     )

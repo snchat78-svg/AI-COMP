@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from collections.abc import Sequence
 from typing import Any
 
@@ -54,9 +55,38 @@ class PostgresAppearanceRepository:
                 else:
                     existing = self._find_by_appearance_id(appearance.appearance_id)
                     if existing is not None:
-                        if existing != appearance:
+                        # Reprocessing a paper must be idempotent. A later
+                        # official answer key may upgrade NULL to an answer,
+                        # but an already resolved, conflicting answer is never
+                        # overwritten silently.
+                        existing_with_incoming_answer = replace(
+                            existing,
+                            correct_answer=appearance.correct_answer,
+                        )
+                        if existing_with_incoming_answer != appearance:
                             raise RepositoryError(
-                                "appearance_id already exists with different data"
+                                "appearance_id already exists with different historical metadata"
+                            )
+                        if (
+                            existing.correct_answer is not None
+                            and appearance.correct_answer is not None
+                            and existing.correct_answer != appearance.correct_answer
+                        ):
+                            raise RepositoryError(
+                                "official answer-key conflict requires manual review"
+                            )
+                        if (
+                            existing.correct_answer is None
+                            and appearance.correct_answer is not None
+                        ):
+                            self._connection.execute(
+                                """
+                                UPDATE exam_appearances
+                                SET correct_answer = %s
+                                WHERE appearance_id = %s
+                                  AND correct_answer IS NULL
+                                """,
+                                (appearance.correct_answer, appearance.appearance_id),
                             )
                         canonical_id = existing.appearance_id
                     else:

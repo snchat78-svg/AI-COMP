@@ -23,18 +23,24 @@ class Connection:
 def test_registry_sync_upserts_parent_rows_before_dependent_rows():
     connection = Connection()
 
-    counts = sync_source_registry(connection, build_initial_registry())
+    registry = build_initial_registry()
+    counts = sync_source_registry(connection, registry)
 
     sql = [statement for statement, _ in connection.calls]
-    assert counts.conducting_bodies == 2
-    assert counts.exams == 2
-    assert counts.paper_categories == 2
-    assert counts.sources == 2
-    assert len(sql) == 8
+    assert counts.conducting_bodies == len(registry.bodies())
+    assert counts.exams == len(registry.exams())
+    assert counts.paper_categories == len(registry.categories())
+    assert counts.sources == len(registry.sources())
+    assert len(sql) == (
+        counts.conducting_bodies + counts.exams
+        + counts.paper_categories + counts.sources
+    )
     assert "INSERT INTO conducting_bodies" in sql[0]
-    assert "INSERT INTO exams" in sql[2]
-    assert "INSERT INTO paper_categories" in sql[4]
-    assert "INSERT INTO sources" in sql[6]
+    assert f"INSERT INTO exams" in sql[counts.conducting_bodies]
+    category_start = counts.conducting_bodies + counts.exams
+    source_start = category_start + counts.paper_categories
+    assert "INSERT INTO paper_categories" in sql[category_start]
+    assert "INSERT INTO sources" in sql[source_start]
     assert all("ON CONFLICT" in statement for statement in sql)
     assert not any("DELETE" in statement.upper() for statement in sql)
 
@@ -47,5 +53,9 @@ def test_registry_sync_is_repeatable_without_deleting_existing_history():
     second = sync_source_registry(connection, registry)
 
     assert first == second
-    assert len(connection.calls) == 16
+    count = (
+        len(registry.bodies()) + len(registry.exams())
+        + len(registry.categories()) + len(registry.sources())
+    )
+    assert len(connection.calls) == count * 2
     assert all("ON CONFLICT" in statement for statement, _ in connection.calls)

@@ -70,6 +70,7 @@ class LiveOfficialSourceDiscovery:
         if source.source_id == "RPSC_OFFICIAL":
             seeds.extend((
                 urljoin(source.base_url, "previousquestionpapers.aspx"),
+                urljoin(source.base_url, "answerkeys.aspx"),
                 urljoin(source.base_url, "Static/AnswerKeys/"),
             ))
         seeds = self._unique_allowed(source, policy, parser, seeds)

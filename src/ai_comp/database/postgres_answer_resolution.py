@@ -30,9 +30,10 @@ class PostgresAnswerResolutionRepository:
                         status,
                         method,
                         source_line,
-                        notes
+                        notes,
+                        source_answer_key_document_id
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (question_id, document_id) DO UPDATE SET
                         question_number = EXCLUDED.question_number,
                         answer_key = EXCLUDED.answer_key,
@@ -40,7 +41,8 @@ class PostgresAnswerResolutionRepository:
                         status = EXCLUDED.status,
                         method = EXCLUDED.method,
                         source_line = EXCLUDED.source_line,
-                        notes = EXCLUDED.notes
+                        notes = EXCLUDED.notes,
+                        source_answer_key_document_id = EXCLUDED.source_answer_key_document_id
                     """,
                     (
                         resolution.question_id,
@@ -52,6 +54,7 @@ class PostgresAnswerResolutionRepository:
                         None if resolution.method is None else resolution.method.value,
                         resolution.source_line,
                         resolution.notes,
+                        resolution.source_answer_key_document_id,
                     ),
                 )
         except Exception as exc:
@@ -73,7 +76,8 @@ class PostgresAnswerResolutionRepository:
                     status,
                     method,
                     source_line,
-                    notes
+                    notes,
+                    source_answer_key_document_id
                 FROM question_answer_records
                 WHERE question_id = %s
                 ORDER BY document_id, answer_record_id
@@ -97,6 +101,9 @@ class PostgresAnswerResolutionRepository:
                     ),
                     source_line=int(row[7]),
                     notes=str(row[8]),
+                    source_answer_key_document_id=(
+                        None if row[9] is None else str(row[9])
+                    ),
                 )
                 for row in rows
             )
