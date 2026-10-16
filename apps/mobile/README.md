@@ -37,7 +37,7 @@ The mobile app signs users in with Firebase Authentication (Email/Password), req
 
 1. Connect to the API and load saved analytics, summary, and recent sessions.
 2. Configure question count and time; ask the server for an adaptive recommendation. When there is no reliable focus signal yet, the app saves a mixed practice request so the learner can still take a test.
-3. Create and start a persistent test, answer questions, mark questions for review, navigate, and submit. The first test may use MIXED mode to establish the history required for future focused recommendations.
+3. Create and start a persistent test, answer questions, mark questions for review, navigate, and submit. The first test may use MIXED mode to establish the history required for future focused recommendations. If fewer verified questions exist than requested, the server uses the available unique eligible questions; an empty verified pool returns an explicit actionable error.
 4. Review correct answers and explanations after submission.
 5. Resume a saved CREATED/IN_PROGRESS session from the dashboard; the server remains the source of truth for remaining time and previously saved answers.
 

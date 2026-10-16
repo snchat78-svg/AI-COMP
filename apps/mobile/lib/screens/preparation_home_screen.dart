@@ -182,13 +182,11 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final session = await api.createSession();
       if (!mounted) return;
       setState(() => _loading = false);
-      final adjustedRecommendation = recommendation;
-      if (adjustedRecommendation != null &&
-          adjustedRecommendation.questionCountAdjusted) {
+      if (session.questionCount < questionCount) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'The available question pool supports ${adjustedRecommendation.questionCount} questions for this test.',
+              'Only ${session.questionCount} verified questions are available. The test has been adjusted to that count.',
             ),
           ),
         );
@@ -256,6 +254,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         return 'Complete a test first to enable adaptive recommendations.';
       case 'NO_ELIGIBLE_ADAPTIVE_QUESTIONS':
         return 'There are no eligible verified questions for the recommended topics yet.';
+      case 'NO_ELIGIBLE_PREPARATION_QUESTIONS':
+        return 'No verified questions are available yet. The question bank must be populated before a practice test can start.';
       case 'NETWORK_UNAVAILABLE':
         return 'Could not reach the API. Check the base URL and network connection.';
       default:
