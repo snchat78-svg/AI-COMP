@@ -163,7 +163,7 @@ def test_rssb_discovery_includes_official_question_and_answer_key_archives():
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: *\\nAllow: /\\nSitemap: " + sitemap + "\\n",
+            "Sitemap: " + sitemap,
             "text/plain",
         ),
         sitemap: HttpResponse(sitemap, 200, "<urlset></urlset>", "application/xml"),
@@ -235,3 +235,25 @@ def test_http_transport_retries_transient_network_failures(monkeypatch):
     assert response.status_code == 200
     assert response.content == "ok"
     assert len(calls) == 2
+
+
+
+def test_live_discovery_blocks_cross_host_redirects():
+    base = "https://rsmssb.rajasthan.gov.in/"
+    transport = FakeTransport({
+        base + "robots.txt": HttpResponse(
+            "https://untrusted.example/robots.txt",
+            200,
+            "",
+            "text/plain",
+        ),
+    })
+    try:
+        LiveOfficialSourceDiscovery(transport).run(
+            source(),
+            CrawlPolicy(True, rate_limit_seconds=0),
+        )
+    except ValueError as exc:
+        assert str(exc) == "cross_host_redirect_blocked"
+    else:
+        raise AssertionError("cross-host redirects must be rejected")
