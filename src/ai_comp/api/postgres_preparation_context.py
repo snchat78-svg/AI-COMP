@@ -212,10 +212,10 @@ class PostgresPreparationContextProvider:
             stored_questions,
             target_concept_ids=test_request.concept_ids,
         )
-        if len(candidates) < test_request.specification.question_count:
-            raise PreparationContextUnavailable(
-                "the accepted verified question pool is smaller than the requested test"
-            )
+        # Return the verified pool even when it is smaller than the requested
+        # test. Session creation can safely cap the requested count to this
+        # pool; rejecting the entire context here prevents first-time learners
+        # from taking a smaller test when only a few verified questions exist.
 
         specification = test_request.specification
         return {
