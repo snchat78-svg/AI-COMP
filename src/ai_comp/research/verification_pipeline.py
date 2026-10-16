@@ -26,7 +26,7 @@ from ai_comp.database.postgres_research import (
     PostgresResearchRepository,
     ProcessedPaperCandidate,
 )
-from ai_comp.domain.answers import AnswerKeyEntry
+from ai_comp.domain.questions import AnswerKeyEntry
 from ai_comp.domain.ingestion import IngestionJobStatus
 from ai_comp.domain.verification import (
     EvidenceType,
@@ -93,6 +93,10 @@ def decide_answer_key_pairs(
     groups: dict[tuple[str, int], list[ResolvedPaperMetadata]] = defaultdict(list)
     for item in metadata:
         if not item.ready_for_pairing or item.exam_id is None or item.year is None:
+            continue
+        if item.role is PaperArtifactRole.QUESTION_PAPER and item.question_count <= 0:
+            continue
+        if item.role is PaperArtifactRole.ANSWER_KEY and item.answer_key_entry_count <= 0:
             continue
         if item.role in {PaperArtifactRole.QUESTION_PAPER, PaperArtifactRole.ANSWER_KEY}:
             groups[(item.exam_id, item.year)].append(item)
