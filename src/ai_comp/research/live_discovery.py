@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from datetime import datetime, timezone
+from hashlib import sha256
 from time import sleep
 from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
@@ -18,11 +20,16 @@ class HttpResponse:
 
 class HttpTransport:
     def get(self, url: str) -> HttpResponse:
+        from urllib.error import HTTPError
         from urllib.request import Request, urlopen
         request = Request(url, headers={"User-Agent": "AI-COMP/phase2"})
-        with urlopen(request, timeout=15) as response:
+        try:
+            with urlopen(request, timeout=15) as response:
+                body = response.read()
+                return HttpResponse(response.geturl(), response.status, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
+        except HTTPError as response:
             body = response.read()
-            return HttpResponse(response.geturl(), response.status, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
+            return HttpResponse(response.geturl(), response.code, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
 
 @dataclass(frozen=True)
 class LiveDiscoveryResult:
@@ -56,6 +63,14 @@ class LiveOfficialSourceDiscovery:
         parser.parse(robots.content.splitlines())
         declared_seeds = list(parser.site_maps() or [])
         seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
+        # RPSC publishes its previous-paper archive at a stable route outside
+        # the generic sitemap/feed paths. Include this registered adapter seed
+        # even when the robots file declares a sitemap, subject to robots rules.
+        if source.source_id == "RPSC_OFFICIAL":
+            seeds.extend((
+                urljoin(source.base_url, "previousquestionpapers.aspx"),
+                urljoin(source.base_url, "Static/AnswerKeys/"),
+            ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
         pending = [(url, 0) for url in seeds]
@@ -95,8 +110,20 @@ class LiveOfficialSourceDiscovery:
                 feed_urls.append(url)
                 paper_links.extend(link.url for link in feed_links)
         paper_links = list(dict.fromkeys(paper_links))[: self.max_documents]
+        # Candidate identity must remain stable across runs and link ordering.
+        # An index-based ID can overwrite a different URL when a sitemap changes.
         candidates = PaperDiscovery(source, policy).candidates_from_links(
-            ((f"{source_id}:live:{i}", url) for i, url in enumerate(paper_links, 1)), source_id)
+            (
+                (f"{source_id}:live:{sha256(url.encode()).hexdigest()[:40]}", url)
+                for url in paper_links
+            ),
+            source_id,
+        )
+        discovered_at = datetime.now(timezone.utc).isoformat()
+        candidates = tuple(
+            replace(candidate, discovered_at=discovered_at)
+            for candidate in candidates
+        )
         return LiveDiscoveryResult(robots_url, tuple(dict.fromkeys(sitemap_urls)), tuple(dict.fromkeys(feed_urls)), tuple(dict.fromkeys(archive_urls)), candidates)
 
     def _configured_seeds(self, source: SourceRecord) -> tuple[str, ...]:

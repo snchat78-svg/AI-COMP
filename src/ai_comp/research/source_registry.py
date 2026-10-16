@@ -43,8 +43,14 @@ class SourceRegistry:
     def get_source(self, source_id: str) -> SourceRecord:
         return self._sources[source_id]
 
+    def bodies(self) -> tuple[ConductingBody, ...]:
+        return tuple(self._bodies.values())
+
     def exams(self) -> tuple[Exam, ...]:
         return tuple(self._exams.values())
+
+    def categories(self) -> tuple[PaperCategory, ...]:
+        return tuple(self._categories.values())
 
     def sources(self) -> tuple[SourceRecord, ...]:
         return tuple(self._sources.values())

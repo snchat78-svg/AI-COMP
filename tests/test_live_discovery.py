@@ -7,7 +7,7 @@ class FakeTransport:
         self.requested = []
     def get(self, url):
         self.requested.append(url)
-        return self.pages[url]
+        return self.pages.get(url, HttpResponse(url, 404, "", "text/plain"))
 
 def source():
     return SourceRecord("RSSB", "RSSB", "https://rssb.rajasthan.gov.in/", SourceType.OFFICIAL_WEBSITE, SourcePriority.OFFICIAL, allowed_paths=("/papers/", "/archive/"))
@@ -43,3 +43,87 @@ def test_live_discovery_fails_closed_when_robots_missing():
         assert str(exc) == "robots_unavailable"
     else:
         raise AssertionError("expected robots_unavailable")
+
+def test_live_candidate_ids_are_stable_when_sitemap_order_changes():
+    base = "https://rssb.rajasthan.gov.in/"
+    robots = HttpResponse(
+        base + "robots.txt",
+        200,
+        "User-agent: AI-COMP/phase2\nSitemap: " + base + "sitemap.xml\n",
+        "text/plain",
+    )
+    first_map = (
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"<url><loc>{base}papers/a.pdf</loc></url>"
+        f"<url><loc>{base}papers/b.pdf</loc></url>"
+        "</urlset>"
+    )
+    second_map = (
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"<url><loc>{base}papers/b.pdf</loc></url>"
+        f"<url><loc>{base}papers/a.pdf</loc></url>"
+        "</urlset>"
+    )
+    discovery = LiveOfficialSourceDiscovery
+    policy = CrawlPolicy(True, rate_limit_seconds=0)
+    first = discovery(FakeTransport({
+        base + "robots.txt": robots,
+        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, first_map, "application/xml"),
+    })).run(source(), policy)
+    second = discovery(FakeTransport({
+        base + "robots.txt": robots,
+        base + "sitemap.xml": HttpResponse(base + "sitemap.xml", 200, second_map, "application/xml"),
+    })).run(source(), policy)
+
+    first_ids = {candidate.url: candidate.candidate_id for candidate in first.candidates}
+    second_ids = {candidate.url: candidate.candidate_id for candidate in second.candidates}
+    assert first_ids == second_ids
+    assert all(candidate.discovered_at for candidate in first.candidates)
+
+
+
+def test_rpsc_discovery_includes_registered_previous_paper_archive():
+    base = "https://rpsc.rajasthan.gov.in/"
+    rpsc_source = SourceRecord(
+        "RPSC_OFFICIAL",
+        "RPSC Official",
+        base,
+        SourceType.OFFICIAL_WEBSITE,
+        SourcePriority.OFFICIAL,
+    )
+    transport = FakeTransport({
+        base + "robots.txt": HttpResponse(
+            base + "robots.txt",
+            200,
+            "User-agent: AI-COMP/phase2\nSitemap: " + base + "sitemap.xml\n",
+            "text/plain",
+        ),
+        base + "sitemap.xml": HttpResponse(
+            base + "sitemap.xml",
+            200,
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',
+            "application/xml",
+        ),
+        base + "previousquestionpapers.aspx": HttpResponse(
+            base + "previousquestionpapers.aspx",
+            200,
+            (
+                '<html><body>'
+                '<a href="/Static/PreviousQuestionPaper/old-paper.pdf">Old paper</a>'
+                '<a href="/Static/AnswerKeys/final-key.pdf">Final answer key</a>'
+                '</body></html>'
+            ),
+            "text/html",
+        ),
+    })
+
+    result = LiveOfficialSourceDiscovery(transport).run(
+        rpsc_source,
+        CrawlPolicy(True, rate_limit_seconds=0),
+    )
+
+    urls = {candidate.url for candidate in result.candidates}
+    assert base + "Static/PreviousQuestionPaper/old-paper.pdf" in urls
+    assert base + "Static/AnswerKeys/final-key.pdf" in urls
+    assert base + "previousquestionpapers.aspx" in transport.requested
+    assert base + "robots.txt" in transport.requested
