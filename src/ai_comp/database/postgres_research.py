@@ -4,7 +4,12 @@ from typing import Any
 
 from ai_comp.database.repository import RepositoryError
 from ai_comp.domain.sources import SourcePriority, SourceRecord, SourceType
-from ai_comp.research.paper import DiscoveryStatus, FetchedDocument, PaperCandidate
+from ai_comp.research.paper import (
+    DiscoveryStatus,
+    DocumentFormat,
+    FetchedDocument,
+    PaperCandidate,
+)
 from ai_comp.research.processing import NormalizedDocument
 
 
@@ -127,9 +132,7 @@ class PostgresResearchRepository:
                 source_id=str(row[1]),
                 url=str(row[2]),
                 title=str(row[3]),
-                format=__import__(
-                    "ai_comp.research.paper", fromlist=["DocumentFormat"]
-                ).DocumentFormat(str(row[4])),
+                format=DocumentFormat(str(row[4])),
                 category_id=None if row[5] is None else str(row[5]),
                 discovered_at=timestamp,
                 status=DiscoveryStatus(str(row[7])),
