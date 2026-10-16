@@ -10,7 +10,8 @@ from ai_comp.research.paper import (
     FetchedDocument,
     PaperCandidate,
 )
-from ai_comp.research.processing import NormalizedDocument
+from ai_comp.research.metadata import StoredDocumentMetadata
+from ai_comp.research.processing import ExtractionMethod, NormalizedDocument
 
 
 
@@ -19,6 +20,13 @@ from ai_comp.research.processing import NormalizedDocument
 class PendingPaperCandidate:
     candidate: PaperCandidate
     source: SourceRecord
+
+
+@dataclass(frozen=True)
+class ProcessedPaperCandidate:
+    candidate: PaperCandidate
+    source: SourceRecord
+    document: NormalizedDocument
 
 
 class PostgresResearchRepository:
@@ -148,6 +156,119 @@ class PostgresResearchRepository:
                 notes=str(row[14] or ""),
             )
             result.append(PendingPaperCandidate(candidate, source))
+        return tuple(result)
+
+    def list_processed_candidates(
+        self,
+        *,
+        limit: int = 500,
+        source_id: str = "all",
+    ) -> tuple[ProcessedPaperCandidate, ...]:
+        """Load fetched official candidates with normalized document content."""
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 5000:
+            raise ValueError("limit must be between 1 and 5000")
+        if not isinstance(source_id, str) or not source_id.strip():
+            raise ValueError("source_id must be a non-empty string")
+        source_condition = ""
+        params: list[object] = []
+        if source_id != "all":
+            source_condition = " AND pc.source_id = %s"
+            params.append(source_id)
+        try:
+            rows = self._connection.execute(
+                f"""
+                SELECT
+                    pc.candidate_id, pc.source_id, pc.url, pc.title,
+                    pc.format, pc.category_id, pc.discovered_at, pc.status,
+                    s.name, s.base_url, s.source_type, s.priority,
+                    s.conducting_body_id, s.allowed_paths, s.notes,
+                    d.document_id, d.source_url, d.content_type, d.sha256,
+                    d.size_bytes, d.storage_key, d.declared_format,
+                    d.detected_format, nd.normalization_version,
+                    nd.extraction_method, nd.normalized_text
+                FROM paper_candidates pc
+                JOIN sources s ON s.source_id = pc.source_id
+                JOIN documents d ON d.candidate_id = pc.candidate_id
+                JOIN normalized_documents nd ON nd.document_id = d.document_id
+                WHERE pc.status = 'FETCHED'
+                  AND s.priority = 'OFFICIAL'
+                  {source_condition}
+                ORDER BY pc.discovered_at NULLS FIRST, pc.candidate_id
+                LIMIT %s
+                """,
+                tuple(params + [limit]),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError(
+                "failed to load processed official paper candidates"
+            ) from exc
+
+        result: list[ProcessedPaperCandidate] = []
+        for row in rows:
+            discovered_at = row[6]
+            if discovered_at is None:
+                timestamp = ""
+            elif hasattr(discovered_at, "isoformat"):
+                timestamp = discovered_at.isoformat()
+            else:
+                timestamp = str(discovered_at)
+            allowed_paths = row[13]
+            if isinstance(allowed_paths, str):
+                try:
+                    allowed_paths = json.loads(allowed_paths)
+                except json.JSONDecodeError:
+                    allowed_paths = []
+            if not isinstance(allowed_paths, (list, tuple)):
+                allowed_paths = []
+
+            candidate = PaperCandidate(
+                candidate_id=str(row[0]),
+                source_id=str(row[1]),
+                url=str(row[2]),
+                title=str(row[3]),
+                format=DocumentFormat(str(row[4])),
+                category_id=None if row[5] is None else str(row[5]),
+                discovered_at=timestamp,
+                status=DiscoveryStatus(str(row[7])),
+            )
+            source = SourceRecord(
+                source_id=str(row[1]),
+                name=str(row[8]),
+                base_url=str(row[9]),
+                source_type=SourceType(str(row[10])),
+                priority=SourcePriority(str(row[11])),
+                conducting_body_id=None if row[12] is None else str(row[12]),
+                allowed_paths=tuple(str(item) for item in allowed_paths),
+                notes=str(row[14] or ""),
+            )
+            fetched = FetchedDocument(
+                document_id=str(row[15]),
+                candidate_id=str(row[0]),
+                source_url=str(row[16]),
+                content_type=str(row[17] or ""),
+                sha256=str(row[18]),
+                size_bytes=int(row[19]),
+                storage_key=str(row[20]),
+                format=DocumentFormat(str(row[22])),
+            )
+            metadata = StoredDocumentMetadata(
+                document_id=fetched.document_id,
+                candidate_id=fetched.candidate_id,
+                source_url=fetched.source_url,
+                content_type=fetched.content_type,
+                sha256=fetched.sha256,
+                size_bytes=fetched.size_bytes,
+                storage_key=fetched.storage_key,
+                declared_format=DocumentFormat(str(row[21])),
+                detected_format=DocumentFormat(str(row[22])),
+            )
+            normalized = NormalizedDocument(
+                document=fetched,
+                metadata=metadata,
+                text=str(row[25] or ""),
+                extraction_method=ExtractionMethod(str(row[24])),
+            )
+            result.append(ProcessedPaperCandidate(candidate, source, normalized))
         return tuple(result)
 
     def has_document_hash(self, digest: str) -> bool:
