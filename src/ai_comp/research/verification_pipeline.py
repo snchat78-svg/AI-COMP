@@ -216,8 +216,7 @@ def _state_upsert(
             paired_answer_key_candidate_id, paired_answer_key_sha256,
             reason, last_processed_at, updated_at
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,
-                CASE WHEN %s THEN NOW() ELSE NULL END, NOW())
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
         ON CONFLICT (candidate_id) DO UPDATE SET
             exam_id = EXCLUDED.exam_id,
             year = EXCLUDED.year,
@@ -227,16 +226,13 @@ def _state_upsert(
             paired_answer_key_candidate_id = EXCLUDED.paired_answer_key_candidate_id,
             paired_answer_key_sha256 = EXCLUDED.paired_answer_key_sha256,
             reason = EXCLUDED.reason,
-            last_processed_at = CASE
-                WHEN %s THEN NOW()
-                ELSE paper_verification_state.last_processed_at
-            END,
+            last_processed_at = NOW(),
             updated_at = NOW()
         """,
         (
             candidate_id, metadata.exam_id, metadata.year, metadata.shift,
             metadata.role.value, state, paired_candidate_id, answer_key_sha256,
-            reason, history_recorded, history_recorded,
+            reason,
         ),
     )
 
