@@ -31,11 +31,11 @@ class FakeConnection:
 
 
 def test_paper_url_heuristic_keeps_exam_documents_and_ignores_normal_pages():
-    assert is_likely_paper_url("https://rssb.rajasthan.gov.in/files/qp-2024.pdf")
+    assert is_likely_paper_url("https://rsmssb.rajasthan.gov.in/files/qp-2024.pdf")
     assert is_likely_paper_url(
         "https://rpsc.rajasthan.gov.in/answer-key/final-answer-key"
     )
-    assert not is_likely_paper_url("https://rssb.rajasthan.gov.in/news/latest-update")
+    assert not is_likely_paper_url("https://rsmssb.rajasthan.gov.in/news/latest-update")
     assert not is_likely_paper_url(
         "https://rpsc.rajasthan.gov.in/previousquestionpapers.aspx"
     )
@@ -45,7 +45,7 @@ def test_paper_url_heuristic_keeps_exam_documents_and_ignores_normal_pages():
 
 
 def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
-    base = "https://rssb.rajasthan.gov.in/"
+    base = "https://rsmssb.rajasthan.gov.in/"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
