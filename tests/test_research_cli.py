@@ -36,6 +36,12 @@ def test_paper_url_heuristic_keeps_exam_documents_and_ignores_normal_pages():
         "https://rpsc.rajasthan.gov.in/answer-key/final-answer-key"
     )
     assert not is_likely_paper_url("https://rssb.rajasthan.gov.in/news/latest-update")
+    assert not is_likely_paper_url(
+        "https://rpsc.rajasthan.gov.in/previousquestionpapers.aspx"
+    )
+    assert not is_likely_paper_url(
+        "https://rpsc.rajasthan.gov.in/Static/AnswerKeys/"
+    )
 
 
 def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
