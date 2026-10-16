@@ -20,17 +20,55 @@ class HttpResponse:
     content_type: str = ""
 
 class HttpTransport:
+    """Small bounded HTTP transport with retries for transient network failures."""
+
+    def __init__(
+        self,
+        *,
+        timeout_seconds: float = 15.0,
+        retries: int = 2,
+        retry_delay_seconds: float = 0.5,
+    ) -> None:
+        if timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be positive")
+        if retries < 0:
+            raise ValueError("retries cannot be negative")
+        if retry_delay_seconds < 0:
+            raise ValueError("retry_delay_seconds cannot be negative")
+        self.timeout_seconds = timeout_seconds
+        self.retries = retries
+        self.retry_delay_seconds = retry_delay_seconds
+
     def get(self, url: str) -> HttpResponse:
-        from urllib.error import HTTPError
+        from urllib.error import HTTPError, URLError
         from urllib.request import Request, urlopen
+
         request = Request(url, headers={"User-Agent": "AI-COMP/phase2"})
-        try:
-            with urlopen(request, timeout=15) as response:
+        for attempt in range(self.retries + 1):
+            try:
+                with urlopen(request, timeout=self.timeout_seconds) as response:
+                    body = response.read()
+                    return HttpResponse(
+                        response.geturl(),
+                        response.status,
+                        body.decode("utf-8", errors="replace"),
+                        response.headers.get("Content-Type", ""),
+                    )
+            except HTTPError as response:
+                # HTTP status responses are not transport failures. Preserve
+                # existing policy handling for 403/404/429 and other statuses.
                 body = response.read()
-                return HttpResponse(response.geturl(), response.status, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
-        except HTTPError as response:
-            body = response.read()
-            return HttpResponse(response.geturl(), response.code, body.decode("utf-8", errors="replace"), response.headers.get("Content-Type", ""))
+                return HttpResponse(
+                    response.geturl(),
+                    response.code,
+                    body.decode("utf-8", errors="replace"),
+                    response.headers.get("Content-Type", ""),
+                )
+            except (URLError, TimeoutError, OSError):
+                if attempt >= self.retries:
+                    raise
+                sleep(self.retry_delay_seconds * (2**attempt))
+        raise RuntimeError("unreachable HTTP retry state")
 
 @dataclass(frozen=True)
 class LiveDiscoveryResult:
@@ -67,6 +105,20 @@ class LiveOfficialSourceDiscovery:
         # RPSC publishes its previous-paper archive at a stable route outside
         # the generic sitemap/feed paths. Include this registered adapter seed
         # even when the robots file declares a sitemap, subject to robots rules.
+        if source.source_id == "RSSB_OFFICIAL":
+            # These are official RSSB archive pages currently used for question
+            # papers and answer keys. They remain subject to the same robots.txt
+            # and same-host gates as sitemap-discovered URLs.
+            seeds.extend((
+                urljoin(
+                    source.base_url,
+                    "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default",
+                ),
+                urljoin(
+                    source.base_url,
+                    "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red",
+                ),
+            ))
         if source.source_id == "RPSC_OFFICIAL":
             seeds.extend((
                 urljoin(source.base_url, "previousquestionpapers.aspx"),
