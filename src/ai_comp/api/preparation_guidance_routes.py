@@ -852,12 +852,48 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
                     "message": "Preparation settings changed during test creation; retry with the active request.",
                 }
             })
+
+        questions = context["questions"]
+        candidates = context["candidates"]
+        if not questions or not candidates:
+            return _json_response(HTTPStatus.CONFLICT, {
+                "error": {
+                    "code": "NO_ELIGIBLE_PREPARATION_QUESTIONS",
+                    "message": (
+                        "No accepted, answer-verified questions are available yet. "
+                        "The verified question bank must be populated before a test can start."
+                    ),
+                }
+            })
+
+        # A request for 20 questions should still work when only 3 accepted,
+        # answer-verified, non-duplicate questions are currently available.
+        # Respect exclusions before calculating the effective count, and never
+        # invent or duplicate questions to fill the requested size.
+        excluded_ids = set(active_request.request.exclude_question_ids)
+        available_ids = {
+            candidate.question_id
+            for candidate in candidates
+            if candidate.question_id not in excluded_ids
+        }
+        effective_question_count = min(spec.question_count, len(available_ids))
+        if effective_question_count < 1:
+            return _json_response(HTTPStatus.CONFLICT, {
+                "error": {
+                    "code": "NO_ELIGIBLE_PREPARATION_QUESTIONS",
+                    "message": (
+                        "No eligible verified questions remain for this test. "
+                        "Remove exclusions or populate the verified question bank."
+                    ),
+                }
+            })
+
         session_id = f"session-{uuid4().hex}"
         plan = PersonalizedPreparationService().build_plan(
             authenticated_learner_id,
             test_id=spec.test_id,
             title=spec.title,
-            question_count=spec.question_count,
+            question_count=effective_question_count,
             duration_seconds=spec.duration_seconds,
             history=context["history"],
             question_history=context["question_history"],
@@ -894,6 +930,8 @@ def create_preparation_session(learner_id: str, request: Request) -> Response:
         )
         response_payload = _test_session_payload(session)
         response_payload["preparation_request_id"] = active_request.request_id
+        response_payload["requested_question_count"] = spec.question_count
+        response_payload["question_count_adjusted"] = effective_question_count != spec.question_count
         response_payload["mode"] = plan.mode.value
         response_payload["focus_concept_ids"] = list(plan.focus_concept_ids)
         response_payload["revision_question_ids"] = list(plan.revision_question_ids)
@@ -1501,6 +1539,16 @@ def get_preparation_guidance(learner_id: str, request: Request) -> Response:
     target = request.url.path
     if request.url.query:
         target = f"{target}?{request.url.query}"
+
+    # Guidance generation still requires the full requested set; only the
+    # session endpoint is allowed to cap a test to a smaller available pool.
+    if len(context["candidates"]) < context["question_count"]:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_CONTEXT_UNAVAILABLE",
+                "message": "Verified question and learner context is not ready.",
+            }
+        })
 
     adapter = PreparationGuidanceHTTPAdapter(service)
     adapted = adapter.handle(
