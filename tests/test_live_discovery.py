@@ -1,5 +1,10 @@
 from ai_comp.domain.sources import CrawlPolicy, SourcePriority, SourceRecord, SourceType
-from ai_comp.research.live_discovery import HttpResponse, HttpTransport, LiveOfficialSourceDiscovery
+from ai_comp.research.live_discovery import (
+    HttpResponse,
+    HttpTransport,
+    LiveOfficialSourceDiscovery,
+    _SameHostRedirectHandler,
+)
 from ai_comp.research.seed_registry import build_initial_registry
 
 class FakeTransport:
@@ -217,13 +222,14 @@ def test_http_transport_retries_transient_network_failures(monkeypatch):
         def read(self):
             return b"ok"
 
-    def fake_urlopen(request, timeout):
-        calls.append((request.full_url, timeout))
-        if len(calls) == 1:
-            raise URLError("temporary network failure")
-        return FakeResponse(request.full_url)
+    class FakeOpener:
+        def open(self, request, timeout):
+            calls.append((request.full_url, timeout))
+            if len(calls) == 1:
+                raise URLError("temporary network failure")
+            return FakeResponse(request.full_url)
 
-    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setattr("urllib.request.build_opener", lambda _handler: FakeOpener())
     monkeypatch.setattr("ai_comp.research.live_discovery.sleep", lambda _delay: None)
 
     response = HttpTransport(
@@ -257,3 +263,24 @@ def test_live_discovery_blocks_cross_host_redirects():
         assert str(exc) == "cross_host_redirect_blocked"
     else:
         raise AssertionError("cross-host redirects must be rejected")
+
+
+
+def test_http_redirect_handler_rejects_cross_host_before_following():
+    from urllib.request import Request
+
+    handler = _SameHostRedirectHandler()
+    request = Request("https://rsmssb.rajasthan.gov.in/robots.txt")
+    try:
+        handler.redirect_request(
+            request,
+            None,
+            302,
+            "Found",
+            {},
+            "https://untrusted.example/robots.txt",
+        )
+    except ValueError as exc:
+        assert str(exc) == "cross_host_redirect_blocked"
+    else:
+        raise AssertionError("cross-host redirect should not be followed")
