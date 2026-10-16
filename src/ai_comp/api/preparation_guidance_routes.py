@@ -1540,9 +1540,15 @@ def get_preparation_guidance(learner_id: str, request: Request) -> Response:
     if request.url.query:
         target = f"{target}?{request.url.query}"
 
-    # Guidance generation still requires the full requested set; only the
-    # session endpoint is allowed to cap a test to a smaller available pool.
-    if len(context["candidates"]) < context["question_count"]:
+    # PostgreSQL-backed context marks the actual verified-pool size. Preserve
+    # injected/non-database context-provider contracts; only enforce this
+    # capacity check when that explicit metadata is supplied.
+    available_question_count = context.get("available_question_count")
+    if (
+        isinstance(available_question_count, int)
+        and not isinstance(available_question_count, bool)
+        and available_question_count < context["question_count"]
+    ):
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
                 "code": "PREPARATION_CONTEXT_UNAVAILABLE",
