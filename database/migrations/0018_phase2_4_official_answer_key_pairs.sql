@@ -33,4 +33,25 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_matched_answer_key_candidate
 CREATE INDEX IF NOT EXISTS idx_paper_answer_key_pairs_exam_year
     ON paper_answer_key_pairs(exam_id, year, shift, pair_status);
 
+CREATE TABLE IF NOT EXISTS paper_verification_state (
+    candidate_id TEXT PRIMARY KEY REFERENCES paper_candidates(candidate_id) ON DELETE CASCADE,
+    exam_id TEXT REFERENCES exams(exam_id),
+    year INTEGER CHECK (year IS NULL OR year >= 1900),
+    shift TEXT,
+    artifact_role TEXT NOT NULL CHECK (
+        artifact_role IN ('QUESTION_PAPER', 'ANSWER_KEY', 'UNKNOWN')
+    ),
+    state TEXT NOT NULL CHECK (
+        state IN ('READY', 'NEEDS_REVIEW', 'HISTORY_RECORDED', 'FAILED')
+    ),
+    paired_answer_key_candidate_id TEXT REFERENCES paper_candidates(candidate_id),
+    paired_answer_key_sha256 CHAR(64),
+    reason TEXT NOT NULL DEFAULT '',
+    last_processed_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_paper_verification_state_state
+    ON paper_verification_state(state, updated_at);
+
 COMMIT;
