@@ -46,6 +46,8 @@ def test_paper_url_heuristic_keeps_exam_documents_and_ignores_normal_pages():
 
 def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
     base = "https://rsmssb.rajasthan.gov.in/"
+    question_archive = base + "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default"
+    answer_archive = base + "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
@@ -64,6 +66,8 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
             ),
             "application/xml",
         ),
+        question_archive: HttpResponse(question_archive, 404, "", "text/html"),
+        answer_archive: HttpResponse(answer_archive, 404, "", "text/html"),
     })
     connection = FakeConnection()
 
@@ -90,7 +94,7 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
     assert candidate_rows[0][1][1] == "RSSB_OFFICIAL"
     assert candidate_rows[0][1][2] == base + "files/qp-2024.pdf"
     assert candidate_rows[0][1][6]
-    assert transport.requested == [base + "robots.txt", base + "sitemap.xml"]
+    assert transport.requested == [base + "robots.txt", base + "sitemap.xml", question_archive, answer_archive]
 
 
 def test_run_discovery_fails_for_unknown_source_before_touching_database():
