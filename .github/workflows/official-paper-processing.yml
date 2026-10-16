@@ -1,0 +1,136 @@
+name: official-paper-processing
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Registered official source ID or all"
+        required: true
+        default: "all"
+        type: string
+      limit:
+        description: "Maximum pending candidates to process (1-50)"
+        required: true
+        default: "10"
+        type: string
+      retry_failed:
+        description: "Retry candidates previously marked FAILED"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "15 2 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-official-paper-processing
+  cancel-in-progress: false
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AI_COMP_DATABASE_URL: ${{ secrets.AI_COMP_DATABASE_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      AI_COMP_DOCUMENT_BUCKET: ai-comp-papers
+      RESEARCH_SOURCE: ${{ github.event.inputs.source || 'all' }}
+      RESEARCH_LIMIT: ${{ github.event.inputs.limit || '10' }}
+      RESEARCH_RETRY_FAILED: ${{ github.event.inputs.retry_failed || 'false' }}
+    steps:
+      - name: Check required repository secrets
+        id: config
+        shell: bash
+        run: |
+          if [ -z "$AI_COMP_DATABASE_URL" ] || [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Official paper processing skipped"
+              echo
+              echo "Configure repository secrets AI_COMP_DATABASE_URL, SUPABASE_URL, and SUPABASE_SERVICE_ROLE_KEY to enable durable processing."
+              echo "No secret values were printed. Discovery remains available separately."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository
+        if: steps.config.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: steps.config.outputs.ready == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Hindi and English OCR system packages
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-eng
+
+      - name: Install application and OCR dependencies
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[postgres,ocr]"
+
+      - name: Fetch and process pending official paper candidates
+        if: steps.config.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$RESEARCH_RETRY_FAILED" = "true" ]; then
+            python -m ai_comp.research.process_cli \
+              --source "$RESEARCH_SOURCE" \
+              --limit "$RESEARCH_LIMIT" \
+              --retry-failed | tee paper-processing-summary.json
+          else
+            python -m ai_comp.research.process_cli \
+              --source "$RESEARCH_SOURCE" \
+              --limit "$RESEARCH_LIMIT" | tee paper-processing-summary.json
+          fi
+
+      - name: Publish processing summary
+        if: steps.config.outputs.ready == 'true' && always() && hashFiles('paper-processing-summary.json') != ''
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("paper-processing-summary.json").read_text(encoding="utf-8"))
+          summary = [
+              "# AI-COMP official paper processing",
+              "",
+              f"- Selected: {data.get('selected', 0)}",
+              f"- Processed: {data.get('processed', 0)}",
+              f"- Duplicate documents skipped: {data.get('duplicate_documents', 0)}",
+              f"- Extracted question candidates: {data.get('question_candidates', 0)}",
+              f"- Extracted answer-key entries: {data.get('answer_key_entries', 0)}",
+              f"- Empty extractions: {data.get('empty_extractions', 0)}",
+              f"- Failed: {data.get('failed', 0)}",
+              f"- Rejected by policy: {data.get('rejected', 0)}",
+              "",
+              "> " + data.get("trust_boundary", ""),
+              "",
+              "## Per-candidate outcomes",
+          ]
+          for item in data.get("results", []):
+              summary.append(
+                  f"- {item.get('candidate_id', 'unknown')} "
+                  f"({item.get('source_id', 'unknown')}): "
+                  f"{item.get('status', 'unknown')}; "
+                  f"questions={item.get('question_count', 0)}, "
+                  f"answer-key entries={item.get('answer_key_entry_count', 0)}"
+              )
+              if item.get("error_type"):
+                  summary.append(f"  - Error type: {item['error_type']}")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write("\n".join(summary) + "\n")
+          PY
