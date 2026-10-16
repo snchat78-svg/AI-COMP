@@ -227,6 +227,7 @@ class PostgresPreparationContextProvider:
             "question_history": question_history,
             "candidates": candidates,
             "questions": questions,
+            "available_question_count": len(candidates),
             "mode": test_request.mode,
             "scoring": specification.scoring,
             "shuffle_questions": specification.shuffle_questions,
