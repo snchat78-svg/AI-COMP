@@ -114,9 +114,8 @@ class LiveOfficialSourceDiscovery:
         parser.parse(robots.content.splitlines())
         declared_seeds = list(parser.site_maps() or [])
         seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
-        # RPSC publishes its previous-paper archive at a stable route outside
-        # the generic sitemap/feed paths. Include this registered adapter seed
-        # even when the robots file declares a sitemap, subject to robots rules.
+        # Registered official archive pages supplement generic sitemap/feed
+        # discovery. All seeds still pass through robots.txt and same-host gates.
         if source.source_id == "RSSB_OFFICIAL":
             # These are official RSSB archive pages currently used for question
             # papers and answer keys. They remain subject to the same robots.txt
@@ -132,10 +131,11 @@ class LiveOfficialSourceDiscovery:
                 ),
             ))
         if source.source_id == "RPSC_OFFICIAL":
+            # Current RPSC navigation exposes Question Papers and Answer Keys
+            # through these slice routes; older .aspx routes now return 404.
             seeds.extend((
-                urljoin(source.base_url, "previousquestionpapers.aspx"),
-                urljoin(source.base_url, "answerkeys.aspx"),
-                urljoin(source.base_url, "Static/AnswerKeys/"),
+                urljoin(source.base_url, "viewcommon?Slice=QP"),
+                urljoin(source.base_url, "viewcommon?Slice=AK"),
             ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
