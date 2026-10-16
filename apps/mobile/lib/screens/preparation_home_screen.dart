@@ -182,11 +182,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final session = await api.createSession();
       if (!mounted) return;
       setState(() => _loading = false);
-      if (recommendation?.questionCountAdjusted == true) {
+      final adjustedRecommendation = recommendation;
+      if (adjustedRecommendation != null &&
+          adjustedRecommendation.questionCountAdjusted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'The available question pool supports ${recommendation!.questionCount} questions for this test.',
+              'The available question pool supports ${adjustedRecommendation.questionCount} questions for this test.',
             ),
           ),
         );
@@ -207,7 +209,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
     } catch (_) {
-      _setError('Could not create an adaptive test. Refresh the dashboard to check whether your progress was saved.');
+      _setError('Could not create a practice test. Refresh the dashboard to check whether your progress was saved.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
