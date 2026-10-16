@@ -32,6 +32,8 @@ class ResolvedPaperMetadata:
     category_id: str | None
     ready_for_pairing: bool
     reason: str
+    question_count: int = 0
+    answer_key_entry_count: int = 0
 
 
 _EXAM_ALIASES: dict[str, tuple[str, ...]] = {
@@ -160,6 +162,8 @@ class PaperMetadataResolver:
             category_id=category_id,
             ready_for_pairing=ready,
             reason="; ".join(reasons),
+            question_count=question_count,
+            answer_key_entry_count=answer_key_entry_count,
         )
 
     @staticmethod
