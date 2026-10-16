@@ -125,5 +125,8 @@ def test_rpsc_discovery_includes_registered_previous_paper_archive():
     urls = {candidate.url for candidate in result.candidates}
     assert base + "Static/PreviousQuestionPaper/old-paper.pdf" in urls
     assert base + "Static/AnswerKeys/final-key.pdf" in urls
+    titles = {candidate.url: candidate.title for candidate in result.candidates}
+    assert titles[base + "Static/PreviousQuestionPaper/old-paper.pdf"] == "Old paper"
+    assert titles[base + "Static/AnswerKeys/final-key.pdf"] == "Final answer key"
     assert base + "previousquestionpapers.aspx" in transport.requested
     assert base + "robots.txt" in transport.requested
