@@ -1,4 +1,5 @@
 from dataclasses import dataclass, replace
+from html import unescape
 from datetime import datetime, timezone
 from hashlib import sha256
 from time import sleep
@@ -73,6 +74,7 @@ class LiveOfficialSourceDiscovery:
             ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []
+        paper_link_titles: dict[str, str] = {}
         pending = [(url, 0) for url in seeds]
         seen: set[str] = set()
         while pending and len(seen) < self.max_documents:
@@ -88,7 +90,12 @@ class LiveOfficialSourceDiscovery:
             is_xml = "xml" in response.content_type.lower() or url.lower().endswith((".xml", ".rss", ".atom"))
             if not is_xml:
                 archive_urls.append(url)
-                paper_links.extend(self._archive_links(source, policy, parser, response.content, response.url))
+                for link_url, link_title in self._archive_link_records(
+                    source, policy, parser, response.content, response.url
+                ):
+                    paper_links.append(link_url)
+                    if link_title and link_url not in paper_link_titles:
+                        paper_link_titles[link_url] = link_title
                 continue
             feed = FeedDiscovery(source, policy)
             try:
@@ -121,7 +128,11 @@ class LiveOfficialSourceDiscovery:
         )
         discovered_at = datetime.now(timezone.utc).isoformat()
         candidates = tuple(
-            replace(candidate, discovered_at=discovered_at)
+            replace(
+                candidate,
+                title=paper_link_titles.get(candidate.url) or candidate.title,
+                discovered_at=discovered_at,
+            )
             for candidate in candidates
         )
         return LiveDiscoveryResult(robots_url, tuple(dict.fromkeys(sitemap_urls)), tuple(dict.fromkeys(feed_urls)), tuple(dict.fromkeys(archive_urls)), candidates)
@@ -147,14 +158,33 @@ class LiveOfficialSourceDiscovery:
         return result
 
     def _archive_links(self, source, policy, parser, html, base_url):
+        """Compatibility wrapper returning only URLs from archive pages."""
+        return tuple(
+            url for url, _title in self._archive_link_records(
+                source, policy, parser, html, base_url
+            )
+        )
+
+    def _archive_link_records(self, source, policy, parser, html, base_url):
+        """Extract same-host allowed links together with visible archive labels."""
         import re
-        result = []
-        for raw in re.findall(r'href\s*=\s*["\']([^"\']+)["\']', html, flags=re.I):
-            url = urljoin(base_url, raw)
+
+        result: list[tuple[str, str]] = []
+        seen: set[str] = set()
+        anchor_pattern = re.compile(
+            r"""<a\b[^>]*?href\s*=\s*["']([^"']+)["'][^>]*>(.*?)</a\s*>""",
+            flags=re.I | re.S,
+        )
+        for match in anchor_pattern.finditer(html):
+            url = urljoin(base_url, match.group(1).strip())
             try:
                 validate_candidate_url(source, url, policy)
             except ResearchPolicyError:
                 continue
-            if parser.can_fetch(self.user_agent, url):
-                result.append(url)
-        return tuple(dict.fromkeys(result))
+            if not parser.can_fetch(self.user_agent, url) or url in seen:
+                continue
+            seen.add(url)
+            label = re.sub(r"<[^>]+>", " ", match.group(2))
+            label = re.sub(r"\s+", " ", unescape(label)).strip()
+            result.append((url, label))
+        return tuple(result)

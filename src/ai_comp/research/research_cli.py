@@ -44,6 +44,9 @@ def is_likely_paper_url(url: str) -> bool:
     are enforced before this function is reached.
     """
     path = unquote(urlparse(url).path).lower()
+    # Archive/listing pages are traversal roots, not downloadable paper files.
+    if path.endswith(("/", ".aspx", ".html", ".htm")):
+        return False
     return path.endswith(_PAPER_SUFFIXES) or any(
         marker in path for marker in _PAPER_PATH_MARKERS
     )
