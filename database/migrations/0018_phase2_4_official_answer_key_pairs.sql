@@ -54,4 +54,13 @@ CREATE TABLE IF NOT EXISTS paper_verification_state (
 CREATE INDEX IF NOT EXISTS idx_paper_verification_state_state
     ON paper_verification_state(state, updated_at);
 
+-- Keep the question-paper document identity used by the resolver separate
+-- from the actual source document that supplied the answer key.
+ALTER TABLE question_answer_records
+    ADD COLUMN IF NOT EXISTS source_answer_key_document_id TEXT
+    REFERENCES documents(document_id);
+
+CREATE INDEX IF NOT EXISTS idx_question_answer_key_source_document
+    ON question_answer_records(source_answer_key_document_id);
+
 COMMIT;
