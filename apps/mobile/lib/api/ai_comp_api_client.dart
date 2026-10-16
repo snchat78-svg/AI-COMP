@@ -148,6 +148,23 @@ class AiCompApiClient {
     return AdaptiveRecommendation.fromJson(json);
   }
 
+  Future<void> createMixedPracticeRequest({
+    required int questionCount,
+    required int durationSeconds,
+  }) async {
+    await _send(
+      'POST',
+      '$_learnerPath/preparation-requests',
+      body: {
+        'title': 'Mixed practice test',
+        'question_count': questionCount,
+        'duration_seconds': durationSeconds,
+        'mode': 'MIXED',
+        'concept_ids': <String>[],
+      },
+    );
+  }
+
   Future<TestSessionSnapshot> createSession() async {
     final json = await _send('POST', '$_learnerPath/preparation-sessions');
     return TestSessionSnapshot.fromJson(json);
