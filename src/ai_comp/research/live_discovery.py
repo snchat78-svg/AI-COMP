@@ -19,6 +19,15 @@ class HttpResponse:
     content: str
     content_type: str = ""
 
+class _SameHostRedirectHandler(__import__("urllib.request", fromlist=["HTTPRedirectHandler"]).HTTPRedirectHandler):
+    """Reject cross-host redirects before urllib follows them."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urlparse(newurl).netloc.lower() != urlparse(req.full_url).netloc.lower():
+            raise ResearchPolicyError("cross_host_redirect_blocked")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 class HttpTransport:
     """Small bounded HTTP transport with retries for transient network failures."""
 
@@ -41,12 +50,13 @@ class HttpTransport:
 
     def get(self, url: str) -> HttpResponse:
         from urllib.error import HTTPError, URLError
-        from urllib.request import Request, urlopen
+        from urllib.request import Request, build_opener
 
         request = Request(url, headers={"User-Agent": "AI-COMP/phase2"})
+        opener = build_opener(_SameHostRedirectHandler())
         for attempt in range(self.retries + 1):
             try:
-                with urlopen(request, timeout=self.timeout_seconds) as response:
+                with opener.open(request, timeout=self.timeout_seconds) as response:
                     body = response.read()
                     return HttpResponse(
                         response.geturl(),
