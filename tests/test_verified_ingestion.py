@@ -262,3 +262,58 @@ def test_unverified_source_never_creates_historical_appearance():
     assert result.appearance_count == 0
     assert result.unresolved_answer_count == 1
     assert appearances.items == []
+
+
+def test_separate_official_answer_key_provenance_is_preserved():
+    from ai_comp.domain.questions import AnswerKeyEntry, QuestionCandidate
+    from ai_comp.domain.questions import QuestionExtractionResult
+
+    question = QuestionCandidate(
+        question_id="q-external-key",
+        document_id="doc-1",
+        document_sha256="a" * 64,
+        question_number=1,
+        stem="भारत की राजधानी क्या है?",
+        options=(QuestionOption("A", "दिल्ली"), QuestionOption("B", "मुंबई")),
+        kind=QuestionKind.MCQ,
+        raw_text="question",
+        start_line=1,
+        end_line=3,
+    )
+    extraction = QuestionExtractionResult(
+        document_id="doc-1",
+        questions=(question,),
+        answer_key_entries=(),
+    )
+    resolutions = MemoryResolutions()
+    orchestrator = VerifiedIngestionOrchestrator(
+        question_repository=MemoryQuestions(),
+        answer_key_repository=MemoryAnswerKeys(),
+        answer_resolution_repository=resolutions,
+        match_repository=MemoryMatches(),
+        appearance_repository=MemoryAppearances(),
+        master_service=MasterQuestionBatchService(InMemoryMasterQuestionRepository()),
+        matching_service=MatchingService(CandidatePairIndex(), MatchEngine()),
+        question_extractor=MemoryExtractor(extraction),
+    )
+
+    result = orchestrator.ingest(
+        VerifiedIngestionRequest(
+            document=build_document(),
+            exam_id="exam-1",
+            conducting_body_id="body-1",
+            year=2024,
+            exam_date=None,
+            shift=None,
+            paper_id="paper-question",
+            source_url="https://example.gov/question-paper.pdf",
+            verification=verification(VerificationStatus.VERIFIED),
+            answer_key_entries=(AnswerKeyEntry(1, "A", "1-A", 5),),
+            answer_key_document_id="answer-key-doc-2024",
+        )
+    )
+
+    assert result.appearance_count == 1
+    assert result.unresolved_answer_count == 0
+    assert resolutions.items[0].document_id == "doc-1"
+    assert resolutions.items[0].source_answer_key_document_id == "answer-key-doc-2024"
