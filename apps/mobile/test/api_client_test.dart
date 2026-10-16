@@ -110,6 +110,65 @@ void main() {
     );
   });
 
+  test('mixed practice request provides a non-adaptive first-test path', () async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return http.Response(
+        jsonEncode({
+          'request_id': 'request-mixed-1',
+          'learner_id': 'learner-1',
+          'status': 'ACTIVE',
+          'test_id': 'prep-request-mixed-1',
+          'title': 'Mixed practice test',
+          'question_count': 20,
+          'duration_seconds': 1800,
+          'scoring': {
+            'correct_marks': 1.0,
+            'incorrect_marks': -0.25,
+            'unattempted_marks': 0.0,
+          },
+          'mode': 'MIXED',
+          'concept_ids': [],
+          'exclude_question_ids': [],
+          'shuffle_questions': false,
+          'shuffle_seed': null,
+          'exam_id': null,
+          'subject_id': null,
+          'created_at': '2026-10-16T00:00:00Z',
+          'updated_at': '2026-10-16T00:00:00Z',
+        }),
+        201,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test/',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    await api.createMixedPracticeRequest(
+      questionCount: 20,
+      durationSeconds: 1800,
+    );
+
+    expect(received.method, 'POST');
+    expect(
+      received.url.path,
+      '/api/v1/learners/learner-1/preparation-requests',
+    );
+    expect(received.headers['authorization'], 'Bearer test-token');
+    final posted = jsonDecode(received.body) as Map<String, dynamic>;
+    expect(posted['title'], 'Mixed practice test');
+    expect(posted['question_count'], 20);
+    expect(posted['duration_seconds'], 1800);
+    expect(posted['mode'], 'MIXED');
+    expect(posted['concept_ids'], isEmpty);
+  });
+
   test('current-question URL supports prefixed API deployments', () async {
     final mock = MockClient((request) async {
       expect(

@@ -157,18 +157,38 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       _error = null;
     });
     try {
-      final recommendation = await api.recommendAdaptivePractice(
-        questionCount: questionCount,
-        durationSeconds: durationMinutes * 60,
-      );
+      AdaptiveRecommendation? recommendation;
+      try {
+        recommendation = await api.recommendAdaptivePractice(
+          questionCount: questionCount,
+          durationSeconds: durationMinutes * 60,
+        );
+      } on ApiException catch (error) {
+        // A first-time learner (or one without a reliable focus signal) still
+        // needs to be able to take a regular test and build useful history.
+        // Keep adaptive recommendations history-driven; only fall back when
+        // the server explicitly says a focused set cannot be made.
+        if (!const {
+          'NO_ADAPTIVE_PRACTICE_SIGNAL',
+          'NO_ELIGIBLE_ADAPTIVE_QUESTIONS',
+        }.contains(error.code)) {
+          rethrow;
+        }
+        await api.createMixedPracticeRequest(
+          questionCount: questionCount,
+          durationSeconds: durationMinutes * 60,
+        );
+      }
       final session = await api.createSession();
       if (!mounted) return;
       setState(() => _loading = false);
-      if (recommendation.questionCountAdjusted) {
+      final adjustedRecommendation = recommendation;
+      if (adjustedRecommendation != null &&
+          adjustedRecommendation.questionCountAdjusted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'The available question pool supports ${recommendation.questionCount} questions for this test.',
+              'The available question pool supports ${adjustedRecommendation.questionCount} questions for this test.',
             ),
           ),
         );
@@ -178,8 +198,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           builder: (_) => TestSessionScreen(
             api: api,
             initialSession: session,
-            title: recommendation.title,
-            focusConceptIds: recommendation.focusConceptIds,
+            title: recommendation?.title ?? 'Mixed practice test',
+            focusConceptIds: recommendation?.focusConceptIds ?? const <String>[],
           ),
         ),
       );
@@ -189,7 +209,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
     } catch (_) {
-      _setError('Could not create an adaptive test. Refresh the dashboard to check whether your progress was saved.');
+      _setError('Could not create a practice test. Refresh the dashboard to check whether your progress was saved.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -388,9 +408,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Adaptive practice test', style: theme.textTheme.titleMedium),
+            Text('Practice test', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            const Text('Focus topics are selected using your saved test history.'),
+            const Text('When saved results provide a clear focus, the test targets weak topics and previous mistakes. Otherwise, a mixed practice test helps build your learning history.'),
             const SizedBox(height: 12),
             Row(
               children: [
