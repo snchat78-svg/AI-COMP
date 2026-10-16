@@ -1,8 +1,19 @@
+from dataclasses import dataclass
+import json
 from typing import Any
 
 from ai_comp.database.repository import RepositoryError
-from ai_comp.research.paper import FetchedDocument, PaperCandidate
+from ai_comp.domain.sources import SourcePriority, SourceRecord, SourceType
+from ai_comp.research.paper import DiscoveryStatus, FetchedDocument, PaperCandidate
 from ai_comp.research.processing import NormalizedDocument
+
+
+
+
+@dataclass(frozen=True)
+class PendingPaperCandidate:
+    candidate: PaperCandidate
+    source: SourceRecord
 
 
 class PostgresResearchRepository:
@@ -49,6 +60,133 @@ class PostgresResearchRepository:
                 )
         except Exception as exc:
             raise RepositoryError("failed to persist paper candidate") from exc
+
+
+    def list_pending_candidates(
+        self,
+        *,
+        limit: int = 10,
+        source_id: str = "all",
+        retry_failed: bool = False,
+    ) -> tuple[PendingPaperCandidate, ...]:
+        """Load bounded official-source candidates that have not been processed."""
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise ValueError("limit must be between 1 and 100")
+        if not isinstance(source_id, str) or not source_id.strip():
+            raise ValueError("source_id must be a non-empty string")
+        status_condition = (
+            "pc.status IN ('DISCOVERED', 'FAILED')"
+            if retry_failed
+            else "pc.status = 'DISCOVERED'"
+        )
+        source_condition = ""
+        params: list[object] = []
+        if source_id != "all":
+            source_condition = " AND pc.source_id = %s"
+            params.append(source_id)
+        try:
+            rows = self._connection.execute(
+                f"""
+                SELECT
+                    pc.candidate_id, pc.source_id, pc.url, pc.title,
+                    pc.format, pc.category_id, pc.discovered_at, pc.status,
+                    s.name, s.base_url, s.source_type, s.priority,
+                    s.conducting_body_id, s.allowed_paths, s.notes
+                FROM paper_candidates pc
+                JOIN sources s ON s.source_id = pc.source_id
+                WHERE {status_condition}
+                  AND s.priority = 'OFFICIAL'
+                  {source_condition}
+                ORDER BY pc.discovered_at NULLS FIRST, pc.candidate_id
+                LIMIT %s
+                """,
+                tuple(params + [limit]),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to list pending official paper candidates") from exc
+
+        result: list[PendingPaperCandidate] = []
+        for row in rows:
+            discovered_at = row[6]
+            if discovered_at is None:
+                timestamp = ""
+            elif hasattr(discovered_at, "isoformat"):
+                timestamp = discovered_at.isoformat()
+            else:
+                timestamp = str(discovered_at)
+            allowed_paths = row[13]
+            if isinstance(allowed_paths, str):
+                try:
+                    allowed_paths = json.loads(allowed_paths)
+                except json.JSONDecodeError:
+                    allowed_paths = []
+            if not isinstance(allowed_paths, (list, tuple)):
+                allowed_paths = []
+            candidate = PaperCandidate(
+                candidate_id=str(row[0]),
+                source_id=str(row[1]),
+                url=str(row[2]),
+                title=str(row[3]),
+                format=__import__(
+                    "ai_comp.research.paper", fromlist=["DocumentFormat"]
+                ).DocumentFormat(str(row[4])),
+                category_id=None if row[5] is None else str(row[5]),
+                discovered_at=timestamp,
+                status=DiscoveryStatus(str(row[7])),
+            )
+            source = SourceRecord(
+                source_id=str(row[1]),
+                name=str(row[8]),
+                base_url=str(row[9]),
+                source_type=SourceType(str(row[10])),
+                priority=SourcePriority(str(row[11])),
+                conducting_body_id=None if row[12] is None else str(row[12]),
+                allowed_paths=tuple(str(item) for item in allowed_paths),
+                notes=str(row[14] or ""),
+            )
+            result.append(PendingPaperCandidate(candidate, source))
+        return tuple(result)
+
+    def has_document_hash(self, digest: str) -> bool:
+        if len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
+            raise ValueError("digest must be a lowercase SHA-256 hex value")
+        try:
+            return self._connection.execute(
+                "SELECT 1 FROM documents WHERE sha256 = %s LIMIT 1",
+                (digest,),
+            ).fetchone() is not None
+        except Exception as exc:
+            raise RepositoryError("failed to check existing document hash") from exc
+
+    def mark_candidate_status(
+        self,
+        candidate_id: str,
+        status: DiscoveryStatus,
+    ) -> None:
+        if status not in {
+            DiscoveryStatus.DISCOVERED,
+            DiscoveryStatus.REJECTED,
+            DiscoveryStatus.FETCHED,
+            DiscoveryStatus.FAILED,
+        }:
+            raise ValueError("unsupported candidate status")
+        try:
+            with self._connection.transaction():
+                row = self._connection.execute(
+                    """
+                    UPDATE paper_candidates
+                    SET status = %s
+                    WHERE candidate_id = %s
+                    RETURNING candidate_id
+                    """,
+                    (status.value, candidate_id),
+                ).fetchone()
+                if row is None:
+                    raise RepositoryError("paper candidate does not exist")
+        except RepositoryError:
+            raise
+        except Exception as exc:
+            raise RepositoryError("failed to update paper candidate status") from exc
 
     def save_document(self, document: FetchedDocument) -> None:
         try:
