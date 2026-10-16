@@ -1,0 +1,88 @@
+name: official-source-research
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Registered source ID or all"
+        required: true
+        default: "all"
+        type: string
+      max_documents:
+        description: "Maximum source documents to inspect per source (1-100)"
+        required: true
+        default: "25"
+        type: string
+  schedule:
+    # Daily at 01:15 UTC (06:45 Asia/Kolkata).
+    - cron: "15 1 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-official-source-research
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AI_COMP_DATABASE_URL: ${{ secrets.AI_COMP_DATABASE_URL }}
+      RESEARCH_SOURCE: ${{ github.event.inputs.source || 'all' }}
+      RESEARCH_MAX_DOCUMENTS: ${{ github.event.inputs.max_documents || '25' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install research dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[postgres]"
+
+      - name: Discover papers from registered official sources
+        run: |
+          set -o pipefail
+          python -m ai_comp.research.research_cli \
+            --source "$RESEARCH_SOURCE" \
+            --max-documents "$RESEARCH_MAX_DOCUMENTS" | tee research-summary.json
+
+      - name: Publish research run summary
+        if: always() && hashFiles('research-summary.json') != ''
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("research-summary.json").read_text(encoding="utf-8"))
+          summary = [
+              "# AI-COMP official-source research",
+              "",
+              f"- Phase: {data.get('phase', 'unknown')}",
+              f"- Persisted paper candidates: {data.get('paper_candidates_persisted', 0)}",
+              "",
+              "## Registry sync",
+          ]
+          for key, value in data.get("registry_synced", {}).items():
+              summary.append(f"- {key}: {value}")
+          summary.extend(["", "## Sources"])
+          for source in data.get("sources", []):
+              summary.append(
+                  f"- **{source.get('source_id', 'unknown')}** — "
+                  f"{source.get('status', 'unknown')}; "
+                  f"paper candidates: {source.get('paper_candidates_persisted', 0)}"
+              )
+              if source.get("reason"):
+                  summary.append(f"  - Reason: {source['reason']}")
+          summary.extend(["", f"> {data.get('verification_note', '')}"])
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write("\n".join(summary) + "\n")
+          PY
