@@ -18,6 +18,7 @@ from ai_comp.database.postgres_answer_key import PostgresAnswerKeyRepository
 from ai_comp.database.postgres_answer_resolution import PostgresAnswerResolutionRepository
 from ai_comp.database.postgres_appearance import PostgresAppearanceRepository
 from ai_comp.database.postgres_master_question import PostgresMasterQuestionRepository
+from ai_comp.database.postgres_match import PostgresMatchRepository
 from ai_comp.database.postgres_paper import PostgresPaperRepository
 from ai_comp.database.postgres_question import PostgresQuestionRepository
 from ai_comp.database.postgres_registry import PostgresRegistryRepository
@@ -27,8 +28,6 @@ from ai_comp.database.postgres_research import (
 )
 from ai_comp.domain.answers import AnswerKeyEntry
 from ai_comp.domain.ingestion import IngestionJobStatus
-from ai_comp.domain.master_questions import MasterAssignmentStatus
-from ai_comp.domain.matching import MatchType
 from ai_comp.domain.verification import (
     EvidenceType,
     SourceVerification,
@@ -42,7 +41,6 @@ from ai_comp.master.batch import MasterQuestionBatchService
 from ai_comp.matching.engine import MatchEngine
 from ai_comp.matching.index import CandidatePairIndex
 from ai_comp.matching.service import MatchingService
-from ai_comp.research.paper import DiscoveryStatus
 from ai_comp.research.paper_metadata import (
     PaperArtifactRole,
     PaperMetadataResolver,
@@ -323,7 +321,13 @@ def run_verification_pipeline(
                     ),
                 )
 
-    decisions = decide_answer_key_pairs(tuple(metadata_by_id.values()))
+    # Do not pair or claim verification for a candidate unless its source URL
+    # passed the registered official HTTPS source gate above.
+    pairable_metadata = tuple(
+        meta for candidate_id, meta in metadata_by_id.items()
+        if candidate_id in verification_by_id
+    )
+    decisions = decide_answer_key_pairs(pairable_metadata)
     by_pair: dict[tuple[str, str], PairDecision] = {
         (decision.question_candidate_id, decision.answer_key_candidate_id): decision
         for decision in decisions
@@ -402,9 +406,7 @@ def run_verification_pipeline(
         question_repository=question_repository,
         answer_key_repository=answer_repository,
         answer_resolution_repository=PostgresAnswerResolutionRepository(connection),
-        match_repository=__import__(
-            "ai_comp.database.postgres_match", fromlist=["PostgresMatchRepository"]
-        ).PostgresMatchRepository(connection),
+        match_repository=PostgresMatchRepository(connection),
         appearance_repository=PostgresAppearanceRepository(connection),
         master_service=MasterQuestionBatchService(master_repository),
         matching_service=MatchingService(CandidatePairIndex(pool), MatchEngine()),
@@ -461,6 +463,11 @@ def run_verification_pipeline(
                         source_url=record.candidate.url,
                         verification=verification,
                         answer_key_entries=key_entries,
+                        answer_key_document_id=(
+                            key_record.document.document_id
+                            if key_record is not None
+                            else None
+                        ),
                     ),
                     resume_after=IngestionJobStatus.EXTRACTED,
                 )
@@ -499,12 +506,16 @@ def run_verification_pipeline(
                                     question_id = questions_by_number.get(entry.question_number)
                                     if question_id is None:
                                         continue
-                                    appearance_id = _stable_id(
-                                        "appearance",
+                                    # Must match VerifiedIngestionOrchestrator._appearance_id.
+                                    identity = "|".join((
                                         meta.exam_id or "",
                                         str(meta.year),
                                         meta.shift or "",
                                         str(entry.question_number),
+                                    ))
+                                    appearance_id = (
+                                        "appearance:"
+                                        + sha256(identity.encode("utf-8")).hexdigest()[:24]
                                     )
                                     connection.execute(
                                         """
