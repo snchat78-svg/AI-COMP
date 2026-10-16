@@ -109,14 +109,15 @@ class FakeDownloader:
 
 
 def sample_payload():
-    return (
-        "1. What is the capital of Rajasthan?\\n"
-        "A) Jaipur\\n"
-        "B) Jodhpur\\n"
-        "\\n"
-        "Answer Key\\n"
-        "1. A\\n"
-    ).encode("utf-8")
+    return chr(10).join([
+        "1. What is the capital of Rajasthan?",
+        "A) Jaipur",
+        "B) Jodhpur",
+        "",
+        "Answer Key",
+        "1. A",
+        "",
+    ]).encode("utf-8")
 
 
 def test_process_pending_candidate_persists_original_text_and_question_candidates():
