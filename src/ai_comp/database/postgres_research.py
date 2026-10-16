@@ -190,10 +190,15 @@ class PostgresResearchRepository:
                 JOIN sources s ON s.source_id = pc.source_id
                 JOIN documents d ON d.candidate_id = pc.candidate_id
                 JOIN normalized_documents nd ON nd.document_id = d.document_id
+                LEFT JOIN paper_verification_state pvs
+                  ON pvs.candidate_id = pc.candidate_id
                 WHERE pc.status = 'FETCHED'
                   AND s.priority = 'OFFICIAL'
                   {source_condition}
-                ORDER BY pc.discovered_at NULLS FIRST, pc.candidate_id
+                ORDER BY
+                    pvs.last_processed_at NULLS FIRST,
+                    pc.discovered_at NULLS FIRST,
+                    pc.candidate_id
                 LIMIT %s
                 """,
                 tuple(params + [limit]),
