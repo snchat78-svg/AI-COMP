@@ -172,7 +172,7 @@ class LiveOfficialSourceDiscovery:
         result: list[tuple[str, str]] = []
         seen: set[str] = set()
         anchor_pattern = re.compile(
-            r'<a\\b[^>]*?href\\s*=\\s*["\\']([^"\\']+)["\\'][^>]*>(.*?)</a\\s*>',
+            r"""<a\b[^>]*?href\s*=\s*["']([^"']+)["'][^>]*>(.*?)</a\s*>""",
             flags=re.I | re.S,
         )
         for match in anchor_pattern.finditer(html):
@@ -185,6 +185,6 @@ class LiveOfficialSourceDiscovery:
                 continue
             seen.add(url)
             label = re.sub(r"<[^>]+>", " ", match.group(2))
-            label = re.sub(r"\\s+", " ", unescape(label)).strip()
+            label = re.sub(r"\s+", " ", unescape(label)).strip()
             result.append((url, label))
         return tuple(result)
