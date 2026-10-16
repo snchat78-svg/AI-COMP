@@ -44,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             migration = connection.execute(
                 "SELECT 1 FROM schema_migrations WHERE version = %s",
-                ("18",),
+                ("0018",),
             ).fetchone()
         except Exception:
             migration = None
