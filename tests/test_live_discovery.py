@@ -88,7 +88,7 @@ def test_live_candidate_ids_are_stable_when_sitemap_order_changes():
 
 
 
-def test_rpsc_discovery_includes_registered_previous_paper_archive():
+def test_rpsc_discovery_includes_registered_question_and_answer_key_archives():
     base = "https://rpsc.rajasthan.gov.in/"
     rpsc_source = SourceRecord(
         "RPSC_OFFICIAL",
@@ -97,6 +97,8 @@ def test_rpsc_discovery_includes_registered_previous_paper_archive():
         SourceType.OFFICIAL_WEBSITE,
         SourcePriority.OFFICIAL,
     )
+    question_archive = base + "viewcommon?Slice=QP"
+    answer_archive = base + "viewcommon?Slice=AK"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
@@ -110,15 +112,16 @@ def test_rpsc_discovery_includes_registered_previous_paper_archive():
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',
             "application/xml",
         ),
-        base + "previousquestionpapers.aspx": HttpResponse(
-            base + "previousquestionpapers.aspx",
+        question_archive: HttpResponse(
+            question_archive,
             200,
-            (
-                '<html><body>'
-                '<a href="/Static/PreviousQuestionPaper/old-paper.pdf">Old paper</a>'
-                '<a href="/Static/AnswerKeys/final-key.pdf">Final answer key</a>'
-                '</body></html>'
-            ),
+            '<a href="/Static/PreviousQuestionPaper/old-paper.pdf">RAS old question paper</a>',
+            "text/html",
+        ),
+        answer_archive: HttpResponse(
+            answer_archive,
+            200,
+            '<a href="/Static/AnswerKeys/final-key.pdf">RAS final answer key</a>',
             "text/html",
         ),
     })
@@ -132,9 +135,10 @@ def test_rpsc_discovery_includes_registered_previous_paper_archive():
     assert base + "Static/PreviousQuestionPaper/old-paper.pdf" in urls
     assert base + "Static/AnswerKeys/final-key.pdf" in urls
     titles = {candidate.url: candidate.title for candidate in result.candidates}
-    assert titles[base + "Static/PreviousQuestionPaper/old-paper.pdf"] == "Old paper"
-    assert titles[base + "Static/AnswerKeys/final-key.pdf"] == "Final answer key"
-    assert base + "previousquestionpapers.aspx" in transport.requested
+    assert titles[base + "Static/PreviousQuestionPaper/old-paper.pdf"] == "RAS old question paper"
+    assert titles[base + "Static/AnswerKeys/final-key.pdf"] == "RAS final answer key"
+    assert question_archive in transport.requested
+    assert answer_archive in transport.requested
     assert base + "robots.txt" in transport.requested
 
 
