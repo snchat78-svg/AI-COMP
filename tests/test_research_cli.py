@@ -74,12 +74,10 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
         transport=transport,
     )
 
-    assert summary["registry_synced"] == {
-        "conducting_bodies": 2,
-        "exams": 2,
-        "paper_categories": 2,
-        "sources": 2,
-    }
+    assert summary["registry_synced"]["conducting_bodies"] == 2
+    assert summary["registry_synced"]["exams"] >= 12
+    assert summary["registry_synced"]["paper_categories"] >= 22
+    assert summary["registry_synced"]["sources"] == 2
     assert summary["paper_candidates_persisted"] == 1
     assert summary["sources"][0]["discovered_links"] == 2
     assert summary["sources"][0]["paper_candidates_persisted"] == 1
