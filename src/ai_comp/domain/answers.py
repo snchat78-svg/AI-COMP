@@ -28,6 +28,9 @@ class AnswerResolution:
     method: AnswerResolutionMethod | None
     source_line: int
     notes: str = ""
+    # Separate provenance for an answer key that lives in another document.
+    # document_id remains the question's paper document for occurrence checks.
+    source_answer_key_document_id: str | None = None
 
 
 class AnswerKeyResolver:
