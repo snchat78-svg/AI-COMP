@@ -106,7 +106,7 @@ class LiveOfficialSourceDiscovery:
         # An index-based ID can overwrite a different URL when a sitemap changes.
         candidates = PaperDiscovery(source, policy).candidates_from_links(
             (
-                (f"{source_id}:live:{sha256(url.encode(\"utf-8\")).hexdigest()[:40]}", url)
+                (f"{source_id}:live:{sha256(url.encode()).hexdigest()[:40]}", url)
                 for url in paper_links
             ),
             source_id,
