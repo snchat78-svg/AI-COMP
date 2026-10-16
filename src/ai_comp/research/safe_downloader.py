@@ -147,9 +147,11 @@ class SafePaperDownloader:
                     except ValueError:
                         pass
 
+                if policy.rate_limit_seconds > 0:
+                    sleep(policy.rate_limit_seconds)
                 blocks: list[bytes] = []
                 total = 0
-                while True:
+                while total <= self.max_bytes:
                     block = response.read(min(64 * 1024, self.max_bytes - total + 1))
                     if not block:
                         break
@@ -157,26 +159,8 @@ class SafePaperDownloader:
                     total += len(block)
                     if total > self.max_bytes:
                         raise ResearchPolicyError("paper_exceeds_size_limit")
-                    if policy.rate_limit_seconds > 0:
-                        # Delay between network chunks would slow large PDFs too
-                        # much; politeness is applied once before each document.
-                        break
                 if not blocks:
                     raise ResearchPolicyError("paper_download_empty")
-                if policy.rate_limit_seconds > 0:
-                    sleep(policy.rate_limit_seconds)
-                payload = b"".join(blocks)
-
-                # Keep reading until EOF, but still enforce the hard byte limit.
-                while total <= self.max_bytes:
-                    remaining = self.max_bytes - total
-                    block = response.read(min(64 * 1024, remaining + 1))
-                    if not block:
-                        break
-                    blocks.append(block)
-                    total += len(block)
-                    if total > self.max_bytes:
-                        raise ResearchPolicyError("paper_exceeds_size_limit")
                 payload = b"".join(blocks)
         except ResearchPolicyError:
             raise
