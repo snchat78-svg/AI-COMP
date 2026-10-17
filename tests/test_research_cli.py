@@ -52,7 +52,7 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: AI-COMP/phase2\\nSitemap: " + sitemap + "\\n",
+            "User-agent: AI-COMP/phase2\nSitemap: " + sitemap + "\n",
             "text/plain",
         ),
         base: HttpResponse(
