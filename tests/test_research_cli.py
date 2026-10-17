@@ -45,29 +45,33 @@ def test_paper_url_heuristic_keeps_exam_documents_and_ignores_normal_pages():
 
 
 def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
-    base = "https://rsmssb.rajasthan.gov.in/"
-    question_archive = base + "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default"
-    answer_archive = base + "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red"
+    base = "https://rssb.rajasthan.gov.in/"
+    sitemap = base + "sitemap.xml"
+    question_pdf = base + "files/qp-2024.pdf"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: AI-COMP/phase2\nSitemap: " + base + "sitemap.xml\n",
+            "User-agent: AI-COMP/phase2\\nSitemap: " + sitemap + "\\n",
             "text/plain",
         ),
-        base + "sitemap.xml": HttpResponse(
-            base + "sitemap.xml",
+        base: HttpResponse(
+            base,
+            200,
+            "<html><body>Rajasthan Staff Selection Board</body></html>",
+            "text/html",
+        ),
+        sitemap: HttpResponse(
+            sitemap,
             200,
             (
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-                f"<url><loc>{base}files/qp-2024.pdf</loc></url>"
+                f"<url><loc>{question_pdf}</loc></url>"
                 f"<url><loc>{base}news/latest-update</loc></url>"
                 "</urlset>"
             ),
             "application/xml",
         ),
-        question_archive: HttpResponse(question_archive, 404, "", "text/html"),
-        answer_archive: HttpResponse(answer_archive, 404, "", "text/html"),
     })
     connection = FakeConnection()
 
@@ -92,9 +96,9 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
     ]
     assert len(candidate_rows) == 1
     assert candidate_rows[0][1][1] == "RSSB_OFFICIAL"
-    assert candidate_rows[0][1][2] == base + "files/qp-2024.pdf"
+    assert candidate_rows[0][1][2] == question_pdf
     assert candidate_rows[0][1][6]
-    assert transport.requested == [base + "robots.txt", base + "sitemap.xml", question_archive, answer_archive]
+    assert transport.requested == [base + "robots.txt", base, sitemap]
 
 
 def test_run_discovery_fails_for_unknown_source_before_touching_database():
