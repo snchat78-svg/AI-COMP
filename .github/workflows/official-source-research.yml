@@ -1,6 +1,16 @@
 name: official-source-research
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/official-source-research.yml"
+      - "src/ai_comp/research/**"
+      - "src/ai_comp/domain/sources.py"
+      - "src/ai_comp/database/postgres_research.py"
+      - "src/ai_comp/database/postgres_registry.py"
+      - "pyproject.toml"
   workflow_dispatch:
     inputs:
       source:
