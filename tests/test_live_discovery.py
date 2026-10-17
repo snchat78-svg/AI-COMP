@@ -149,11 +149,11 @@ def test_rssb_registry_uses_current_official_host():
         for source in build_initial_registry().sources()
         if source.source_id == "RSSB_OFFICIAL"
     )
-    assert rssb.base_url == "https://rsmssb.rajasthan.gov.in/"
+    assert rssb.base_url == "https://rssb.rajasthan.gov.in/"
 
 
-def test_rssb_discovery_includes_official_question_and_answer_key_archives():
-    base = "https://rsmssb.rajasthan.gov.in/"
+def test_rssb_discovery_follows_current_official_question_and_answer_key_pages():
+    base = "https://rssb.rajasthan.gov.in/"
     source = SourceRecord(
         "RSSB_OFFICIAL",
         "RSSB Official",
@@ -161,12 +161,10 @@ def test_rssb_discovery_includes_official_question_and_answer_key_archives():
         SourceType.OFFICIAL_WEBSITE,
         SourcePriority.OFFICIAL,
     )
-    question_archive = (
-        base + "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default"
-    )
-    answer_archive = (
-        base + "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red"
-    )
+    question_archive = base + "question-papers"
+    answer_archive = base + "answer-keys"
+    question_pdf = base + "storage/questionpaper_item/1764767162.pdf"
+    answer_pdf = base + "storage/answerkey_item/1722599865.pdf"
     sitemap = base + "sitemap.xml"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
@@ -175,31 +173,42 @@ def test_rssb_discovery_includes_official_question_and_answer_key_archives():
             "Sitemap: " + sitemap,
             "text/plain",
         ),
+        base: HttpResponse(
+            base,
+            200,
+            (
+                '<a href="/question-papers">Question Papers</a>'
+                '<a href="/answer-keys">Answer Key</a>'
+            ),
+            "text/html",
+        ),
         sitemap: HttpResponse(sitemap, 200, "<urlset></urlset>", "application/xml"),
         question_archive: HttpResponse(
             question_archive,
             200,
-            '<a href="/files/Patwar-2021-question-paper.pdf">Patwar 2021 Master Question Paper</a>',
+            f'<a href="/storage/questionpaper_item/1764767162.pdf">Patwar 2025 Master Question Paper</a>',
             "text/html",
         ),
         answer_archive: HttpResponse(
             answer_archive,
             200,
-            '<a href="/files/Patwar-2021-final-answer-key.pdf">Patwar 2021 Final Answer Key</a>',
+            f'<a href="/storage/answerkey_item/1722599865.pdf">Patwar 2025 Final Answer Key</a>',
             "text/html",
         ),
     })
 
     result = LiveOfficialSourceDiscovery(transport).run(
         source,
-        CrawlPolicy(True, rate_limit_seconds=0),
+        CrawlPolicy(True, rate_limit_seconds=0, max_depth=2),
     )
 
     by_url = {candidate.url: candidate.title for candidate in result.candidates}
-    assert base + "files/Patwar-2021-question-paper.pdf" in by_url
-    assert base + "files/Patwar-2021-final-answer-key.pdf" in by_url
+    assert by_url[question_pdf] == "Patwar 2025 Master Question Paper"
+    assert by_url[answer_pdf] == "Patwar 2025 Final Answer Key"
+    assert base in transport.requested
     assert question_archive in transport.requested
     assert answer_archive in transport.requested
+    assert base + "robots.txt" in transport.requested
 
 
 def test_http_transport_retries_transient_network_failures(monkeypatch):
