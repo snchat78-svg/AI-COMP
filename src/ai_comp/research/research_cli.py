@@ -138,6 +138,23 @@ def run_discovery(
     }
 
 
+def discovery_exit_code(summary: dict[str, Any]) -> int:
+    """Return failure only when no registered source completed discovery.
+
+    A reachable source returning no candidate is a valid zero-result run.
+    A run in which every source is blocked/failed (or no source result exists)
+    must not be reported by automation as a successful research run.
+    """
+    sources = summary.get("sources")
+    if not sources:
+        return 1
+    reachable_statuses = {"CANDIDATES_PERSISTED", "NO_PAPER_CANDIDATES"}
+    return 0 if any(
+        source.get("status") in reachable_statuses
+        for source in sources
+    ) else 1
+
+
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Discover likely paper/answer-key URLs from registered official sources."
@@ -189,7 +206,14 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0
+    exit_code = discovery_exit_code(summary)
+    if exit_code:
+        print(
+            "No registered official source completed discovery; "
+            "check the per-source status in the JSON summary.",
+            file=sys.stderr,
+        )
+    return exit_code
 
 
 if __name__ == "__main__":
