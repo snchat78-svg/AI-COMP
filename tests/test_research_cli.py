@@ -1,5 +1,9 @@
 from ai_comp.research.live_discovery import HttpResponse
-from ai_comp.research.research_cli import is_likely_paper_url, run_discovery
+from ai_comp.research.research_cli import (
+    discovery_exit_code,
+    is_likely_paper_url,
+    run_discovery,
+)
 
 
 class FakeTransport:
@@ -110,3 +114,28 @@ def test_run_discovery_fails_for_unknown_source_before_touching_database():
     else:
         raise AssertionError("unknown source should be rejected")
     assert connection.calls == []
+
+
+
+def test_research_exit_code_fails_when_every_official_source_is_unavailable():
+    assert discovery_exit_code({
+        "sources": [
+            {"source_id": "RSSB_OFFICIAL", "status": "BLOCKED_OR_FAILED"},
+            {"source_id": "RPSC_OFFICIAL", "status": "BLOCKED_OR_FAILED"},
+        ]
+    }) == 1
+    assert discovery_exit_code({"sources": []}) == 1
+
+
+def test_research_exit_code_allows_a_reachable_source_with_no_papers():
+    assert discovery_exit_code({
+        "sources": [
+            {"source_id": "RSSB_OFFICIAL", "status": "BLOCKED_OR_FAILED"},
+            {"source_id": "RPSC_OFFICIAL", "status": "NO_PAPER_CANDIDATES"},
+        ]
+    }) == 0
+    assert discovery_exit_code({
+        "sources": [
+            {"source_id": "RSSB_OFFICIAL", "status": "CANDIDATES_PERSISTED"},
+        ]
+    }) == 0
