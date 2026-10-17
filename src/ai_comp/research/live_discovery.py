@@ -114,22 +114,12 @@ class LiveOfficialSourceDiscovery:
         parser.parse(robots.content.splitlines())
         declared_seeds = list(parser.site_maps() or [])
         seeds = declared_seeds if declared_seeds else list(self._configured_seeds(source))
-        # Registered official archive pages supplement generic sitemap/feed
-        # discovery. All seeds still pass through robots.txt and same-host gates.
-        if source.source_id == "RSSB_OFFICIAL":
-            # These are official RSSB archive pages currently used for question
-            # papers and answer keys. They remain subject to the same robots.txt
-            # and same-host gates as sitemap-discovered URLs.
-            seeds.extend((
-                urljoin(
-                    source.base_url,
-                    "show_archived?menuName=Xj4lCb9vGxpQnfLs/xlZ2g==&theme=Default",
-                ),
-                urljoin(
-                    source.base_url,
-                    "show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg==&theme=Red",
-                ),
-            ))
+        # Start from the registered official home page as well as its declared
+        # sitemap/feed roots. New official portals may publish paper archives as
+        # links from the home page instead of exposing them in a sitemap.
+        seeds.insert(0, source.base_url)
+        # Legacy RSSB show_archived routes belonged to the retired host and must
+        # not be assumed to exist on the current rssb.rajasthan.gov.in portal.
         if source.source_id == "RPSC_OFFICIAL":
             # Current RPSC navigation exposes Question Papers and Answer Keys
             # through these slice routes; older .aspx routes now return 404.
@@ -159,6 +149,10 @@ class LiveOfficialSourceDiscovery:
                 for link_url, link_title in self._archive_link_records(
                     source, policy, parser, response.content, response.url
                 ):
+                    if self._should_follow_archive_page(link_url, link_title):
+                        if depth < policy.max_depth:
+                            pending.append((link_url, depth + 1))
+                        continue
                     paper_links.append(link_url)
                     if link_title and link_url not in paper_link_titles:
                         paper_link_titles[link_url] = link_title
@@ -177,6 +171,9 @@ class LiveOfficialSourceDiscovery:
                 for link in sitemap_links:
                     if link.url.lower().endswith((".xml", ".xml.gz")) and depth < policy.max_depth:
                         pending.append((link.url, depth + 1))
+                    elif self._should_follow_archive_page(link.url, ""):
+                        if depth < policy.max_depth:
+                            pending.append((link.url, depth + 1))
                     else:
                         paper_links.append(link.url)
             if feed_links:
@@ -214,6 +211,21 @@ class LiveOfficialSourceDiscovery:
     def _configured_seeds(self, source: SourceRecord) -> tuple[str, ...]:
         base = source.base_url.rstrip("/") + "/"
         return tuple(urljoin(base, path) for path in ("sitemap.xml", "sitemap_index.xml", "feed", "rss.xml", "archive"))
+
+    @staticmethod
+    def _should_follow_archive_page(url: str, title: str) -> bool:
+        """Recognize archive/listing links that should be traversed, not stored as papers."""
+        path = urlparse(url).path.lower()
+        if path.endswith((".pdf", ".doc", ".docx", ".png", ".jpg", ".jpeg", ".webp")):
+            return False
+        label = f"{title} {path}".lower()
+        markers = (
+            "question paper", "question-paper", "question_paper", "questionpaper",
+            "answer key", "answer-key", "answer_key", "answerkey",
+            "previous paper", "previous-paper", "old paper", "old-paper",
+            "archive", "download",
+        )
+        return any(marker in label for marker in markers)
 
     def _unique_allowed(self, source, policy, parser, urls):
         """Allow crawl-control URLs (sitemaps/feeds) on the registered host.
