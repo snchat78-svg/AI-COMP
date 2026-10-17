@@ -52,6 +52,20 @@ def is_likely_paper_url(url: str) -> bool:
     )
 
 
+def build_research_transport() -> HttpTransport:
+    """Keep a full multi-source discovery run within its CI time budget.
+
+    Public official portals can stall rather than immediately reject a
+    connection. Research uses a shorter per-request timeout and one retry;
+    robots/access checks and same-host restrictions remain mandatory.
+    """
+    return HttpTransport(
+        timeout_seconds=6.0,
+        retries=1,
+        retry_delay_seconds=0.25,
+    )
+
+
 def run_discovery(
     connection: Any,
     *,
@@ -75,7 +89,7 @@ def run_discovery(
     registry_counts = sync_source_registry(connection, registry)
     repository = PostgresResearchRepository(connection)
     results: list[dict[str, Any]] = []
-    http_transport = transport or HttpTransport()
+    http_transport = transport or build_research_transport()
 
     for source in selected_sources:
         try:
