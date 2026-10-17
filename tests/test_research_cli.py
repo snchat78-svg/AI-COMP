@@ -1,5 +1,6 @@
 from ai_comp.research.live_discovery import HttpResponse
 from ai_comp.research.research_cli import (
+    build_research_transport,
     discovery_exit_code,
     is_likely_paper_url,
     run_discovery,
@@ -139,3 +140,23 @@ def test_research_exit_code_allows_a_reachable_source_with_no_papers():
             {"source_id": "RSSB_OFFICIAL", "status": "CANDIDATES_PERSISTED"},
         ]
     }) == 0
+
+
+
+def test_research_transport_uses_a_short_bounded_timeout_and_single_retry(monkeypatch):
+    import ai_comp.research.research_cli as research_cli
+
+    observed = {}
+
+    def fake_transport(**kwargs):
+        observed.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(research_cli, "HttpTransport", fake_transport)
+    research_cli.build_research_transport()
+
+    assert observed == {
+        "timeout_seconds": 6.0,
+        "retries": 1,
+        "retry_delay_seconds": 0.25,
+    }
