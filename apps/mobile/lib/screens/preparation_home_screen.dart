@@ -31,6 +31,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   AiCompApiClient? _api;
   LearnerAnalytics? _analytics;
   ResultsSummary? _summary;
+  QuestionBankReadiness? _questionBankReadiness;
   List<TestHistoryItem> _recentSessions = const [];
   bool _loading = false;
   String? _error;
@@ -85,6 +86,15 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await candidate.getAnalytics();
       final summary = await candidate.getResultsSummary();
       final sessions = await candidate.getSessions(limit: 8);
+      QuestionBankReadiness? readiness;
+      try {
+        readiness = await candidate.getQuestionBankReadiness();
+      } on ApiException {
+        // Preserve sign-in/dashboard access for older deployments while the
+        // new readiness endpoint is rolling out. The test action stays
+        // available unless an authoritative zero count was returned.
+        readiness = null;
+      }
       final previous = _api;
       _api = candidate;
       candidate = null;
@@ -94,6 +104,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _analytics = analytics;
         _summary = summary;
         _recentSessions = sessions;
+        _questionBankReadiness = readiness;
         _loading = false;
         _error = null;
       });
@@ -120,11 +131,18 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await api.getAnalytics();
       final summary = await api.getResultsSummary();
       final sessions = await api.getSessions(limit: 8);
+      QuestionBankReadiness? readiness;
+      try {
+        readiness = await api.getQuestionBankReadiness();
+      } on ApiException {
+        readiness = null;
+      }
       if (!mounted) return;
       setState(() {
         _analytics = analytics;
         _summary = summary;
         _recentSessions = sessions;
+        _questionBankReadiness = readiness;
       });
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
@@ -137,6 +155,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     final api = _api;
     if (api == null) {
       _setError('Connect to the API first.');
+      return;
+    }
+    final readiness = _questionBankReadiness;
+    if (readiness != null && !readiness.practiceTestAvailable) {
+      _setError(
+        'No eligible verified questions are available yet. The question bank is not ready; refresh after official paper and answer-key verification succeeds.',
+      );
       return;
     }
     final questionCount = int.tryParse(_questionCountController.text.trim());
@@ -255,7 +280,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       case 'NO_ELIGIBLE_ADAPTIVE_QUESTIONS':
         return 'There are no eligible verified questions for the recommended topics yet.';
       case 'NO_ELIGIBLE_PREPARATION_QUESTIONS':
-        return 'No verified questions are available yet. The question bank must be populated before a practice test can start.';
+        return 'No eligible verified questions are available yet. Official paper and answer-key verification must finish before a practice test can start.';
       case 'NETWORK_UNAVAILABLE':
         return 'Could not reach the API. Check the base URL and network connection.';
       default:
@@ -309,6 +334,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             if (_error != null) ...[
               const SizedBox(height: 12),
               _ErrorPanel(message: _error!),
+            ],
+            if (_questionBankReadiness != null) ...[
+              const SizedBox(height: 16),
+              _buildQuestionBankReadinessCard(theme),
             ],
             const SizedBox(height: 16),
             _buildAdaptiveTestCard(theme),
@@ -401,6 +430,60 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     );
   }
 
+  Widget _buildQuestionBankReadinessCard(ThemeData theme) {
+    final readiness = _questionBankReadiness;
+    if (readiness == null) return const SizedBox.shrink();
+    final available = readiness.eligibleQuestionCount;
+    final empty = available == 0;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  empty ? Icons.info_outline : Icons.verified_outlined,
+                  color: empty
+                      ? theme.colorScheme.onSurfaceVariant
+                      : theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    empty ? 'Question bank status' : 'Verified question bank ready',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${available} eligible questions available '
+              '(${readiness.verifiedHistoryQuestionCount} from verified exam history, '
+              '${readiness.acceptedGeneratedQuestionCount} accepted generated questions).',
+            ),
+            if (empty) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Past-exam questions enter the practice pool only after an official paper '
+                'is paired with a verified official answer key. Unverified items are not '
+                'used to fill the pool, and no manual previous-paper upload is required. '
+                'Practice tests remain disabled until at least one eligible question is available.',
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              'Counts are bounded by the configured pool limit of ${readiness.questionPoolLimit}.',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildAdaptiveTestCard(ThemeData theme) {
     return Card(
       child: Padding(
@@ -443,9 +526,17 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: _loading || !_connected ? null : _startAdaptivePractice,
+                onPressed: _loading ||
+                        !_connected ||
+                        _questionBankReadiness?.practiceTestAvailable == false
+                    ? null
+                    : _startAdaptivePractice,
                 icon: const Icon(Icons.play_arrow),
-                label: const Text('Create and start test'),
+                label: Text(
+                  _questionBankReadiness?.practiceTestAvailable == false
+                      ? 'Question bank not ready'
+                      : 'Create and start test',
+                ),
               ),
             ),
           ],
