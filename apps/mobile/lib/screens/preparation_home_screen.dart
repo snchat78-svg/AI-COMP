@@ -488,7 +488,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${available} eligible questions available '
+              '$available eligible questions available '
               '(${readiness.verifiedHistoryQuestionCount} from verified exam history, '
               '${readiness.acceptedGeneratedQuestionCount} accepted generated questions).',
             ),
