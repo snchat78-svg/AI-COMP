@@ -236,6 +236,11 @@ class AiCompApiClient {
     return AnswerReview.fromJson(json);
   }
 
+  Future<QuestionBankReadiness> getQuestionBankReadiness() async {
+    final json = await _send('GET', '$_learnerPath/question-bank/readiness');
+    return QuestionBankReadiness.fromJson(json);
+  }
+
   Future<LearnerAnalytics> getAnalytics() async {
     final json = await _send('GET', '$_learnerPath/preparation-results/analytics');
     return LearnerAnalytics.fromJson(json);
