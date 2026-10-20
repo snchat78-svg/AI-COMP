@@ -83,8 +83,8 @@ def test_repository_query_fails_closed_unless_official_paper_and_matched_officia
         "resolved.selected_option_key = a.correct_answer",
         "qs.priority = 'OFFICIAL'",
         "ks.priority = 'OFFICIAL'",
-        "qv.source_url LIKE 'https://%'",
-        "kv.source_url LIKE 'https://%'",
+        "qv.source_url LIKE 'https://%%'",
+        "kv.source_url LIKE 'https://%%'",
         "options.option_count = 4",
     ):
         assert required_gate in query
