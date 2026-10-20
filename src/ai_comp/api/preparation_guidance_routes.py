@@ -1464,7 +1464,10 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
         })
     try:
         readiness = readiness_provider()
-        payload = QuestionBankReadinessResponse.model_validate(readiness).model_dump()
+        payload = QuestionBankReadinessResponse.model_validate({
+            **readiness,
+            "learner_id": authenticated_learner_id,
+        }).model_dump()
     except Exception:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
@@ -1472,10 +1475,7 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
                 "message": "Eligible question counts could not be loaded.",
             }
         })
-    return _json_response(HTTPStatus.OK, {
-        "learner_id": authenticated_learner_id,
-        **payload,
-    })
+    return _json_response(HTTPStatus.OK, payload)
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
