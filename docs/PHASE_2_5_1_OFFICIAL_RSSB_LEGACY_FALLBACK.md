@@ -31,6 +31,10 @@ No new database schema is introduced. Existing idempotent registry synchronizati
 - This change does not repair general outbound network restrictions. The new domain must pass the deployed health probe and the live discovery step before this fallback can be considered operational.
 - No learner must upload previous papers manually; this increment continues the automatic research pipeline.
 
+## Deployment-aware health gate
+
+The Render source-health workflow must not stop at the first HTTP 200 from the endpoint after a source-registry update: an old live instance can still return a valid report while auto-deploy is in progress. It now retries until the returned report includes `RSSB_LEGACY_OFFICIAL`, or times out and fails. Only the report containing the new registry is relevant for validating this fallback.
+
 ## Validation and exact next operation
 
 CI must pass the full Python/PostgreSQL suite, Docker image build, and Flutter analyze/tests/APK build triggered by the documentation checkpoint already merged on main as appropriate.
