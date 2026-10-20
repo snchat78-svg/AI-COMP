@@ -32,6 +32,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   LearnerAnalytics? _analytics;
   ResultsSummary? _summary;
   QuestionBankReadiness? _questionBankReadiness;
+  String? _questionBankReadinessError;
   List<TestHistoryItem> _recentSessions = const [];
   bool _loading = false;
   String? _error;
@@ -87,13 +88,11 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final summary = await candidate.getResultsSummary();
       final sessions = await candidate.getSessions(limit: 8);
       QuestionBankReadiness? readiness;
+      String? readinessError;
       try {
         readiness = await candidate.getQuestionBankReadiness();
       } on ApiException {
-        // Preserve sign-in/dashboard access for older deployments while the
-        // new readiness endpoint is rolling out. The test action stays
-        // available unless an authoritative zero count was returned.
-        readiness = null;
+        readinessError = 'Question-bank status could not be checked. Refresh after the server update completes.';
       }
       final previous = _api;
       _api = candidate;
@@ -105,6 +104,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _summary = summary;
         _recentSessions = sessions;
         _questionBankReadiness = readiness;
+        _questionBankReadinessError = readinessError;
         _loading = false;
         _error = null;
       });
@@ -132,10 +132,11 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final summary = await api.getResultsSummary();
       final sessions = await api.getSessions(limit: 8);
       QuestionBankReadiness? readiness;
+      String? readinessError;
       try {
         readiness = await api.getQuestionBankReadiness();
       } on ApiException {
-        readiness = null;
+        readinessError = 'Question-bank status could not be checked. Refresh after the server update completes.';
       }
       if (!mounted) return;
       setState(() {
@@ -143,6 +144,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _summary = summary;
         _recentSessions = sessions;
         _questionBankReadiness = readiness;
+        _questionBankReadinessError = readinessError;
       });
     } on ApiException catch (error) {
       _setError(_friendlyError(error));
@@ -158,7 +160,14 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       return;
     }
     final readiness = _questionBankReadiness;
-    if (readiness != null && !readiness.practiceTestAvailable) {
+    if (_questionBankReadinessError != null || readiness == null) {
+      _setError(
+        _questionBankReadinessError ??
+            'Question-bank status has not been checked. Refresh the dashboard before starting a test.',
+      );
+      return;
+    }
+    if (!readiness.practiceTestAvailable) {
       _setError(
         'No eligible verified questions are available yet. The question bank is not ready; refresh after official paper and answer-key verification succeeds.',
       );
@@ -335,7 +344,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               const SizedBox(height: 12),
               _ErrorPanel(message: _error!),
             ],
-            if (_questionBankReadiness != null) ...[
+            if (_connected &&
+                (_questionBankReadiness != null || _questionBankReadinessError != null)) ...[
               const SizedBox(height: 16),
               _buildQuestionBankReadinessCard(theme),
             ],
@@ -432,7 +442,25 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
 
   Widget _buildQuestionBankReadinessCard(ThemeData theme) {
     final readiness = _questionBankReadiness;
-    if (readiness == null) return const SizedBox.shrink();
+    if (readiness == null) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _questionBankReadinessError ??
+                      'Question-bank status has not been checked yet.',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     final available = readiness.eligibleQuestionCount;
     final empty = available == 0;
     return Card(
@@ -528,14 +556,19 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               child: FilledButton.icon(
                 onPressed: _loading ||
                         !_connected ||
+                        _questionBankReadinessError != null ||
+                        _questionBankReadiness == null ||
                         _questionBankReadiness?.practiceTestAvailable == false
                     ? null
                     : _startAdaptivePractice,
                 icon: const Icon(Icons.play_arrow),
                 label: Text(
-                  _questionBankReadiness?.practiceTestAvailable == false
-                      ? 'Question bank not ready'
-                      : 'Create and start test',
+                  _questionBankReadinessError != null ||
+                          _questionBankReadiness == null
+                      ? 'Check question bank status'
+                      : _questionBankReadiness?.practiceTestAvailable == false
+                          ? 'Question bank not ready'
+                          : 'Create and start test',
                 ),
               ),
             ),
