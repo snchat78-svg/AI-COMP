@@ -90,3 +90,19 @@ def test_source_health_route_is_not_listed_in_public_openapi_schema():
 
     assert response.status_code == 200
     assert "/diagnostics/official-source-health" not in response.json()["paths"]
+
+
+
+def test_source_health_route_returns_503_without_exposing_probe_exception_details(monkeypatch):
+    def fail_report(**_kwargs):
+        raise RuntimeError("private database or runtime details")
+
+    monkeypatch.setattr(source_health_routes, "source_health_report", fail_report)
+    client = TestClient(create_app())
+
+    response = client.get("/diagnostics/official-source-health")
+
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "SOURCE_HEALTH_UNAVAILABLE"
+    assert response.json()["error"]["exception_type"] == "RuntimeError"
+    assert "private database or runtime details" not in response.text
