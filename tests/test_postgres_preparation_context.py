@@ -294,14 +294,12 @@ def test_verified_exam_history_enters_mixed_pool_with_provenance_and_stem_dedupl
                 "VALUES (%s, %s, %s, 7, %s, 'MCQ', %s, 1, 8)",
                 (question_id, question_document_id, question_sha, question_stem, question_stem),
             )
-            connection.executemany(
-                "INSERT INTO question_options (question_id, option_key, option_text, option_order) "
-                "VALUES (%s, %s, %s, %s)",
-                [
-                    (question_id, key, text, order)
-                    for order, (key, text) in enumerate(option_rows, start=1)
-                ],
-            )
+            for order, (key, option_text) in enumerate(option_rows, start=1):
+                connection.execute(
+                    "INSERT INTO question_options (question_id, option_key, option_text, option_order) "
+                    "VALUES (%s, %s, %s, %s)",
+                    (question_id, key, option_text, order),
+                )
             connection.execute(
                 "INSERT INTO papers "
                 "(paper_id, candidate_id, title, exam_id, category_id, source_id, canonical_url, year, shift) "
