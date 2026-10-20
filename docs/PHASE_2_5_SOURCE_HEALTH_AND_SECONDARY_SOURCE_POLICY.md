@@ -6,6 +6,10 @@ The live official-source research runs on 18–20 October 2026 failed before dis
 
 The `source_health` preflight reports DNS status, TCP connection, and certificate-validated TLS handshake separately for IPv4 and IPv6. It connects only to registered official source hosts, performs no page fetch, does not bypass TLS verification, and does not alter the crawler's robots, terms, redirect, or host checks. It is diagnostic only; the research CLI still decides whether discovery succeeded.
 
+## Render runtime connectivity probe
+
+The deployed FastAPI runtime exposes `GET /diagnostics/official-source-health` as a read-only diagnostic for the two registered official hosts. It is intentionally absent from the generated OpenAPI schema. It accepts no query parameters or caller-supplied URLs, fetches no pages or documents, returns no resolved IP addresses, and caches results for 60 seconds to bound outbound probes. It reports source connectivity only; it does not run discovery, download a paper, or modify the database. The endpoint is diagnostic and does not change the official research CLI's fail-closed outcome.
+
 ## Secondary source admission rule
 
 A secondary source must not be added to automated ingestion merely because its page is public or appears in a search result. Before enabling a source for automated retrieval, record and review all of the following:
