@@ -34,6 +34,7 @@ Read [Phase 6.46 — Free-Tier Cloud Hosting Readiness](docs/PHASE_6_46_FREE_HOS
 ## Roadmap and evidence
 
 - [Master roadmap coverage audit](docs/MASTER_ROADMAP_COVERAGE_AUDIT.md)
+- [Phase 2.5 source health and secondary-source policy](docs/PHASE_2_5_SOURCE_HEALTH_AND_SECONDARY_SOURCE_POLICY.md)
 - [Phase 6.40 client/API contract](docs/PHASE_6_40_ADAPTIVE_PREPARATION_CLIENT_API_CONTRACT.md)
 - [Phase 6.41 Flutter client foundation](docs/PHASE_6_41_FLUTTER_ADAPTIVE_PREPARATION_CLIENT.md)
 - [Phase 6.42 Android platform and APK build](docs/PHASE_6_42_ANDROID_PLATFORM_AND_APK_BUILD.md)
