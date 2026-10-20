@@ -60,7 +60,7 @@ class AdaptiveRecommendationDetails(ContractModel):
     eligible_question_count_in_configured_pool: int = Field(ge=0)
     effective_question_count: int = Field(ge=1)
     question_count_adjusted: bool
-    availability_scope: Literal["configured_accepted_question_pool"]
+    availability_scope: Literal["configured_eligible_pool"]
 
 
 class AdaptivePreparationRecommendationResponse(PreparationTestRequestResponse):
@@ -119,6 +119,25 @@ class CurrentQuestionResponse(ContractModel):
     selected_option_key: str | None = None
     review_marked: bool
     remaining_seconds: float = Field(ge=0)
+    source_kind: Literal["AI_GENERATED", "VERIFIED_EXAM_HISTORY"] = "AI_GENERATED"
+    source_url: str | None = None
+    answer_key_source_url: str | None = None
+    exam_name: str | None = None
+    exam_id: str | None = None
+    exam_year: int | None = None
+    exam_shift: str | None = None
+    exam_question_number: int | None = None
+    verified_appearance_count: int = Field(default=0, ge=0)
+
+
+class QuestionBankReadinessResponse(ContractModel):
+    learner_id: str
+    question_pool_limit: int = Field(ge=1)
+    eligible_question_count: int = Field(ge=0)
+    verified_history_question_count: int = Field(ge=0)
+    accepted_generated_question_count: int = Field(ge=0)
+    practice_test_available: bool
+    source_counts_scope: Literal["configured_eligible_pool"]
 
 
 class SubmittedTestResponse(ContractModel):
@@ -242,5 +261,6 @@ __all__ = [
     "PreparationSessionHistoryResponse",
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
+    "QuestionBankReadinessResponse",
     "SubmittedTestResponse",
 ]

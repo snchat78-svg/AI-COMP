@@ -14,12 +14,15 @@ from ai_comp.database.postgres_adaptive_study_strategy_audit import (
     PostgresAdaptiveStudyStrategyAuditRepository,
 )
 from ai_comp.database.postgres_generated_question import PostgresGeneratedQuestionRepository
+from ai_comp.database.postgres_verified_history_question import (
+    PostgresVerifiedHistoryQuestionRepository,
+)
 from ai_comp.database.postgres_learning_history import PostgresLearningHistoryRepository
 from ai_comp.database.postgres_question_learning import PostgresQuestionLearningHistoryRepository
 from ai_comp.database.postgres_preparation_test_request import PostgresPreparationTestRequestRepository
 from ai_comp.domain.preparation_request import PreparationTestRequest
 from ai_comp.domain.adaptive_study_strategy_audit import AdaptiveStudyStrategyAudit
-from ai_comp.domain.material_generation import GeneratedMCQ
+from ai_comp.domain.material_generation import GeneratedMCQ, QuestionSourceKind
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
 from ai_comp.domain.question_intelligence import (
     DifficultyLevel,
@@ -28,6 +31,7 @@ from ai_comp.domain.question_intelligence import (
 )
 from ai_comp.domain.test_engine import TestSpecification
 from ai_comp.material.intelligence import QuestionIntelligenceService
+from ai_comp.matching.normalization import normalize_question_text
 
 
 ConnectionFactory = Callable[[], Any]
@@ -197,10 +201,8 @@ class PostgresPreparationContextProvider:
                 question_history = QuestionLearningHistoryService(
                     PostgresQuestionLearningHistoryRepository(connection)
                 ).history(learner_id)
-                stored_questions = PostgresGeneratedQuestionRepository(
-                    connection
-                ).list_accepted(
-                    limit=self.question_pool_limit,
+                stored_questions = self._load_combined_question_pool(
+                    connection,
                     concept_ids=test_request.concept_ids,
                 )
         finally:
@@ -254,10 +256,8 @@ class PostgresPreparationContextProvider:
         connection = self._connection_factory()
         try:
             with connection.transaction():
-                stored_questions = PostgresGeneratedQuestionRepository(
-                    connection
-                ).list_accepted(
-                    limit=self.question_pool_limit,
+                stored_questions = self._load_combined_question_pool(
+                    connection,
                     concept_ids=selected_concepts,
                 )
             _, candidates = self._rank_accepted_questions(
@@ -269,6 +269,68 @@ class PostgresPreparationContextProvider:
             close = getattr(connection, "close", None)
             if callable(close):
                 close()
+
+    def get_question_bank_readiness(self) -> dict[str, int | bool | str]:
+        """Return safe aggregate counts from the same bounded eligible pool as tests."""
+        connection = self._connection_factory()
+        try:
+            with connection.transaction():
+                stored_questions = self._load_combined_question_pool(
+                    connection,
+                    concept_ids=(),
+                )
+            ranked_questions, candidates = self._rank_accepted_questions(
+                stored_questions,
+                target_concept_ids=(),
+            )
+            historical_count = sum(
+                question.source_kind is QuestionSourceKind.VERIFIED_EXAM_HISTORY
+                for question in ranked_questions
+            )
+            generated_count = len(ranked_questions) - historical_count
+            return {
+                "question_pool_limit": self.question_pool_limit,
+                "eligible_question_count": len(candidates),
+                "verified_history_question_count": historical_count,
+                "accepted_generated_question_count": generated_count,
+                "practice_test_available": bool(candidates),
+                "source_counts_scope": "configured_eligible_pool",
+            }
+        finally:
+            close = getattr(connection, "close", None)
+            if callable(close):
+                close()
+
+    def _load_combined_question_pool(
+        self,
+        connection: Any,
+        *,
+        concept_ids: Sequence[str],
+    ) -> tuple[GeneratedMCQ, ...]:
+        """Read generated and official-history sources separately, then deduplicate.
+
+        Official historical records are considered first so an identical AI-
+        generated stem cannot masquerade as a fresh or independent exam item.
+        Each query is bounded by the configured pool limit; final ranking applies
+        the same limit to the merged, deduplicated pool.
+        """
+        generated = PostgresGeneratedQuestionRepository(connection).list_accepted(
+            limit=self.question_pool_limit,
+            concept_ids=concept_ids,
+        )
+        historical = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=self.question_pool_limit,
+            concept_ids=concept_ids,
+        )
+        combined: list[GeneratedMCQ] = []
+        seen_stems: set[str] = set()
+        for question in (*historical, *generated):
+            normalized_stem = normalize_question_text(question.stem)
+            if not normalized_stem or normalized_stem in seen_stems:
+                continue
+            seen_stems.add(normalized_stem)
+            combined.append(question)
+        return tuple(combined)
 
     def _rank_accepted_questions(
         self,
@@ -303,11 +365,16 @@ class PostgresPreparationContextProvider:
             evidence_by_question[question.generated_question_id] = QuestionIntelligenceInput(
                 generated_question_id=question.generated_question_id,
                 requested_difficulty=difficulty,
-                # Stored question importance is real evidence. Confidence and
-                # verified historical appearances are not inferred where absent.
+                # Historical frequency is available only for source-backed
+                # verified occurrences. Generated questions never acquire
+                # exam-history counts by inference.
                 fact_importance_scores=(question.importance_score,),
-                verified_appearance_count=0,
-                novelty_score=1.0,
+                verified_appearance_count=question.verified_appearance_count,
+                novelty_score=(
+                    0.35
+                    if question.source_kind is QuestionSourceKind.VERIFIED_EXAM_HISTORY
+                    else 1.0
+                ),
                 coverage_score=coverage,
             )
 
@@ -316,8 +383,15 @@ class PostgresPreparationContextProvider:
         candidates = self._intelligence_service.rank(
             scoreable,
             evidence_by_question,
+            limit=self.question_pool_limit,
         )
-        return tuple(scoreable), candidates
+        questions_by_id = {
+            question.generated_question_id: question for question in scoreable
+        }
+        ranked_questions = tuple(
+            questions_by_id[candidate.question_id] for candidate in candidates
+        )
+        return ranked_questions, candidates
 
 
 __all__ = [

@@ -44,9 +44,19 @@ def valid_context():
 
 
 class FakeContextProvider:
-    def __init__(self, context=None, error=None):
+    def __init__(self, context=None, error=None, readiness=None, readiness_error=None):
         self.context = valid_context() if context is None else context
         self.error = error
+        self.readiness = readiness or {
+            "question_pool_limit": 5000,
+            "eligible_question_count": 0,
+            "verified_history_question_count": 0,
+            "accepted_generated_question_count": 0,
+            "practice_test_available": False,
+            "source_counts_scope": "configured_eligible_pool",
+        }
+        self.readiness_error = readiness_error
+        self.readiness_calls = 0
         self.calls = []
 
     def load_context(self, learner_id, *, request):
@@ -54,6 +64,12 @@ class FakeContextProvider:
         if self.error:
             raise self.error
         return self.context
+
+    def get_question_bank_readiness(self):
+        self.readiness_calls += 1
+        if self.readiness_error:
+            raise self.readiness_error
+        return self.readiness
 
 
 def make_client(*, identity="learner-1", service=None, context_provider=None):
@@ -167,3 +183,50 @@ def test_non_get_route_method_is_rejected_with_security_headers():
     assert response.status_code == 405
     assert response.headers["cache-control"] == "no-store"
     assert response.headers["x-content-type-options"] == "nosniff"
+
+
+def test_question_bank_readiness_reports_source_separated_counts_after_authentication():
+    context_provider = FakeContextProvider(readiness={
+        "question_pool_limit": 5000,
+        "eligible_question_count": 7,
+        "verified_history_question_count": 5,
+        "accepted_generated_question_count": 2,
+        "practice_test_available": True,
+        "source_counts_scope": "configured_eligible_pool",
+    })
+    client = make_client(context_provider=context_provider)
+
+    response = client.get(
+        "/api/v1/learners/learner-1/question-bank/readiness"
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["learner_id"] == "learner-1"
+    assert response.json()["eligible_question_count"] == 7
+    assert response.json()["verified_history_question_count"] == 5
+    assert response.json()["accepted_generated_question_count"] == 2
+    assert response.json()["practice_test_available"] is True
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert context_provider.readiness_calls == 1
+
+
+def test_question_bank_readiness_enforces_learner_scope_and_fails_closed():
+    context_provider = FakeContextProvider()
+    client = make_client(identity="learner-2", context_provider=context_provider)
+
+    forbidden = client.get(
+        "/api/v1/learners/learner-1/question-bank/readiness"
+    )
+    assert forbidden.status_code == 403
+    assert forbidden.json()["error"]["code"] == "LEARNER_SCOPE_MISMATCH"
+    assert context_provider.readiness_calls == 0
+
+    unavailable = make_client(
+        context_provider=FakeContextProvider(
+            readiness_error=RuntimeError("private database detail")
+        )
+    ).get("/api/v1/learners/learner-1/question-bank/readiness")
+    assert unavailable.status_code == 503
+    assert unavailable.json()["error"]["code"] == "QUESTION_BANK_READINESS_UNAVAILABLE"
+    assert "private database detail" not in unavailable.text

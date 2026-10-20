@@ -35,6 +35,7 @@ from ai_comp.api.preparation_client_contract import (
     PreparationSessionHistoryResponse,
     PreparationTestRequestResponse,
     PreparationTestSessionResponse,
+    QuestionBankReadinessResponse,
     SubmittedTestResponse,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
@@ -459,7 +460,7 @@ def create_adaptive_practice_recommendation(
         "eligible_question_count_in_configured_pool": available_count,
         "effective_question_count": effective_count,
         "question_count_adjusted": effective_count != payload.question_count,
-        "availability_scope": "configured_accepted_question_pool",
+        "availability_scope": "configured_eligible_pool",
     }
     return _json_response(HTTPStatus.CREATED, response_payload)
 
@@ -1197,6 +1198,15 @@ def get_preparation_session_question(learner_id: str, session_id: str, request: 
             "selected_option_key": saved_answer.selected_option_key if saved_answer is not None else None,
             "review_marked": question.generated_question_id in session.review_question_ids,
             "remaining_seconds": max(0.0, (session.deadline_at or 0.0) - time.time()),
+            "source_kind": question.source_kind.value,
+            "source_url": question.source_url,
+            "answer_key_source_url": question.answer_key_source_url,
+            "exam_name": question.exam_name,
+            "exam_id": question.exam_id,
+            "exam_year": question.exam_year,
+            "exam_shift": question.exam_shift,
+            "exam_question_number": question.exam_question_number,
+            "verified_appearance_count": question.verified_appearance_count,
         })
     except Exception as exc:
         return _session_exception_response(exc)
@@ -1424,6 +1434,48 @@ def get_preparation_results_analytics(learner_id: str, request: Request) -> Resp
             }
         })
     return _json_response(HTTPStatus.OK, report)
+
+
+@router.get(
+    "/{learner_id}/question-bank/readiness",
+    name="get_question_bank_readiness",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {
+            "model": QuestionBankReadinessResponse,
+            "description": "Bounded count of questions eligible for real practice tests by verified source.",
+        },
+    },
+)
+def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
+    """Return aggregate pool counts without exposing question text or learner history."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    context_provider = request.app.state.preparation_context_provider
+    readiness_provider = getattr(context_provider, "get_question_bank_readiness", None)
+    if not callable(readiness_provider):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_READINESS_NOT_CONFIGURED",
+                "message": "Question-bank readiness is not configured for this server.",
+            }
+        })
+    try:
+        readiness = readiness_provider()
+        payload = QuestionBankReadinessResponse.model_validate({
+            **readiness,
+            "learner_id": authenticated_learner_id,
+        }).model_dump()
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_READINESS_UNAVAILABLE",
+                "message": "Eligible question counts could not be loaded.",
+            }
+        })
+    return _json_response(HTTPStatus.OK, payload)
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")

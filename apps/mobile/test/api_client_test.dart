@@ -47,7 +47,7 @@ void main() {
             'eligible_question_count_in_configured_pool': 6,
             'effective_question_count': 6,
             'question_count_adjusted': true,
-            'availability_scope': 'configured_accepted_question_pool',
+            'availability_scope': 'configured_eligible_pool',
           },
         }),
         201,
@@ -186,6 +186,15 @@ void main() {
           'selected_option_key': 'A',
           'review_marked': false,
           'remaining_seconds': 60,
+          'source_kind': 'VERIFIED_EXAM_HISTORY',
+          'source_url': 'https://official.example/paper.pdf',
+          'answer_key_source_url': 'https://official.example/key.pdf',
+          'exam_name': 'Test recruitment exam',
+          'exam_id': 'TEST_EXAM',
+          'exam_year': 2024,
+          'exam_shift': 'MORNING',
+          'exam_question_number': 7,
+          'verified_appearance_count': 2,
         }),
         200,
       );
@@ -202,5 +211,49 @@ void main() {
 
     expect(question.selectedOptionKey, 'A');
     expect(question.remainingSeconds, 60);
+    expect(question.sourceKind, 'VERIFIED_EXAM_HISTORY');
+    expect(question.examName, 'Test recruitment exam');
+    expect(question.examYear, 2024);
+    expect(question.verifiedAppearanceCount, 2);
+  });
+
+  test('question-bank readiness returns generated/history counts with bearer authentication', () async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return http.Response(
+        jsonEncode({
+          'learner_id': 'learner-1',
+          'question_pool_limit': 5000,
+          'eligible_question_count': 7,
+          'verified_history_question_count': 5,
+          'accepted_generated_question_count': 2,
+          'practice_test_available': true,
+          'source_counts_scope': 'configured_eligible_pool',
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    final readiness = await api.getQuestionBankReadiness();
+
+    expect(received.method, 'GET');
+    expect(
+      received.url.path,
+      '/api/v1/learners/learner-1/question-bank/readiness',
+    );
+    expect(received.headers['authorization'], 'Bearer test-token');
+    expect(readiness.eligibleQuestionCount, 7);
+    expect(readiness.verifiedHistoryQuestionCount, 5);
+    expect(readiness.acceptedGeneratedQuestionCount, 2);
+    expect(readiness.practiceTestAvailable, isTrue);
   });
 }
