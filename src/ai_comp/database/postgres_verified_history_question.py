@@ -172,8 +172,8 @@ class PostgresVerifiedHistoryQuestionRepository:
                       FROM jsonb_array_elements(options.options) AS item
                   )
                   AND qv.source_url = a.source_url
-                  AND qv.source_url LIKE 'https://%'
-                  AND kv.source_url LIKE 'https://%'
+                  AND qv.source_url LIKE 'https://%%'
+                  AND kv.source_url LIKE 'https://%%'
                   AND lower(split_part(split_part(qv.source_url, '://', 2), '/', 1))
                       = lower(split_part(split_part(qs.base_url, '://', 2), '/', 1))
                   AND lower(split_part(split_part(kv.source_url, '://', 2), '/', 1))
