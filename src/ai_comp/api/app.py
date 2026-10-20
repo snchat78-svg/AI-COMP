@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from threading import Lock
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -9,6 +10,7 @@ from ai_comp.api.dependencies import (
     PreparationContextProvider,
 )
 from ai_comp.api.preparation_guidance_routes import router
+from ai_comp.api.source_health_routes import router as source_health_router
 from ai_comp.api.postgres_preparation_context import (
     ConnectionScopedPreparationTestRequestRepository,
     PostgresPreparationContextProvider,
@@ -45,6 +47,8 @@ def create_app(
     app.state.preparation_test_session_repository_factory = preparation_test_session_repository_factory
     app.state.completed_test_learning_recorder = completed_test_learning_recorder
     app.state.completed_test_analytics_provider = completed_test_analytics_provider
+    app.state.source_health_cache = {"report": None, "expires_at": 0.0, "status_code": 200}
+    app.state.source_health_lock = Lock()
 
     @app.middleware("http")
     async def api_security_headers(request: Request, call_next):
@@ -55,6 +59,7 @@ def create_app(
         return response
 
     app.include_router(router)
+    app.include_router(source_health_router)
     return app
 
 
