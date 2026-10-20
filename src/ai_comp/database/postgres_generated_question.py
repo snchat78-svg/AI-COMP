@@ -8,6 +8,7 @@ from ai_comp.domain.material_generation import (
     GeneratedMCQ,
     GeneratedOption,
     GeneratedQuestionStatus,
+    QuestionSourceKind,
 )
 
 
@@ -25,6 +26,10 @@ class PostgresGeneratedQuestionRepository:
         self._connection = connection
 
     def save(self, question: GeneratedMCQ) -> None:
+        if question.source_kind is not QuestionSourceKind.AI_GENERATED:
+            raise ValueError(
+                "verified exam-history questions must stay in the historical source tables"
+            )
         try:
             with self._connection.transaction():
                 self._connection.execute(
