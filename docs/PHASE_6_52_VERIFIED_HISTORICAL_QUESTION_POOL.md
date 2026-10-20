@@ -42,13 +42,13 @@ The mobile dashboard displays those counts. When the count is known to be zero, 
 - Unit tests check the official-source/answer-key/matched-pair gates, answer-option normalization, separate storage, and legacy session-snapshot compatibility.
 - PostgreSQL integration test seeds a synthetic official paper plus official answer key and proves that a resolved historical MCQ can enter the pool; it also stores a generated duplicate stem and checks that it is counted only once and history provenance wins.
 - API tests cover learner-scoped readiness and fail-closed behavior; Flutter tests cover readiness parsing and request headers.
-- Full test and Docker checks, plus Flutter analyze/tests/APK build, must pass before merge.
+- Validation on the merged implementation: main Python/PostgreSQL suite and Docker build passed; Flutter analyze and mobile tests passed. A test APK built and was verified/uploaded from the same Flutter source files as main; the latest main-branch packaging run was still in progress at this checkpoint.
 
 A passing test with an empty real database proves only that the guards behave correctly. It does not prove that live papers or history records exist.
 
 ## Exact resume point
 
-1. Merge this phase only after CI passes.
+1. Phase 6.52 is merged as PR #34. The code fixes the source-selector integration gap but does not generate or backfill any historical paper records.
 2. Confirm the live API responds to the readiness endpoint and that it returns real source-separated counts.
 3. Restore one approved official HTTPS source path without bypassing TLS, robots, terms, or host restrictions.
 4. Run the existing discovery workflow and require nonzero persisted candidates.
