@@ -94,6 +94,26 @@ def build_initial_registry() -> SourceRegistry:
         notes="Current official Rajasthan Staff Selection Board website. Discovery remains subject to robots.txt, terms and access restrictions.",
     ))
     registry.add_source(SourceRecord(
+        source_id="RSSB_LEGACY_OFFICIAL",
+        name="RSSB Official Legacy Archive",
+        base_url="https://rsmssb.rajasthan.gov.in/",
+        source_type=SourceType.OFFICIAL_WEBSITE,
+        priority=SourcePriority.OFFICIAL,
+        conducting_body_id="RSSB",
+        allowed_paths=(
+            "/page",
+            "/show_archived",
+            "/link_to_external_file/",
+            "/Static/",
+        ),
+        notes=(
+            "Alternate official Rajasthan Staff Selection Board host with indexed question-paper "
+            "and answer-key archive listings. Discovery must start from current navigation and "
+            "remain subject to robots.txt, terms, allowed paths, and same-host restrictions; "
+            "source registration alone does not verify a question or exam appearance."
+        ),
+    ))
+    registry.add_source(SourceRecord(
         source_id="RPSC_OFFICIAL",
         name="RPSC Official",
         base_url="https://rpsc.rajasthan.gov.in/",
