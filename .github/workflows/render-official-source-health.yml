@@ -48,7 +48,7 @@ jobs:
             exit 1
           fi
 
-          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
           import json
           from pathlib import Path
 
@@ -80,3 +80,4 @@ jobs:
           Path("render-source-health-summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
           print("\n".join(lines))
           PY
+          cat render-source-health-summary.md >> "$GITHUB_STEP_SUMMARY"
