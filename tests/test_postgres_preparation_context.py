@@ -102,6 +102,13 @@ def test_postgres_context_drives_fastapi_guidance_from_verified_question_store()
 
     with connect_postgres(dsn) as connection:
         PostgresGeneratedQuestionRepository(connection).save(generated)
+        # Exercise the new historical read path directly so schema/query errors
+        # are visible in the integration traceback rather than being converted
+        # into the API's deliberately generic 503/500 response.
+        assert PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=10,
+            concept_ids=(concept_id,),
+        ) == ()
 
     try:
         test_request = PreparationTestRequest(
