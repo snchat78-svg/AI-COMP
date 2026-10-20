@@ -24,7 +24,7 @@ Do not repeat the already implemented registry, downloader, OCR, verification, t
 
 | Phase 6.47 — APK default API URL | Merged PR #10 | Client defaults to the HTTPS Render API URL, editable by the user. This does not by itself prove login or database access works on a real device. |
 | Phase 6.51 — Eligible-pool test selection | Merged PR #14 | A test is capped to available unique eligible questions; an empty verified pool correctly remains an explicit error rather than creating fake or duplicate history. |
-| Phase 6.52 — Verified historical question pool | In progress on PR `phase-6-52-verified-history-question-pool`; distinct official-history repository, matched official answer-key gates, source provenance in session snapshots, readiness API and mobile status | Fixes the code gap where `exam_appearances` history was not queried by timed practice. Live candidate ingestion is still blocked, so a nonzero real pool remains unproven until official HTTPS access returns. |
+| Phase 6.52 — Verified historical question pool | Merged PR #34 at `ff21194`; strict official-history repository, matched answer-key gates, provenance in snapshots, authenticated readiness API and mobile pool status | Backend/PostgreSQL suite + Docker pass on main; Flutter analyze/mobile tests pass, and an APK artifact from the same mobile source was verified. Live source ingestion remains blocked, so actual eligible pool may still be zero. |
 
 ## Master Roadmap coverage
 
@@ -59,7 +59,7 @@ The last validated mobile build (Phase 6.51, 16 October) passed dependency resol
 
 ## Exact next sequence — resume here, without repeating completed phases
 
-1. Merge Phase 6.52 only after CI passes. This closes the practice-pool integration gap; it does not generate or backfill historical source records.
+1. Phase 6.52 is merged. Backend tests and Docker build are green; Flutter analyze/tests are green and the identical mobile source produced a verified test APK. The final main-branch packaging run may still be finishing.
 2. Confirm the deployed `/api/v1/learners/{learner_id}/question-bank/readiness` endpoint responds and reports the actual eligible, verified-history and generated-question counts.
 3. Restore one approved official HTTPS path from the research runtime. The current-source timeout and legacy TLS failure must be fixed by a supported endpoint or authorized network/hosting change—not by weakening certificate verification, enabling unsafe legacy renegotiation, or bypassing robots/terms.
 4. Run `official-source-research` and stop if it fails or persists zero candidates.
