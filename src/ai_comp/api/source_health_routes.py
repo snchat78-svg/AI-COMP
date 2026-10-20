@@ -1,4 +1,4 @@
-"""Read-only, cached connectivity diagnostics for fixed official exam sources."""
+"""Read-only, cached connectivity diagnostics for registered official exam sources."""
 from __future__ import annotations
 
 import json
@@ -31,7 +31,7 @@ def _response(status_code: int, payload: dict[str, Any]) -> Response:
 
 @router.get("/diagnostics/official-source-health", include_in_schema=False)
 def official_source_health(request: Request) -> Response:
-    """Probe registered RSSB/RPSC hosts only; no arbitrary host input or content fetch."""
+    """Probe registered official hosts only; no arbitrary host input or content fetch."""
     if request.query_params:
         return _response(400, {
             "error": {

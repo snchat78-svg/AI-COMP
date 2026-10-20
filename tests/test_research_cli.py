@@ -1,4 +1,5 @@
 from ai_comp.research.live_discovery import HttpResponse
+from ai_comp.research.seed_registry import build_initial_registry
 from ai_comp.research.research_cli import (
     build_research_transport,
     discovery_exit_code,
@@ -90,7 +91,7 @@ def test_run_discovery_syncs_registry_and_persists_only_paper_candidates():
     assert summary["registry_synced"]["conducting_bodies"] == 2
     assert summary["registry_synced"]["exams"] >= 12
     assert summary["registry_synced"]["paper_categories"] >= 22
-    assert summary["registry_synced"]["sources"] == 2
+    assert summary["registry_synced"]["sources"] == len(build_initial_registry().sources())
     assert summary["paper_candidates_persisted"] == 1
     assert summary["sources"][0]["discovered_links"] == 2
     assert summary["sources"][0]["paper_candidates_persisted"] == 1

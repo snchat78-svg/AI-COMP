@@ -297,3 +297,76 @@ def test_http_redirect_handler_rejects_cross_host_before_following():
         assert str(exc) == "cross_host_redirect_blocked"
     else:
         raise AssertionError("cross-host redirect should not be followed")
+
+
+def test_rssb_legacy_archive_is_registered_as_a_separate_official_source():
+    legacy = next(
+        source
+        for source in build_initial_registry().sources()
+        if source.source_id == "RSSB_LEGACY_OFFICIAL"
+    )
+
+    assert legacy.base_url == "https://rsmssb.rajasthan.gov.in/"
+    assert legacy.priority is SourcePriority.OFFICIAL
+    assert legacy.source_type is SourceType.OFFICIAL_WEBSITE
+    assert legacy.conducting_body_id == "RSSB"
+    assert legacy.allowed_paths == (
+        "/page",
+        "/show_archived",
+        "/link_to_external_file/",
+        "/Static/",
+    )
+
+
+def test_rssb_legacy_archive_discovers_papers_via_current_navigation_under_robots_policy():
+    base = "https://rsmssb.rajasthan.gov.in/"
+    source = next(
+        source
+        for source in build_initial_registry().sources()
+        if source.source_id == "RSSB_LEGACY_OFFICIAL"
+    )
+    question_archive = base + "page?menuName=question-paper-archive"
+    answer_archive = base + "page?menuName=answer-key-archive"
+    question_pdf = base + "link_to_external_file/CET_2024_Master_Question_Paper.pdf"
+    answer_pdf = base + "Static/files/CET_2024_Final_Answer_Key.pdf"
+    transport = FakeTransport({
+        base + "robots.txt": HttpResponse(
+            base + "robots.txt",
+            200,
+            "User-agent: AI-COMP/phase2\nAllow: /\n",
+            "text/plain",
+        ),
+        base: HttpResponse(
+            base,
+            200,
+            (
+                '<a href="/page?menuName=question-paper-archive">Question Papers</a>'
+                '<a href="/page?menuName=answer-key-archive">Answer Key</a>'
+            ),
+            "text/html",
+        ),
+        question_archive: HttpResponse(
+            question_archive,
+            200,
+            '<a href="/link_to_external_file/CET_2024_Master_Question_Paper.pdf">CET (Sr. Sec.) 2024 : Master Question Paper V23</a>',
+            "text/html",
+        ),
+        answer_archive: HttpResponse(
+            answer_archive,
+            200,
+            '<a href="/Static/files/CET_2024_Final_Answer_Key.pdf">CET (Sr. Sec.) 2024 : Final Answer Key V23</a>',
+            "text/html",
+        ),
+    })
+
+    result = LiveOfficialSourceDiscovery(transport).run(
+        source,
+        CrawlPolicy(True, rate_limit_seconds=0, max_depth=2),
+    )
+
+    titles = {candidate.url: candidate.title for candidate in result.candidates}
+    assert titles[question_pdf] == "CET (Sr. Sec.) 2024 : Master Question Paper V23"
+    assert titles[answer_pdf] == "CET (Sr. Sec.) 2024 : Final Answer Key V23"
+    assert question_archive in transport.requested
+    assert answer_archive in transport.requested
+    assert base + "robots.txt" in transport.requested

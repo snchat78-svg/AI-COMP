@@ -128,3 +128,20 @@ def test_source_health_report_rejects_unknown_sources():
 def test_probe_source_rejects_unbounded_timeouts():
     with pytest.raises(ValueError, match="between 0.5 and 5.0"):
         probe_source(official_source(), timeout_seconds=30)
+
+
+def test_source_health_report_can_probe_registered_rssb_legacy_host():
+    report = source_health_report(
+        "RSSB_LEGACY_OFFICIAL",
+        resolver=lambda hostname, *_args, **_kwargs: (
+            []
+            if hostname == "rsmssb.rajasthan.gov.in"
+            else pytest.fail(f"unexpected host probe: {hostname}")
+        ),
+    )
+
+    assert [item["source_id"] for item in report["results"]] == [
+        "RSSB_LEGACY_OFFICIAL"
+    ]
+    assert report["results"][0]["host"] == "rsmssb.rajasthan.gov.in"
+    assert report["results"][0]["dns_status"] == "NO_RECORDS"

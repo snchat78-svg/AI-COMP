@@ -4,7 +4,7 @@ import ai_comp.api.source_health_routes as source_health_routes
 from ai_comp.api.app import create_app
 
 
-def test_source_health_route_reports_fixed_registered_hosts_without_raw_ip_addresses(monkeypatch):
+def test_source_health_route_reports_registered_hosts_without_raw_ip_addresses(monkeypatch):
     calls = []
 
     def fake_report(*, timeout_seconds):
@@ -27,6 +27,21 @@ def test_source_health_route_reports_fixed_registered_hosts_without_raw_ip_addre
                     "ipv6_tls": "NO_RECORDS",
                     "ipv6_tcp_errors": [],
                     "ipv6_tls_errors": [],
+                },
+                {
+                    "source_id": "RSSB_LEGACY_OFFICIAL",
+                    "host": "rsmssb.rajasthan.gov.in",
+                    "dns_status": "OK",
+                    "ipv4_records": 1,
+                    "ipv4_tcp": "PASS",
+                    "ipv4_tls": "PASS",
+                    "ipv4_tcp_errors": [],
+                    "ipv4_tls_errors": [],
+                    "ipv6_records": 0,
+                    "ipv6_tcp": "NO_RECORDS",
+                    "ipv6_tls": "NO_RECORDS",
+                    "ipv6_tcp_errors": [],
+                    "ipv6_tls_errors": [],
                 }
             ],
         }
@@ -39,6 +54,7 @@ def test_source_health_route_reports_fixed_registered_hosts_without_raw_ip_addre
     assert response.status_code == 200
     assert response.json()["phase"] == "2.5-source-health"
     assert response.json()["results"][0]["ipv4_tcp"] == "FAIL"
+    assert response.json()["results"][1]["source_id"] == "RSSB_LEGACY_OFFICIAL"
     assert response.json()["cache"] == {"cached": False, "ttl_seconds": 60}
     assert response.headers["cache-control"] == "no-store"
     assert response.headers["x-content-type-options"] == "nosniff"

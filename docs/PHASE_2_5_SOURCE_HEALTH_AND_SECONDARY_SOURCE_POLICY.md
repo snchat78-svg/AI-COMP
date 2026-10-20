@@ -12,6 +12,14 @@ The deployed FastAPI runtime exposes `GET /diagnostics/official-source-health` a
 
 A path-filtered workflow, [`render-official-source-health.yml`](../.github/workflows/render-official-source-health.yml), queries this endpoint after relevant main-branch changes and can also be run manually. It retries briefly for a Render deployment to finish, then publishes separate DNS/TCP/TLS results in its GitHub Actions summary. A successful workflow means the diagnostic payload was retrieved, not that an official host is reachable or that any papers were discovered.
 
+## Official-host fallback reviewed on 20 October 2026
+
+The official Rajasthan Staff Selection Board legacy host `https://rsmssb.rajasthan.gov.in/` has publicly indexed Question Papers and Answer Key archive listings ([Question Papers](https://rsmssb.rajasthan.gov.in/show_archived?menuName=Xj4lCb9vGxpQnfLs%2FxlZ2g%3D%3D&theme=Default), [Answer Key](https://rsmssb.rajasthan.gov.in/show_archived?menuName=AGDAnN3xlANlxQ9BZvzaeg%3D%3D&theme=Red)). AI-COMP registers this as the distinct official source ID `RSSB_LEGACY_OFFICIAL`, with the RSSB conducting body and narrow candidate path rules. These links were discovered in current search indexing; do not hard-code opaque archive menu identifiers because direct deep-link resolution can change.
+
+This does not presume that the runtime can reach the host or that robots permits every page. The crawl must fetch and obey the current `robots.txt`; if unavailable, fail closed. The existing same-host redirect and path allow-lists remain in force. Candidates from this source still pass through the same extraction, metadata-resolution, answer-key pairing, and verification pipeline. Registry membership never auto-verifies historical appearances.
+
+The Render source-health workflow now runs when `src/ai_comp/research/seed_registry.py` changes, so the new host can be tested from the deployed runtime as well as the GitHub Actions research runner.
+
 ## Secondary source admission rule
 
 A secondary source must not be added to automated ingestion merely because its page is public or appears in a search result. Before enabling a source for automated retrieval, record and review all of the following:

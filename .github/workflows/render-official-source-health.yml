@@ -9,6 +9,7 @@ on:
       - "src/ai_comp/api/source_health_routes.py"
       - "src/ai_comp/api/app.py"
       - "src/ai_comp/research/source_health.py"
+      - "src/ai_comp/research/seed_registry.py"
   workflow_dispatch:
 
 permissions:
