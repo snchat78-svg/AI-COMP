@@ -244,6 +244,17 @@ class PostgresVerifiedHistoryQuestionRepository:
             GeneratedOption(str(item["key"]), str(item["text"]))
             for item in options
         )
+        source_answer_key = str(correct_answer)
+        matching_option_key = next(
+            (
+                option.key
+                for option in normalized_options
+                if option.key.strip().upper() == source_answer_key.strip().upper()
+            ),
+            None,
+        )
+        if matching_option_key is None:
+            raise ValueError("verified answer key does not match the persisted paper options")
         concept_values = (
             json.loads(concept_ids)
             if isinstance(concept_ids, str)
@@ -269,7 +280,7 @@ class PostgresVerifiedHistoryQuestionRepository:
             material_id=f"verified-paper:{question_id}",
             stem=str(stem),
             options=normalized_options,
-            correct_option_key=str(correct_answer),
+            correct_option_key=matching_option_key,
             explanation=(
                 "Answer matched to the linked, official answer key. "
                 "Review the original paper and key provenance before relying on this item."
