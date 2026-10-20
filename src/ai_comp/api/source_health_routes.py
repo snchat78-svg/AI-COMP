@@ -48,7 +48,7 @@ def official_source_health(request: Request) -> Response:
         cached_report = cache.get("report")
         expires_at = float(cache.get("expires_at", 0.0))
         if isinstance(cached_report, dict) and now < expires_at:
-            return _response(200, {
+            return _response(int(cache.get("status_code", 200)), {
                 **cached_report,
                 "cache": {"cached": True, "ttl_seconds": CACHE_TTL_SECONDS},
             })
@@ -67,10 +67,14 @@ def official_source_health(request: Request) -> Response:
                     "exception_type": type(exc).__name__,
                 },
             }
+            status_code = 503
+        else:
+            status_code = 200
 
         cache["report"] = report
+        cache["status_code"] = status_code
         cache["expires_at"] = time.monotonic() + CACHE_TTL_SECONDS
-        return _response(200, {
+        return _response(status_code, {
             **report,
             "cache": {"cached": False, "ttl_seconds": CACHE_TTL_SECONDS},
         })
