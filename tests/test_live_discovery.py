@@ -333,7 +333,7 @@ def test_rssb_legacy_archive_discovers_papers_via_current_navigation_under_robot
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: AI-COMP/phase2\\nAllow: /\\n",
+            "User-agent: AI-COMP/phase2\nAllow: /\n",
             "text/plain",
         ),
         base: HttpResponse(
