@@ -82,3 +82,32 @@ jobs:
           print("\n".join(lines))
           PY
           cat render-source-health-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Require at least one official source to complete validated TCP and TLS
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("render-source-health.json").read_text(encoding="utf-8"))
+          results = data.get("results", [])
+          reachable = [
+              item.get("source_id", "unknown")
+              for item in results
+              if any(
+                  item.get(f"{family}_tcp") == "PASS"
+                  and item.get(f"{family}_tls") == "PASS"
+                  for family in ("ipv4", "ipv6")
+              )
+          ]
+          if reachable:
+              print("Validated official-source TCP/TLS available for: " + ", ".join(reachable))
+          else:
+              print(
+                  "::error::No registered official exam source completed both TCP connect "
+                  "and certificate-validated TLS. See the published table above; discovery "
+                  "must remain blocked until an allowed official HTTPS endpoint is reachable."
+              )
+              raise SystemExit(1)
+          PY
