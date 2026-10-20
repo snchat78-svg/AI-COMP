@@ -47,7 +47,7 @@ void main() {
             'eligible_question_count_in_configured_pool': 6,
             'effective_question_count': 6,
             'question_count_adjusted': true,
-            'availability_scope': 'configured_accepted_question_pool',
+            'availability_scope': 'configured_eligible_pool',
           },
         }),
         201,
