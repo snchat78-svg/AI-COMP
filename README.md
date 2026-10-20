@@ -29,11 +29,12 @@ See [apps/mobile/README.md](apps/mobile/README.md) for requirements, local setup
 
 ## Hosting readiness
 
-Read [Phase 6.46 — Free-Tier Cloud Hosting Readiness](docs/PHASE_6_46_FREE_HOSTING_READINESS.md) before creating resources. Never commit database credentials or Firebase service-account JSON. Render Free services may sleep and Supabase Free projects may pause; check the current provider limits before public launch. API URL configuration in the APK must wait for a real HTTPS service.
+Read [Phase 6.46 — Free-Tier Cloud Hosting Readiness](docs/PHASE_6_46_FREE_HOSTING_READINESS.md) before creating resources. Never commit database credentials or Firebase service-account JSON. Render Free services may sleep and Supabase Free projects may pause; check the current provider limits before public launch. The mobile client currently defaults to the deployed HTTPS Render API endpoint, but live Firebase login, database migrations, source ingestion, and learner-pool readiness must still be validated.
 
 ## Roadmap and evidence
 
 - [Master roadmap coverage audit](docs/MASTER_ROADMAP_COVERAGE_AUDIT.md)
+- [Latest operational checkpoint — 20 October 2026](docs/MASTER_ROADMAP_CHECKPOINT_2026-10-20.md)
 - [Phase 2.5 source health and secondary-source policy](docs/PHASE_2_5_SOURCE_HEALTH_AND_SECONDARY_SOURCE_POLICY.md)
 - [Phase 6.40 client/API contract](docs/PHASE_6_40_ADAPTIVE_PREPARATION_CLIENT_API_CONTRACT.md)
 - [Phase 6.41 Flutter client foundation](docs/PHASE_6_41_FLUTTER_ADAPTIVE_PREPARATION_CLIENT.md)

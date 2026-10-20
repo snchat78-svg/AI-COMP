@@ -54,3 +54,7 @@ adb install -r app-release.apk
 ```
 
 The CI APK is a release-mode test build signed with Flutter's local debug key. It is **not** a production-signed store release. No keystore, API URL, learner ID, or access token is embedded in the repository or build workflow. Production distribution requires a separately configured private signing key and release process.
+
+## Master roadmap checkpoint
+
+Use [the 20 October 2026 roadmap/operations checkpoint](../../docs/MASTER_ROADMAP_CHECKPOINT_2026-10-20.md) before continuing development. It records the latest merged research work, known live-source blocker, verified build evidence, and the exact next sequence to avoid repeating a completed phase or claiming an unproven live capability.
