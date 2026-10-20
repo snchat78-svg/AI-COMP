@@ -1,0 +1,82 @@
+name: render-official-source-health
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/render-official-source-health.yml"
+      - "src/ai_comp/api/source_health_routes.py"
+      - "src/ai_comp/api/app.py"
+      - "src/ai_comp/research/source_health.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-render-official-source-health
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Query deployed Render source-health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ai-comp-api.onrender.com/diagnostics/official-source-health"
+          found=false
+
+          # A main push starts Render auto-deploy and this workflow near the same
+          # time. Retry for a bounded window until the new diagnostic route exists.
+          for attempt in $(seq 1 24); do
+            status_code="$(curl --silent --max-time 5 --output render-source-health.json --write-out '%{http_code}' "$url" || true)"
+            if [ "$status_code" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("render-source-health.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-source-health" and isinstance(d.get("results"), list) and len(d["results"]) > 0 else 1)'; then
+              echo "Render source-health endpoint responded successfully (attempt $attempt)."
+              found=true
+              break
+            fi
+            rm -f render-source-health.json
+            sleep 5
+          done
+
+          if [ "$found" != "true" ]; then
+            echo "::error::Could not retrieve a valid source-health response from the deployed Render service."
+            exit 1
+          fi
+
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("render-source-health.json").read_text(encoding="utf-8"))
+          lines = [
+              "# Render official-source connectivity",
+              "",
+              "- Diagnostic only; no paper content was fetched and no database records were changed.",
+              f"- Cache result: {'cached' if data.get('cache', {}).get('cached') else 'fresh'}",
+              "",
+              "| Registered source | DNS | IPv4 TCP | IPv4 TLS | IPv6 TCP | IPv6 TLS |",
+              "|---|---|---|---|---|---|",
+          ]
+          for item in data.get("results", []):
+              lines.append(
+                  "| {source} | {dns} | {v4tcp} | {v4tls} | {v6tcp} | {v6tls} |".format(
+                      source=item.get("source_id", "unknown"),
+                      dns=item.get("dns_status", "unknown"),
+                      v4tcp=item.get("ipv4_tcp", "unknown"),
+                      v4tls=item.get("ipv4_tls", "unknown"),
+                      v6tcp=item.get("ipv6_tcp", "unknown"),
+                      v6tls=item.get("ipv6_tls", "unknown"),
+                  )
+              )
+              for label in ("ipv4_tcp_errors", "ipv4_tls_errors", "ipv6_tcp_errors", "ipv6_tls_errors"):
+                  errors = item.get(label, [])
+                  if errors:
+                      lines.append(f"- {item.get('source_id', 'unknown')} {label}: {', '.join(errors)}")
+          Path("render-source-health-summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          print("\n".join(lines))
+          PY
