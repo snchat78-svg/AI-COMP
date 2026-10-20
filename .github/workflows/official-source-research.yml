@@ -112,16 +112,21 @@ jobs:
                       summary.append(
                           f"- **{item.get('source_id', 'unknown')}** ({item.get('host', 'unknown')}): "
                           f"DNS={item.get('dns_status', 'unknown')}; "
+                          f"IPv4 TCP={item.get('ipv4_tcp', 'unknown')}; "
                           f"IPv4 TLS={item.get('ipv4_tls', 'unknown')} "
                           f"({item.get('ipv4_records', 0)} address records); "
+                          f"IPv6 TCP={item.get('ipv6_tcp', 'unknown')}; "
                           f"IPv6 TLS={item.get('ipv6_tls', 'unknown')} "
                           f"({item.get('ipv6_records', 0)} address records)"
                       )
                       if item.get("dns_error"):
                           summary.append(f"  - DNS error type: {item['dns_error']}")
-                      errors = sorted(set(item.get("ipv4_errors", []) + item.get("ipv6_errors", [])))
-                      if errors:
-                          summary.append(f"  - Connection/TLS error types: {', '.join(errors)}")
+                      tcp_errors = sorted(set(item.get("ipv4_tcp_errors", []) + item.get("ipv6_tcp_errors", [])))
+                      tls_errors = sorted(set(item.get("ipv4_tls_errors", []) + item.get("ipv6_tls_errors", [])))
+                      if tcp_errors:
+                          summary.append(f"  - TCP error types: {', '.join(tcp_errors)}")
+                      if tls_errors:
+                          summary.append(f"  - TLS error types: {', '.join(tls_errors)}")
           summary.extend(["", f"> {data.get('verification_note', '')}"])
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
               handle.write("\n".join(summary) + "\n")
