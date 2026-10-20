@@ -40,6 +40,44 @@ class ApiException implements Exception {
   String toString() => '$code: $message';
 }
 
+class QuestionBankReadiness {
+  const QuestionBankReadiness({
+    required this.questionPoolLimit,
+    required this.eligibleQuestionCount,
+    required this.verifiedHistoryQuestionCount,
+    required this.acceptedGeneratedQuestionCount,
+    required this.practiceTestAvailable,
+    required this.sourceCountsScope,
+  });
+
+  final int questionPoolLimit;
+  final int eligibleQuestionCount;
+  final int verifiedHistoryQuestionCount;
+  final int acceptedGeneratedQuestionCount;
+  final bool practiceTestAvailable;
+  final String sourceCountsScope;
+
+  factory QuestionBankReadiness.fromJson(Map<String, dynamic> json) {
+    return QuestionBankReadiness(
+      questionPoolLimit: _integer(json['question_pool_limit'], 1),
+      eligibleQuestionCount: _integer(json['eligible_question_count'], 0),
+      verifiedHistoryQuestionCount: _integer(
+        json['verified_history_question_count'],
+        0,
+      ),
+      acceptedGeneratedQuestionCount: _integer(
+        json['accepted_generated_question_count'],
+        0,
+      ),
+      practiceTestAvailable: json['practice_test_available'] == true,
+      sourceCountsScope: _string(
+        json['source_counts_scope'],
+        'configured_eligible_pool',
+      ),
+    );
+  }
+}
+
 class AdaptiveRecommendation {
   const AdaptiveRecommendation({
     required this.requestId,
@@ -153,6 +191,15 @@ class CurrentQuestion {
     required this.reviewMarked,
     required this.remainingSeconds,
     this.selectedOptionKey,
+    this.sourceKind = 'AI_GENERATED',
+    this.sourceUrl,
+    this.answerKeySourceUrl,
+    this.examName,
+    this.examId,
+    this.examYear,
+    this.examShift,
+    this.examQuestionNumber,
+    this.verifiedAppearanceCount = 0,
   });
 
   final String sessionId;
@@ -164,6 +211,15 @@ class CurrentQuestion {
   final bool reviewMarked;
   final double remainingSeconds;
   final String? selectedOptionKey;
+  final String sourceKind;
+  final String? sourceUrl;
+  final String? answerKeySourceUrl;
+  final String? examName;
+  final String? examId;
+  final int? examYear;
+  final String? examShift;
+  final int? examQuestionNumber;
+  final int verifiedAppearanceCount;
 
   factory CurrentQuestion.fromJson(Map<String, dynamic> json) {
     final rawOptions = json['options'];
@@ -182,6 +238,17 @@ class CurrentQuestion {
       reviewMarked: json['review_marked'] == true,
       remainingSeconds: _double(json['remaining_seconds']),
       selectedOptionKey: _optionalString(json['selected_option_key']),
+      sourceKind: _string(json['source_kind'], 'AI_GENERATED'),
+      sourceUrl: _optionalString(json['source_url']),
+      answerKeySourceUrl: _optionalString(json['answer_key_source_url']),
+      examName: _optionalString(json['exam_name']),
+      examId: _optionalString(json['exam_id']),
+      examYear: json['exam_year'] == null ? null : _integer(json['exam_year'], 0),
+      examShift: _optionalString(json['exam_shift']),
+      examQuestionNumber: json['exam_question_number'] == null
+          ? null
+          : _integer(json['exam_question_number'], 0),
+      verifiedAppearanceCount: _integer(json['verified_appearance_count'], 0),
     );
   }
 }
