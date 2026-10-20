@@ -563,12 +563,14 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                     : _startAdaptivePractice,
                 icon: const Icon(Icons.play_arrow),
                 label: Text(
-                  _questionBankReadinessError != null ||
-                          _questionBankReadiness == null
-                      ? 'Check question bank status'
-                      : _questionBankReadiness?.practiceTestAvailable == false
-                          ? 'Question bank not ready'
-                          : 'Create and start test',
+                  !_connected
+                      ? 'Create and start test'
+                      : _questionBankReadinessError != null ||
+                              _questionBankReadiness == null
+                          ? 'Check question bank status'
+                          : _questionBankReadiness!.practiceTestAvailable
+                              ? 'Create and start test'
+                              : 'Question bank not ready',
                 ),
               ),
             ),
