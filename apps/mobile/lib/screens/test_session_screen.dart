@@ -284,6 +284,46 @@ class _TestSessionScreenState extends State<TestSessionScreen> {
                   const SizedBox(height: 16),
                   if (_error != null) _InlineError(message: _error!),
                   if (question != null) ...[
+                    if (question.sourceKind == 'VERIFIED_EXAM_HISTORY') ...[
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.verified_outlined, size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Verified previous-exam question',
+                                      style: Theme.of(context).textTheme.titleSmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                '${question.examName ?? 'Official exam'}'
+                                '${question.examYear == null ? '' : ' · ${question.examYear}'}'
+                                '${question.examShift == null ? '' : ' · ${question.examShift}'}',
+                              ),
+                              Text(
+                                'Question ${question.examQuestionNumber ?? question.questionNumber}'
+                                ' · ${question.verifiedAppearanceCount} verified appearance(s)',
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Answer was matched to the linked official answer key. '
+                                'Correct answers remain hidden until test review.',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(18),
