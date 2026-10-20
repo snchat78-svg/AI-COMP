@@ -14,7 +14,7 @@ def official_source(source_id="RSSB_OFFICIAL"):
     )
 
 
-def test_probe_source_reports_ipv4_and_ipv6_tls_separately_without_ip_addresses():
+def test_probe_source_reports_ipv4_and_ipv6_tcp_tls_separately_without_ip_addresses():
     source = official_source()
     calls = []
 
@@ -30,8 +30,8 @@ def test_probe_source_reports_ipv4_and_ipv6_tls_separately_without_ip_addresses(
     def probe(family, socktype, proto, sockaddr, hostname, timeout):
         calls.append((family, hostname, timeout))
         if family == socket.AF_INET:
-            return True, None
-        return False, "TimeoutError"
+            return {"tcp_ok": True, "tls_ok": True, "tcp_error": None, "tls_error": None}
+        return {"tcp_ok": True, "tls_ok": False, "tcp_error": None, "tls_error": "SSLError"}
 
     result = probe_source(
         source,
@@ -42,16 +42,40 @@ def test_probe_source_reports_ipv4_and_ipv6_tls_separately_without_ip_addresses(
 
     assert result["dns_status"] == "OK"
     assert result["ipv4_records"] == 1
+    assert result["ipv4_tcp"] == "PASS"
     assert result["ipv4_tls"] == "PASS"
     assert result["ipv6_records"] == 1
+    assert result["ipv6_tcp"] == "PASS"
     assert result["ipv6_tls"] == "FAIL"
-    assert result["ipv6_errors"] == ["TimeoutError"]
+    assert result["ipv6_tls_errors"] == ["SSLError"]
     assert "192.0.2.10" not in repr(result)
     assert "2001:db8::10" not in repr(result)
     assert calls == [
         (socket.AF_INET, "rssb.rajasthan.gov.in", 1.5),
         (socket.AF_INET6, "rssb.rajasthan.gov.in", 1.5),
     ]
+
+
+def test_probe_source_distinguishes_tcp_connection_failure_from_tls_failure():
+    source = official_source()
+
+    result = probe_source(
+        source,
+        resolver=lambda *_args, **_kwargs: [
+            (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", ("192.0.2.10", 443)),
+        ],
+        address_probe=lambda *_args: {
+            "tcp_ok": False,
+            "tls_ok": False,
+            "tcp_error": "TimeoutError",
+            "tls_error": None,
+        },
+    )
+
+    assert result["ipv4_tcp"] == "FAIL"
+    assert result["ipv4_tcp_errors"] == ["TimeoutError"]
+    assert result["ipv4_tls"] == "NOT_REACHED"
+    assert result["ipv4_tls_errors"] == []
 
 
 def test_probe_source_reports_missing_address_families_without_network_attempts():
@@ -64,7 +88,9 @@ def test_probe_source_reports_missing_address_families_without_network_attempts(
     )
 
     assert result["dns_status"] == "NO_RECORDS"
+    assert result["ipv4_tcp"] == "NO_RECORDS"
     assert result["ipv4_tls"] == "NO_RECORDS"
+    assert result["ipv6_tcp"] == "NO_RECORDS"
     assert result["ipv6_tls"] == "NO_RECORDS"
 
 
@@ -78,6 +104,8 @@ def test_probe_source_reports_dns_errors_without_leaking_exception_text():
 
     assert result["dns_status"] == "ERROR"
     assert result["dns_error"] == "gaierror"
+    assert result["ipv4_tcp"] == "NOT_TESTED"
+    assert result["ipv4_tls"] == "NOT_TESTED"
     assert "private resolver diagnostics" not in repr(result)
 
 

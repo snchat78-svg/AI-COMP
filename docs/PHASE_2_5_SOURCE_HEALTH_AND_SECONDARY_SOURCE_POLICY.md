@@ -4,7 +4,7 @@
 
 The live official-source research runs on 18–20 October 2026 failed before discovery could persist candidates. The observable failures were an RSSB request timeout and an RPSC `Network is unreachable` error. A green processing or verification workflow with zero selected records is not evidence of a populated question bank.
 
-The `source_health` preflight reports DNS availability and certificate-validated TLS connectivity separately for IPv4 and IPv6. It connects only to registered official source hosts, performs no page fetch, does not bypass TLS verification, and does not alter the crawler's robots, terms, redirect, or host checks. It is diagnostic only; the research CLI still decides whether discovery succeeded.
+The `source_health` preflight reports DNS status, TCP connection, and certificate-validated TLS handshake separately for IPv4 and IPv6. It connects only to registered official source hosts, performs no page fetch, does not bypass TLS verification, and does not alter the crawler's robots, terms, redirect, or host checks. It is diagnostic only; the research CLI still decides whether discovery succeeded.
 
 ## Secondary source admission rule
 
@@ -31,7 +31,7 @@ Official RSSB/RPSC remains the first choice. A secondary fallback can be added l
 
 ## Acceptance criteria
 
-- The preflight reports DNS status, IPv4/IPv6 address counts, and per-family TLS result without logging raw IP addresses or secret values.
+- The preflight reports DNS status, IPv4/IPv6 address counts, TCP-connect status, and TLS-handshake status separately without logging raw IP addresses or secret values.
 - TLS verification remains enabled.
 - Source health diagnostics do not change the discovery or verification trust boundary.
 - A fully blocked official-source run remains a failed research run.

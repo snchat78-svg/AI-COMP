@@ -32,22 +32,42 @@ def _validated_tls_probe(
     sockaddr: tuple[Any, ...],
     hostname: str,
     timeout_seconds: float,
-) -> tuple[bool, str | None]:
-    """Probe one resolved address with normal certificate verification."""
+) -> dict[str, Any]:
+    """Report TCP connect and certificate-validated TLS handshake separately."""
     raw_socket = socket.socket(family, socktype, proto)
     try:
-        raw_socket.settimeout(timeout_seconds)
-        raw_socket.connect(sockaddr)
-        context = ssl.create_default_context()
-        tls_socket = context.wrap_socket(raw_socket, server_hostname=hostname)
         try:
-            # The handshake and certificate validation happen during wrap_socket.
-            tls_socket.getpeercert()
-        finally:
-            tls_socket.close()
-        return True, None
-    except (OSError, ssl.SSLError, TimeoutError) as exc:
-        return False, type(exc).__name__
+            raw_socket.settimeout(timeout_seconds)
+            raw_socket.connect(sockaddr)
+        except (OSError, TimeoutError) as exc:
+            return {
+                "tcp_ok": False,
+                "tls_ok": False,
+                "tcp_error": type(exc).__name__,
+                "tls_error": None,
+            }
+
+        try:
+            context = ssl.create_default_context()
+            tls_socket = context.wrap_socket(raw_socket, server_hostname=hostname)
+            try:
+                # The handshake and certificate validation happen during wrap_socket.
+                tls_socket.getpeercert()
+            finally:
+                tls_socket.close()
+            return {
+                "tcp_ok": True,
+                "tls_ok": True,
+                "tcp_error": None,
+                "tls_error": None,
+            }
+        except (OSError, ssl.SSLError, TimeoutError) as exc:
+            return {
+                "tcp_ok": True,
+                "tls_ok": False,
+                "tcp_error": None,
+                "tls_error": type(exc).__name__,
+            }
     finally:
         try:
             raw_socket.close()
@@ -60,9 +80,9 @@ def probe_source(
     *,
     timeout_seconds: float = 2.0,
     resolver: Callable[..., Any] | None = None,
-    address_probe: Callable[..., tuple[bool, str | None]] | None = None,
+    address_probe: Callable[..., dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Report per-address-family connectivity without exposing resolved IPs."""
+    """Report DNS, TCP and TLS outcomes by address family without exposing IPs."""
     if not 0.5 <= timeout_seconds <= 5.0:
         raise ValueError("timeout_seconds must be between 0.5 and 5.0")
 
@@ -74,29 +94,37 @@ def probe_source(
             "dns_status": "ERROR",
             "dns_error": "InvalidSourceHost",
             "ipv4_records": 0,
+            "ipv4_tcp": "NOT_TESTED",
             "ipv4_tls": "NOT_TESTED",
-            "ipv4_errors": [],
+            "ipv4_tcp_errors": [],
+            "ipv4_tls_errors": [],
             "ipv6_records": 0,
+            "ipv6_tcp": "NOT_TESTED",
             "ipv6_tls": "NOT_TESTED",
-            "ipv6_errors": [],
+            "ipv6_tcp_errors": [],
+            "ipv6_tls_errors": [],
         }
 
     resolve = resolver or socket.getaddrinfo
     probe = address_probe or _validated_tls_probe
     try:
         addresses = resolve(hostname, 443, type=socket.SOCK_STREAM)
-    except (OSError, socket.gaierror) as exc:
+    except OSError as exc:
         return {
             "source_id": source.source_id,
             "host": hostname,
             "dns_status": "ERROR",
             "dns_error": type(exc).__name__,
             "ipv4_records": 0,
+            "ipv4_tcp": "NOT_TESTED",
             "ipv4_tls": "NOT_TESTED",
-            "ipv4_errors": [],
+            "ipv4_tcp_errors": [],
+            "ipv4_tls_errors": [],
             "ipv6_records": 0,
+            "ipv6_tcp": "NOT_TESTED",
             "ipv6_tls": "NOT_TESTED",
-            "ipv6_errors": [],
+            "ipv6_tcp_errors": [],
+            "ipv6_tls_errors": [],
         }
 
     result: dict[str, Any] = {
@@ -118,15 +146,16 @@ def probe_source(
 
         result[f"{label}_records"] = len(family_addresses)
         if not family_addresses:
+            result[f"{label}_tcp"] = "NO_RECORDS"
             result[f"{label}_tls"] = "NO_RECORDS"
-            result[f"{label}_errors"] = []
+            result[f"{label}_tcp_errors"] = []
+            result[f"{label}_tls_errors"] = []
             continue
 
-        errors: list[str] = []
-        connected = False
+        observations: list[dict[str, Any]] = []
         for socktype, proto, sockaddr in family_addresses[:_MAX_ADDRESSES_PER_FAMILY]:
             try:
-                ok, error_type = probe(
+                observation = probe(
                     family,
                     socktype,
                     proto,
@@ -135,15 +164,34 @@ def probe_source(
                     timeout_seconds,
                 )
             except (OSError, ssl.SSLError, TimeoutError) as exc:
-                ok, error_type = False, type(exc).__name__
-            if ok:
-                connected = True
+                observation = {
+                    "tcp_ok": False,
+                    "tls_ok": False,
+                    "tcp_error": type(exc).__name__,
+                    "tls_error": None,
+                }
+            observations.append(observation)
+            if observation.get("tls_ok"):
                 break
-            if error_type:
-                errors.append(str(error_type))
 
-        result[f"{label}_tls"] = "PASS" if connected else "FAIL"
-        result[f"{label}_errors"] = sorted(set(errors))
+        tcp_passed = any(item.get("tcp_ok") for item in observations)
+        tls_passed = any(item.get("tls_ok") for item in observations)
+        tcp_errors = sorted({
+            str(item["tcp_error"])
+            for item in observations
+            if not item.get("tcp_ok") and item.get("tcp_error")
+        })
+        tls_errors = sorted({
+            str(item["tls_error"])
+            for item in observations
+            if item.get("tcp_ok") and not item.get("tls_ok") and item.get("tls_error")
+        })
+        result[f"{label}_tcp"] = "PASS" if tcp_passed else "FAIL"
+        result[f"{label}_tls"] = (
+            "PASS" if tls_passed else "FAIL" if tcp_passed else "NOT_REACHED"
+        )
+        result[f"{label}_tcp_errors"] = tcp_errors
+        result[f"{label}_tls_errors"] = tls_errors
     return result
 
 
@@ -152,7 +200,7 @@ def source_health_report(
     *,
     timeout_seconds: float = 2.0,
     resolver: Callable[..., Any] | None = None,
-    address_probe: Callable[..., tuple[bool, str | None]] | None = None,
+    address_probe: Callable[..., dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Probe one or all registered official sources only."""
     registry = build_initial_registry()
@@ -182,7 +230,7 @@ def source_health_report(
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Diagnose DNS and certificate-validated HTTPS reachability for registered official sources."
+        description="Diagnose DNS, TCP and certificate-validated TLS for registered official sources."
     )
     parser.add_argument("--source", default="all")
     parser.add_argument("--timeout-seconds", type=float, default=2.0)
