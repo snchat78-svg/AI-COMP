@@ -57,6 +57,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[postgres]"
 
+      - name: Probe registered official-source connectivity
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m ai_comp.research.source_health \
+            --source "$RESEARCH_SOURCE" \
+            --timeout-seconds 2 | tee source-health-summary.json
+
       - name: Discover papers from registered official sources
         run: |
           set -o pipefail
@@ -92,6 +100,28 @@ jobs:
               )
               if source.get("reason"):
                   summary.append(f"  - Reason: {source['reason']}")
+          health_path = Path("source-health-summary.json")
+          if health_path.exists():
+              try:
+                  health_data = json.loads(health_path.read_text(encoding="utf-8"))
+              except (json.JSONDecodeError, OSError):
+                  summary.extend(["", "## HTTPS connectivity preflight", "- Diagnostic output was unavailable; inspect the preflight step logs."])
+              else:
+                  summary.extend(["", "## HTTPS connectivity preflight"])
+                  for item in health_data.get("results", []):
+                      summary.append(
+                          f"- **{item.get('source_id', 'unknown')}** ({item.get('host', 'unknown')}): "
+                          f"DNS={item.get('dns_status', 'unknown')}; "
+                          f"IPv4 TLS={item.get('ipv4_tls', 'unknown')} "
+                          f"({item.get('ipv4_records', 0)} address records); "
+                          f"IPv6 TLS={item.get('ipv6_tls', 'unknown')} "
+                          f"({item.get('ipv6_records', 0)} address records)"
+                      )
+                      if item.get("dns_error"):
+                          summary.append(f"  - DNS error type: {item['dns_error']}")
+                      errors = sorted(set(item.get("ipv4_errors", []) + item.get("ipv6_errors", [])))
+                      if errors:
+                          summary.append(f"  - Connection/TLS error types: {', '.join(errors)}")
           summary.extend(["", f"> {data.get('verification_note', '')}"])
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
               handle.write("\n".join(summary) + "\n")
