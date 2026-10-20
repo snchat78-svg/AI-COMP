@@ -10,6 +10,8 @@ The `source_health` preflight reports DNS status, TCP connection, and certificat
 
 The deployed FastAPI runtime exposes `GET /diagnostics/official-source-health` as a read-only diagnostic for the two registered official hosts. It is intentionally absent from the generated OpenAPI schema. It accepts no query parameters or caller-supplied URLs, fetches no pages or documents, returns no resolved IP addresses, and caches results for 60 seconds to bound outbound probes. It reports source connectivity only; it does not run discovery, download a paper, or modify the database. The endpoint is diagnostic and does not change the official research CLI's fail-closed outcome.
 
+A path-filtered workflow, [`render-official-source-health.yml`](../.github/workflows/render-official-source-health.yml), queries this endpoint after relevant main-branch changes and can also be run manually. It retries briefly for a Render deployment to finish, then publishes separate DNS/TCP/TLS results in its GitHub Actions summary. A successful workflow means the diagnostic payload was retrieved, not that an official host is reachable or that any papers were discovered.
+
 ## Secondary source admission rule
 
 A secondary source must not be added to automated ingestion merely because its page is public or appears in a search result. Before enabling a source for automated retrieval, record and review all of the following:
