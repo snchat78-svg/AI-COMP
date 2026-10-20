@@ -131,6 +131,7 @@ class CurrentQuestionResponse(ContractModel):
 
 
 class QuestionBankReadinessResponse(ContractModel):
+    learner_id: str
     question_pool_limit: int = Field(ge=1)
     eligible_question_count: int = Field(ge=0)
     verified_history_question_count: int = Field(ge=0)
