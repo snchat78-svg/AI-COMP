@@ -35,8 +35,8 @@ jobs:
           # time. Retry for a bounded window until the new diagnostic route exists.
           for attempt in $(seq 1 24); do
             status_code="$(curl --silent --max-time 5 --output render-source-health.json --write-out '%{http_code}' "$url" || true)"
-            if [ "$status_code" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("render-source-health.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-source-health" and isinstance(d.get("results"), list) and len(d["results"]) > 0 else 1)'; then
-              echo "Render source-health endpoint responded successfully (attempt $attempt)."
+            if [ "$status_code" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("render-source-health.json").read_text(encoding="utf-8")); results=d.get("results"); seen={item.get("source_id") for item in results if isinstance(item, dict)} if isinstance(results, list) else set(); sys.exit(0 if d.get("phase") == "2.5-source-health" and "RSSB_LEGACY_OFFICIAL" in seen else 1)'; then
+              echo "Render source-health endpoint responded with the updated official-source registry (attempt $attempt)."
               found=true
               break
             fi

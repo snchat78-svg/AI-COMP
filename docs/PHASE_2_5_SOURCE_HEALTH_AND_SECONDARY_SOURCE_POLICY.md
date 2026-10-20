@@ -20,6 +20,10 @@ This does not presume that the runtime can reach the host or that robots permits
 
 The Render source-health workflow now runs when `src/ai_comp/research/seed_registry.py` changes, so the new host can be tested from the deployed runtime as well as the GitHub Actions research runner.
 
+## Deployment-aware registry refresh
+
+After the official-source registry changes, a successful HTTP response from the Render diagnostics endpoint may still come from the previous live deployment. The health workflow must validate that the expected new registered source ID appears in the returned report before declaring the registry refresh check successful. This proves the active instance has loaded the updated registry; source TCP/TLS failures remain visible and do not imply successful paper discovery.
+
 ## Secondary source admission rule
 
 A secondary source must not be added to automated ingestion merely because its page is public or appears in a search result. Before enabling a source for automated retrieval, record and review all of the following:
