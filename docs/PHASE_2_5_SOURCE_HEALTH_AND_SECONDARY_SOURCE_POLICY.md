@@ -24,6 +24,18 @@ The Render source-health workflow now runs when `src/ai_comp/research/seed_regis
 
 After the official-source registry changes, a successful HTTP response from the Render diagnostics endpoint may still come from the previous live deployment. The health workflow must validate that the expected new registered source ID appears in the returned report before declaring the registry refresh check successful. This proves the active instance has loaded the updated registry; source TCP/TLS failures remain visible and do not imply successful paper discovery.
 
+## Live evidence from 20 October 2026
+
+The deployed registry now includes `RSSB_LEGACY_OFFICIAL`. After the registry-aware guard was merged, the Render report correctly listed all three registered official sources:
+
+- `RSSB_OFFICIAL`: DNS OK, IPv4 TCP FAIL (`TimeoutError`), TLS not reached.
+- `RSSB_LEGACY_OFFICIAL`: DNS OK, IPv4 TCP PASS, TLS FAIL (`SSLError`; research runtime reports `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`).
+- `RPSC_OFFICIAL`: DNS OK, IPv4 TCP FAIL (`TimeoutError`); IPv6 TCP FAIL (`OSError`); TLS not reached.
+
+Main-branch discovery run [39408528273](https://github.com/snchat78-svg/AI-COMP/actions/runs/39408528273) failed closed with zero persisted candidates. The legacy host is not safe to ingest from this runtime while TLS is incompatible. Do not enable unsafe legacy renegotiation or disable certificate validation merely to fetch papers.
+
+Phase 2.5.3 adds a separate operational health gate: the Render source-health workflow publishes the full diagnostic table, then fails unless at least one registered official host passes both TCP connect and certificate-validated TLS. A retrieved HTTP 200 is only a reachable diagnostic endpoint; it is not an official-source connectivity pass and never establishes paper discovery.
+
 ## Secondary source admission rule
 
 A secondary source must not be added to automated ingestion merely because its page is public or appears in a search result. Before enabling a source for automated retrieval, record and review all of the following:
