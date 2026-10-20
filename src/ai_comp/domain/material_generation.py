@@ -15,6 +15,13 @@ class AnswerVerificationStatus(str, Enum):
     UNCERTAIN = "UNCERTAIN"
 
 
+class QuestionSourceKind(str, Enum):
+    """Distinguishes model-generated items from source-backed exam history."""
+
+    AI_GENERATED = "AI_GENERATED"
+    VERIFIED_EXAM_HISTORY = "VERIFIED_EXAM_HISTORY"
+
+
 @dataclass(frozen=True)
 class GenerationSpecification:
     generation_id: str
@@ -65,6 +72,15 @@ class GeneratedMCQ:
     status: GeneratedQuestionStatus = GeneratedQuestionStatus.REJECTED
     quality_score: float = 0.0
     duplicate_of_master_question_id: str | None = None
+    source_kind: QuestionSourceKind = QuestionSourceKind.AI_GENERATED
+    source_url: str | None = None
+    answer_key_source_url: str | None = None
+    exam_name: str | None = None
+    exam_id: str | None = None
+    exam_year: int | None = None
+    exam_shift: str | None = None
+    exam_question_number: int | None = None
+    verified_appearance_count: int = 0
 
     def __post_init__(self) -> None:
         if not self.generated_question_id.strip() or not self.generation_id.strip():
@@ -84,6 +100,25 @@ class GeneratedMCQ:
             raise ValueError("importance_score must be between 0 and 1")
         if not 0.0 <= self.quality_score <= 1.0:
             raise ValueError("quality_score must be between 0 and 1")
+        if self.verified_appearance_count < 0:
+            raise ValueError("verified_appearance_count must be non-negative")
+        if self.source_kind is QuestionSourceKind.VERIFIED_EXAM_HISTORY:
+            if not self.source_url or not self.source_url.startswith("https://"):
+                raise ValueError("verified historical question requires an HTTPS paper URL")
+            if not self.answer_key_source_url or not self.answer_key_source_url.startswith("https://"):
+                raise ValueError("verified historical question requires an HTTPS answer-key URL")
+            if not self.exam_name or not self.exam_name.strip() or not self.exam_id or not self.exam_id.strip():
+                raise ValueError("verified historical question requires exam identity")
+            if self.exam_year is None or self.exam_year < 1900:
+                raise ValueError("verified historical question requires a valid exam year")
+            if self.exam_question_number is None or self.exam_question_number < 1:
+                raise ValueError("verified historical question requires its exam question number")
+            if self.verified_appearance_count < 1:
+                raise ValueError("verified historical question requires at least one verified appearance")
+            if self.answer_verification is not AnswerVerificationStatus.VERIFIED:
+                raise ValueError("verified historical question requires verified answer")
+            if not self.answer_verification_evidence:
+                raise ValueError("verified historical question requires provenance evidence")
         if self.status is GeneratedQuestionStatus.ACCEPTED:
             if self.answer_verification is not AnswerVerificationStatus.VERIFIED:
                 raise ValueError("accepted question requires verified answer")
