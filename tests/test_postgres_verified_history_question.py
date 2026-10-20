@@ -1,6 +1,7 @@
 from ai_comp.database.postgres_verified_history_question import (
     PostgresVerifiedHistoryQuestionRepository,
 )
+from ai_comp.database.postgres_generated_question import PostgresGeneratedQuestionRepository
 from ai_comp.domain.material_generation import QuestionSourceKind
 
 
@@ -114,3 +115,16 @@ def test_repository_rejects_invalid_limit_and_ambiguous_concept_filters():
         assert "concept_ids" in str(exc)
     else:
         raise AssertionError("duplicate concept filters must be rejected")
+
+
+def test_historical_question_cannot_be_written_to_generated_question_table():
+    question = PostgresVerifiedHistoryQuestionRepository._from_row(row())
+    connection = FakeConnection()
+
+    try:
+        PostgresGeneratedQuestionRepository(connection).save(question)
+    except ValueError as exc:
+        assert "historical source tables" in str(exc)
+    else:
+        raise AssertionError("historical provenance must not be persisted as AI-generated")
+    assert connection.calls == []
