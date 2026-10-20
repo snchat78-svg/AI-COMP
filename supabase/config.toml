@@ -1,0 +1,4 @@
+project_id = "edjxradbjzbuveizujzu"
+
+[functions.official-source-health]
+verify_jwt = true
