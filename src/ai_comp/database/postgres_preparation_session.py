@@ -10,6 +10,7 @@ from ai_comp.domain.material_generation import (
     GeneratedMCQ,
     GeneratedOption,
     GeneratedQuestionStatus,
+    QuestionSourceKind,
 )
 from ai_comp.domain.test_engine import (
     ScoringPolicy,
@@ -361,6 +362,15 @@ class PostgresPreparationTestSessionRepository:
             "status": question.status.value,
             "quality_score": question.quality_score,
             "duplicate_of_master_question_id": question.duplicate_of_master_question_id,
+            "source_kind": question.source_kind.value,
+            "source_url": question.source_url,
+            "answer_key_source_url": question.answer_key_source_url,
+            "exam_name": question.exam_name,
+            "exam_id": question.exam_id,
+            "exam_year": question.exam_year,
+            "exam_shift": question.exam_shift,
+            "exam_question_number": question.exam_question_number,
+            "verified_appearance_count": question.verified_appearance_count,
         }
 
     @classmethod
@@ -382,9 +392,24 @@ class PostgresPreparationTestSessionRepository:
             status=GeneratedQuestionStatus(str(payload["status"])),
             quality_score=float(payload["quality_score"]),
             duplicate_of_master_question_id=(
-                None if payload["duplicate_of_master_question_id"] is None
+                None if payload.get("duplicate_of_master_question_id") is None
                 else str(payload["duplicate_of_master_question_id"])
             ),
+            source_kind=QuestionSourceKind(str(payload.get("source_kind", "AI_GENERATED"))),
+            source_url=None if payload.get("source_url") is None else str(payload["source_url"]),
+            answer_key_source_url=(
+                None if payload.get("answer_key_source_url") is None
+                else str(payload["answer_key_source_url"])
+            ),
+            exam_name=None if payload.get("exam_name") is None else str(payload["exam_name"]),
+            exam_id=None if payload.get("exam_id") is None else str(payload["exam_id"]),
+            exam_year=None if payload.get("exam_year") is None else int(payload["exam_year"]),
+            exam_shift=None if payload.get("exam_shift") is None else str(payload["exam_shift"]),
+            exam_question_number=(
+                None if payload.get("exam_question_number") is None
+                else int(payload["exam_question_number"])
+            ),
+            verified_appearance_count=int(payload.get("verified_appearance_count", 0)),
         )
 
     @staticmethod
