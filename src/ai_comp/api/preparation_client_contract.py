@@ -238,6 +238,13 @@ class AnswerReviewResponse(ContractModel):
     questions: list[AnswerReviewQuestionResponse]
 
 
+class QuestionBankPaginationResponse(ContractModel):
+    limit: int = Field(ge=1)
+    offset: int = Field(ge=0)
+    returned: int = Field(ge=0)
+    has_more: bool
+
+
 class QuestionBankSubjectItem(ContractModel):
     subject_id: str
     subject_label: str
@@ -259,7 +266,7 @@ class QuestionBankTopicItem(ContractModel):
 
 class QuestionBankTopicsResponse(ContractModel):
     items: list[QuestionBankTopicItem]
-    pagination: PaginationResponse
+    pagination: QuestionBankPaginationResponse
 
 
 class TopicOneLinerItem(ContractModel):
@@ -279,7 +286,7 @@ class TopicOneLinerItem(ContractModel):
 
 class TopicOneLinerListResponse(ContractModel):
     items: list[TopicOneLinerItem]
-    pagination: PaginationResponse
+    pagination: QuestionBankPaginationResponse
 
 
 COMMON_API_ERROR_RESPONSES = {
@@ -307,6 +314,7 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "QuestionBankPaginationResponse",
     "QuestionBankSubjectItem",
     "QuestionBankSubjectsResponse",
     "QuestionBankTopicItem",
