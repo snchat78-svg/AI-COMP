@@ -237,6 +237,50 @@ class AnswerReviewResponse(ContractModel):
     questions: list[AnswerReviewQuestionResponse]
 
 
+class QuestionBankSubjectItem(ContractModel):
+    subject_id: str
+    subject_label: str
+    concept_count: int = Field(ge=0)
+
+
+class QuestionBankSubjectsResponse(ContractModel):
+    items: list[QuestionBankSubjectItem]
+
+
+class QuestionBankTopicItem(ContractModel):
+    concept_id: str
+    label: str
+    subject: str
+    topic: str | None
+    subtopic: str | None
+    verified_one_liner_count: int = Field(ge=0)
+
+
+class QuestionBankTopicsResponse(ContractModel):
+    items: list[QuestionBankTopicItem]
+    pagination: PaginationResponse
+
+
+class TopicOneLinerItem(ContractModel):
+    one_liner_id: str
+    concept_id: str
+    question_text: str
+    answer_text: str
+    language_code: str
+    source_url: str | None
+    source_evidence: str
+    verification_status: Literal["DRAFT", "NEEDS_REVIEW", "VERIFIED", "REJECTED"]
+    importance_score: float = Field(ge=0, le=1)
+    reviewed_at: datetime | None
+    created_at: datetime | None
+    updated_at: datetime | None
+
+
+class TopicOneLinerListResponse(ContractModel):
+    items: list[TopicOneLinerItem]
+    pagination: PaginationResponse
+
+
 COMMON_API_ERROR_RESPONSES = {
     400: {"model": APIErrorResponse, "description": "Invalid path or query parameters."},
     401: {"model": APIErrorResponse, "description": "Authentication is required."},
@@ -262,5 +306,11 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "QuestionBankSubjectItem",
+    "QuestionBankSubjectsResponse",
+    "QuestionBankTopicItem",
+    "QuestionBankTopicsResponse",
+    "TopicOneLinerItem",
+    "TopicOneLinerListResponse",
     "SubmittedTestResponse",
 ]
