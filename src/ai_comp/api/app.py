@@ -9,7 +9,7 @@ from ai_comp.api.dependencies import (
     LearnerIdentityProvider,
     PreparationContextProvider,
 )
-from ai_comp.api.preparation_guidance_routes import router
+from ai_comp.api.preparation_guidance_routes import content_admin_router, router
 from ai_comp.api.source_health_routes import router as source_health_router
 from ai_comp.api.postgres_preparation_context import (
     ConnectionScopedPreparationTestRequestRepository,
@@ -60,6 +60,7 @@ def create_app(
         return response
 
     app.include_router(router)
+    app.include_router(content_admin_router)
     app.include_router(source_health_router)
     return app
 
