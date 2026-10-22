@@ -20,6 +20,23 @@ class PostgresExamSyllabusRepository:
         AND btrim(m.source_evidence) <> ''
     """
 
+    _PROFILE_COMPLETENESS_SQL = """
+        NOT EXISTS (
+            SELECT 1
+            FROM concepts AS required_concept
+            LEFT JOIN exam_concept_applicability AS required_map
+              ON required_map.syllabus_id = d.syllabus_id
+             AND required_map.concept_id = required_concept.concept_id
+            WHERE required_map.concept_id IS NULL
+               OR required_map.applicability_status NOT IN ('IN_SCOPE', 'OUT_OF_SCOPE')
+               OR required_map.reviewed_at IS NULL
+               OR required_map.reviewed_by IS NULL
+               OR btrim(required_map.reviewed_by) = ''
+               OR btrim(required_map.source_locator) = ''
+               OR btrim(required_map.source_evidence) = ''
+        )
+    """
+
     def __init__(self, connection: Any) -> None:
         self._connection = connection
 
@@ -119,6 +136,7 @@ class PostgresExamSyllabusRepository:
             WHERE d.exam_id = %s
               AND d.is_current = TRUE
               AND {self._VERIFIED_MAPPING_SQL}
+              AND {self._PROFILE_COMPLETENESS_SQL}
               AND m.applicability_status = 'IN_SCOPE'
               AND c.subject IS NOT NULL AND btrim(c.subject) <> ''
             GROUP BY btrim(c.subject)
@@ -156,6 +174,7 @@ class PostgresExamSyllabusRepository:
             WHERE d.exam_id = %s
               AND d.is_current = TRUE
               AND {self._VERIFIED_MAPPING_SQL}
+              AND {self._PROFILE_COMPLETENESS_SQL}
               AND m.applicability_status = 'IN_SCOPE'
               AND lower(btrim(c.subject)) = lower(%s)
             GROUP BY c.concept_id, c.label, c.subject, c.topic, c.subtopic
