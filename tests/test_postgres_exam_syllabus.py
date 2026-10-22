@@ -34,12 +34,12 @@ class _Connection:
 def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
     connection = _Connection([
         (
-            "RSSB_CET_GRADUATION_2026",
-            "Rajasthan Common Eligibility Test (Graduation Level) 2026",
-            "RSSB_CET_GRADUATION_2026_ADVT_09_2026",
-            "Common Eligibility Test (Graduation Level) 2026 — syllabus clause",
-            "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
-            "Advertisement No. 09/2026",
+            "TEST_EXAM_001",
+            "Example recruitment exam",
+            "TEST_EXAM_001_ADVT_09_2026",
+            "Example test syllabus",
+            "https://official.example/test-syllabus.pdf",
+            "TEST/001",
             "REVIEW_PENDING",
             False,
             340,
@@ -52,7 +52,7 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
 
     assert len(profiles) == 1
     profile = profiles[0]
-    assert profile["exam_id"] == "RSSB_CET_GRADUATION_2026"
+    assert profile["exam_id"] == "TEST_EXAM_001"
     assert profile["source_status"] == "REVIEW_PENDING"
     assert profile["syllabus_inventory_complete"] is False
     assert profile["concept_count"] == 340
@@ -71,12 +71,12 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
 def test_profile_is_ready_only_after_inventory_and_all_concepts_are_reviewed() -> None:
     connection = _Connection([
         (
-            "RSSB_CET_GRADUATION_2026",
-            "Rajasthan Common Eligibility Test (Graduation Level) 2026",
-            "RSSB_CET_GRADUATION_2026_ADVT_09_2026",
+            "TEST_EXAM_001",
+            "Example recruitment exam",
+            "TEST_EXAM_001_ADVT_09_2026",
             "CET 2026 full official syllabus inventory reviewed",
-            "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
-            "Advertisement No. 09/2026",
+            "https://official.example/test-syllabus.pdf",
+            "TEST/001",
             "VERIFIED",
             True,
             340,
@@ -98,7 +98,7 @@ def test_exam_subject_query_requires_verified_in_scope_mappings() -> None:
     connection = _Connection([])
 
     subjects = PostgresExamSyllabusRepository(connection).list_subjects(
-        "RSSB_CET_GRADUATION_2026"
+        "TEST_EXAM_001"
     )
 
     assert subjects == ()
@@ -109,7 +109,7 @@ def test_exam_subject_query_requires_verified_in_scope_mappings() -> None:
     assert "m.source_locator" in query
     assert "NOT EXISTS" in query
     assert "required_map.applicability_status NOT IN ('IN_SCOPE', 'OUT_OF_SCOPE')" in query
-    assert params == ("RSSB_CET_GRADUATION_2026", 100)
+    assert params == ("TEST_EXAM_001", 100)
 
 
 def test_exam_topic_query_filters_profile_and_preserves_verified_one_liner_count() -> None:
@@ -125,7 +125,7 @@ def test_exam_topic_query_filters_profile_and_preserves_verified_one_liner_count
     ])
 
     topics = PostgresExamSyllabusRepository(connection).list_topics(
-        "RSSB_CET_GRADUATION_2026",
+        "TEST_EXAM_001",
         "Rajasthan Geography",
         limit=10,
         offset=20,
@@ -148,16 +148,16 @@ def test_exam_topic_query_filters_profile_and_preserves_verified_one_liner_count
     assert "ol.verification_status = 'VERIFIED'" in query
     assert "NOT EXISTS" in query
     assert "required_map.source_evidence" in query
-    assert params == ("RSSB_CET_GRADUATION_2026", "Rajasthan Geography", 10, 20)
+    assert params == ("TEST_EXAM_001", "Rajasthan Geography", 10, 20)
 
 
 def test_exam_profile_exists_requires_active_exam_and_current_syllabus() -> None:
     connection = _Connection([(1,)])
 
     assert PostgresExamSyllabusRepository(connection).profile_exists(
-        "RSSB_CET_GRADUATION_2026"
+        "TEST_EXAM_001"
     )
     query, params = connection.calls[0]
     assert "d.is_current = TRUE" in query
     assert "e.active = TRUE" in query
-    assert params == ("RSSB_CET_GRADUATION_2026",)
+    assert params == ("TEST_EXAM_001",)
