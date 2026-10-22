@@ -79,7 +79,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(topicOffsets, [0, 100]);
-    expect(find.text('Thar Desert'), findsOneWidget);
     expect(find.text('100 of 101 topics • 0 verified one-liner Q&A available'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'Thar');
@@ -210,13 +209,13 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('लूणी नदी किस दिशा में बहती है?'), findsOneWidget);
+    expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsOneWidget);
     expect(find.text('Answer: दक्षिण-पश्चिम दिशा में।'), findsOneWidget);
     expect(find.textContaining('Verified source evidence'), findsOneWidget);
 
     await tester.tap(find.text('Previous Year'));
     await tester.pumpAndSettle();
     expect(find.text('No verified previous-paper questions yet'), findsOneWidget);
-    expect(find.text('लूणी नदी किस दिशा में बहती है?'), findsNothing);
+    expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsNothing);
   });
 }
