@@ -587,7 +587,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             const Text('Choose a subject first, set the question count and time, then start a test. Questions are taken only from the selected subject and the existing verified/accepted four-option MCQ pool.'),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _subjects.any((item) => item.subjectId == _selectedSubjectId)
+              initialValue: _subjects.any((item) => item.subjectId == _selectedSubjectId)
                   ? _selectedSubjectId
                   : null,
               decoration: const InputDecoration(
