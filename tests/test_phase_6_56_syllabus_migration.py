@@ -16,6 +16,10 @@ def test_phase_6_56_syllabus_migration_is_https_and_review_gated() -> None:
     assert "document_sha256 IS NOT NULL" in sql
     assert "source_checked_at IS NOT NULL" in sql
     assert "source_checked_by IS NOT NULL" in sql
+    assert "syllabus_inventory_complete BOOLEAN NOT NULL DEFAULT FALSE" in sql
+    assert "inventory_reviewed_at IS NOT NULL" in sql
+    assert "inventory_reviewed_by IS NOT NULL" in sql
+    assert "btrim(inventory_review_note) <> ''" in sql
     assert "applicability_status IN ('IN_SCOPE', 'OUT_OF_SCOPE', 'UNMAPPED', 'NEEDS_REVIEW')" in sql
     assert "m.reviewed_by" in sql or "reviewed_by TEXT" in sql
     assert "'REVIEW_PENDING'" in sql
