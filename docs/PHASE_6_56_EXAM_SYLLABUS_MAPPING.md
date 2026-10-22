@@ -23,11 +23,12 @@ The official board site/legacy domain may be used as navigation context, but onl
 
 Migration `0023_phase6_56_exam_syllabus_mapping.sql` adds:
 
-- `exam_syllabus_documents`: links an existing `exams` record to one current HTTPS syllabus document, notification/version, source metadata, content SHA-256, source status and review evidence. One current document is allowed per exam. A VERIFIED source requires a digest, review timestamp, reviewer identity and source evidence.
+- `exam_syllabus_documents`: links an existing `exams` record to one current HTTPS syllabus document, notification/version, source metadata, content SHA-256, source status and review evidence. One current document is allowed per exam. A VERIFIED source requires a digest, review timestamp, reviewer identity and source evidence **and** an independently reviewed full-syllabus inventory attestation. The database will not permit `source_status = VERIFIED` while the inventory is unreviewed.
 - `exam_concept_applicability`: records each canonical concept as `IN_SCOPE`, `OUT_OF_SCOPE`, `UNMAPPED` or `NEEDS_REVIEW` for a specific syllabus document. IN_SCOPE/OUT_OF_SCOPE are rejected by the database unless independent-review metadata and evidence locator/note are present.
+- The syllabus document itself includes `syllabus_inventory_complete` with reviewer/time/note fields. `source_status = VERIFIED` is rejected unless both the official-document evidence and whole-inventory attestation are present. Read APIs also require every canonical concept to have a reviewed applicability decision before returning any exam-specific topics; they do not expose a partially mapped list.
 - An idempotent RSSB CET Graduation Level 2026 profile/source seed, kept in REVIEW_PENDING with zero asserted concept mappings.
 
-The mapping must remain faithful to the complete official syllabus. If a syllabus includes a unit/subtopic absent from the current concept catalogue, create the missing stable concept and ledger row before declaring the profile ready. If a generic catalogue concept is not in the syllabus, record the reviewed out-of-scope decision rather than silently showing it.
+The mapping must remain faithful to the complete official syllabus. The repository refuses to expose exam-scoped subjects/topics unless the source is VERIFIED, the whole-syllabus inventory attestation is complete, and every current canonical concept has an independently reviewed IN_SCOPE/OUT_OF_SCOPE decision with evidence. If a syllabus includes a unit/subtopic absent from the current concept catalogue, create the missing stable concept and ledger row before the inventory reviewer attests completion. If a generic catalogue concept is not in the syllabus, record the reviewed out-of-scope decision rather than silently showing it.
 
 ## API and mobile slice
 
