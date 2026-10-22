@@ -107,6 +107,8 @@ def test_exam_subject_query_requires_verified_in_scope_mappings() -> None:
     assert "d.source_status = 'VERIFIED'" in query
     assert "m.applicability_status = 'IN_SCOPE'" in query
     assert "m.source_locator" in query
+    assert "NOT EXISTS" in query
+    assert "required_map.applicability_status NOT IN ('IN_SCOPE', 'OUT_OF_SCOPE')" in query
     assert params == ("RSSB_CET_GRADUATION_2026", 100)
 
 
@@ -144,6 +146,8 @@ def test_exam_topic_query_filters_profile_and_preserves_verified_one_liner_count
     assert "d.source_status = 'VERIFIED'" in query
     assert "m.applicability_status = 'IN_SCOPE'" in query
     assert "ol.verification_status = 'VERIFIED'" in query
+    assert "NOT EXISTS" in query
+    assert "required_map.source_evidence" in query
     assert params == ("RSSB_CET_GRADUATION_2026", "Rajasthan Geography", 10, 20)
 
 
