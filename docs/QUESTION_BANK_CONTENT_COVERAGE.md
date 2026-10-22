@@ -44,6 +44,28 @@ The starter catalogue migration currently defines **340 concept/topic rows acros
 
 The 14 starter categories are Rajasthan History, Rajasthan Geography, Rajasthan Polity and Administration, Rajasthan Art and Culture, Rajasthan Economy, Indian History, Indian Geography, Indian Polity, General Science, Hindi, English, Mathematics, Reasoning and Computer Awareness. These are broad navigation groupings only; they must be reconciled to each chosen exam's official syllabus, and extra official syllabus topics must be added to the catalogue/ledger.
 
+The current catalogue row count by subject is:
+
+| Subject | Concepts in current catalogue |
+|---|---:|
+| Rajasthan History | 34 |
+| Rajasthan Geography | 32 |
+| Rajasthan Polity and Administration | 21 |
+| Rajasthan Art and Culture | 29 |
+| Rajasthan Economy | 21 |
+| Indian History | 23 |
+| Indian Geography | 20 |
+| Indian Polity | 25 |
+| General Science | 25 |
+| Hindi | 24 |
+| English | 21 |
+| Mathematics | 22 |
+| Reasoning | 23 |
+| Computer Awareness | 20 |
+| **Total** | **340** |
+
+At five baseline Q&A per concept, the naive full-catalogue baseline would be 1,700 Q&As; the actual applicable target must first be reconciled to each exam's official syllabus. Current candidates are only 10 across 6 concepts (all pending review); 334 concepts have no candidate in the current seed migration.
+
 ## Ledger contract
 
 QUESTION_BANK_CONTENT_COVERAGE.csv has one row per current catalogue concept and records:
