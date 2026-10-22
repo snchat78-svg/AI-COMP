@@ -324,7 +324,17 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       case 'NO_ELIGIBLE_ADAPTIVE_QUESTIONS':
         return 'There are no eligible verified questions for the recommended topics yet.';
       case 'NO_ELIGIBLE_PREPARATION_QUESTIONS':
-        return 'No eligible verified questions are available yet. Official paper and answer-key verification must finish before a practice test can start.';
+        return 'No eligible verified questions are available yet. Check this subject\'s reviewed one-liners and official answer-key history.';
+      case 'QUESTION_GENERATION_NOT_CONFIGURED':
+        return 'AI question generation is not configured on the server. The server owner must add the model API key as a secret; never put it in the app.';
+      case 'QUESTION_BANK_SOURCE_UNAVAILABLE':
+        return 'Verified one-liners or previous-paper answers could not be loaded for this subject. Refresh and try again later.';
+      case 'QUESTION_GENERATION_FAILED':
+        return 'New MCQs could not pass generation and answer verification. No test was started; try again after the server issue is resolved.';
+      case 'NO_VERIFIED_ALTERNATIVE_MCQS':
+        return 'No new four-option MCQs passed answer verification. The app will not create a test from unverified questions.';
+      case 'NO_ELIGIBLE_SUBJECT_QUESTIONS':
+        return 'The selected subject has no eligible four-option MCQs yet. Check topic mapping and source verification.';
       case 'NETWORK_UNAVAILABLE':
         return 'Could not reach the API. Check the base URL and network connection.';
       default:
@@ -523,7 +533,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '$available eligible questions available '
+              '$available eligible questions available'
+              '${readiness.subjectId == null ? '' : ' for ${readiness.subjectId}'} '
               '(${readiness.verifiedHistoryQuestionCount} from verified exam history, '
               '${readiness.acceptedGeneratedQuestionCount} accepted generated questions).',
             ),
