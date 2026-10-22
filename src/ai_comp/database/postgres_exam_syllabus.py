@@ -61,7 +61,7 @@ class PostgresExamSyllabusRepository:
             excluded = int(row[9] or 0)
             unmapped = max(0, total - mapped - excluded)
             source_status = str(row[6])
-            selection_ready = source_status == "VERIFIED" and unmapped == 0
+            selection_ready = source_status == "VERIFIED" and total > 0 and unmapped == 0
             profiles.append({
                 "exam_id": str(row[0]),
                 "exam_name": str(row[1]),
