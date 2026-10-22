@@ -43,6 +43,7 @@ from ai_comp.api.preparation_client_contract import (
     QuestionBankSubjectsResponse,
     QuestionBankTopicsResponse,
     PreviousYearQuestionsResponse,
+    TopicOneLinerItem,
     TopicOneLinerListResponse,
     TopicPracticeGenerationResponse,
     SubmittedTestResponse,
