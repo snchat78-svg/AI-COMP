@@ -1,6 +1,6 @@
 # Phase 6.54 — Topic-wise Previous-Paper API
 
-**Phase status:** IN_PROGRESS until this code is merged and current backend + Flutter CI pass.  
+**Phase status:** COMPLETED for the API implementation and CI/merge acceptance; real historical data and runtime setup remain separately gated under Phase 6.58.  
 **Canonical status ledger:** [Phase Registry](PHASE_REGISTRY.md)  
 **Related implementation:** existing `GET /api/v1/learners/{learner_id}/question-bank/previous-papers` route and `PostgresVerifiedHistoryQuestionRepository`. This phase extends them; it does not create a second historical-question store or endpoint.
 
@@ -50,7 +50,8 @@ This API returns only records that actually exist and pass the trust gate. It do
 
 ## Close-out checklist
 
-1. Backend pytest and Flutter analyze/widget/release-APK CI pass on the PR head.
-2. Required reviewers and merge policy pass.
-3. Update [Phase Registry](PHASE_REGISTRY.md) with PR number, merge SHA, CI run outcomes and any outstanding live-data gates.
-4. Mark complete only after all phase-specific checks are true; otherwise leave the exact pending gate.
+1. **Completed on 2026-10-22:** PR #40 was squash-merged at `16f75e3c76e9c830235c39a4dc806710c116bed0`.
+2. Backend tests and API container image passed on workflow run `39742750806`.
+3. Flutter analysis, mobile client tests, release-mode APK build, APK verification and upload passed on workflow run `39742750869`; artifact ID `12409383681`.
+4. The authoritative [Phase Registry](PHASE_REGISTRY.md) records the merge SHA and CI evidence.
+5. Real historical records, live official-source connectivity, secret setup and database migration application are not claims of this API phase; they remain separately gated by Phase 6.58.
