@@ -1,6 +1,6 @@
 # Phase 6.55 — Source-backed One-Liner Q&A and Independent Review
 
-**Status:** IN_PROGRESS; implementation is on `feature/phase-6-55-one-liner-source-review`.  
+**Status:** MERGED_CODE_DATA_PENDING; PR #41 squash-merged as `abfdfbfa8c8b732012c04a247e443032c93f6d01`. 
 **Canonical status:** [Phase Registry](PHASE_REGISTRY.md).  
 **Previous phase:** Phase 6.54 is merged and its backend + Flutter CI passed. Merge SHA: `16f75e3c76e9c830235c39a4dc806710c116bed0`.
 
@@ -10,7 +10,7 @@ Fill the existing `question_bank_one_liners` store with concise, topic-mapped di
 
 This phase reuses migration `0019_phase6_53_topic_one_liners.sql`, the canonical `concepts` IDs, `PostgresTopicQuestionBankRepository`, the existing learner read endpoint and the protected admin authoring endpoint. It does not create a second content store, does not use generated MCQs as historic questions, and does not claim the entire 340-topic starter catalogue is covered.
 
-## Current implementation in this branch
+## Merged implementation
 
 - Migration `0021_phase6_55_one_liner_review_workflow.sql` adds reviewer metadata and append-only `question_bank_one_liner_reviews` audit events. Legacy `VERIFIED` rows without independent reviewer identity are demoted to `NEEDS_REVIEW` for re-review.
 - Migration `0022_phase6_55_seed_one_liner_candidates.sql` idempotently seeds 10 Hindi Q&A records with evidence URLs and concept IDs. **Every seeded record is `NEEDS_REVIEW`; none is learner-visible as verified by this migration.**
@@ -58,6 +58,12 @@ All source URLs and evidence notes are stored on each seed row, not inferred fro
 - [Rajasthan at a Glance — Rajasthan State Biodiversity Board / Environment Department](https://environment.rajasthan.gov.in/content/environment/en/rsbb/about-rajasthan/rajasthan-at-a-glance.html). Relevant sections cover the Thar Desert, the Aravalli and southwest monsoon relationship, the Luni and tributaries, and Banas/Chambal drainage. Page displayed an update date of 18 August 2026 when checked.
 - [National Parks and Sanctuaries in Rajasthan — Forest Department, Government of Rajasthan](https://forest.rajasthan.gov.in/content/raj/forest/en/aboutus/forest-statistics/general-introduction1/national-parks-and-sanctuaries-in-rajasthan.html). The national parks table lists Keoladeo–Bharatpur and Ranthambore–Sawai Madhopur. Page displayed an update date of 18 October 2026 when checked.
 - [Kalbelia folk songs and dances of Rajasthan — UNESCO Intangible Cultural Heritage](https://ich.unesco.org/en/RL/kalbelia-folk-songs-and-dances-of-rajasthan-00340?lang=en). Supports the entry's 2010 inscription and the details about performers and instruments. The review should open the linked official record when accessible and record the check in the review audit.
+
+## CI results on the merged PR head
+
+- Backend suite: **502 passed, 14 warnings**; API container image build passed (workflow run `39755404955`).
+- Flutter analysis and mobile client tests passed; release-mode Android APK built, verified and uploaded (workflow run `39755200693`; artifact ID `12414704506`; SHA-256 `87d6bb73ea1794798bc6fde6c17f48fad08d8c0a40f1350e50977ee288161e14`).
+- Duplicate Flutter run `39755404990` also passed and uploaded artifact `12415573069`.
 
 ## Validation and completion gates
 
