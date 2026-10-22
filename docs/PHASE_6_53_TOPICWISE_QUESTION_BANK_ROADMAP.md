@@ -55,6 +55,9 @@ Before adding tables, APIs, services or mobile models, search the repository and
 
 ### Phase 6.55 — One-Liner Question-and-Answer Bank (manual authoring supported)
 
+**Current implementation status:** PR #41 is merged as `abfdfbfa8c8b732012c04a247e443032c93f6d01`. The workflow and 10 source-backed Hindi candidate Q&As are in Git; all candidates remain `NEEDS_REVIEW` and are **not counted as verified content**. See [Phase 6.55 source-backed content and independent review workflow](PHASE_6_55_ONE_LINER_SOURCE_REVIEW.md) and the [Phase Registry](PHASE_REGISTRY.md). Migrations have not been applied to a live database and separate server-side reviewer credentials are still required. Registry status is `MERGED_CODE_DATA_PENDING`.
+
+
 **Deliver:** A topic-linked list of short one-liner **questions with direct answers** (not necessarily MCQs), for example a fact question followed by its exact answer. Authorized editors may type/add these pairs directly in the content workflow. Each entry maps to subject/topic/subtopic and stores language, source/evidence, verification/review state, and timestamps. Reuse the repository's existing fact/material models where fit; introduce a separate persisted record only where the current schema cannot represent a reusable topic-linked Q&A pair.
 
 **Trust rules:** Every factual one-liner needs traceable supporting source evidence. For Rajasthan exam facts, prioritize relevant official government/department publications and the official syllabus; use authoritative textbooks/standard references only under the configured source policy. Current/volatile facts (office holders, budgets, rankings, laws/rules) need an as-of date and refresh policy. AI may summarize or propose facts but cannot self-certify them as verified. Keep disputed/out-of-date facts out of the verified set and send them for review.
