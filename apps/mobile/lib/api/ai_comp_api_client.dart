@@ -257,6 +257,25 @@ class AiCompApiClient {
         .toList(growable: false);
   }
 
+  Future<TopicPracticeGenerationResult> generateSubjectPractice({
+    required String subjectId,
+    required int questionCount,
+    required int durationSeconds,
+    String languageCode = 'hi',
+  }) async {
+    final json = await _send(
+      'POST',
+      '$_learnerPath/question-bank/generate-practice',
+      body: {
+        'subject_id': subjectId,
+        'question_count': questionCount,
+        'duration_seconds': durationSeconds,
+        'language_code': languageCode,
+      },
+    );
+    return TopicPracticeGenerationResult.fromJson(json);
+  }
+
   Future<LearnerAnalytics> getAnalytics() async {
     final json = await _send('GET', '$_learnerPath/preparation-results/analytics');
     return LearnerAnalytics.fromJson(json);
