@@ -120,6 +120,51 @@ class PostgresTopicQuestionBankRepository:
             raise RepositoryError("failed to list topic one-liners") from exc
         return tuple(self._one_liner_from_row(row) for row in rows)
 
+    def list_verified_one_liners_for_subject(
+        self,
+        subject: str,
+        *,
+        limit: int = 300,
+        offset: int = 0,
+        language_code: str | None = None,
+    ) -> tuple[TopicOneLinerQA, ...]:
+        """Load a bounded, source-reviewed Q&A set for generating subject practice."""
+        self._validate_page(limit, offset)
+        if not isinstance(subject, str) or not subject.strip() or subject != subject.strip():
+            raise ValueError("subject must be a non-empty trimmed string")
+        if language_code is not None and (
+            not language_code.strip() or language_code != language_code.strip()
+        ):
+            raise ValueError("language_code must be a non-empty trimmed string when supplied")
+        conditions = [
+            "lower(btrim(c.subject)) = lower(%s)",
+            "ol.verification_status = 'VERIFIED'",
+        ]
+        params: list[object] = [subject]
+        if language_code is not None:
+            conditions.append("ol.language_code = %s")
+            params.append(language_code)
+        params.extend((limit, offset))
+        try:
+            rows = self._connection.execute(
+                f"""
+                SELECT ol.one_liner_id, ol.concept_id, ol.question_text, ol.answer_text,
+                       ol.language_code, ol.source_url, ol.source_evidence,
+                       ol.verification_status, ol.importance_score, ol.reviewed_at,
+                       ol.created_at, ol.updated_at
+                FROM question_bank_one_liners AS ol
+                JOIN concepts AS c ON c.concept_id = ol.concept_id
+                WHERE {' AND '.join(conditions)}
+                ORDER BY ol.importance_score DESC, ol.concept_id,
+                         lower(ol.question_text), ol.one_liner_id
+                LIMIT %s OFFSET %s
+                """,
+                tuple(params),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to load subject one-liners") from exc
+        return tuple(self._one_liner_from_row(row) for row in rows)
+
     def save_one_liner(self, item: TopicOneLinerQA) -> None:
         """Persist a content-editor supplied item; the database enforces evidence for VERIFIED."""
         try:
