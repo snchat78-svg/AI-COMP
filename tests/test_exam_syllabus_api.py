@@ -6,12 +6,12 @@ from ai_comp.api.app import create_app
 
 
 _PROFILE_ROW = (
-    "RSSB_CET_GRADUATION_2026",
-    "Rajasthan Common Eligibility Test (Graduation Level) 2026",
-    "RSSB_CET_GRADUATION_2026_ADVT_09_2026",
-    "Common Eligibility Test (Graduation Level) 2026 — syllabus clause",
-    "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
-    "Advertisement No. 09/2026",
+    "TEST_EXAM_001",
+    "Example recruitment exam",
+    "TEST_EXAM_001_ADVT_09_2026",
+    "Example test syllabus",
+    "https://official.example/test-syllabus.pdf",
+    "TEST/001",
     "REVIEW_PENDING",
     False,
     340,
@@ -68,7 +68,7 @@ def test_exam_profiles_endpoint_exposes_pending_mapping_without_claiming_ready()
     payload = response.json()
     assert len(payload["items"]) == 1
     profile = payload["items"][0]
-    assert profile["exam_id"] == "RSSB_CET_GRADUATION_2026"
+    assert profile["exam_id"] == "TEST_EXAM_001"
     assert profile["source_status"] == "REVIEW_PENDING"
     assert profile["syllabus_inventory_complete"] is False
     assert profile["concept_count"] == 340
@@ -84,7 +84,7 @@ def test_subject_endpoint_returns_no_generic_subjects_for_unmapped_exam_profile(
 
     response = client.get(
         "/api/v1/learners/learner-1/question-bank/subjects",
-        params={"exam_id": "RSSB_CET_GRADUATION_2026"},
+        params={"exam_id": "TEST_EXAM_001"},
     )
 
     assert response.status_code == 200, response.text
