@@ -5,6 +5,13 @@
 **Last verified:** 2026-10-22  
 **Repository:** `snchat78-svg/AI-COMP`
 
+**Cross-chat start gate:** Read this registry before every phase and follow [PHASE_CONTINUITY_STANDARD.md](PHASE_CONTINUITY_STANDARD.md). Verify `main` head and latest exact-SHA CI before changing code; do not repeat phases already completed here.
+
+**Continuity setup evidence (2026-10-22):**
+- Last verified application/documentation baseline before the phase-policy addition: `99d18efdef202f661ccd444f921641f44e7ceb7e`, [CI run 39756305750](https://github.com/snchat78-svg/AI-COMP/actions/runs/39756305750) — success.
+- Added the reusable phase policy in `docs/PHASE_CONTINUITY_STANDARD.md` at commit `1fc42e631ec3601c72e0b174243e9b5cfde4283d`; its CI run 39758153317 was in progress at the last state check. Re-check latest CI before the next code phase.
+- From the phase ledger, the next planned implementation item is **Phase 6.56**. Phase 6.55 still has live migration/reviewer/data gates, and Phase 6.58 remains blocked on approved official-source connectivity. Do not claim those operational gates complete from code CI alone.
+
 ## Status rules
 
 - **PLANNED** — scoped, but implementation has not started.
