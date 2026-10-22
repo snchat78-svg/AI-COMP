@@ -253,6 +253,27 @@ def test_reviewer_cannot_verify_without_source_evidence(monkeypatch) -> None:
     assert connection.closed
 
 
+def test_reviewer_cannot_verify_malformed_https_source(monkeypatch) -> None:
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
+    connection = _ReviewConnection(source_url="https://", source_evidence="Some source text.")
+    app = create_app()
+    app.state.question_bank_connection_factory = lambda: connection
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/admin/question-bank/one-liners/one-liner-1/review",
+        headers={"X-AI-COMP-Content-Review-Token": "configured-review-token"},
+        json={"decision": "VERIFIED", "review_note": "Checked malformed source."},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "ONE_LINER_SOURCE_EVIDENCE_REQUIRED"
+    assert connection.status == "NEEDS_REVIEW"
+    assert len(connection.review_entries) == 0
+
+
 def test_review_cannot_overwrite_already_verified_item(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
     monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
