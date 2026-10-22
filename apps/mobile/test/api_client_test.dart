@@ -256,4 +256,81 @@ void main() {
     expect(readiness.acceptedGeneratedQuestionCount, 2);
     expect(readiness.practiceTestAvailable, isTrue);
   });
+
+  test('previous-paper client sends exam year shift and source filters', () async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return http.Response(
+        jsonEncode({
+          'items': [
+            {
+              'question_id': 'history-1',
+              'stem': 'Which river flows west?',
+              'options': [
+                {'key': 'A', 'text': 'Luni'},
+                {'key': 'B', 'text': 'Banas'},
+                {'key': 'C', 'text': 'Chambal'},
+                {'key': 'D', 'text': 'Mahi'},
+              ],
+              'correct_option_key': 'A',
+              'explanation': 'Matched official answer key.',
+              'exam_name': 'State recruitment exam',
+              'exam_id': 'STATE_EXAM',
+              'exam_year': 2024,
+              'exam_shift': 'MORNING',
+              'exam_question_number': 12,
+              'source_url': 'https://official.example/paper.pdf',
+              'answer_key_source_url': 'https://official.example/key.pdf',
+              'verified_appearance_count': 2,
+              'concept_ids': ['topic-rivers'],
+            },
+          ],
+          'pagination': {
+            'limit': 20,
+            'offset': 0,
+            'returned': 1,
+            'total_count': 8,
+            'has_more': true,
+          },
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    final page = await api.getPreviousYearQuestionPage(
+      'topic-rivers',
+      subjectId: 'Rajasthan Geography',
+      examId: 'STATE_EXAM',
+      examYear: 2024,
+      examShift: 'MORNING',
+      sourceDomain: 'official.example',
+      limit: 20,
+      offset: 0,
+    );
+
+    expect(received.method, 'GET');
+    expect(
+      received.url.path,
+      '/api/v1/learners/learner-1/question-bank/previous-papers',
+    );
+    expect(received.url.queryParameters['concept_id'], 'topic-rivers');
+    expect(received.url.queryParameters['subject_id'], 'Rajasthan Geography');
+    expect(received.url.queryParameters['exam_id'], 'STATE_EXAM');
+    expect(received.url.queryParameters['exam_year'], '2024');
+    expect(received.url.queryParameters['exam_shift'], 'MORNING');
+    expect(received.url.queryParameters['source_domain'], 'official.example');
+    expect(received.headers['authorization'], 'Bearer test-token');
+    expect(page.items.single.correctOptionText, 'Luni');
+    expect(page.pagination.totalCount, 8);
+  });
+
 }
