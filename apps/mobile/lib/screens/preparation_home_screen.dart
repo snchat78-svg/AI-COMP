@@ -508,6 +508,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     }
     final available = readiness.eligibleQuestionCount;
     final empty = available == 0;
+    final scopeLabel = readiness.subjectId == null
+        ? ''
+        : ' for ${readiness.subjectId}';
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -533,8 +536,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '$available eligible questions available'
-              '${readiness.subjectId == null ? '' : ' for ${readiness.subjectId}'} '
+              '$available eligible questions available$scopeLabel '
               '(${readiness.verifiedHistoryQuestionCount} from verified exam history, '
               '${readiness.acceptedGeneratedQuestionCount} accepted generated questions).',
             ),
