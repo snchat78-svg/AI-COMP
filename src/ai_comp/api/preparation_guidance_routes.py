@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from collections.abc import Mapping
 import time
 from http import HTTPStatus
@@ -40,6 +41,7 @@ from ai_comp.api.preparation_client_contract import (
     QuestionBankSubjectsResponse,
     QuestionBankTopicsResponse,
     TopicOneLinerListResponse,
+    TopicPracticeGenerationResponse,
     SubmittedTestResponse,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
@@ -187,6 +189,24 @@ class PreparationRequestPayload(BaseModel):
             exam_id=self.exam_id,
             subject_id=self.subject_id,
         )
+
+
+class GenerateTopicPracticePayload(BaseModel):
+    """User-selected subject/time/count for generation-grounded mixed practice."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    subject_id: str = Field(min_length=1, max_length=200)
+    question_count: int = Field(ge=1, le=500)
+    duration_seconds: int = Field(ge=1, le=86400)
+    language_code: str = Field(default="hi", min_length=2, max_length=20)
+
+    @field_validator("subject_id", "language_code")
+    @classmethod
+    def labels_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("field must not be blank")
+        return value
 
 
 class AdaptivePracticeRecommendationPayload(BaseModel):
@@ -1706,6 +1726,218 @@ def list_topic_one_liners(
         close = getattr(connection, "close", None)
         if callable(close):
             close()
+
+
+@router.post(
+    "/{learner_id}/question-bank/generate-practice",
+    status_code=201,
+    name="generate_subject_practice",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        201: {"model": TopicPracticeGenerationResponse, "description": "Generated, answer-verified subject alternatives and persisted test settings."},
+    },
+)
+def generate_subject_practice(
+    learner_id: str,
+    payload: GenerateTopicPracticePayload,
+    request: Request,
+) -> Response:
+    """Generate new MCQs from reviewed one-liners and verified past-paper answers.
+
+    Existing questions/history are used as source evidence, never as permission
+    to invent exam appearances. AI-generated alternatives remain in generated
+    storage, while the past-paper store remains read-only.
+    """
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_NOT_CONFIGURED",
+                "message": "AI question generation is not configured. Add the model API key to the server's secret environment, not to the app or repository.",
+            }
+        })
+
+    from ai_comp.application.topic_practice_generation import TopicPracticeAlternativeGenerator
+    from ai_comp.database.postgres_generated_question import PostgresGeneratedQuestionRepository
+    from ai_comp.database.postgres_verified_history_question import PostgresVerifiedHistoryQuestionRepository
+    from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
+    from ai_comp.domain.preparation_request import PreparationTestRequest
+    from ai_comp.material.gemini import GeminiMaterialAnalysisConfig
+    from ai_comp.material.gemini_generation import GeminiAnswerVerifier, GeminiQuestionGenerationProvider
+
+    try:
+        from google import genai
+        config = GeminiMaterialAnalysisConfig(
+            model=os.environ.get("AI_COMP_GEMINI_MODEL", "gemini-3.8-flash").strip()
+            or "gemini-3.8-flash"
+        )
+        client = genai.Client(api_key=api_key)
+        question_provider = GeminiQuestionGenerationProvider(config, client=client)
+        answer_verifier = GeminiAnswerVerifier(config, client=client)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_NOT_CONFIGURED",
+                "message": "The configured question-generation provider could not be initialized.",
+            }
+        })
+
+    connection = None
+    try:
+        connection = connection_factory()
+        bank_repository = PostgresTopicQuestionBankRepository(connection)
+        topics = bank_repository.list_topics(payload.subject_id, limit=500, offset=0)
+        one_liners = bank_repository.list_verified_one_liners_for_subject(
+            payload.subject_id,
+            limit=300,
+            offset=0,
+            language_code=payload.language_code,
+        )
+        previous_questions = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=1000,
+            concept_ids=(),
+            subject_id=payload.subject_id,
+        )
+        existing_generated = PostgresGeneratedQuestionRepository(connection).list_accepted(
+            limit=1000,
+            concept_ids=(),
+            subject_id=payload.subject_id,
+        )
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_SOURCE_UNAVAILABLE",
+                "message": "Verified topic facts and previous-paper source records could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+    def persist_question(question) -> None:
+        scoped_connection = connection_factory()
+        try:
+            PostgresGeneratedQuestionRepository(scoped_connection).save(question)
+        finally:
+            close_scoped = getattr(scoped_connection, "close", None)
+            if callable(close_scoped):
+                close_scoped()
+
+    try:
+        generator = TopicPracticeAlternativeGenerator(
+            provider=question_provider,
+            verifier=answer_verifier,
+            persist_question=persist_question,
+            max_source_facts=300,
+        )
+        generated = generator.generate(
+            subject_id=payload.subject_id,
+            requested_count=payload.question_count,
+            topics=topics,
+            one_liners=one_liners,
+            previous_questions=previous_questions,
+            existing_generated_questions=existing_generated,
+        )
+    except Exception:
+        # Provider internals, model prompts, credentials and returned source data
+        # must not be copied into a learner-facing error response.
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_FAILED",
+                "message": "New MCQs could not be generated and verified. No test settings were saved; retry after checking server-side generation diagnostics.",
+            }
+        })
+
+    if generated.accepted_count < 1:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_VERIFIED_ALTERNATIVE_MCQS",
+                "message": "No new MCQ passed source-answer verification, four-option validation, topic mapping and duplicate checks. The app will not fill the test with fabricated questions.",
+            }
+        })
+
+    context_provider = request.app.state.preparation_context_provider
+    readiness_provider = getattr(context_provider, "get_question_bank_readiness", None)
+    request_repository = request.app.state.preparation_test_request_repository
+    if not callable(readiness_provider) or request_repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "SUBJECT_PRACTICE_NOT_CONFIGURED",
+                "message": "Subject-scoped question selection or test-request storage is not configured.",
+            }
+        })
+    try:
+        readiness = readiness_provider(subject_id=payload.subject_id)
+        eligible_count = readiness.get("eligible_question_count")
+        if isinstance(eligible_count, bool) or not isinstance(eligible_count, int) or eligible_count < 1:
+            raise ValueError("eligible question count is empty or invalid")
+    except Exception:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_ELIGIBLE_SUBJECT_QUESTIONS",
+                "message": "The selected subject has no eligible verified four-option MCQs after generation. Check topic mappings and answer verification.",
+            }
+        })
+
+    effective_count = min(payload.question_count, eligible_count)
+    request_id = uuid4().hex
+    title = f"{payload.subject_id} practice test"
+    specification = TestSpecification(
+        test_id=f"topic-{request_id}",
+        title=title,
+        question_count=effective_count,
+        duration_seconds=payload.duration_seconds,
+        scoring=ScoringPolicy(
+            correct_marks=1.0,
+            incorrect_marks=-0.25,
+            unattempted_marks=0.0,
+        ),
+    )
+    try:
+        domain_request = PreparationTestRequest(
+            learner_id=authenticated_learner_id,
+            specification=specification,
+            mode=PersonalizedPreparationMode.MIXED,
+            subject_id=payload.subject_id,
+        )
+        request_repository.save_active(request_id, domain_request)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Generated MCQs were saved, but test settings could not be saved. Retry creating the test.",
+            }
+        })
+
+    response_payload = TopicPracticeGenerationResponse.model_validate({
+        "learner_id": authenticated_learner_id,
+        "subject_id": payload.subject_id,
+        "request_id": request_id,
+        "requested_question_count": payload.question_count,
+        "generated_alternative_count": generated.accepted_count,
+        "eligible_question_count": eligible_count,
+        "effective_question_count": effective_count,
+        "duration_seconds": payload.duration_seconds,
+        "one_liner_source_count": generated.one_liner_source_count,
+        "previous_paper_source_count": generated.previous_paper_source_count,
+        "warnings": list(generated.warnings),
+        "message": "New four-option alternatives passed answer verification and were mapped to the selected subject. The test engine will use eligible questions from this subject only.",
+    }).model_dump(mode="json")
+    return _json_response(HTTPStatus.CREATED, response_payload)
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
