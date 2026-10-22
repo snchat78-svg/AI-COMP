@@ -22,7 +22,7 @@
 
 - **Phase 6.54:** COMPLETED. PR #40 merge SHA 16f75e3c76e9c830235c39a4dc806710c116bed0. Backend tests/container and Flutter analysis/client/release APK workflows passed.
 - **Phase 6.55:** MERGED_CODE_DATA_PENDING. PR #41 merge SHA abfdfbfa8c8b732012c04a247e443032c93f6d01. The repository contains independent one-liner review code and 10 Hindi candidates (all NEEDS_REVIEW), but migrations have not been confirmed applied to the live database and reviewer credentials remain a server configuration gate.
-- **Phase 6.56:** IN_PROGRESS on branch feature/phase-6-56-topic-navigation-coverage. Updated QuestionBankScreen to fetch all bounded topic pages, search label/topic/subtopic/subject/concept ID, show current verified counts with an explicit non-completeness warning, and load One-Liner/Previous-Year tabs independently with their own load-more, retry and refresh state. Added widget tests; PR and current CI still need to be created/confirmed. Exam-profile-specific syllabus applicability is not represented as confirmed data, so do not pretend the starter catalogue is exam-complete.
+- **Phase 6.56:** IN_PROGRESS; PR #42 merged at d138d65d758efbde5c04126688566d499063da40. The mobile screen now fetches bounded topic pages, searches label/topic/subtopic/subject/concept ID, displays verified one-liner counts with a non-completeness warning, and keeps One-Liner/Previous-Year tabs independently paged with load-more, retry and refresh. Backend tests/API container passed on PR head c70313064c341b3f517c045a2dc63969b2c58341 (run 39758826307). Flutter analyze/tests/APK build and artifact upload passed on code-equivalent commit 3bd15ebdc6b01058aea03d79ba13345f4e600668 (run 39758711810, APK artifact 12416449538); only coverage documentation changed after this run. The phase is not complete: sourced exam-profile/official-syllabus-to-concept mapping remains the next implementation gate.
 - **Phase 6.57:** PLANNED — topic coverage, learner mastery and revision.
 - **Phase 6.58:** BLOCKED on approved official-source connectivity, live database migration/secrets, real official-paper + matched answer-key records, and live end-to-end proof.
 
@@ -34,10 +34,10 @@ The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A acros
 
 ## Exact next actions at checkpoint creation
 
-1. Run the new apps/mobile/test/question_bank_screen_test.dart widget suite along with all existing Flutter tests/analyze; fix any regression.
-2. Create/update Phase 6.56 PR, verify current-head backend and Flutter/APK CI, and merge only after all required checks pass.
-3. Ensure the current checkpoint + registry + roadmap + README + CSV ledger remain synchronized with the merge SHA, CI results and any live gates.
-4. Continue source candidate research from QUESTION_BANK_CONTENT_COVERAGE.csv, prioritizing concepts with no candidates; submit candidates as NEEDS_REVIEW, independently review them, and update the ledger from actual DB/review evidence.
+1. Continue Phase 6.56 by determining which registered exam profiles exist in the current registry, then research the first supported official exam notifications/syllabi and implement a persisted, source-cited exam-profile → applicable concept mapping. Do not hardcode generic catalogue applicability or invent a profile.
+2. Add API/client/UI flow for exam profile → applicable subjects → topics/subtopics, with widget/API tests for distinct exam scopes and unmapped-topic states; preserve all existing authentication, session, resume, result and adaptive-practice flows.
+3. After that implementation passes backend, Flutter/widget, release APK, artifact verification and upload CI, record its PR/merge SHA and remaining gates here and in PHASE_REGISTRY.md. Do not mark Phase 6.56 complete before the official syllabus mapping exists.
+4. Continue source candidate research from QUESTION_BANK_CONTENT_COVERAGE.csv, prioritizing concepts with no candidates; submit candidates as NEEDS_REVIEW, independently review them, and update ledger counts from actual DB/review evidence.
 5. Do not apply Phase 6.55 live migrations without the approved deployment workflow and a database-state review; do not claim official exam coverage until syllabus applicability is sourced.
 
 ## Known live-data/security gates
