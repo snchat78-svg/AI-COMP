@@ -1,6 +1,6 @@
 # Phase 6.53–6.58 — Topic-wise Question Bank and Complete Preparation
 
-**Status:** Roadmap recorded; implementation phases 6.53–6.58 are not yet complete.  
+**Status:** Phase 6.53 implementation in progress on PR #36. Topic catalog/Q&A APIs, verified previous-paper read API, subject-scoped alternative generation, mobile topic browsing, and focused tests are present in this branch. Phase 6.53 is not declared complete until current CI is green, migration 0019 is applied through the controlled migration workflow, and real topic data is populated/reviewed.  
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
 **Primary outcome:** A learner can choose an exam profile → subject → topic/subtopic and see source-backed previous-exam questions, important one-liners, practice and revision material for that topic.
 
