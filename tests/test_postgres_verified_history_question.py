@@ -68,7 +68,7 @@ def test_repository_returns_historical_question_with_official_paper_key_and_exam
     assert question.source_url == "https://official.example/paper.pdf"
     assert question.answer_key_source_url == "https://official.example/key.pdf"
     assert connection.calls[0][1] == (
-        None, None, None, None, None, None, None, None,
+        None, None, None, None, None, None, None, None, None, None,
         ["rajasthan-area"], ["rajasthan-area"], 50, 0,
     )
 
@@ -114,6 +114,14 @@ def test_repository_rejects_invalid_limit_and_ambiguous_concept_filters():
             assert "limit" in str(exc)
         else:
             raise AssertionError("invalid limit must be rejected")
+
+
+    try:
+        repository.list_eligible(source_domain="https://official.example")
+    except ValueError as exc:
+        assert "source_domain" in str(exc)
+    else:
+        raise AssertionError("source_domain must be a plain host name")
 
     try:
         repository.list_eligible(concept_ids=["topic", "topic"])
@@ -164,6 +172,7 @@ def test_page_returns_exact_count_with_bounded_pagination_and_appearance_filters
         "RAJ_EXAM", "RAJ_EXAM",
         2024, 2024,
         "MORNING", "MORNING",
+        None, None,
         ["rajasthan-area"], ["rajasthan-area"],
         1, 4,
     )
