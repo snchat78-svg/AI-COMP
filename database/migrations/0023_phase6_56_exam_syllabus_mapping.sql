@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS exam_syllabus_documents (
     ),
     source_evidence TEXT NOT NULL DEFAULT '',
     document_sha256 CHAR(64),
+    syllabus_inventory_complete BOOLEAN NOT NULL DEFAULT FALSE,
+    inventory_reviewed_at TIMESTAMPTZ,
+    inventory_reviewed_by TEXT,
+    inventory_review_note TEXT NOT NULL DEFAULT '',
     is_current BOOLEAN NOT NULL DEFAULT TRUE,
     published_on DATE,
     effective_from DATE,
@@ -32,6 +36,21 @@ CREATE TABLE IF NOT EXISTS exam_syllabus_documents (
             AND btrim(source_checked_by) <> ''
             AND document_sha256 IS NOT NULL
             AND btrim(source_evidence) <> ''
+            AND syllabus_inventory_complete = TRUE
+            AND inventory_reviewed_at IS NOT NULL
+            AND inventory_reviewed_by IS NOT NULL
+            AND btrim(inventory_reviewed_by) <> ''
+            AND btrim(inventory_review_note) <> ''
+        )
+    ),
+    CHECK (
+        NOT syllabus_inventory_complete
+        OR (
+            source_status = 'VERIFIED'
+            AND inventory_reviewed_at IS NOT NULL
+            AND inventory_reviewed_by IS NOT NULL
+            AND btrim(inventory_reviewed_by) <> ''
+            AND btrim(inventory_review_note) <> ''
         )
     ),
     UNIQUE (exam_id, source_url)
