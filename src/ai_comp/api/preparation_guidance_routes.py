@@ -207,7 +207,7 @@ class SaveTopicOneLinerPayload(BaseModel):
     language_code: str = Field(default="hi", min_length=2, max_length=20)
     source_url: str | None = Field(default=None, max_length=2000)
     source_evidence: str = Field(default="", max_length=4000)
-    verification_status: Literal["DRAFT", "NEEDS_REVIEW", "VERIFIED", "REJECTED"] = "NEEDS_REVIEW"
+    verification_status: Literal["DRAFT", "NEEDS_REVIEW"] = "NEEDS_REVIEW"
     importance_score: float = Field(default=0.5, ge=0.0, le=1.0)
 
     @field_validator("concept_id", "question_text", "answer_text", "language_code")
@@ -230,6 +230,22 @@ class SaveTopicOneLinerPayload(BaseModel):
             if self.source_url is None or not self.source_evidence.strip():
                 raise ValueError("VERIFIED one-liners require an HTTPS source URL and source evidence")
         return self
+
+
+class ReviewTopicOneLinerPayload(BaseModel):
+    """Decision recorded by a reviewer using credentials separate from authoring."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    decision: Literal["VERIFIED", "REJECTED", "NEEDS_REVIEW"]
+    review_note: str = Field(min_length=1, max_length=2000)
+
+    @field_validator("review_note")
+    @classmethod
+    def review_note_must_be_trimmed(cls, value: str) -> str:
+        if not value.strip() or value != value.strip():
+            raise ValueError("review_note must be non-empty and trimmed")
+        return value
 
 
 class GenerateTopicPracticePayload(BaseModel):
@@ -1639,6 +1655,186 @@ def create_topic_one_liner(payload: SaveTopicOneLinerPayload, request: Request) 
             "error": {
                 "code": "QUESTION_BANK_ONE_LINER_SAVE_FAILED",
                 "message": "The one-liner could not be saved. Verify the concept exists and check server-side database diagnostics.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@content_admin_router.post(
+    "/one-liners/{one_liner_id}/review",
+    name="review_topic_one_liner",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": TopicOneLinerItem, "description": "Review decision and audit metadata for an existing one-liner."},
+    },
+)
+def review_topic_one_liner(
+    one_liner_id: str,
+    payload: ReviewTopicOneLinerPayload,
+    request: Request,
+) -> Response:
+    """Review a pending one-liner using a separate reviewer credential.
+
+    A content-admin token can draft/submit content but cannot promote it to
+    VERIFIED. The reviewer identity is configured server-side so the body
+    cannot claim an arbitrary reviewer.
+    """
+    configured_token = os.environ.get("AI_COMP_CONTENT_REVIEW_TOKEN", "").strip()
+    if not configured_token:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_CONTENT_REVIEW_NOT_CONFIGURED",
+                "message": "Independent content review is not configured on this server.",
+            }
+        })
+    supplied_token = request.headers.get("X-AI-COMP-Content-Review-Token", "")
+    if not supplied_token or not hmac.compare_digest(supplied_token, configured_token):
+        return _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {
+                "code": "CONTENT_REVIEW_AUTHENTICATION_REQUIRED",
+                "message": "Authorized content-review credentials are required.",
+            }
+        })
+    reviewer_id = os.environ.get("AI_COMP_CONTENT_REVIEWER_ID", "").strip()
+    if not reviewer_id or len(reviewer_id) > 128:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_REVIEWER_ID_NOT_CONFIGURED",
+                "message": "A server-side content reviewer ID is required for auditable review.",
+            }
+        })
+    if (
+        not one_liner_id
+        or len(one_liner_id) > 128
+        or one_liner_id != one_liner_id.strip()
+        or any(not (ch.isalnum() or ch in "-_.") for ch in one_liner_id)
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_ONE_LINER_ID", "message": "one_liner_id format is invalid."}
+        })
+
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    connection = None
+    try:
+        connection = connection_factory()
+        with connection.transaction():
+            existing = connection.execute(
+                """
+                SELECT one_liner_id, concept_id, question_text, answer_text,
+                       language_code, source_url, source_evidence,
+                       verification_status, importance_score, reviewed_at,
+                       created_at, updated_at
+                FROM question_bank_one_liners
+                WHERE one_liner_id = %s
+                FOR UPDATE
+                """,
+                (one_liner_id,),
+            ).fetchone()
+            if existing is None:
+                return _json_response(HTTPStatus.NOT_FOUND, {
+                    "error": {
+                        "code": "ONE_LINER_NOT_FOUND",
+                        "message": "The requested one-liner does not exist.",
+                    }
+                })
+            current_status = str(existing[7])
+            if current_status == "VERIFIED":
+                return _json_response(HTTPStatus.CONFLICT, {
+                    "error": {
+                        "code": "ONE_LINER_ALREADY_VERIFIED",
+                        "message": "Verified content is immutable through this review route; submit a corrected version for review.",
+                    }
+                })
+            if payload.decision == "VERIFIED" and (
+                not existing[5] or not str(existing[5]).startswith("https://")
+                or not str(existing[6]).strip()
+            ):
+                return _json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {
+                    "error": {
+                        "code": "ONE_LINER_SOURCE_EVIDENCE_REQUIRED",
+                        "message": "A verified one-liner requires an HTTPS source URL and source evidence.",
+                    }
+                })
+
+            updated = connection.execute(
+                """
+                UPDATE question_bank_one_liners
+                SET verification_status = %s,
+                    reviewed_at = CASE WHEN %s = 'NEEDS_REVIEW' THEN NULL ELSE NOW() END,
+                    reviewed_by = CASE WHEN %s = 'NEEDS_REVIEW' THEN NULL ELSE %s END,
+                    review_note = %s,
+                    source_checked_at = NOW(),
+                    updated_at = NOW()
+                WHERE one_liner_id = %s
+                RETURNING one_liner_id, concept_id, question_text, answer_text,
+                          language_code, source_url, source_evidence,
+                          verification_status, importance_score, reviewed_at,
+                          created_at, updated_at
+                """,
+                (
+                    payload.decision,
+                    payload.decision,
+                    payload.decision,
+                    reviewer_id,
+                    payload.review_note,
+                    one_liner_id,
+                ),
+            ).fetchone()
+            if updated is None:
+                raise RuntimeError("review update returned no row")
+            audit = connection.execute(
+                """
+                INSERT INTO question_bank_one_liner_reviews (
+                    review_id, one_liner_id, decision, reviewer_id, review_note
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING source_checked_at, created_at
+                """,
+                (uuid4().hex, one_liner_id, payload.decision, reviewer_id, payload.review_note),
+            ).fetchone()
+            if audit is None:
+                raise RuntimeError("review audit insert returned no row")
+
+        item_payload = TopicOneLinerItem.model_validate({
+            "one_liner_id": updated[0],
+            "concept_id": updated[1],
+            "question_text": updated[2],
+            "answer_text": updated[3],
+            "language_code": updated[4],
+            "source_url": updated[5],
+            "source_evidence": updated[6],
+            "verification_status": updated[7],
+            "importance_score": updated[8],
+            "reviewed_at": updated[9],
+            "created_at": updated[10],
+            "updated_at": updated[11],
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, {
+            "item": item_payload,
+            "review": {
+                "decision": payload.decision,
+                "reviewer_id": reviewer_id,
+                "review_note": payload.review_note,
+                "source_checked_at": audit[0].isoformat() if audit[0] is not None else None,
+                "created_at": audit[1].isoformat() if audit[1] is not None else None,
+            },
+        })
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_ONE_LINER_REVIEW_FAILED",
+                "message": "The one-liner review could not be saved. Check server-side database diagnostics.",
             }
         })
     finally:
