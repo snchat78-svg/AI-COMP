@@ -48,6 +48,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         exam_id: str | None = None,
         exam_year: int | None = None,
         exam_shift: str | None = None,
+        source_domain: str | None = None,
         offset: int = 0,
     ) -> VerifiedHistoryQuestionPage:
         """Return one representative per active master/exact question identity.
@@ -86,6 +87,16 @@ class PostgresVerifiedHistoryQuestionRepository:
             not isinstance(exam_shift, str) or not exam_shift.strip() or exam_shift != exam_shift.strip()
         ):
             raise ValueError("exam_shift must be a non-empty trimmed string when supplied")
+        if source_domain is not None and (
+            not isinstance(source_domain, str)
+            or not source_domain.strip()
+            or source_domain != source_domain.strip()
+            or len(source_domain) > 253
+            or any(not (ch.isalnum() or ch in ".-") for ch in source_domain)
+            or source_domain.startswith(".")
+            or source_domain.endswith(".")
+        ):
+            raise ValueError("source_domain must be a plain domain name when supplied")
 
         query = """
             WITH option_sets AS (
@@ -254,6 +265,9 @@ class PostgresVerifiedHistoryQuestionRepository:
                   AND (%s::INTEGER IS NULL OR exam_year = %s)
                   AND (%s::TEXT IS NULL OR lower(btrim(exam_shift)) = lower(%s))
                   AND (
+                      %s::TEXT IS NULL OR lower(split_part(split_part(question_source_url, '://', 2), '/', 1)) = lower(%s)
+                  )
+                  AND (
                       cardinality(%s::TEXT[]) = 0
                       OR concept_ids && %s::TEXT[]
                   )
@@ -294,6 +308,7 @@ class PostgresVerifiedHistoryQuestionRepository:
             exam_id, exam_id,
             exam_year, exam_year,
             exam_shift, exam_shift,
+            source_domain, source_domain,
             list(scoped_ids), list(scoped_ids),
             limit, offset,
         )
@@ -322,6 +337,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         exam_id: str | None = None,
         exam_year: int | None = None,
         exam_shift: str | None = None,
+        source_domain: str | None = None,
         offset: int = 0,
     ) -> tuple[GeneratedMCQ, ...]:
         """Return eligible historical question items; preserves existing callers."""
@@ -332,6 +348,7 @@ class PostgresVerifiedHistoryQuestionRepository:
             exam_id=exam_id,
             exam_year=exam_year,
             exam_shift=exam_shift,
+            source_domain=source_domain,
             offset=offset,
         ).items
 
@@ -344,6 +361,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         exam_id: str | None = None,
         exam_year: int | None = None,
         exam_shift: str | None = None,
+        source_domain: str | None = None,
         offset: int = 0,
     ) -> VerifiedHistoryQuestionPage:
         """Return a topic-scoped page and exact eligible count after trust gates."""
@@ -354,6 +372,7 @@ class PostgresVerifiedHistoryQuestionRepository:
             exam_id=exam_id,
             exam_year=exam_year,
             exam_shift=exam_shift,
+            source_domain=source_domain,
             offset=offset,
         )
 
