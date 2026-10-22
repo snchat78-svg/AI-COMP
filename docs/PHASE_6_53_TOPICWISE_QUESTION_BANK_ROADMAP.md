@@ -1,6 +1,6 @@
 # Phase 6.53–6.58 — Topic-wise Question Bank and Complete Preparation
 
-**Status:** Phase 6.53 implementation in progress on PR #36. Topic catalog/Q&A APIs, verified previous-paper read API, subject-scoped alternative generation, mobile topic browsing, and focused tests are present in this branch. Phase 6.53 is not declared complete until current CI is green, migration 0019 is applied through the controlled migration workflow, and real topic data is populated/reviewed.  
+**Status:** Phase 6.53 application code is implemented on PR #36 plus follow-up fix PR #37; merge/CI and live-data setup are tracked separately. The code provides the starter topic catalogue, Q&A/previous-paper APIs, subject-scoped alternative MCQ generation, mobile topic browsing, and focused tests. This does **not** mean the question content is complete: one-liners and verified historical questions still depend on reviewed/source-backed records, and the starter topic list is not a substitute for each exam's official syllabus.  
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
 **Primary outcome:** A learner can choose an exam profile → subject → topic/subtopic and see source-backed previous-exam questions, important one-liners, practice and revision material for that topic.
 
@@ -32,6 +32,8 @@ Before adding tables, APIs, services or mobile models, search the repository and
 ## 3. Phase sequence and exit criteria
 
 ### Phase 6.53 — Syllabus-backed subject/topic taxonomy
+
+**Starter catalogue currently added:** migration `0020_phase6_53_starter_topic_catalogue.sql` seeds 340 canonical concept/topic entries across 14 broad subjects: Rajasthan History, Rajasthan Geography, Rajasthan Polity and Administration, Rajasthan Art and Culture, Rajasthan Economy, Indian History, Indian Geography, Indian Polity, General Science, Hindi, English, Mathematics, Reasoning and Computer Awareness. The seeds use stable `catalog.*` IDs and are idempotent. They are navigation scaffolding, not a claim that every entry is in every recruitment exam's syllabus or that facts/questions for these topics have been verified.
 
 **Deliver:** Canonical subject → topic → subtopic catalogue for the first supported Rajasthan exam profiles, with stable IDs, labels, parent/child relationship, exam applicability and syllabus/source provenance. Map existing `ConceptRecord` rows and linked questions into it; report unmapped, ambiguous and orphaned records.
 
@@ -76,6 +78,14 @@ Before adding tables, APIs, services or mobile models, search the repository and
 **Critical prerequisite:** The 20 October 2026 operational checkpoint reports that no registered official source currently passes both TCP and certificate-validated TLS from the research runtime. RSSB/RPSC endpoints time out; the legacy RSSB host fails verified TLS. Restore an approved official HTTPS path or authorized runtime/network configuration. Do not weaken TLS, bypass robots/terms/host policies or manufacture questions to inflate counts.
 
 **Exit tests:** nonzero real source-backed counts from the live readiness/content endpoints; inspect source and answer-key URLs; end-to-end tests run against real persisted records; verify no fake history or fabricated readiness; capture a mobile test-flow result. A CI run with zero selected papers is not success evidence.
+
+## 4. Current content and completion boundary
+
+- Migration `0019_phase6_53_topic_one_liners.sql` stores short topic-linked direct Q&A, with source evidence, language, importance, deduplication and review state. Only reviewed `VERIFIED` items appear in the learner-facing One-Liner Q&A list.
+- Migration `0020_phase6_53_starter_topic_catalogue.sql` makes the subject/topic browser navigable across 14 starter subject categories; it does not seed invented answers or mark a topic as exam-complete.
+- The previous-paper tab reads only official-paper + matched official-answer-key verified history and displays options, answer and source provenance separately.
+- The generation flow creates new four-option practice MCQs from reviewed one-liner Q&A and verified previous-paper answer facts; it does not add generated items to official history.
+- The actual learner-ready content bank is **not populated/completed by migrations alone**. One-liner source entries need to be added/reviewed through the protected authoring flow; previous-year history requires successful official paper discovery and answer-key reconciliation. Migration application, server-secret configuration and fresh CI verification remain deployment gates.
 
 ## 4. Completion definition
 
