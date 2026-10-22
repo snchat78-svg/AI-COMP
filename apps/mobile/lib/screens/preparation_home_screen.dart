@@ -222,20 +222,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       _setError('Select a subject before creating a test.');
       return;
     }
-    final readiness = _questionBankReadiness;
-    if (_questionBankReadinessError != null || readiness == null) {
-      _setError(
-        _questionBankReadinessError ??
-            'Question-bank status has not been checked. Refresh the dashboard before starting a test.',
-      );
-      return;
-    }
-    if (!readiness.practiceTestAvailable) {
-      _setError(
-        'No eligible verified questions are available yet. The question bank is not ready; refresh after official paper and answer-key verification succeeds.',
-      );
-      return;
-    }
+    // An empty existing MCQ pool does not block a new generation attempt:
+    // the server can derive alternatives from verified one-liners/history.
     final questionCount = int.tryParse(_questionCountController.text.trim());
     final durationMinutes = int.tryParse(_durationMinutesController.text.trim());
     if (questionCount == null || questionCount < 1 || questionCount > 500) {
@@ -254,25 +242,24 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       _error = null;
     });
     try {
-      // Subject, count and duration are persisted before the existing test
-      // engine selects from verified/accepted four-option MCQs.
-      await api.createMixedPracticeRequest(
+      // Generate source-grounded alternatives first; the API persists the
+      // selected subject/count/time and the existing test engine then builds the session.
+      final generation = await api.generateSubjectPractice(
+        subjectId: subjectId,
         questionCount: questionCount,
         durationSeconds: durationMinutes * 60,
-        subjectId: subjectId,
       );
       final session = await api.createSession();
       if (!mounted) return;
       setState(() => _loading = false);
-      if (session.questionCount < questionCount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Only ${session.questionCount} verified questions are available. The test has been adjusted to that count.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Generated ${generation.generatedAlternativeCount} verified alternative MCQs. '
+            'Starting a ${session.questionCount}-question test for $subjectId.',
           ),
-        );
-      }
+        ),
+      );
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (_) => TestSessionScreen(
@@ -543,10 +530,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             if (empty) ...[
               const SizedBox(height: 8),
               const Text(
-                'Past-exam questions enter the practice pool only after an official paper '
-                'is paired with a verified official answer key. Unverified items are not '
-                'used to fill the pool, and no manual previous-paper upload is required. '
-                'Practice tests remain disabled until at least one eligible question is available.',
+                'Past-paper questions enter the verified pool only after an official paper '
+                'is paired with its verified official answer key. The subject-test flow can '
+                'try to generate new alternatives from reviewed one-liners and verified past-paper '
+                'answers; it still stops when source evidence or answer verification is insufficient.',
               ),
             ],
             const SizedBox(height: 8),
@@ -634,10 +621,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 onPressed: _loading ||
                         !_connected ||
                         _selectedSubjectId == null ||
-                        _subjects.isEmpty ||
-                        _questionBankReadinessError != null ||
-                        _questionBankReadiness == null ||
-                        _questionBankReadiness?.practiceTestAvailable == false
+                        _subjects.isEmpty
                     ? null
                     : _startAdaptivePractice,
                 icon: const Icon(Icons.play_arrow),
@@ -648,12 +632,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                           ? 'No subjects available'
                           : _selectedSubjectId == null
                               ? 'Select a subject'
-                              : _questionBankReadinessError != null ||
-                                      _questionBankReadiness == null
-                                  ? 'Check subject question bank'
-                                  : _questionBankReadiness!.practiceTestAvailable
-                                      ? 'Generate MCQs and start test'
-                                      : 'No MCQs for selected subject',
+                              : 'Generate MCQs and start test',
                 ),
               ),
             ),
