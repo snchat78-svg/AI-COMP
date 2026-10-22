@@ -238,6 +238,13 @@ class AnswerReviewResponse(ContractModel):
     questions: list[AnswerReviewQuestionResponse]
 
 
+class QuestionBankPaginationResponse(ContractModel):
+    limit: int = Field(ge=1)
+    offset: int = Field(ge=0)
+    returned: int = Field(ge=0)
+    has_more: bool
+
+
 class PreviousYearQuestionItem(ContractModel):
     question_id: str
     stem: str
@@ -258,13 +265,6 @@ class PreviousYearQuestionItem(ContractModel):
 class PreviousYearQuestionsResponse(ContractModel):
     items: list[PreviousYearQuestionItem]
     pagination: QuestionBankPaginationResponse
-
-
-class QuestionBankPaginationResponse(ContractModel):
-    limit: int = Field(ge=1)
-    offset: int = Field(ge=0)
-    returned: int = Field(ge=0)
-    has_more: bool
 
 
 class QuestionBankSubjectItem(ContractModel):
