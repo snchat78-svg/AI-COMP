@@ -283,6 +283,7 @@ class QuestionBankExamProfileItem(ContractModel):
     source_url: str
     notification_number: str
     source_status: Literal["DISCOVERED", "REVIEW_PENDING", "VERIFIED", "SUPERSEDED", "REJECTED"]
+    syllabus_inventory_complete: bool
     concept_count: int = Field(ge=0)
     mapped_concept_count: int = Field(ge=0)
     excluded_concept_count: int = Field(ge=0)
