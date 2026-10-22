@@ -289,6 +289,21 @@ class TopicOneLinerListResponse(ContractModel):
     pagination: QuestionBankPaginationResponse
 
 
+class TopicPracticeGenerationResponse(ContractModel):
+    learner_id: str
+    subject_id: str
+    request_id: str
+    requested_question_count: int = Field(ge=1, le=500)
+    generated_alternative_count: int = Field(ge=0)
+    eligible_question_count: int = Field(ge=0)
+    effective_question_count: int = Field(ge=1)
+    duration_seconds: int = Field(ge=1)
+    one_liner_source_count: int = Field(ge=0)
+    previous_paper_source_count: int = Field(ge=0)
+    warnings: list[str] = Field(default_factory=list)
+    message: str
+
+
 COMMON_API_ERROR_RESPONSES = {
     400: {"model": APIErrorResponse, "description": "Invalid path or query parameters."},
     401: {"model": APIErrorResponse, "description": "Authentication is required."},
@@ -321,5 +336,6 @@ __all__ = [
     "QuestionBankTopicsResponse",
     "TopicOneLinerItem",
     "TopicOneLinerListResponse",
+    "TopicPracticeGenerationResponse",
     "SubmittedTestResponse",
 ]
