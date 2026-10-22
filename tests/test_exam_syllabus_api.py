@@ -70,6 +70,7 @@ def test_exam_profiles_endpoint_exposes_pending_mapping_without_claiming_ready()
     profile = payload["items"][0]
     assert profile["exam_id"] == "RSSB_CET_GRADUATION_2026"
     assert profile["source_status"] == "REVIEW_PENDING"
+    assert profile["syllabus_inventory_complete"] is False
     assert profile["concept_count"] == 340
     assert profile["mapped_concept_count"] == 0
     assert profile["unmapped_concept_count"] == 340
