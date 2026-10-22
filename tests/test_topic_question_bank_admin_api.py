@@ -152,6 +152,7 @@ def test_reviewer_fails_closed_without_separate_server_secret(monkeypatch) -> No
 
 def test_review_endpoint_rejects_wrong_review_token(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
     connection = _ReviewConnection()
     app = create_app()
@@ -169,8 +170,38 @@ def test_review_endpoint_rejects_wrong_review_token(monkeypatch) -> None:
     assert connection.calls == []
 
 
+def test_review_fails_closed_when_author_and_reviewer_secrets_are_identical(monkeypatch) -> None:
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "same-secret")
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "same-secret")
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
+    connection = _ReviewConnection()
+    app = create_app()
+    app.state.question_bank_connection_factory = lambda: connection
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/admin/question-bank/one-liners/one-liner-1/review",
+        headers={"X-AI-COMP-Content-Review-Token": "same-secret"},
+        json={"decision": "VERIFIED", "review_note": "Checked source."},
+    )
+
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "QUESTION_BANK_CONTENT_REVIEW_NOT_CONFIGURED"
+    assert connection.calls == []
+
+
+def test_authoring_rejects_https_url_without_hostname() -> None:
+    client = TestClient(create_app())
+    response = client.post(
+        "/api/v1/admin/question-bank/one-liners",
+        json=_payload(source_url="https://"),
+    )
+    assert response.status_code == 422
+
+
 def test_independent_reviewer_verifies_pending_item_and_writes_audit(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
     connection = _ReviewConnection()
     app = create_app()
@@ -202,6 +233,7 @@ def test_independent_reviewer_verifies_pending_item_and_writes_audit(monkeypatch
 
 def test_reviewer_cannot_verify_without_source_evidence(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
     connection = _ReviewConnection(source_url=None, source_evidence="")
     app = create_app()
@@ -223,6 +255,7 @@ def test_reviewer_cannot_verify_without_source_evidence(monkeypatch) -> None:
 
 def test_review_cannot_overwrite_already_verified_item(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
     connection = _ReviewConnection(status="VERIFIED")
     app = create_app()
@@ -242,6 +275,7 @@ def test_review_cannot_overwrite_already_verified_item(monkeypatch) -> None:
 
 def test_review_returns_not_found_for_unknown_item(monkeypatch) -> None:
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
     monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
     connection = _ReviewConnection(exists=False)
     app = create_app()
