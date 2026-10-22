@@ -64,7 +64,7 @@ def test_repository_returns_historical_question_with_official_paper_key_and_exam
     assert question.verified_appearance_count == 2
     assert question.source_url == "https://official.example/paper.pdf"
     assert question.answer_key_source_url == "https://official.example/key.pdf"
-    assert connection.calls[0][1] == (["rajasthan-area"], ["rajasthan-area"], 50)
+    assert connection.calls[0][1] == (None, None, ["rajasthan-area"], ["rajasthan-area"], 50)
 
 
 def test_repository_query_fails_closed_unless_official_paper_and_matched_official_key_are_verified():
