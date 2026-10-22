@@ -333,4 +333,98 @@ void main() {
     expect(page.pagination.totalCount, 8);
   });
 
+  test('exam profile parser preserves pending syllabus and unmapped counts', () async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return http.Response(
+        jsonEncode({
+          'items': [
+            {
+              'exam_id': 'RSSB_CET_GRADUATION_2026',
+              'exam_name': 'Rajasthan CET Graduation Level 2026',
+              'syllabus_id': 'syllabus-2026',
+              'syllabus_title': 'Advertisement 09/2026 — review pending',
+              'source_url': 'https://rssb.rajasthan.gov.in/notice.pdf',
+              'notification_number': '09/2026',
+              'source_status': 'REVIEW_PENDING',
+              'concept_count': 340,
+              'mapped_concept_count': 0,
+              'excluded_concept_count': 0,
+              'unmapped_concept_count': 340,
+              'selection_ready': false,
+            },
+          ],
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    final profiles = await api.getQuestionBankExamProfiles();
+
+    expect(received.method, 'GET');
+    expect(received.url.path, '/api/v1/learners/learner-1/question-bank/exam-profiles');
+    expect(received.url.queryParameters['limit'], '100');
+    expect(received.headers['authorization'], 'Bearer test-token');
+    expect(profiles.single.sourceStatus, 'REVIEW_PENDING');
+    expect(profiles.single.unmappedConceptCount, 340);
+    expect(profiles.single.selectionReady, isFalse);
+  });
+
+  test('exam-scoped subject and topic requests send the selected profile ID', () async {
+    final received = <http.Request>[];
+    final mock = MockClient((request) async {
+      received.add(request);
+      if (request.url.path.endsWith('/question-bank/subjects')) {
+        return http.Response(jsonEncode({'items': []}), 200);
+      }
+      if (request.url.path.endsWith('/question-bank/topics')) {
+        return http.Response(
+          jsonEncode({
+            'items': [],
+            'pagination': {
+              'limit': 20,
+              'offset': 0,
+              'returned': 0,
+              'has_more': false,
+            },
+          }),
+          200,
+        );
+      }
+      return http.Response('not found', 404);
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    final subjects = await api.getQuestionBankSubjects(examId: 'RSSB_CET_GRADUATION_2026');
+    final topics = await api.getQuestionBankTopics(
+      'Rajasthan Geography',
+      examId: 'RSSB_CET_GRADUATION_2026',
+      limit: 20,
+      offset: 0,
+    );
+
+    expect(subjects, isEmpty);
+    expect(topics, isEmpty);
+    expect(received, hasLength(2));
+    expect(received[0].url.queryParameters['exam_id'], 'RSSB_CET_GRADUATION_2026');
+    expect(received[1].url.queryParameters['exam_id'], 'RSSB_CET_GRADUATION_2026');
+    expect(received[1].url.queryParameters['subject'], 'Rajasthan Geography');
+  });
+
+
 }
