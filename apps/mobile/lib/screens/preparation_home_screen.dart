@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../api/ai_comp_api_client.dart';
 import '../models/preparation_models.dart';
 import 'test_session_screen.dart';
+import 'question_bank_screen.dart';
 
 class PreparationHomeScreen extends StatefulWidget {
   const PreparationHomeScreen({super.key, this.firebaseUser});
@@ -184,6 +185,20 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } catch (_) {
       _setError('Could not load the latest progress. Refresh and try again.');
     }
+  }
+
+  Future<void> _browseQuestionBank() async {
+    final api = _api;
+    final subjectId = _selectedSubjectId;
+    if (api == null || subjectId == null || subjectId.isEmpty) {
+      _setError('Connect to the API and select a subject before browsing topics.');
+      return;
+    }
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => QuestionBankScreen(api: api, subjectId: subjectId),
+      ),
+    );
   }
 
   Future<void> _selectQuestionBankSubject(String? subjectId) async {
@@ -599,6 +614,17 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               const SizedBox(height: 6),
               Text(_subjectError!, style: theme.textTheme.bodySmall),
             ],
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _loading || !_connected || _selectedSubjectId == null
+                    ? null
+                    : _browseQuestionBank,
+                icon: const Icon(Icons.menu_book_outlined),
+                label: const Text('Browse topics, One-Liners & Previous Papers'),
+              ),
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
