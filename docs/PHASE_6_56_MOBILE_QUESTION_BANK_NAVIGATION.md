@@ -1,6 +1,6 @@
 # Phase 6.56 — Mobile Question Bank Navigation and Topic Search
 
-**Status:** IN_PROGRESS on branch feature/phase-6-56-topic-navigation-coverage.  
+**Status:** IN_PROGRESS; the first navigation/search/paging slice was merged in PR #42 as d138d65d758efbde5c04126688566d499063da40. Official exam-profile/syllabus mapping remains the next acceptance gate.  
 **Canonical state:** [Phase Registry](PHASE_REGISTRY.md).  
 **Persistent restart location:** [Project Continuity Checkpoint](PROJECT_CONTINUITY_CHECKPOINT.md).  
 **Full subject/topic content goal:** [One-Liner coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) and [per-concept CSV ledger](QUESTION_BANK_CONTENT_COVERAGE.csv).
@@ -24,6 +24,11 @@ Do not create a parallel topic taxonomy, duplicate content APIs, a new question 
 - Load each content section with separate bounded 100-item requests and separate offsets/loading/error state; provide an explicit Load More action rather than assuming the first page is the complete bank.
 - Preserve question source/evidence and official paper/answer-key provenance.
 
+## CI evidence for the merged slice
+
+- Backend tests and API container build passed on PR head c70313064c341b3f517c045a2dc63969b2c58341 (run 39758826307).
+- Flutter analyze, all mobile tests, release APK build, artifact verification and upload passed on code-equivalent commit 3bd15ebdc6b01058aea03d79ba13345f4e600668 (run 39758711810; artifact 12416449538; SHA-256 2a6f9c96619ef28569049d558a821a40b778601eb9c6222ed63c475dd26c8dfe). The only change between that commit and the PR head was a documentation-only coverage-policy change.
+
 ## Exam-profile/syllabus boundary
 
 The current API's topic catalogue returns generic subjects and concepts; it does not yet prove which topics belong to each specific recruitment exam's official syllabus. This PR must not show the 340-row starter catalogue as a completed exam syllabus or invent exam applicability. Official exam-profile selection/filtered coverage requires sourced exam-notification/syllabus mappings and remains an explicit next gate. The content ledger marks those mappings NOT_YET_MAPPED_TO_EXAM_SPECIFIC_OFFICIAL_SYLLABUS until researched and checked.
@@ -42,6 +47,6 @@ Current snapshot from repository files only: 340 catalogue concept rows across 1
 - Existing authentication, dashboard, create/resume session, submit/result and adaptive practice paths continue to pass.
 - Phase Registry and continuity checkpoint include current branch, PR, CI evidence, open exam-syllabus mapping gate, live migration gates and next action before merge.
 
-## Next after this phase
+## Next within Phase 6.56
 
-Continue with Phase 6.57 only after Phase 6.56's UI contract is accepted. Keep Phase 6.55's migrations/reviewer-secret/content review gates visible. Continue source-backed content candidates from QUESTION_BANK_CONTENT_COVERAGE.csv; prioritise topics with no candidates, confirm official syllabus applicability and keep all new factual items NEEDS_REVIEW until independently reviewed.
+Phase 6.56 stays IN_PROGRESS. First determine the supported exam profiles from existing registered exam records, then research their official notifications/syllabi and implement an auditable exam-profile → applicable canonical concept mapping. Add the profile selector and tests proving that subject/topic options are filtered to the selected exam and that unmapped topics are visible as unmapped rather than silently included. Do not claim the full phase complete until this source-backed mapping passes CI. Keep Phase 6.55's live migration/reviewer-secret gates visible and continue source-backed candidates from QUESTION_BANK_CONTENT_COVERAGE.csv, prioritising rows with no candidates.
