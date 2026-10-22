@@ -126,6 +126,22 @@ def test_full_phase4_postgres_round_trip():
         assert set(migration_runner.apply(connection)).issubset(expected_versions)
         assert migration_runner.apply(connection) == ()
 
+        # The starter topic catalogue makes the browse UI navigable, but the
+        # seeds deliberately do not imply official-syllabus or factual coverage.
+        catalogue = connection.execute(
+            """
+            SELECT COUNT(*), COUNT(DISTINCT subject)
+            FROM concepts
+            WHERE concept_id LIKE 'catalog.%'
+            """
+        ).fetchone()
+        assert int(catalogue[0]) >= 300
+        assert int(catalogue[1]) == 14
+        assert connection.execute(
+            "SELECT 1 FROM concepts WHERE concept_id = %s",
+            ("catalog.rajasthan_geography.rivers.luni_river",),
+        ).fetchone() is not None
+
         registry = PostgresRegistryRepository(connection)
         registry.save_body(
             ConductingBody(
