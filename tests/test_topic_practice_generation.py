@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from ai_comp.application.topic_practice_generation import TopicPracticeAlternativeGenerator
-from ai_comp.domain.material_analysis import AnswerVerificationResult, ImportantFact
 from ai_comp.domain.material_generation import (
+    AnswerVerificationResult,
     AnswerVerificationStatus,
     GeneratedMCQ,
     GeneratedOption,
