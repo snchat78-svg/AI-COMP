@@ -1,5 +1,5 @@
 -- Phase 6.56: persist exam-specific official syllabus evidence and concept applicability.
--- New profiles deliberately remain unverified until the official document is checked.
+-- No exam profile is seeded until its exact official notification/syllabus is confirmed.
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS exam_syllabus_documents (
@@ -93,70 +93,8 @@ CREATE TABLE IF NOT EXISTS exam_concept_applicability (
 CREATE INDEX IF NOT EXISTS idx_exam_concept_applicability_status
     ON exam_concept_applicability (syllabus_id, applicability_status, concept_id);
 
--- Seed only the discovered profile and source pointer. The notification's official
--- PDF contents/hash have not yet been checked by an independent reviewer, so no
--- concept is marked IN_SCOPE and no topic is selectable for this profile.
-INSERT INTO conducting_bodies (
-    body_id, name, level, country, state, official_domains
-)
-VALUES (
-    'RSSB',
-    'Rajasthan Staff Selection Board',
-    'STATE',
-    'IN',
-    'Rajasthan',
-    '["rssb.rajasthan.gov.in","rsmssb.rajasthan.gov.in"]'::jsonb
-)
-ON CONFLICT (body_id) DO NOTHING;
-
-INSERT INTO sources (
-    source_id, name, base_url, source_type, priority,
-    conducting_body_id, allowed_paths, notes
-)
-VALUES (
-    'RSSB_CET_GRADUATION_2026_NOTICE',
-    'RSSB CET Graduation Level 2026 advertisement / syllabus',
-    'https://rssb.rajasthan.gov.in',
-    'OFFICIAL_WEBSITE',
-    'OFFICIAL',
-    'RSSB',
-    '["/storage/advertisement_item/1782966142.pdf"]'::jsonb,
-    'PDF location discovered for Advertisement 09/2026. Keep syllabus status REVIEW_PENDING until the official document is fetched, its content and SHA-256 are checked, and an independent reviewer records evidence.'
-)
-ON CONFLICT (source_id) DO NOTHING;
-
-INSERT INTO exams (
-    exam_id, name, conducting_body_id, level, state, categories, active
-)
-VALUES (
-    'RSSB_CET_GRADUATION_2026',
-    'Rajasthan Common Eligibility Test (Graduation Level) 2026',
-    'RSSB',
-    'STATE',
-    'Rajasthan',
-    '["CET_GRADUATION"]'::jsonb,
-    TRUE
-)
-ON CONFLICT (exam_id) DO NOTHING;
-
-INSERT INTO exam_syllabus_documents (
-    syllabus_id, exam_id, source_id, source_title, source_url,
-    notification_number, version_label, source_status, source_evidence,
-    is_current, published_on
-)
-VALUES (
-    'RSSB_CET_GRADUATION_2026_ADVT_09_2026',
-    'RSSB_CET_GRADUATION_2026',
-    'RSSB_CET_GRADUATION_2026_NOTICE',
-    'Common Eligibility Test (Graduation Level) 2026 — Advertisement 09/2026, syllabus clause',
-    'https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf',
-    'Advertisement No. 09/2026',
-    'Advt 09/2026 — syllabus document review pending',
-    'REVIEW_PENDING',
-    'The official-host PDF URL is identified, but its content and SHA-256 have not yet been independently checked in this phase. Do not infer applicability from the URL or secondary summaries.',
-    TRUE,
-    NULL
-)
-ON CONFLICT (exam_id, source_url) DO NOTHING;
+-- Deliberately do not seed an exam profile: no current official notification/syllabus version
+-- has been independently established for this mapping slice. Add profile/source rows only
+-- after confirming the exact official advertisement and source lineage.
 
 COMMIT;
