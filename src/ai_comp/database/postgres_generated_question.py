@@ -128,7 +128,7 @@ class PostgresGeneratedQuestionRepository:
                   AND answer_verification_status = 'VERIFIED'
                   AND duplicate_of_master_question_id IS NULL
                   AND (
-                      %s IS NULL OR EXISTS (
+                      %s::TEXT IS NULL OR EXISTS (
                           SELECT 1
                           FROM concepts AS subject_concept
                           WHERE lower(btrim(subject_concept.subject)) = lower(%s)
