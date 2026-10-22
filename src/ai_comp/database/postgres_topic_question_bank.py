@@ -183,27 +183,56 @@ class PostgresTopicQuestionBankRepository:
                         source_url = CASE
                             WHEN EXCLUDED.verification_status = 'VERIFIED'
                                  OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                 OR (
+                                     existing.verification_status = 'REJECTED'
+                                     AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                 )
                             THEN COALESCE(EXCLUDED.source_url, existing.source_url)
                             ELSE existing.source_url
                         END,
                         source_evidence = CASE
                             WHEN EXCLUDED.verification_status = 'VERIFIED'
                                  OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                 OR (
+                                     existing.verification_status = 'REJECTED'
+                                     AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                 )
                             THEN COALESCE(NULLIF(EXCLUDED.source_evidence, ''), existing.source_evidence)
                             ELSE existing.source_evidence
                         END,
                         verification_status = CASE
                             WHEN EXCLUDED.verification_status IN ('VERIFIED', 'REJECTED')
                                 THEN EXCLUDED.verification_status
-                            WHEN existing.verification_status = 'DRAFT'
+                            WHEN existing.verification_status IN ('DRAFT', 'REJECTED')
                                 THEN EXCLUDED.verification_status
                             ELSE existing.verification_status
                         END,
                         importance_score = GREATEST(existing.importance_score, EXCLUDED.importance_score),
                         reviewed_at = CASE
+                            WHEN existing.verification_status = 'REJECTED'
+                                 AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                THEN NULL
                             WHEN EXCLUDED.verification_status = 'VERIFIED'
                                 THEN EXCLUDED.reviewed_at
                             ELSE existing.reviewed_at
+                        END,
+                        reviewed_by = CASE
+                            WHEN existing.verification_status = 'REJECTED'
+                                 AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                THEN NULL
+                            ELSE existing.reviewed_by
+                        END,
+                        review_note = CASE
+                            WHEN existing.verification_status = 'REJECTED'
+                                 AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                THEN ''
+                            ELSE existing.review_note
+                        END,
+                        source_checked_at = CASE
+                            WHEN existing.verification_status = 'REJECTED'
+                                 AND EXCLUDED.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                                THEN NULL
+                            ELSE existing.source_checked_at
                         END,
                         updated_at = NOW()
                     RETURNING one_liner_id, concept_id, question_text, answer_text,
