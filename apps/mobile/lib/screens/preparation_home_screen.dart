@@ -37,6 +37,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   List<QuestionBankSubject> _subjects = const [];
   String? _selectedSubjectId;
   String? _subjectError;
+  List<QuestionBankExamProfile> _examProfiles = const [];
+  String? _selectedExamId;
+  List<QuestionBankSubject> _examSubjects = const [];
+  String? _selectedExamSubjectId;
+  String? _examProfileError;
+  String? _examSubjectError;
+  bool _loadingExamSubjects = false;
   List<TestHistoryItem> _recentSessions = const [];
   bool _loading = false;
   String? _error;
@@ -91,6 +98,28 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await candidate.getAnalytics();
       final summary = await candidate.getResultsSummary();
       final sessions = await candidate.getSessions(limit: 8);
+      List<QuestionBankExamProfile> examProfiles = const [];
+      String? examProfileError;
+      try {
+        examProfiles = await candidate.getQuestionBankExamProfiles();
+      } on ApiException {
+        examProfileError = 'Official exam profiles are not available on this API version yet.';
+      }
+      final selectedExamId = examProfiles.any((item) => item.examId == _selectedExamId)
+          ? _selectedExamId
+          : (examProfiles.isEmpty ? null : examProfiles.first.examId);
+      List<QuestionBankSubject> examSubjects = const [];
+      String? examSubjectError;
+      if (selectedExamId != null) {
+        try {
+          examSubjects = await candidate.getQuestionBankSubjects(examId: selectedExamId);
+        } on ApiException {
+          examSubjectError = 'Syllabus-mapped subjects could not be loaded. Refresh after the server update.';
+        }
+      }
+      final selectedExamSubjectId = examSubjects.any((item) => item.subjectId == _selectedExamSubjectId)
+          ? _selectedExamSubjectId
+          : (examSubjects.isEmpty ? null : examSubjects.first.subjectId);
       List<QuestionBankSubject> subjects = const [];
       String? subjectError;
       try {
@@ -122,6 +151,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _subjects = subjects;
         _selectedSubjectId = selectedSubjectId;
         _subjectError = subjectError;
+        _examProfiles = examProfiles;
+        _selectedExamId = selectedExamId;
+        _examSubjects = examSubjects;
+        _selectedExamSubjectId = selectedExamSubjectId;
+        _examProfileError = examProfileError;
+        _examSubjectError = examSubjectError;
+        _loadingExamSubjects = false;
         _questionBankReadiness = readiness;
         _questionBankReadinessError = readinessError;
         _loading = false;
@@ -150,6 +186,28 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await api.getAnalytics();
       final summary = await api.getResultsSummary();
       final sessions = await api.getSessions(limit: 8);
+      List<QuestionBankExamProfile> examProfiles = const [];
+      String? examProfileError;
+      try {
+        examProfiles = await api.getQuestionBankExamProfiles();
+      } on ApiException {
+        examProfileError = 'Official exam profiles are not available on this API version yet.';
+      }
+      final selectedExamId = examProfiles.any((item) => item.examId == _selectedExamId)
+          ? _selectedExamId
+          : (examProfiles.isEmpty ? null : examProfiles.first.examId);
+      List<QuestionBankSubject> examSubjects = const [];
+      String? examSubjectError;
+      if (selectedExamId != null) {
+        try {
+          examSubjects = await api.getQuestionBankSubjects(examId: selectedExamId);
+        } on ApiException {
+          examSubjectError = 'Syllabus-mapped subjects could not be loaded. Refresh after the server update.';
+        }
+      }
+      final selectedExamSubjectId = examSubjects.any((item) => item.subjectId == _selectedExamSubjectId)
+          ? _selectedExamSubjectId
+          : (examSubjects.isEmpty ? null : examSubjects.first.subjectId);
       List<QuestionBankSubject> subjects = const [];
       String? subjectError;
       try {
@@ -177,6 +235,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _subjects = subjects;
         _selectedSubjectId = selectedSubjectId;
         _subjectError = subjectError;
+        _examProfiles = examProfiles;
+        _selectedExamId = selectedExamId;
+        _examSubjects = examSubjects;
+        _selectedExamSubjectId = selectedExamSubjectId;
+        _examProfileError = examProfileError;
+        _examSubjectError = examSubjectError;
+        _loadingExamSubjects = false;
         _questionBankReadiness = readiness;
         _questionBankReadinessError = readinessError;
       });
@@ -185,6 +250,67 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     } catch (_) {
       _setError('Could not load the latest progress. Refresh and try again.');
     }
+  }
+
+  QuestionBankExamProfile? get _selectedExamProfile {
+    for (final profile in _examProfiles) {
+      if (profile.examId == _selectedExamId) return profile;
+    }
+    return null;
+  }
+
+  Future<void> _selectExamProfile(String? examId) async {
+    if (examId == null || examId.trim().isEmpty) return;
+    final api = _api;
+    setState(() {
+      _selectedExamId = examId;
+      _examSubjects = const [];
+      _selectedExamSubjectId = null;
+      _examSubjectError = null;
+      _loadingExamSubjects = true;
+    });
+    if (api == null) {
+      setState(() => _loadingExamSubjects = false);
+      return;
+    }
+    try {
+      final subjects = await api.getQuestionBankSubjects(examId: examId);
+      if (!mounted || _selectedExamId != examId) return;
+      setState(() {
+        _examSubjects = subjects;
+        _selectedExamSubjectId = subjects.isEmpty ? null : subjects.first.subjectId;
+        _examSubjectError = null;
+        _loadingExamSubjects = false;
+      });
+    } on ApiException {
+      if (!mounted || _selectedExamId != examId) return;
+      setState(() {
+        _examSubjects = const [];
+        _selectedExamSubjectId = null;
+        _examSubjectError = 'Syllabus-mapped subjects could not be loaded. Refresh and try again.';
+        _loadingExamSubjects = false;
+      });
+    }
+  }
+
+  Future<void> _browseExamQuestionBank() async {
+    final api = _api;
+    final profile = _selectedExamProfile;
+    final subjectId = _selectedExamSubjectId;
+    if (api == null || profile == null || !profile.selectionReady ||
+        subjectId == null || subjectId.isEmpty) {
+      _setError('The selected exam syllabus is not completely reviewed yet. Generic topics are not a substitute for exam-specific coverage.');
+      return;
+    }
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => QuestionBankScreen(
+          api: api,
+          subjectId: subjectId,
+          examId: profile.examId,
+        ),
+      ),
+    );
   }
 
   Future<void> _browseQuestionBank() async {
@@ -400,6 +526,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             ),
             const SizedBox(height: 20),
             _buildConnectionCard(theme),
+            if (_connected) ...[
+              const SizedBox(height: 16),
+              _buildExamSyllabusCard(theme),
+            ],
             if (_error != null) ...[
               const SizedBox(height: 12),
               _ErrorPanel(message: _error!),
@@ -422,6 +552,118 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               'Security: the access token is kept only in memory on this screen and is not saved to disk.',
               style: theme.textTheme.bodySmall,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExamSyllabusCard(ThemeData theme) {
+    final profile = _selectedExamProfile;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Official exam syllabus', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 6),
+            const Text(
+              'Exam-specific topics are shown only after the official syllabus and every concept mapping have been independently reviewed.',
+            ),
+            const SizedBox(height: 12),
+            if (_examProfiles.isNotEmpty)
+              DropdownButtonFormField<String>(
+                key: const ValueKey('exam-profile-selector'),
+                initialValue: _examProfiles.any((item) => item.examId == _selectedExamId)
+                    ? _selectedExamId
+                    : null,
+                decoration: const InputDecoration(
+                  labelText: 'Exam profile',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.fact_check_outlined),
+                ),
+                items: _examProfiles.map((item) => DropdownMenuItem<String>(
+                  value: item.examId,
+                  child: Text(
+                    item.selectionReady
+                        ? item.examName
+                        : '${item.examName} · ${item.unmappedConceptCount} unmapped',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )).toList(growable: false),
+                onChanged: _loading || _loadingExamSubjects ? null : _selectExamProfile,
+              ),
+            if (_examProfileError != null) ...[
+              const SizedBox(height: 8),
+              Text(_examProfileError!, style: theme.textTheme.bodySmall),
+            ],
+            if (_examProfiles.isEmpty && _examProfileError == null)
+              const Text('No official exam profile has been registered yet.'),
+            if (profile != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Syllabus source: ${profile.sourceStatus} · ${profile.notificationNumber}',
+                style: theme.textTheme.bodySmall,
+              ),
+              Text(
+                'Mapped concepts: ${profile.mappedConceptCount} of ${profile.conceptCount}; '
+                '${profile.excludedConceptCount} documented out of scope; '
+                '${profile.unmappedConceptCount} still unmapped.',
+                style: theme.textTheme.bodySmall,
+              ),
+              if (!profile.selectionReady) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  'This exam cannot be used for syllabus-filtered study yet. The official document or concept mapping still needs review. The app will not silently use the generic topic list for this exam.',
+                ),
+              ],
+            ],
+            if (profile != null && profile.selectionReady) ...[
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                key: ValueKey('exam-subject-selector-${profile.examId}'),
+                initialValue: _examSubjects.any((item) => item.subjectId == _selectedExamSubjectId)
+                    ? _selectedExamSubjectId
+                    : null,
+                decoration: const InputDecoration(
+                  labelText: 'Syllabus-mapped subject',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.menu_book_outlined),
+                ),
+                items: _examSubjects.map((item) => DropdownMenuItem<String>(
+                  value: item.subjectId,
+                  child: Text(
+                    '${item.subjectLabel} (${item.conceptCount} topics)',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )).toList(growable: false),
+                onChanged: _loading || _loadingExamSubjects || _examSubjects.isEmpty
+                    ? null
+                    : (value) => setState(() => _selectedExamSubjectId = value),
+              ),
+              if (_examSubjects.isEmpty && !_loadingExamSubjects)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text('No in-scope subjects have been mapped to this syllabus yet.'),
+                ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _loading || _loadingExamSubjects ||
+                          _selectedExamSubjectId == null
+                      ? null
+                      : _browseExamQuestionBank,
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Browse this exam syllabus'),
+                ),
+              ),
+            ],
+            if (_examSubjectError != null) ...[
+              const SizedBox(height: 8),
+              Text(_examSubjectError!, style: theme.textTheme.bodySmall),
+            ],
           ],
         ),
       ),
