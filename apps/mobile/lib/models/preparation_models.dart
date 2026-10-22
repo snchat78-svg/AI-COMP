@@ -40,6 +40,53 @@ class ApiException implements Exception {
   String toString() => '$code: $message';
 }
 
+class TopicPracticeGenerationResult {
+  const TopicPracticeGenerationResult({
+    required this.learnerId,
+    required this.subjectId,
+    required this.requestId,
+    required this.requestedQuestionCount,
+    required this.generatedAlternativeCount,
+    required this.eligibleQuestionCount,
+    required this.effectiveQuestionCount,
+    required this.durationSeconds,
+    required this.oneLinerSourceCount,
+    required this.previousPaperSourceCount,
+    required this.warnings,
+    required this.message,
+  });
+
+  final String learnerId;
+  final String subjectId;
+  final String requestId;
+  final int requestedQuestionCount;
+  final int generatedAlternativeCount;
+  final int eligibleQuestionCount;
+  final int effectiveQuestionCount;
+  final int durationSeconds;
+  final int oneLinerSourceCount;
+  final int previousPaperSourceCount;
+  final List<String> warnings;
+  final String message;
+
+  factory TopicPracticeGenerationResult.fromJson(Map<String, dynamic> json) {
+    return TopicPracticeGenerationResult(
+      learnerId: _string(json['learner_id']),
+      subjectId: _string(json['subject_id']),
+      requestId: _string(json['request_id']),
+      requestedQuestionCount: _integer(json['requested_question_count'], 1),
+      generatedAlternativeCount: _integer(json['generated_alternative_count'], 0),
+      eligibleQuestionCount: _integer(json['eligible_question_count'], 0),
+      effectiveQuestionCount: _integer(json['effective_question_count'], 1),
+      durationSeconds: _integer(json['duration_seconds'], 1800),
+      oneLinerSourceCount: _integer(json['one_liner_source_count'], 0),
+      previousPaperSourceCount: _integer(json['previous_paper_source_count'], 0),
+      warnings: _stringList(json['warnings']),
+      message: _string(json['message']),
+    );
+  }
+}
+
 class QuestionBankSubject {
   const QuestionBankSubject({
     required this.subjectId,
