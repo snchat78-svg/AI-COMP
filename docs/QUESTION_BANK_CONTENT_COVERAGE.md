@@ -11,15 +11,39 @@ The Question Bank must eventually cover **every applicable subject, topic and su
 
 The assistant/implementation agent should proactively analyse the topic and draft important question-answer candidates. This includes definitions, dates, people/places, facts, differences/comparisons, cause/effect, lists, formulas and calculation methods as appropriate to the subject. AI drafting is allowed; AI self-certification is not. Every factual candidate needs an attributable source URL and a short locator/evidence note and stays NEEDS_REVIEW until an independent reviewer confirms it.
 
+## What “complete topic coverage” means (explicit product rule)
+
+**The user’s intended meaning of coverage is full examinable-point coverage, not merely reaching a question count.** For every applicable official-syllabus topic/subtopic, analyse the topic and its authoritative sources until all syllabus-relevant, reasonably testable knowledge points have been considered and covered. Do not label a topic complete just because it has five (or any fixed number of) questions.
+
+**Question-bank format: write each item as a clear question followed by its short, direct answer (Q → A).** Do not store only a bare fact sentence as the final learner-facing One-Liner. A factual line may be used in research notes, but turn it into an exam-useful question, for example:
+- Fact note: “The Luni River drains into the Rann of Kutch.”
+- One-liner: “Where does the Luni River drain? — Into the Rann of Kutch.”
+- Where a fact has multiple separately testable parts, create separate questions for those parts rather than hiding several answers inside one overloaded question. Do not inflate coverage with superficial rewordings of the same fact.
+
+For each topic, use a documented completion checklist tailored to its content and syllabus. Consider the applicable lenses below, then mark each as covered / not applicable / still missing, with evidence:
+- Definitions, meaning, identity and distinguishing features.
+- All named people, places, institutions, events and dates/years required by the syllabus.
+- Categories, lists, examples, classifications and their members.
+- Differences, comparisons, relationships, causes/effects and sequences.
+- Formulae, units, methods, rules, legal provisions, exceptions and boundary conditions.
+- Important data and exam-relevant static facts; date-stamp facts that can change.
+- Diagrams, maps, tables, works or named items when they are part of the official syllabus/source.
+- Common confusions and frequently testable distinctions, without duplicating an already-covered fact.
+- Every official-syllabus subtopic and any subtopic discovered in authoritative source material that is genuinely required by that syllabus.
+
+The checklist is complete only after the source-backed knowledge points have been reviewed for omissions, candidate questions cover those points without material gaps, duplicates have been removed, and independent review accepts the set. If a topic is broad, split it into smaller concepts/subtopics in the ledger first. A source or a human reviewer may justify why a lens is not applicable; never silently skip it.
+
+The “at least five distinct Q&As per applicable subtopic” rule below is a **minimum progress floor**, not the definition of completeness and not permission to stop at five. A narrow topic may warrant fewer only with a documented reviewer rationale; a broad or high-weight topic will usually need substantially more. Report status as NOT_STARTED / DRAFTING / NEEDS_REVIEW / PARTIALLY_COVERED / VERIFIED_COMPLETE (or the repository’s equivalent) so a partial set is never presented as fully complete.
+
 ## Coverage standard
 
 For the initial baseline, target **at least 5 distinct, non-duplicate, source-backed, independently verified one-liners per applicable subtopic**. This is a minimum baseline, not a limit: important/high-weight topics may need more. A topic is not "fully covered" just because it has five questions if those five repeat the same fact or omit required parts of the official syllabus.
 
-For a topic to be counted as covered, all must be true:
+For a topic to be counted as VERIFIED_COMPLETE, all must be true:
 
 1. The topic is mapped to the selected exam profile using an official exam notification/syllabus, with source and date.
-2. The question bank has at least five accepted distinct one-liners for that topic, unless the exam-specific syllabus/reviewer explicitly documents why a smaller number is appropriate.
-3. Each accepted item carries concept_id, Hindi/English language, HTTPS source URL, source evidence/section locator, importance score, source-check date, independent reviewer, review note and VERIFIED status.
+2. The topic-specific completion checklist above is complete with no unresolved syllabus-relevant knowledge-point gaps; at least five accepted distinct Q&As are present as a minimum floor, unless the exam-specific syllabus/reviewer documents why a smaller number is appropriate.
+3. Each accepted item is phrased as a clear question with a concise direct answer and carries concept_id, Hindi/English language, HTTPS source URL, source evidence/section locator, importance score, source-check date, independent reviewer, review note and VERIFIED status.
 4. No unresolved disputed/current/outdated claim is counted as covered. Volatile facts carry an as-of date and refresh rule.
 5. Coverage summaries distinguish drafted, needs_review, verified, and rejected; candidates in Git migration files are not proof of live database population.
 6. Empty/null coverage stays visible. Never inflate the count with duplicates, generated MCQs, previous-paper appearances copied between sites, or unreviewed candidates.
