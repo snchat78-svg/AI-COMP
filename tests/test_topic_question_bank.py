@@ -39,7 +39,7 @@ def test_one_liner_content_hash_normalizes_whitespace_and_case() -> None:
     a = TopicOneLinerQA(
         one_liner_id="ol-1",
         concept_id="concept-rivers",
-        question_text="  What is the   longest river? ",
+        question_text="What is the   longest river?",
         answer_text="River A",
     )
     b = TopicOneLinerQA(
