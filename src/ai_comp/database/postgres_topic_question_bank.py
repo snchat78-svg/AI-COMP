@@ -165,13 +165,13 @@ class PostgresTopicQuestionBankRepository:
             raise RepositoryError("failed to load subject one-liners") from exc
         return tuple(self._one_liner_from_row(row) for row in rows)
 
-    def save_one_liner(self, item: TopicOneLinerQA) -> None:
-        """Persist a content-editor supplied item; the database enforces evidence for VERIFIED."""
+    def save_one_liner(self, item: TopicOneLinerQA) -> TopicOneLinerQA:
+        """Save or merge a duplicate Q&A without downgrading reviewed content."""
         try:
             with self._connection.transaction():
-                self._connection.execute(
+                row = self._connection.execute(
                     """
-                    INSERT INTO question_bank_one_liners (
+                    INSERT INTO question_bank_one_liners AS existing (
                         one_liner_id, concept_id, question_text, answer_text,
                         language_code, source_url, source_evidence,
                         verification_status, importance_score, content_hash,
@@ -179,18 +179,37 @@ class PostgresTopicQuestionBankRepository:
                     )
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, COALESCE(%s, NOW()), COALESCE(%s, NOW()))
-                    ON CONFLICT (one_liner_id) DO UPDATE SET
-                        concept_id = EXCLUDED.concept_id,
-                        question_text = EXCLUDED.question_text,
-                        answer_text = EXCLUDED.answer_text,
-                        language_code = EXCLUDED.language_code,
-                        source_url = EXCLUDED.source_url,
-                        source_evidence = EXCLUDED.source_evidence,
-                        verification_status = EXCLUDED.verification_status,
-                        importance_score = EXCLUDED.importance_score,
-                        content_hash = EXCLUDED.content_hash,
-                        reviewed_at = EXCLUDED.reviewed_at,
+                    ON CONFLICT (concept_id, language_code, content_hash) DO UPDATE SET
+                        source_url = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                 OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                            THEN COALESCE(EXCLUDED.source_url, existing.source_url)
+                            ELSE existing.source_url
+                        END,
+                        source_evidence = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                 OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                            THEN COALESCE(NULLIF(EXCLUDED.source_evidence, ''), existing.source_evidence)
+                            ELSE existing.source_evidence
+                        END,
+                        verification_status = CASE
+                            WHEN EXCLUDED.verification_status IN ('VERIFIED', 'REJECTED')
+                                THEN EXCLUDED.verification_status
+                            WHEN existing.verification_status = 'DRAFT'
+                                THEN EXCLUDED.verification_status
+                            ELSE existing.verification_status
+                        END,
+                        importance_score = GREATEST(existing.importance_score, EXCLUDED.importance_score),
+                        reviewed_at = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                THEN EXCLUDED.reviewed_at
+                            ELSE existing.reviewed_at
+                        END,
                         updated_at = NOW()
+                    RETURNING one_liner_id, concept_id, question_text, answer_text,
+                              language_code, source_url, source_evidence,
+                              verification_status, importance_score, reviewed_at,
+                              created_at, updated_at
                     """,
                     (
                         item.one_liner_id,
@@ -207,7 +226,12 @@ class PostgresTopicQuestionBankRepository:
                         item.created_at,
                         item.updated_at,
                     ),
-                )
+                ).fetchone()
+            if row is None:
+                raise RepositoryError("one-liner save returned no canonical record")
+            return self._one_liner_from_row(row)
+        except RepositoryError:
+            raise
         except Exception as exc:
             raise RepositoryError("failed to persist topic one-liner") from exc
 
