@@ -66,6 +66,11 @@ Before adding tables, APIs, services or mobile models, search the repository and
 
 ### Phase 6.56 — Mobile Subject → Topic → Study page
 
+**Current implementation status:** IN_PROGRESS. This work extends the existing QuestionBankScreen: loads all topics through bounded pages, adds topic/subtopic/concept search, independent One-Liner and Previous-Year content states, refresh/retry, and explicit per-section Load More paging. See [Phase 6.56 mobile navigation contract](PHASE_6_56_MOBILE_QUESTION_BANK_NAVIGATION.md), [Phase Registry](PHASE_REGISTRY.md), and [Project Continuity Checkpoint](PROJECT_CONTINUITY_CHECKPOINT.md).
+
+**Persistent content completeness requirement:** every applicable subject/topic/subtopic for each supported exam must eventually have at least five distinct source-backed independently reviewed VERIFIED one-liners as the baseline. The assistant should proactively research and draft important Q&A, but generated facts remain NEEDS_REVIEW until independent review. The current 340-row generic starter catalogue is not proof of exam-specific syllabus coverage. Track every concept and its next action in [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv); read the [coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) before adding candidates. Exam-profile selection cannot claim official applicability until syllabus mapping is evidenced.
+
+
 **Deliver:** A question-bank entry point in the Flutter dashboard. Navigation: exam profile → subjects → expandable topic/subtopic list → topic page. The topic page must show **One-Liner Q&A** and **Previous Year Papers** as distinct tabs/options, plus Practice MCQs and Topic Test/Revision. One-Liners show short question → direct answer pairs; Previous Year Papers show historical MCQs with original options and verified historical answers, together with exam/year/shift/provenance metadata. Provide independent loading, empty, unavailable and partially populated states for each section.
 
 **Exit tests:** Flutter analyze and widget tests; tap-through navigation and filters; one-liner Q&A and previous-year papers open separately; previous-paper options and answer-review state are shown correctly; long lists are paginated; question source/exam metadata are visible; each section has an independent honest empty state; old login, dashboard, timed session, resume and results flows remain intact.
@@ -112,14 +117,14 @@ A topic is shown as **covered** only when:
 - Add migration up/down or migration-chain checks as required by project conventions, API contract tests, repository integration tests and Flutter tests for every completed phase.
 - Maintain the master checkpoint with branch/commit, tests run, CI evidence, live-data caveats and the next exact phase. Do not restart completed Phases 1–6.52.
 
-## 6. Immediate implementation order
+## 6. Immediate implementation order (checkpoint updated 2026-10-22)
 
-1. Close or explicitly work around the approved official HTTPS reachability blocker without weakening security, and verify current database migration/readiness state.
-2. Implement Phase 6.53 taxonomy and a coverage audit report.
-3. Implement Phase 6.54 historic topic question reads.
-4. Implement Phase 6.55 verified one-liners.
-5. Add the Flutter browsing journey in Phase 6.56.
-6. Add progress/coverage integration in Phase 6.57.
-7. Complete Phase 6.58 real-data end-to-end validation.
+1. Continue Phase 6.56 mobile topic search and independent paged One-Liner/Previous-Year views; validate Flutter widget tests and release APK CI before merge.
+2. Keep Phase 6.55 merged code at MERGED_CODE_DATA_PENDING until migrations are safely applied, distinct author/reviewer secrets are configured, and source-backed candidate review is recorded.
+3. Build candidate Q&A topic-by-topic from [the permanent coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) and [per-concept ledger](QUESTION_BANK_CONTENT_COVERAGE.csv); prioritize concepts with no candidates. Update evidence/status counts only after confirming the actual database/review audit.
+4. Implement Phase 6.57 only from its planned existing learner-session/results/mastery requirements after Phase 6.56 acceptance.
+5. Keep Phase 6.58 blocked until approved official HTTPS/TLS access is restored, persisted official paper + matched answer-key data exists, migrations/secrets are verified and a real-data mobile end-to-end test passes.
+
+Read [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md) before work in every new chat; do not restart Phases 6.53–6.55.
 
 This document records the plan and constraints; it does not claim phases 6.53–6.58 or nationwide topic coverage have already been implemented.
