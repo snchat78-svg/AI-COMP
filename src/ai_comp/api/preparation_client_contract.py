@@ -262,9 +262,17 @@ class PreviousYearQuestionItem(ContractModel):
     concept_ids: list[str]
 
 
+class TopicPreviousPaperPaginationResponse(ContractModel):
+    limit: int = Field(ge=1)
+    offset: int = Field(ge=0)
+    returned: int = Field(ge=0)
+    total_count: int = Field(ge=0)
+    has_more: bool
+
+
 class PreviousYearQuestionsResponse(ContractModel):
     items: list[PreviousYearQuestionItem]
-    pagination: QuestionBankPaginationResponse
+    pagination: TopicPreviousPaperPaginationResponse
 
 
 class QuestionBankSubjectItem(ContractModel):
@@ -353,6 +361,7 @@ __all__ = [
     "QuestionBankReadinessResponse",
     "PreviousYearQuestionItem",
     "PreviousYearQuestionsResponse",
+    "TopicPreviousPaperPaginationResponse",
     "QuestionBankPaginationResponse",
     "QuestionBankSubjectItem",
     "QuestionBankSubjectsResponse",
