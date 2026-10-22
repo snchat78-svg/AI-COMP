@@ -45,6 +45,7 @@ from ai_comp.api.preparation_client_contract import (
     PreviousYearQuestionsResponse,
     TopicOneLinerItem,
     TopicOneLinerListResponse,
+    TopicOneLinerReviewResponse,
     TopicPracticeGenerationResponse,
     SubmittedTestResponse,
 )
@@ -1668,7 +1669,7 @@ def create_topic_one_liner(payload: SaveTopicOneLinerPayload, request: Request) 
     name="review_topic_one_liner",
     responses={
         **COMMON_API_ERROR_RESPONSES,
-        200: {"model": TopicOneLinerItem, "description": "Review decision and audit metadata for an existing one-liner."},
+        200: {"model": TopicOneLinerReviewResponse, "description": "Review decision and audit metadata for an existing one-liner."},
     },
 )
 def review_topic_one_liner(
@@ -1820,16 +1821,17 @@ def review_topic_one_liner(
             "created_at": updated[10],
             "updated_at": updated[11],
         }).model_dump(mode="json")
-        return _json_response(HTTPStatus.OK, {
+        response_payload = TopicOneLinerReviewResponse.model_validate({
             "item": item_payload,
             "review": {
                 "decision": payload.decision,
                 "reviewer_id": reviewer_id,
                 "review_note": payload.review_note,
-                "source_checked_at": audit[0].isoformat() if audit[0] is not None else None,
-                "created_at": audit[1].isoformat() if audit[1] is not None else None,
+                "source_checked_at": audit[0],
+                "created_at": audit[1],
             },
-        })
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, response_payload)
     except Exception:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
