@@ -232,9 +232,6 @@ class PostgresVerifiedHistoryQuestionRepository:
                             AND lower(btrim(subject_concept.subject)) = lower(%s)
                       )
                   )
-                  AND (%s::TEXT IS NULL OR e.exam_id = %s)
-                  AND (%s::INTEGER IS NULL OR a.year = %s)
-                  AND (%s::TEXT IS NULL OR lower(btrim(a.shift)) = lower(%s))
             ),
             deduplicated AS (
                 SELECT DISTINCT ON (pool_identity)
@@ -253,8 +250,13 @@ class PostgresVerifiedHistoryQuestionRepository:
                     verified_appearance_count,
                     pool_identity
                 FROM eligible
-                WHERE cardinality(%s::TEXT[]) = 0
-                   OR concept_ids && %s::TEXT[]
+                WHERE (%s::TEXT IS NULL OR exam_id = %s)
+                  AND (%s::INTEGER IS NULL OR exam_year = %s)
+                  AND (%s::TEXT IS NULL OR lower(btrim(exam_shift)) = lower(%s))
+                  AND (
+                      cardinality(%s::TEXT[]) = 0
+                      OR concept_ids && %s::TEXT[]
+                  )
                 ORDER BY pool_identity, exam_year DESC, exam_shift NULLS LAST,
                          exam_question_number, question_id
             ),
