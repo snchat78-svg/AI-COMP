@@ -271,14 +271,22 @@ class PostgresPreparationContextProvider:
             if callable(close):
                 close()
 
-    def get_question_bank_readiness(self) -> dict[str, int | bool | str]:
-        """Return safe aggregate counts from the same bounded eligible pool as tests."""
+    def get_question_bank_readiness(
+        self,
+        subject_id: str | None = None,
+    ) -> dict[str, int | bool | str | None]:
+        """Return bounded pool counts, optionally scoped to the learner-selected subject."""
+        if subject_id is not None and (
+            not isinstance(subject_id, str) or not subject_id.strip() or subject_id != subject_id.strip()
+        ):
+            raise ValueError("subject_id must be a non-empty trimmed string when supplied")
         connection = self._connection_factory()
         try:
             with connection.transaction():
                 stored_questions = self._load_combined_question_pool(
                     connection,
                     concept_ids=(),
+                    subject_id=subject_id,
                 )
             ranked_questions, candidates = self._rank_accepted_questions(
                 stored_questions,
@@ -296,6 +304,7 @@ class PostgresPreparationContextProvider:
                 "accepted_generated_question_count": generated_count,
                 "practice_test_available": bool(candidates),
                 "source_counts_scope": "configured_eligible_pool",
+                "subject_id": subject_id,
             }
         finally:
             close = getattr(connection, "close", None)
