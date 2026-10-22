@@ -192,7 +192,7 @@ class PostgresVerifiedHistoryQuestionRepository:
                         AND paper_appearance_source.source_url = qv.source_url
                   )
                   AND (
-                      %s IS NULL OR EXISTS (
+                      %s::TEXT IS NULL OR EXISTS (
                           SELECT 1
                           FROM question_concepts AS subject_question_concept
                           JOIN concepts AS subject_concept
