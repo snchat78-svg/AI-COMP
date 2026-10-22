@@ -40,6 +40,26 @@ class ApiException implements Exception {
   String toString() => '$code: $message';
 }
 
+class QuestionBankSubject {
+  const QuestionBankSubject({
+    required this.subjectId,
+    required this.subjectLabel,
+    required this.conceptCount,
+  });
+
+  final String subjectId;
+  final String subjectLabel;
+  final int conceptCount;
+
+  factory QuestionBankSubject.fromJson(Map<String, dynamic> json) {
+    return QuestionBankSubject(
+      subjectId: _string(json['subject_id']),
+      subjectLabel: _string(json['subject_label']),
+      conceptCount: _integer(json['concept_count'], 0),
+    );
+  }
+}
+
 class QuestionBankReadiness {
   const QuestionBankReadiness({
     required this.questionPoolLimit,
@@ -48,6 +68,7 @@ class QuestionBankReadiness {
     required this.acceptedGeneratedQuestionCount,
     required this.practiceTestAvailable,
     required this.sourceCountsScope,
+    this.subjectId,
   });
 
   final int questionPoolLimit;
@@ -56,6 +77,7 @@ class QuestionBankReadiness {
   final int acceptedGeneratedQuestionCount;
   final bool practiceTestAvailable;
   final String sourceCountsScope;
+  final String? subjectId;
 
   factory QuestionBankReadiness.fromJson(Map<String, dynamic> json) {
     return QuestionBankReadiness(
@@ -74,6 +96,7 @@ class QuestionBankReadiness {
         json['source_counts_scope'],
         'configured_eligible_pool',
       ),
+      subjectId: _optionalString(json['subject_id']),
     );
   }
 }
