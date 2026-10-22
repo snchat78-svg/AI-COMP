@@ -121,10 +121,26 @@ def test_full_phase4_postgres_round_trip():
         migrations_dir = Path(__file__).resolve().parents[1] / "database" / "migrations"
         migration_runner = MigrationRunner(migrations_dir)
         expected_versions = tuple(item.version for item in migration_runner.discover())
-        assert expected_versions == tuple(f"{version:04d}" for version in range(1, 20))
+        assert expected_versions == tuple(f"{version:04d}" for version in range(1, 21))
         # Earlier integration tests may already have applied the migrations.
         assert set(migration_runner.apply(connection)).issubset(expected_versions)
         assert migration_runner.apply(connection) == ()
+
+        # The starter topic catalogue makes the browse UI navigable, but the
+        # seeds deliberately do not imply official-syllabus or factual coverage.
+        catalogue = connection.execute(
+            """
+            SELECT COUNT(*), COUNT(DISTINCT subject)
+            FROM concepts
+            WHERE concept_id LIKE 'catalog.%'
+            """
+        ).fetchone()
+        assert int(catalogue[0]) >= 300
+        assert int(catalogue[1]) == 14
+        assert connection.execute(
+            "SELECT 1 FROM concepts WHERE concept_id = %s",
+            ("catalog.rajasthan_geography_rivers_and_drainage_luni_river",),
+        ).fetchone() is not None
 
         registry = PostgresRegistryRepository(connection)
         registry.save_body(
