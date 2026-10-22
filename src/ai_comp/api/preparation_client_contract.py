@@ -238,6 +238,28 @@ class AnswerReviewResponse(ContractModel):
     questions: list[AnswerReviewQuestionResponse]
 
 
+class PreviousYearQuestionItem(ContractModel):
+    question_id: str
+    stem: str
+    options: list[QuestionOptionResponse]
+    correct_option_key: str
+    explanation: str
+    exam_name: str
+    exam_id: str
+    exam_year: int = Field(ge=1900)
+    exam_shift: str | None
+    exam_question_number: int = Field(ge=1)
+    source_url: str
+    answer_key_source_url: str
+    verified_appearance_count: int = Field(ge=1)
+    concept_ids: list[str]
+
+
+class PreviousYearQuestionsResponse(ContractModel):
+    items: list[PreviousYearQuestionItem]
+    pagination: QuestionBankPaginationResponse
+
+
 class QuestionBankPaginationResponse(ContractModel):
     limit: int = Field(ge=1)
     offset: int = Field(ge=0)
@@ -329,6 +351,8 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "PreviousYearQuestionItem",
+    "PreviousYearQuestionsResponse",
     "QuestionBankPaginationResponse",
     "QuestionBankSubjectItem",
     "QuestionBankSubjectsResponse",
