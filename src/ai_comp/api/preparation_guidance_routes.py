@@ -1872,6 +1872,10 @@ def list_verified_previous_paper_questions(
     request: Request,
     concept_id: str,
     subject_id: str | None = None,
+    exam_id: str | None = None,
+    exam_year: int | None = None,
+    exam_shift: str | None = None,
+    source_domain: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> Response:
@@ -1888,6 +1892,33 @@ def list_verified_previous_paper_questions(
     ):
         return _json_response(HTTPStatus.BAD_REQUEST, {
             "error": {"code": "INVALID_SUBJECT", "message": "subject_id must be trimmed and 1-200 characters."}
+        })
+    if exam_id is not None and (
+        not exam_id.strip() or exam_id != exam_id.strip() or len(exam_id) > 128
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_EXAM_ID", "message": "exam_id must be trimmed and 1-128 characters."}
+        })
+    if exam_year is not None and not 1900 <= exam_year <= 2200:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_EXAM_YEAR", "message": "exam_year must be between 1900 and 2200."}
+        })
+    if exam_shift is not None and (
+        not exam_shift.strip() or exam_shift != exam_shift.strip() or len(exam_shift) > 100
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_EXAM_SHIFT", "message": "exam_shift must be trimmed and 1-100 characters."}
+        })
+    if source_domain is not None and (
+        not source_domain.strip()
+        or source_domain != source_domain.strip()
+        or len(source_domain) > 253
+        or any(not (ch.isalnum() or ch in ".-") for ch in source_domain)
+        or source_domain.startswith(".")
+        or source_domain.endswith(".")
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SOURCE_DOMAIN", "message": "source_domain must be a plain domain name."}
         })
     if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
         return _json_response(HTTPStatus.BAD_REQUEST, {
@@ -1906,13 +1937,17 @@ def list_verified_previous_paper_questions(
         from ai_comp.database.postgres_verified_history_question import PostgresVerifiedHistoryQuestionRepository
 
         connection = connection_factory()
-        rows = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
-            limit=limit + 1,
+        result_page = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible_page(
+            limit=limit,
             offset=offset,
             concept_ids=(concept_id,),
             subject_id=subject_id,
+            exam_id=exam_id,
+            exam_year=exam_year,
+            exam_shift=exam_shift,
+            source_domain=source_domain,
         )
-        page = rows[:limit]
+        page = result_page.items
         payload = PreviousYearQuestionsResponse.model_validate({
             "items": [
                 {
@@ -1937,7 +1972,8 @@ def list_verified_previous_paper_questions(
                 "limit": limit,
                 "offset": offset,
                 "returned": len(page),
-                "has_more": len(rows) > limit,
+                "total_count": result_page.total_count,
+                "has_more": offset + len(page) < result_page.total_count,
             },
         }).model_dump(mode="json")
         return _json_response(HTTPStatus.OK, payload)

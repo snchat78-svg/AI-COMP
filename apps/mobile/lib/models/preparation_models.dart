@@ -174,6 +174,32 @@ class TopicOneLinerItem {
   }
 }
 
+class QuestionBankPageInfo {
+  const QuestionBankPageInfo({
+    required this.limit,
+    required this.offset,
+    required this.returned,
+    required this.totalCount,
+    required this.hasMore,
+  });
+
+  final int limit;
+  final int offset;
+  final int returned;
+  final int totalCount;
+  final bool hasMore;
+
+  factory QuestionBankPageInfo.fromJson(Map<String, dynamic> json) {
+    return QuestionBankPageInfo(
+      limit: _integer(json['limit'], 1),
+      offset: _integer(json['offset'], 0),
+      returned: _integer(json['returned'], 0),
+      totalCount: _integer(json['total_count'], 0),
+      hasMore: json['has_more'] == true,
+    );
+  }
+}
+
 class PreviousYearQuestion {
   const PreviousYearQuestion({
     required this.questionId,
@@ -239,6 +265,35 @@ class PreviousYearQuestion {
       answerKeySourceUrl: _string(json['answer_key_source_url']),
       verifiedAppearanceCount: _integer(json['verified_appearance_count'], 0),
       conceptIds: _stringList(json['concept_ids']),
+    );
+  }
+}
+
+class PreviousYearQuestionPage {
+  const PreviousYearQuestionPage({
+    required this.items,
+    required this.pagination,
+  });
+
+  final List<PreviousYearQuestion> items;
+  final QuestionBankPageInfo pagination;
+
+  factory PreviousYearQuestionPage.fromJson(Map<String, dynamic> json) {
+    final raw = json['items'];
+    final items = raw is List
+        ? raw
+            .whereType<Map<String, dynamic>>()
+            .map(PreviousYearQuestion.fromJson)
+            .toList(growable: false)
+        : const <PreviousYearQuestion>[];
+    final paginationJson = json['pagination'];
+    return PreviousYearQuestionPage(
+      items: items,
+      pagination: QuestionBankPageInfo.fromJson(
+        paginationJson is Map<String, dynamic>
+            ? paginationJson
+            : const <String, dynamic>{},
+      ),
     );
   }
 }

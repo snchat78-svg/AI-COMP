@@ -1,6 +1,6 @@
 # Phase 6.53–6.58 — Topic-wise Question Bank and Complete Preparation
 
-**Status:** Phase 6.53 application code is implemented on PR #36 plus follow-up fix PR #37; merge/CI and live-data setup are tracked separately. The code provides the starter topic catalogue, Q&A/previous-paper APIs, subject-scoped alternative MCQ generation, mobile topic browsing, and focused tests. This does **not** mean the question content is complete: one-liners and verified historical questions still depend on reviewed/source-backed records, and the starter topic list is not a substitute for each exam's official syllabus.  
+**Phase/status source of truth:** [AI-COMP Phase Registry](PHASE_REGISTRY.md). Phase 6.53 application code is merged (PR #36 plus follow-up PR #39); the repository CI checks passed on the PR #39 head before merge. This does **not** mean the question content is complete: one-liners and verified historical questions still depend on reviewed/source-backed records, controlled migration application, and server-side secret configuration. The starter topic list is not a substitute for each exam's official syllabus.  
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
 **Primary outcome:** A learner can choose an exam profile → subject → topic/subtopic and see source-backed previous-exam questions, important one-liners, practice and revision material for that topic.
 
@@ -44,6 +44,8 @@ Before adding tables, APIs, services or mobile models, search the repository and
 **Exit tests:** taxonomy parent/child and exam-profile validation; deterministic/idempotent seed tests; old concepts/questions remain readable; coverage report identifies unknown/unmapped items.
 
 ### Phase 6.54 — Topic-wise Previous Exam Question API
+
+**Implementation details:** See [Phase 6.54 Topic Previous-Paper API](PHASE_6_54_TOPIC_PREVIOUS_PAPER_API.md) and the [Phase Registry](PHASE_REGISTRY.md) for current status. Extend the existing route/repository; do not rebuild either.
 
 **Deliver:** An authenticated, paginated topic-content API/query that returns eligible historic questions for a selected canonical topic/subtopic, with exam/year/shift/source filters and topic-level counts.
 

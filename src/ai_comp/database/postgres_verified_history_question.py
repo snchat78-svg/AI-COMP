@@ -8,6 +8,7 @@ the same appearance is already recorded as verified history.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from typing import Any, Sequence
 
 from ai_comp.database.repository import RepositoryError
@@ -20,20 +21,36 @@ from ai_comp.domain.material_generation import (
 )
 
 
+@dataclass(frozen=True)
+class VerifiedHistoryQuestionPage:
+    """Bounded history page plus exact count of eligible canonical questions."""
+
+    items: tuple[GeneratedMCQ, ...]
+    total_count: int
+
+    def __post_init__(self) -> None:
+        if self.total_count < 0:
+            raise ValueError("total_count must be non-negative")
+
+
 class PostgresVerifiedHistoryQuestionRepository:
     """Builds an eligible practice read model from verified exam appearances."""
 
     def __init__(self, connection: Any) -> None:
         self._connection = connection
 
-    def list_eligible(
+    def _query_eligible_page(
         self,
         *,
         limit: int = 5000,
         concept_ids: Sequence[str] | None = None,
         subject_id: str | None = None,
+        exam_id: str | None = None,
+        exam_year: int | None = None,
+        exam_shift: str | None = None,
+        source_domain: str | None = None,
         offset: int = 0,
-    ) -> tuple[GeneratedMCQ, ...]:
+    ) -> VerifiedHistoryQuestionPage:
         """Return one representative per active master/exact question identity.
 
         Historical records are never inserted into the AI-generated question
@@ -58,6 +75,28 @@ class PostgresVerifiedHistoryQuestionRepository:
             not isinstance(subject_id, str) or not subject_id.strip() or subject_id != subject_id.strip()
         ):
             raise ValueError("subject_id must be a non-empty trimmed string when supplied")
+        if exam_id is not None and (
+            not isinstance(exam_id, str) or not exam_id.strip() or exam_id != exam_id.strip()
+        ):
+            raise ValueError("exam_id must be a non-empty trimmed string when supplied")
+        if exam_year is not None and (
+            isinstance(exam_year, bool) or not isinstance(exam_year, int) or not 1900 <= exam_year <= 2200
+        ):
+            raise ValueError("exam_year must be between 1900 and 2200")
+        if exam_shift is not None and (
+            not isinstance(exam_shift, str) or not exam_shift.strip() or exam_shift != exam_shift.strip()
+        ):
+            raise ValueError("exam_shift must be a non-empty trimmed string when supplied")
+        if source_domain is not None and (
+            not isinstance(source_domain, str)
+            or not source_domain.strip()
+            or source_domain != source_domain.strip()
+            or len(source_domain) > 253
+            or any(not (ch.isalnum() or ch in ".-") for ch in source_domain)
+            or source_domain.startswith(".")
+            or source_domain.endswith(".")
+        ):
+            raise ValueError("source_domain must be a plain domain name when supplied")
 
         query = """
             WITH option_sets AS (
@@ -204,38 +243,138 @@ class PostgresVerifiedHistoryQuestionRepository:
                             AND lower(btrim(subject_concept.subject)) = lower(%s)
                       )
                   )
+            ),
+            deduplicated AS (
+                SELECT DISTINCT ON (pool_identity)
+                    question_id,
+                    stem,
+                    options,
+                    correct_answer,
+                    exam_id,
+                    exam_name,
+                    exam_year,
+                    exam_shift,
+                    exam_question_number,
+                    question_source_url,
+                    answer_key_source_url,
+                    concept_ids,
+                    verified_appearance_count,
+                    pool_identity
+                FROM eligible
+                WHERE (%s::TEXT IS NULL OR exam_id = %s)
+                  AND (%s::INTEGER IS NULL OR exam_year = %s)
+                  AND (%s::TEXT IS NULL OR lower(btrim(exam_shift)) = lower(%s))
+                  AND (
+                      %s::TEXT IS NULL OR lower(split_part(split_part(question_source_url, '://', 2), '/', 1)) = lower(%s)
+                  )
+                  AND (
+                      cardinality(%s::TEXT[]) = 0
+                      OR concept_ids && %s::TEXT[]
+                  )
+                ORDER BY pool_identity, exam_year DESC, exam_shift NULLS LAST,
+                         exam_question_number, question_id
+            ),
+            totals AS (
+                SELECT COUNT(*)::INTEGER AS total_count FROM deduplicated
+            ),
+            page AS (
+                SELECT * FROM deduplicated
+                ORDER BY exam_year DESC, exam_shift NULLS LAST,
+                         exam_question_number, question_id
+                LIMIT %s OFFSET %s
             )
-            SELECT DISTINCT ON (pool_identity)
-                question_id,
-                stem,
-                options,
-                correct_answer,
-                exam_id,
-                exam_name,
-                exam_year,
-                exam_shift,
-                exam_question_number,
-                question_source_url,
-                answer_key_source_url,
-                concept_ids,
-                verified_appearance_count
-            FROM eligible
-            WHERE cardinality(%s::TEXT[]) = 0
-               OR concept_ids && %s::TEXT[]
-            ORDER BY pool_identity, exam_year DESC, exam_shift NULLS LAST,
-                     exam_question_number, question_id
-            LIMIT %s OFFSET %s
+            SELECT
+                page.question_id,
+                page.stem,
+                page.options,
+                page.correct_answer,
+                page.exam_id,
+                page.exam_name,
+                page.exam_year,
+                page.exam_shift,
+                page.exam_question_number,
+                page.question_source_url,
+                page.answer_key_source_url,
+                page.concept_ids,
+                page.verified_appearance_count,
+                totals.total_count
+            FROM totals
+            LEFT JOIN page ON TRUE
+            ORDER BY page.exam_year DESC NULLS LAST, page.exam_shift NULLS LAST,
+                     page.exam_question_number NULLS LAST, page.question_id NULLS LAST
         """
+        params = (
+            subject_id, subject_id,
+            exam_id, exam_id,
+            exam_year, exam_year,
+            exam_shift, exam_shift,
+            source_domain, source_domain,
+            list(scoped_ids), list(scoped_ids),
+            limit, offset,
+        )
         try:
-            rows = self._connection.execute(
-                query,
-                (subject_id, subject_id, list(scoped_ids), list(scoped_ids), limit, offset),
-            ).fetchall()
-            return tuple(self._from_row(row) for row in rows)
+            rows = self._connection.execute(query, params).fetchall()
+            if not rows:
+                return VerifiedHistoryQuestionPage(items=(), total_count=0)
+            total_count = int(rows[0][13])
+            items = tuple(
+                self._from_row(row[:13])
+                for row in rows
+                if row[0] is not None
+            )
+            return VerifiedHistoryQuestionPage(items=items, total_count=total_count)
         except ValueError:
             raise
         except Exception as exc:
             raise RepositoryError("failed to load verified historical practice questions") from exc
+
+    def list_eligible(
+        self,
+        *,
+        limit: int = 5000,
+        concept_ids: Sequence[str] | None = None,
+        subject_id: str | None = None,
+        exam_id: str | None = None,
+        exam_year: int | None = None,
+        exam_shift: str | None = None,
+        source_domain: str | None = None,
+        offset: int = 0,
+    ) -> tuple[GeneratedMCQ, ...]:
+        """Return eligible historical question items; preserves existing callers."""
+        return self._query_eligible_page(
+            limit=limit,
+            concept_ids=concept_ids,
+            subject_id=subject_id,
+            exam_id=exam_id,
+            exam_year=exam_year,
+            exam_shift=exam_shift,
+            source_domain=source_domain,
+            offset=offset,
+        ).items
+
+    def list_eligible_page(
+        self,
+        *,
+        limit: int = 50,
+        concept_ids: Sequence[str] | None = None,
+        subject_id: str | None = None,
+        exam_id: str | None = None,
+        exam_year: int | None = None,
+        exam_shift: str | None = None,
+        source_domain: str | None = None,
+        offset: int = 0,
+    ) -> VerifiedHistoryQuestionPage:
+        """Return a topic-scoped page and exact eligible count after trust gates."""
+        return self._query_eligible_page(
+            limit=limit,
+            concept_ids=concept_ids,
+            subject_id=subject_id,
+            exam_id=exam_id,
+            exam_year=exam_year,
+            exam_shift=exam_shift,
+            source_domain=source_domain,
+            offset=offset,
+        )
 
     @classmethod
     def _from_row(cls, row: Sequence[object]) -> GeneratedMCQ:
@@ -326,4 +465,4 @@ class PostgresVerifiedHistoryQuestionRepository:
         )
 
 
-__all__ = ["PostgresVerifiedHistoryQuestionRepository"]
+__all__ = ["PostgresVerifiedHistoryQuestionRepository", "VerifiedHistoryQuestionPage"]

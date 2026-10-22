@@ -302,9 +302,13 @@ class AiCompApiClient {
         .toList(growable: false);
   }
 
-  Future<List<PreviousYearQuestion>> getPreviousYearQuestions(
+  Future<PreviousYearQuestionPage> getPreviousYearQuestionPage(
     String conceptId, {
     String? subjectId,
+    String? examId,
+    int? examYear,
+    String? examShift,
+    String? sourceDomain,
     int limit = 100,
     int offset = 0,
   }) async {
@@ -316,17 +320,47 @@ class AiCompApiClient {
     if (subjectId != null && subjectId.trim().isNotEmpty) {
       query['subject_id'] = subjectId.trim();
     }
+    if (examId != null && examId.trim().isNotEmpty) {
+      query['exam_id'] = examId.trim();
+    }
+    if (examYear != null) {
+      query['exam_year'] = '$examYear';
+    }
+    if (examShift != null && examShift.trim().isNotEmpty) {
+      query['exam_shift'] = examShift.trim();
+    }
+    if (sourceDomain != null && sourceDomain.trim().isNotEmpty) {
+      query['source_domain'] = sourceDomain.trim();
+    }
     final json = await _send(
       'GET',
       '$_learnerPath/question-bank/previous-papers',
       query: query,
     );
-    final raw = json['items'];
-    if (raw is! List) return const [];
-    return raw
-        .whereType<Map<String, dynamic>>()
-        .map(PreviousYearQuestion.fromJson)
-        .toList(growable: false);
+    return PreviousYearQuestionPage.fromJson(json);
+  }
+
+  Future<List<PreviousYearQuestion>> getPreviousYearQuestions(
+    String conceptId, {
+    String? subjectId,
+    String? examId,
+    int? examYear,
+    String? examShift,
+    String? sourceDomain,
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    final page = await getPreviousYearQuestionPage(
+      conceptId,
+      subjectId: subjectId,
+      examId: examId,
+      examYear: examYear,
+      examShift: examShift,
+      sourceDomain: sourceDomain,
+      limit: limit,
+      offset: offset,
+    );
+    return page.items;
   }
 
   Future<TopicPracticeGenerationResult> generateSubjectPractice({
