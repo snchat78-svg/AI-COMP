@@ -319,6 +319,19 @@ class TopicOneLinerListResponse(ContractModel):
     pagination: QuestionBankPaginationResponse
 
 
+class TopicOneLinerReviewAudit(ContractModel):
+    decision: Literal["VERIFIED", "REJECTED", "NEEDS_REVIEW"]
+    reviewer_id: str
+    review_note: str
+    source_checked_at: datetime | None
+    created_at: datetime | None
+
+
+class TopicOneLinerReviewResponse(ContractModel):
+    item: TopicOneLinerItem
+    review: TopicOneLinerReviewAudit
+
+
 class TopicPracticeGenerationResponse(ContractModel):
     learner_id: str
     subject_id: str
