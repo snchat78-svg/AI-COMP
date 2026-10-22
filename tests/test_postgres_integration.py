@@ -139,7 +139,7 @@ def test_full_phase4_postgres_round_trip():
         assert int(catalogue[1]) == 14
         assert connection.execute(
             "SELECT 1 FROM concepts WHERE concept_id = %s",
-            ("catalog.rajasthan_geography_rivers_luni_river",),
+            ("catalog.rajasthan_geography_rivers_and_drainage_luni_river",),
         ).fetchone() is not None
 
         registry = PostgresRegistryRepository(connection)
