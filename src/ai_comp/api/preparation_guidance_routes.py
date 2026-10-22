@@ -25,6 +25,7 @@ from ai_comp.application.preparation_guidance_http import (
     PreparationGuidanceHTTPAdapter,
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
+from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
 from ai_comp.api.preparation_client_contract import (
     AdaptivePreparationRecommendationResponse,
     AnswerReviewResponse,
@@ -36,6 +37,9 @@ from ai_comp.api.preparation_client_contract import (
     PreparationTestRequestResponse,
     PreparationTestSessionResponse,
     QuestionBankReadinessResponse,
+    QuestionBankSubjectsResponse,
+    QuestionBankTopicsResponse,
+    TopicOneLinerListResponse,
     SubmittedTestResponse,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
@@ -1476,6 +1480,218 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
             }
         })
     return _json_response(HTTPStatus.OK, payload)
+
+
+@router.get(
+    "/{learner_id}/question-bank/subjects",
+    name="list_question_bank_subjects",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": QuestionBankSubjectsResponse, "description": "Subjects already represented by canonical concepts."},
+    },
+)
+def list_question_bank_subjects(learner_id: str, request: Request) -> Response:
+    """List available subject labels from the existing concept taxonomy."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        rows = PostgresTopicQuestionBankRepository(connection).list_subjects(limit=100, offset=0)
+        payload = QuestionBankSubjectsResponse.model_validate({
+            "items": [
+                {"subject_id": subject, "subject_label": subject, "concept_count": count}
+                for subject, count in rows
+            ]
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_SUBJECTS_UNAVAILABLE",
+                "message": "Question-bank subjects could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/topics",
+    name="list_question_bank_topics",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": QuestionBankTopicsResponse, "description": "Bounded topic/subtopic list for a selected subject."},
+    },
+)
+def list_question_bank_topics(
+    learner_id: str,
+    request: Request,
+    subject: str,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """List canonical topic concepts for one selected subject."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not subject.strip() or subject != subject.strip() or len(subject) > 200:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject must be trimmed and 1-200 characters."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        repository = PostgresTopicQuestionBankRepository(connection)
+        rows = repository.list_topics(subject, limit=limit + 1, offset=offset)
+        selected = rows[:limit]
+        payload = QuestionBankTopicsResponse.model_validate({
+            "items": [
+                {
+                    "concept_id": item.concept_id,
+                    "label": item.label,
+                    "subject": item.subject,
+                    "topic": item.topic,
+                    "subtopic": item.subtopic,
+                    "verified_one_liner_count": item.verified_one_liner_count,
+                }
+                for item in selected
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(selected),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_TOPICS_UNAVAILABLE",
+                "message": "Topics for the selected subject could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/one-liners",
+    name="list_topic_one_liners",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": TopicOneLinerListResponse, "description": "Source-reviewed direct question-and-answer one-liners for one canonical topic."},
+    },
+)
+def list_topic_one_liners(
+    learner_id: str,
+    request: Request,
+    concept_id: str,
+    language_code: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """List only verified one-liners; Q&A are distinct from historical MCQs."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not concept_id.strip() or concept_id != concept_id.strip() or len(concept_id) > 128:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_CONCEPT_ID", "message": "concept_id must be trimmed and 1-128 characters."}
+        })
+    if language_code is not None and (
+        not language_code.strip() or language_code != language_code.strip() or len(language_code) > 20
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_LANGUAGE_CODE", "message": "language_code must be a trimmed language code."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        repository = PostgresTopicQuestionBankRepository(connection)
+        rows = repository.list_one_liners(
+            concept_id,
+            limit=limit + 1,
+            offset=offset,
+            verified_only=True,
+            language_code=language_code,
+        )
+        selected = rows[:limit]
+        payload = TopicOneLinerListResponse.model_validate({
+            "items": [
+                {
+                    "one_liner_id": item.one_liner_id,
+                    "concept_id": item.concept_id,
+                    "question_text": item.question_text,
+                    "answer_text": item.answer_text,
+                    "language_code": item.language_code,
+                    "source_url": item.source_url,
+                    "source_evidence": item.source_evidence,
+                    "verification_status": item.verification_status.value,
+                    "importance_score": item.importance_score,
+                    "reviewed_at": item.reviewed_at,
+                    "created_at": item.created_at,
+                    "updated_at": item.updated_at,
+                }
+                for item in selected
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(selected),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_ONE_LINERS_UNAVAILABLE",
+                "message": "Verified one-liners for this topic could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")
