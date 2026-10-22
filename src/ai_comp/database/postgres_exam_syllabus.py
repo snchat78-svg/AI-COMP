@@ -11,6 +11,7 @@ class PostgresExamSyllabusRepository:
 
     _VERIFIED_MAPPING_SQL = """
         d.source_status = 'VERIFIED'
+        AND d.syllabus_inventory_complete = TRUE
         AND m.applicability_status IN ('IN_SCOPE', 'OUT_OF_SCOPE')
         AND m.reviewed_at IS NOT NULL
         AND m.reviewed_by IS NOT NULL
@@ -27,7 +28,7 @@ class PostgresExamSyllabusRepository:
             raise ValueError("limit must be between 1 and 100")
         query = f"""
             SELECT e.exam_id, e.name, d.syllabus_id, d.source_title, d.source_url,
-                   d.notification_number, d.source_status,
+                   d.notification_number, d.source_status, d.syllabus_inventory_complete,
                    COUNT(DISTINCT c.concept_id)::INTEGER AS concept_count,
                    COUNT(DISTINCT c.concept_id) FILTER (
                        WHERE m.applicability_status = 'IN_SCOPE'
@@ -56,12 +57,18 @@ class PostgresExamSyllabusRepository:
 
         profiles: list[dict[str, object]] = []
         for row in rows:
-            total = int(row[7] or 0)
-            mapped = int(row[8] or 0)
-            excluded = int(row[9] or 0)
-            unmapped = max(0, total - mapped - excluded)
             source_status = str(row[6])
-            selection_ready = source_status == "VERIFIED" and total > 0 and unmapped == 0
+            inventory_complete = row[7] is True
+            total = int(row[8] or 0)
+            mapped = int(row[9] or 0)
+            excluded = int(row[10] or 0)
+            unmapped = max(0, total - mapped - excluded)
+            selection_ready = (
+                source_status == "VERIFIED"
+                and inventory_complete
+                and total > 0
+                and unmapped == 0
+            )
             profiles.append({
                 "exam_id": str(row[0]),
                 "exam_name": str(row[1]),
@@ -70,6 +77,7 @@ class PostgresExamSyllabusRepository:
                 "source_url": str(row[4]),
                 "notification_number": str(row[5] or ""),
                 "source_status": source_status,
+                "syllabus_inventory_complete": inventory_complete,
                 "concept_count": total,
                 "mapped_concept_count": mapped,
                 "excluded_concept_count": excluded,
