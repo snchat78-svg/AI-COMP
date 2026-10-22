@@ -348,6 +348,7 @@ void main() {
               'source_url': 'https://rssb.rajasthan.gov.in/notice.pdf',
               'notification_number': '09/2026',
               'source_status': 'REVIEW_PENDING',
+              'syllabus_inventory_complete': false,
               'concept_count': 340,
               'mapped_concept_count': 0,
               'excluded_concept_count': 0,
@@ -376,6 +377,7 @@ void main() {
     expect(received.headers['authorization'], 'Bearer test-token');
     expect(profiles.single.sourceStatus, 'REVIEW_PENDING');
     expect(profiles.single.unmappedConceptCount, 340);
+    expect(profiles.single.syllabusInventoryComplete, isFalse);
     expect(profiles.single.selectionReady, isFalse);
   });
 
