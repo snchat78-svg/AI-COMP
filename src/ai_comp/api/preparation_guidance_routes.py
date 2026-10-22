@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import json
 import logging
 import os
@@ -51,6 +52,7 @@ from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
 
 
 router = APIRouter(prefix="/api/v1/learners", tags=["preparation-guidance"])
+content_admin_router = APIRouter(prefix="/api/v1/admin/question-bank", tags=["question-bank-authoring"])
 
 JSON_SECURITY_HEADERS = {
     "Content-Type": "application/json; charset=utf-8",
@@ -190,6 +192,42 @@ class PreparationRequestPayload(BaseModel):
             exam_id=self.exam_id,
             subject_id=self.subject_id,
         )
+
+
+class SaveTopicOneLinerPayload(BaseModel):
+    """Direct content-editor entry for a topic-linked short Q&A item."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    concept_id: str = Field(min_length=1, max_length=128)
+    question_text: str = Field(min_length=1, max_length=1000)
+    answer_text: str = Field(min_length=1, max_length=2000)
+    language_code: str = Field(default="hi", min_length=2, max_length=20)
+    source_url: str | None = Field(default=None, max_length=2000)
+    source_evidence: str = Field(default="", max_length=4000)
+    verification_status: Literal["DRAFT", "NEEDS_REVIEW", "VERIFIED", "REJECTED"] = "NEEDS_REVIEW"
+    importance_score: float = Field(default=0.5, ge=0.0, le=1.0)
+
+    @field_validator("concept_id", "question_text", "answer_text", "language_code")
+    @classmethod
+    def required_text_must_be_trimmed(cls, value: str) -> str:
+        if not value.strip() or value != value.strip():
+            raise ValueError("required text fields must be non-empty and trimmed")
+        return value
+
+    @field_validator("source_url")
+    @classmethod
+    def source_must_be_https(cls, value: str | None) -> str | None:
+        if value is not None and (not value.startswith("https://") or value != value.strip()):
+            raise ValueError("source_url must be an absolute HTTPS URL")
+        return value
+
+    @model_validator(mode="after")
+    def verified_items_need_source_evidence(self):
+        if self.verification_status == "VERIFIED":
+            if self.source_url is None or not self.source_evidence.strip():
+                raise ValueError("VERIFIED one-liners require an HTTPS source URL and source evidence")
+        return self
 
 
 class GenerateTopicPracticePayload(BaseModel):
@@ -1515,6 +1553,96 @@ def get_question_bank_readiness(
             }
         })
     return _json_response(HTTPStatus.OK, payload)
+
+
+@content_admin_router.post(
+    "/one-liners",
+    status_code=201,
+    name="create_topic_one_liner",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        201: {"model": TopicOneLinerItem, "description": "Created or deduplicated topic-linked one-liner Q&A."},
+    },
+)
+def create_topic_one_liner(payload: SaveTopicOneLinerPayload, request: Request) -> Response:
+    """Create/update a one-liner via a separate server-side content-admin token.
+
+    The learner Firebase token is not a content-editing permission. Configure
+    AI_COMP_CONTENT_ADMIN_TOKEN as a secret on the API host; never embed it in
+    the Android app or commit it to the repository.
+    """
+    configured_token = os.environ.get("AI_COMP_CONTENT_ADMIN_TOKEN", "").strip()
+    if not configured_token:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_CONTENT_AUTHORING_NOT_CONFIGURED",
+                "message": "Content authoring is not configured on this server.",
+            }
+        })
+    supplied_token = request.headers.get("X-AI-COMP-Content-Admin-Token", "")
+    if not supplied_token or not hmac.compare_digest(supplied_token, configured_token):
+        return _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {
+                "code": "CONTENT_ADMIN_AUTHENTICATION_REQUIRED",
+                "message": "Authorized content-editor credentials are required.",
+            }
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    from datetime import datetime, timezone
+    from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
+    from ai_comp.domain.topic_question_bank import OneLinerVerificationStatus, TopicOneLinerQA
+
+    status = OneLinerVerificationStatus(payload.verification_status)
+    item = TopicOneLinerQA(
+        one_liner_id=uuid4().hex,
+        concept_id=payload.concept_id,
+        question_text=payload.question_text,
+        answer_text=payload.answer_text,
+        language_code=payload.language_code,
+        source_url=payload.source_url,
+        source_evidence=payload.source_evidence,
+        verification_status=status,
+        importance_score=payload.importance_score,
+        reviewed_at=datetime.now(timezone.utc) if status is OneLinerVerificationStatus.VERIFIED else None,
+    )
+    connection = None
+    try:
+        connection = connection_factory()
+        saved = PostgresTopicQuestionBankRepository(connection).save_one_liner(item)
+        response_payload = TopicOneLinerItem.model_validate({
+            "one_liner_id": saved.one_liner_id,
+            "concept_id": saved.concept_id,
+            "question_text": saved.question_text,
+            "answer_text": saved.answer_text,
+            "language_code": saved.language_code,
+            "source_url": saved.source_url,
+            "source_evidence": saved.source_evidence,
+            "verification_status": saved.verification_status.value,
+            "importance_score": saved.importance_score,
+            "reviewed_at": saved.reviewed_at,
+            "created_at": saved.created_at,
+            "updated_at": saved.updated_at,
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.CREATED, response_payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_ONE_LINER_SAVE_FAILED",
+                "message": "The one-liner could not be saved. Verify the concept exists and check server-side database diagnostics.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
 
 
 @router.get(
