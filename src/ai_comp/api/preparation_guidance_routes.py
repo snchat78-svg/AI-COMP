@@ -1777,11 +1777,12 @@ def list_verified_previous_paper_questions(
 
         connection = connection_factory()
         rows = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
-            limit=min(10000, limit + offset + 1),
+            limit=limit + 1,
+            offset=offset,
             concept_ids=(concept_id,),
             subject_id=subject_id,
         )
-        page = rows[offset : offset + limit]
+        page = rows[:limit]
         payload = PreviousYearQuestionsResponse.model_validate({
             "items": [
                 {
@@ -1806,7 +1807,7 @@ def list_verified_previous_paper_questions(
                 "limit": limit,
                 "offset": offset,
                 "returned": len(page),
-                "has_more": len(rows) > offset + limit,
+                "has_more": len(rows) > limit,
             },
         }).model_dump(mode="json")
         return _json_response(HTTPStatus.OK, payload)
