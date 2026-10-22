@@ -67,8 +67,10 @@ class TopicOneLinerQA:
 
     @property
     def content_hash(self) -> str:
-        normalized = " ".join(self.question_text.casefold().split())
-        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        normalized_question = " ".join(self.question_text.casefold().split())
+        normalized_answer = " ".join(self.answer_text.casefold().split())
+        payload = f"{normalized_question}\\n{normalized_answer}"
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 __all__ = [
