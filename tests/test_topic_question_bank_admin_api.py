@@ -286,12 +286,34 @@ def test_review_cannot_overwrite_already_verified_item(monkeypatch) -> None:
     response = client.post(
         "/api/v1/admin/question-bank/one-liners/one-liner-1/review",
         headers={"X-AI-COMP-Content-Review-Token": "configured-review-token"},
-        json={"decision": "REJECTED", "review_note": "Needs a content correction."},
+        json={"decision": "NEEDS_REVIEW", "review_note": "Needs source re-check."},
     )
 
     assert response.status_code == 409
     assert response.json()["error"]["code"] == "ONE_LINER_ALREADY_VERIFIED"
     assert len(connection.review_entries) == 0
+
+
+def test_reviewer_can_reject_previously_verified_item_with_audit(monkeypatch) -> None:
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEW_TOKEN", "configured-review-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_ADMIN_TOKEN", "configured-author-token")
+    monkeypatch.setenv("AI_COMP_CONTENT_REVIEWER_ID", "reviewer-test")
+    connection = _ReviewConnection(status="VERIFIED")
+    app = create_app()
+    app.state.question_bank_connection_factory = lambda: connection
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/admin/question-bank/one-liners/one-liner-1/review",
+        headers={"X-AI-COMP-Content-Review-Token": "configured-review-token"},
+        json={"decision": "REJECTED", "review_note": "Source did not support the saved answer."},
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["item"]["verification_status"] == "REJECTED"
+    assert response.json()["review"]["decision"] == "REJECTED"
+    assert connection.status == "REJECTED"
+    assert len(connection.review_entries) == 1
 
 
 def test_review_returns_not_found_for_unknown_item(monkeypatch) -> None:
