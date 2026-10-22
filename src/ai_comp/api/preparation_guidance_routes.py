@@ -1763,11 +1763,11 @@ def review_topic_one_liner(
                     }
                 })
             current_status = str(existing[7])
-            if current_status == "VERIFIED":
+            if current_status == "VERIFIED" and payload.decision != "REJECTED":
                 return _json_response(HTTPStatus.CONFLICT, {
                     "error": {
                         "code": "ONE_LINER_ALREADY_VERIFIED",
-                        "message": "Verified content is immutable through this review route; submit a corrected version for review.",
+                        "message": "A verified item cannot be downgraded directly; reject it with evidence if it is invalid, then resubmit the correction for review.",
                     }
                 })
             source_url = urlsplit(str(existing[5])) if existing[5] else None
