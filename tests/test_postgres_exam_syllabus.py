@@ -41,6 +41,7 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
             "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
             "Advertisement No. 09/2026",
             "REVIEW_PENDING",
+            False,
             340,
             0,
             0,
@@ -53,6 +54,7 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
     profile = profiles[0]
     assert profile["exam_id"] == "RSSB_CET_GRADUATION_2026"
     assert profile["source_status"] == "REVIEW_PENDING"
+    assert profile["syllabus_inventory_complete"] is False
     assert profile["concept_count"] == 340
     assert profile["mapped_concept_count"] == 0
     assert profile["excluded_concept_count"] == 0
@@ -62,6 +64,7 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
     assert "exam_syllabus_documents" in query
     assert "applicability_status = 'IN_SCOPE'" in query
     assert "d.source_status = 'VERIFIED'" in query
+    assert "d.syllabus_inventory_complete = TRUE" in query
     assert params == (100,)
 
 
