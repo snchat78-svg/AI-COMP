@@ -22,7 +22,7 @@
 
 - **Phase 6.54:** COMPLETED. PR #40 merge SHA 16f75e3c76e9c830235c39a4dc806710c116bed0. Backend tests/container and Flutter analysis/client/release APK workflows passed.
 - **Phase 6.55:** MERGED_CODE_DATA_PENDING. PR #41 merge SHA abfdfbfa8c8b732012c04a247e443032c93f6d01. The repository contains independent one-liner review code and 10 Hindi candidates (all NEEDS_REVIEW), but migrations have not been confirmed applied to the live database and reviewer credentials remain a server configuration gate.
-- **Phase 6.56:** Starting now — full mobile Question Bank navigation, topic search and coverage visibility. Current screen already has a subject→topic list and distinct One-Liner/Previous-Year tabs; extend it rather than rebuilding it. Existing API has paginated topic and previous-paper queries. Exam-profile-specific syllabus applicability is not yet represented as confirmed data, so do not pretend the starter catalogue is exam-complete.
+- **Phase 6.56:** IN_PROGRESS on branch feature/phase-6-56-topic-navigation-coverage. Updated QuestionBankScreen to fetch all bounded topic pages, search label/topic/subtopic/subject/concept ID, show current verified counts with an explicit non-completeness warning, and load One-Liner/Previous-Year tabs independently with their own load-more, retry and refresh state. Added widget tests; PR and current CI still need to be created/confirmed. Exam-profile-specific syllabus applicability is not represented as confirmed data, so do not pretend the starter catalogue is exam-complete.
 - **Phase 6.57:** PLANNED — topic coverage, learner mastery and revision.
 - **Phase 6.58:** BLOCKED on approved official-source connectivity, live database migration/secrets, real official-paper + matched answer-key records, and live end-to-end proof.
 
@@ -34,11 +34,11 @@ The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A acros
 
 ## Exact next actions at checkpoint creation
 
-1. Finish Phase 6.56 UI additions in branch feature/phase-6-56-topic-navigation-coverage, starting with all-topic loading (bounded paging), topic/subtopic search, and honest available-vs-verified counts in existing QuestionBankScreen; preserve test sessions and authentication.
-2. Add widget tests for searching/navigating the existing topic list, independent One-Liner and Previous-Year empty/error/loading states, and bounded/paged loads.
-3. Update Phase Registry and roadmap to Phase 6.56 IN_PROGRESS; link the content coverage ledger and this checkpoint from README.
-4. CI validate backend and Flutter/APK on the PR head before merge.
-5. After UI acceptance, continue content gap work from the CSV in parallel: source candidates topic by topic, submit NEEDS_REVIEW, independently review, and update ledger counts from actual evidence. Do not apply live migrations without the approved deployment workflow and a database-state review.
+1. Run the new apps/mobile/test/question_bank_screen_test.dart widget suite along with all existing Flutter tests/analyze; fix any regression.
+2. Create/update Phase 6.56 PR, verify current-head backend and Flutter/APK CI, and merge only after all required checks pass.
+3. Ensure the current checkpoint + registry + roadmap + README + CSV ledger remain synchronized with the merge SHA, CI results and any live gates.
+4. Continue source candidate research from QUESTION_BANK_CONTENT_COVERAGE.csv, prioritizing concepts with no candidates; submit candidates as NEEDS_REVIEW, independently review them, and update the ledger from actual DB/review evidence.
+5. Do not apply Phase 6.55 live migrations without the approved deployment workflow and a database-state review; do not claim official exam coverage until syllabus applicability is sourced.
 
 ## Known live-data/security gates
 
