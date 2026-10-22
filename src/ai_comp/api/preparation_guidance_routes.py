@@ -40,6 +40,7 @@ from ai_comp.api.preparation_client_contract import (
     QuestionBankReadinessResponse,
     QuestionBankSubjectsResponse,
     QuestionBankTopicsResponse,
+    PreviousYearQuestionsResponse,
     TopicOneLinerListResponse,
     TopicPracticeGenerationResponse,
     SubmittedTestResponse,
@@ -1720,6 +1721,100 @@ def list_topic_one_liners(
             "error": {
                 "code": "QUESTION_BANK_ONE_LINERS_UNAVAILABLE",
                 "message": "Verified one-liners for this topic could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/previous-papers",
+    name="list_verified_previous_paper_questions",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": PreviousYearQuestionsResponse, "description": "Source-backed past-paper questions with options and verified official-key answers."},
+    },
+)
+def list_verified_previous_paper_questions(
+    learner_id: str,
+    request: Request,
+    concept_id: str,
+    subject_id: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """Browse eligible official past-paper MCQs separately from one-liner Q&A."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not concept_id.strip() or concept_id != concept_id.strip() or len(concept_id) > 128:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_CONCEPT_ID", "message": "concept_id must be trimmed and 1-128 characters."}
+        })
+    if subject_id is not None and (
+        not subject_id.strip() or subject_id != subject_id.strip() or len(subject_id) > 200
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject_id must be trimmed and 1-200 characters."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        from ai_comp.database.postgres_verified_history_question import PostgresVerifiedHistoryQuestionRepository
+
+        connection = connection_factory()
+        rows = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=min(10000, limit + offset + 1),
+            concept_ids=(concept_id,),
+            subject_id=subject_id,
+        )
+        page = rows[offset : offset + limit]
+        payload = PreviousYearQuestionsResponse.model_validate({
+            "items": [
+                {
+                    "question_id": item.generated_question_id.removeprefix("verified-history:"),
+                    "stem": item.stem,
+                    "options": [{"key": option.key, "text": option.text} for option in item.options],
+                    "correct_option_key": item.correct_option_key,
+                    "explanation": item.explanation,
+                    "exam_name": item.exam_name,
+                    "exam_id": item.exam_id,
+                    "exam_year": item.exam_year,
+                    "exam_shift": item.exam_shift,
+                    "exam_question_number": item.exam_question_number,
+                    "source_url": item.source_url,
+                    "answer_key_source_url": item.answer_key_source_url,
+                    "verified_appearance_count": item.verified_appearance_count,
+                    "concept_ids": list(item.concept_ids),
+                }
+                for item in page
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(page),
+                "has_more": len(rows) > offset + limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_PREVIOUS_PAPERS_UNAVAILABLE",
+                "message": "Verified previous-paper questions for this topic could not be loaded.",
             }
         })
     finally:
