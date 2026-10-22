@@ -607,6 +607,10 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 style: theme.textTheme.bodySmall,
               ),
               Text(
+                'Full syllabus inventory: ${profile.syllabusInventoryComplete ? 'reviewed' : 'not yet reviewed'}',
+                style: theme.textTheme.bodySmall,
+              ),
+              Text(
                 'Mapped concepts: ${profile.mappedConceptCount} of ${profile.conceptCount}; '
                 '${profile.excludedConceptCount} documented out of scope; '
                 '${profile.unmappedConceptCount} still unmapped.',
