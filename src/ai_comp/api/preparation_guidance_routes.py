@@ -1770,8 +1770,13 @@ def review_topic_one_liner(
                         "message": "Verified content is immutable through this review route; submit a corrected version for review.",
                     }
                 })
+            source_url = urlsplit(str(existing[5])) if existing[5] else None
             if payload.decision == "VERIFIED" and (
-                not existing[5] or not str(existing[5]).startswith("https://")
+                source_url is None
+                or source_url.scheme.lower() != "https"
+                or not source_url.hostname
+                or source_url.username is not None
+                or source_url.password is not None
                 or not str(existing[6]).strip()
             ):
                 return _json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {
