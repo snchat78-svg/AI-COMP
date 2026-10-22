@@ -60,9 +60,10 @@ The mobile client parses the profile status and sends optional `exam_id` filters
 ## Remaining work inside Phase 6.56
 
 1. Retrieve the official PDF over approved HTTPS, confirm document contents and SHA-256, and independently verify the exact notification/syllabus version.
-2. Extract the entire official unit/subtopic inventory, cite exact page/section locators, reconcile it with the concept catalogue, add concepts for omitted units, and complete the coverage ledger.
-3. Record a separately reviewed IN_SCOPE/OUT_OF_SCOPE decision for every catalogue concept and map every official syllabus unit to canonical concepts. Keep remaining/ambiguous items visible.
-4. Once the official document and complete mapping are reviewed, make the profile ready and verify the mobile selector filters subjects/topics by profile with tests for two distinct scopes and an unmapped state.
-5. Then resume topic-by-topic source-backed Q&A creation; complete knowledge-point coverage, not only a target question count, and keep drafts NEEDS_REVIEW until independent review.
+2. Add a protected, auditable admin/reviewer workflow for source verification and concept-applicability authoring/review. Author and reviewer secrets must be distinct; never trust a learner token or client-supplied reviewer ID.
+3. Extract the entire official unit/subtopic inventory, cite exact page/section locators, reconcile it with the concept catalogue, add concepts for omitted units, and update the coverage ledger before an independent reviewer attests that the inventory is complete.
+4. Record a separately reviewed IN_SCOPE/OUT_OF_SCOPE decision for every catalogue concept and ensure every official syllabus unit maps to canonical concepts. Keep missing/ambiguous mappings visible. The read API must not expose partially reviewed subject/topic lists as exam-ready.
+5. Once the official document, full inventory and complete mapping are reviewed, make the profile ready and verify the mobile selector filters subjects/topics by profile with tests for distinct scopes and an unmapped state.
+6. Then resume topic-by-topic source-backed Q&A creation; complete knowledge-point coverage, not only a target question count, and keep drafts NEEDS_REVIEW until independent review.
 
 Phase 6.56 must remain IN_PROGRESS until official-source retrieval, source evidence, mapping completeness, current-head CI and the remaining acceptance checks have been demonstrated.
