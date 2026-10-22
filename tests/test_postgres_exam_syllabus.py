@@ -68,6 +68,32 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
     assert params == (100,)
 
 
+def test_profile_is_ready_only_after_inventory_and_all_concepts_are_reviewed() -> None:
+    connection = _Connection([
+        (
+            "RSSB_CET_GRADUATION_2026",
+            "Rajasthan Common Eligibility Test (Graduation Level) 2026",
+            "RSSB_CET_GRADUATION_2026_ADVT_09_2026",
+            "CET 2026 full official syllabus inventory reviewed",
+            "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
+            "Advertisement No. 09/2026",
+            "VERIFIED",
+            True,
+            340,
+            300,
+            40,
+        )
+    ])
+
+    profile = PostgresExamSyllabusRepository(connection).list_profiles()[0]
+
+    assert profile["syllabus_inventory_complete"] is True
+    assert profile["mapped_concept_count"] == 300
+    assert profile["excluded_concept_count"] == 40
+    assert profile["unmapped_concept_count"] == 0
+    assert profile["selection_ready"] is True
+
+
 def test_exam_subject_query_requires_verified_in_scope_mappings() -> None:
     connection = _Connection([])
 
