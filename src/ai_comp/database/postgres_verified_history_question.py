@@ -31,6 +31,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         *,
         limit: int = 5000,
         concept_ids: Sequence[str] | None = None,
+        subject_id: str | None = None,
     ) -> tuple[GeneratedMCQ, ...]:
         """Return one representative per active master/exact question identity.
 
@@ -50,6 +51,10 @@ class PostgresVerifiedHistoryQuestionRepository:
             )
         ):
             raise ValueError("concept_ids must be unique, non-empty, trimmed strings")
+        if subject_id is not None and (
+            not isinstance(subject_id, str) or not subject_id.strip() or subject_id != subject_id.strip()
+        ):
+            raise ValueError("subject_id must be a non-empty trimmed string when supplied")
 
         query = """
             WITH option_sets AS (
@@ -186,6 +191,16 @@ class PostgresVerifiedHistoryQuestionRepository:
                         AND paper_appearance_source.verification_id = qv.verification_id
                         AND paper_appearance_source.source_url = qv.source_url
                   )
+                  AND (
+                      %s IS NULL OR EXISTS (
+                          SELECT 1
+                          FROM question_concepts AS subject_question_concept
+                          JOIN concepts AS subject_concept
+                            ON subject_concept.concept_id = subject_question_concept.concept_id
+                          WHERE subject_question_concept.question_id = q.question_id
+                            AND lower(btrim(subject_concept.subject)) = lower(%s)
+                      )
+                  )
             )
             SELECT DISTINCT ON (pool_identity)
                 question_id,
@@ -211,7 +226,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         try:
             rows = self._connection.execute(
                 query,
-                (list(scoped_ids), list(scoped_ids), limit),
+                (subject_id, subject_id, list(scoped_ids), list(scoped_ids), limit),
             ).fetchall()
             return tuple(self._from_row(row) for row in rows)
         except ValueError:
