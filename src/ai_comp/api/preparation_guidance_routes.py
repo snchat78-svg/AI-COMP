@@ -1731,6 +1731,17 @@ def list_question_bank_topics(
         return _json_response(HTTPStatus.BAD_REQUEST, {
             "error": {"code": "INVALID_EXAM_SHIFT", "message": "exam_shift must be trimmed and 1-100 characters."}
         })
+    if source_domain is not None and (
+        not source_domain.strip()
+        or source_domain != source_domain.strip()
+        or len(source_domain) > 253
+        or any(not (ch.isalnum() or ch in ".-") for ch in source_domain)
+        or source_domain.startswith(".")
+        or source_domain.endswith(".")
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SOURCE_DOMAIN", "message": "source_domain must be a plain domain name."}
+        })
     if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
         return _json_response(HTTPStatus.BAD_REQUEST, {
             "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
@@ -1891,6 +1902,7 @@ def list_verified_previous_paper_questions(
     exam_id: str | None = None,
     exam_year: int | None = None,
     exam_shift: str | None = None,
+    source_domain: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> Response:
@@ -1933,6 +1945,7 @@ def list_verified_previous_paper_questions(
             exam_id=exam_id,
             exam_year=exam_year,
             exam_shift=exam_shift,
+            source_domain=source_domain,
         )
         page = result_page.items
         payload = PreviousYearQuestionsResponse.model_validate({
