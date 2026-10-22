@@ -27,7 +27,7 @@ Do not create a parallel topic taxonomy, duplicate content APIs, a new question 
 ## CI evidence for the merged slice
 
 - Backend tests and API container build passed on PR head c70313064c341b3f517c045a2dc63969b2c58341 (run 39758826307).
-- Flutter analyze, all mobile tests, release APK build, artifact verification and upload passed on code-equivalent commit 3bd15ebdc6b01058aea03d79ba13345f4e600668 (run 39758711810; artifact 12416449538; SHA-256 2a6f9c96619ef28569049d558a821a40b778601eb9c6222ed63c475dd26c8dfe). The only change between that commit and the PR head was a documentation-only coverage-policy change.
+- Flutter analyze, all mobile/widget tests, release APK build, artifact verification and upload passed on the same PR head (run 39758826247; artifact 12416808828; SHA-256 10bf4f17bf3ada321c2ce3efab1a99d442f3cc311c34d9a031656f27fcaa1f55).
 
 ## Exam-profile/syllabus boundary
 
