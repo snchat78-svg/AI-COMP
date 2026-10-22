@@ -1505,7 +1505,7 @@ def get_question_bank_readiness(
         payload = QuestionBankReadinessResponse.model_validate({
             **readiness,
             "learner_id": authenticated_learner_id,
-        }).model_dump(mode="json")
+        }).model_dump(mode="json", exclude_none=True)
     except Exception:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
