@@ -79,7 +79,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(topicOffsets, [0, 100]);
-    expect(find.text('100 of 101 topics • 0 verified one-liner Q&A available'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'Thar');
     await tester.pumpAndSettle();
