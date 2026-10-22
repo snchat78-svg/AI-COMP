@@ -32,6 +32,7 @@ class PostgresVerifiedHistoryQuestionRepository:
         limit: int = 5000,
         concept_ids: Sequence[str] | None = None,
         subject_id: str | None = None,
+        offset: int = 0,
     ) -> tuple[GeneratedMCQ, ...]:
         """Return one representative per active master/exact question identity.
 
@@ -42,6 +43,8 @@ class PostgresVerifiedHistoryQuestionRepository:
         """
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 10000:
             raise ValueError("limit must be between 1 and 10000")
+        if isinstance(offset, bool) or not isinstance(offset, int) or not 0 <= offset <= 100000:
+            raise ValueError("offset must be between 0 and 100000")
         scoped_ids = tuple(concept_ids or ())
         if (
             len(set(scoped_ids)) != len(scoped_ids)
@@ -221,12 +224,12 @@ class PostgresVerifiedHistoryQuestionRepository:
                OR concept_ids && %s::TEXT[]
             ORDER BY pool_identity, exam_year DESC, exam_shift NULLS LAST,
                      exam_question_number, question_id
-            LIMIT %s
+            LIMIT %s OFFSET %s
         """
         try:
             rows = self._connection.execute(
                 query,
-                (subject_id, subject_id, list(scoped_ids), list(scoped_ids), limit),
+                (subject_id, subject_id, list(scoped_ids), list(scoped_ids), limit, offset),
             ).fetchall()
             return tuple(self._from_row(row) for row in rows)
         except ValueError:
