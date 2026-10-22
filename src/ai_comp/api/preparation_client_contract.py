@@ -391,6 +391,8 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "QuestionBankExamProfileItem",
+    "QuestionBankExamProfilesResponse",
     "PreviousYearQuestionItem",
     "PreviousYearQuestionsResponse",
     "TopicPreviousPaperPaginationResponse",
