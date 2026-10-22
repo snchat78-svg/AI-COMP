@@ -12,7 +12,7 @@ AI-COMP is a Python/FastAPI backend for competitive-exam paper research, verifie
 - Phase 6.45 adds fail-closed Firebase ID-token verification, the configured PostgreSQL/Firebase API runtime, explicit migrations, and a Cloud Run-ready container.
 - Phase 6.46 adds a Render Free Blueprint and a manually triggered GitHub Actions database-migration workflow. It prepares a free-tier deployment path but does not create cloud resources or claim the API is deployed.
 - Phase 6.52 adds the verified historical-question read model, practice-pool readiness contract, and mobile display of real source-separated pool counts.
-- [Phase 6.53–6.58 topic-wise Question Bank and complete-preparation roadmap](docs/PHASE_6_53_TOPICWISE_QUESTION_BANK_ROADMAP.md) plans the non-duplicate sequence for syllabus-backed subjects/topics, verified previous questions, source-backed one-liners, mobile topic browsing, coverage tracking, and real-data end-to-end validation. This is the plan, not a claim that these phases are implemented.
+- [Phase 6.53–6.58 topic-wise Question Bank roadmap](docs/PHASE_6_53_TOPICWISE_QUESTION_BANK_ROADMAP.md) documents the implementation and completion gates. Phase 6.53 code adds the starter subject/topic catalogue, source-reviewed one-liner Q&A, a separate verified previous-paper tab, and subject-scoped alternative MCQ generation. The catalogue is navigation scaffolding; the one-liner and previous-paper banks still require reviewed/source-backed content, and later phases 6.54–6.58 are not claimed complete.
 
 ## Backend tests
 
