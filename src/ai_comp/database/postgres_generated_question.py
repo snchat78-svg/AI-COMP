@@ -96,6 +96,7 @@ class PostgresGeneratedQuestionRepository:
         *,
         limit: int = 5000,
         concept_ids: Sequence[str] | None = None,
+        subject_id: str | None = None,
     ) -> tuple[GeneratedMCQ, ...]:
         """List accepted verified questions, optionally scoped to concepts.
 
@@ -111,9 +112,14 @@ class PostgresGeneratedQuestionRepository:
             raise ValueError("limit must be between 1 and 10000")
         scoped_ids = tuple(concept_ids or ())
         if len(set(scoped_ids)) != len(scoped_ids) or any(
-            not isinstance(item, str) or not item.strip() for item in scoped_ids
+            not isinstance(item, str) or not item.strip() or item != item.strip()
+            for item in scoped_ids
         ):
-            raise ValueError("concept_ids must be unique non-empty strings")
+            raise ValueError("concept_ids must be unique non-empty trimmed strings")
+        if subject_id is not None and (
+            not isinstance(subject_id, str) or not subject_id.strip() or subject_id != subject_id.strip()
+        ):
+            raise ValueError("subject_id must be a non-empty trimmed string when supplied")
         try:
             query = f"""
                 SELECT {self._SELECT_COLUMNS}
@@ -121,8 +127,16 @@ class PostgresGeneratedQuestionRepository:
                 WHERE status = 'ACCEPTED'
                   AND answer_verification_status = 'VERIFIED'
                   AND duplicate_of_master_question_id IS NULL
+                  AND (
+                      %s::TEXT IS NULL OR EXISTS (
+                          SELECT 1
+                          FROM concepts AS subject_concept
+                          WHERE lower(btrim(subject_concept.subject)) = lower(%s)
+                            AND generated_questions.concept_ids ? subject_concept.concept_id
+                      )
+                  )
             """
-            params: list[Any] = []
+            params: list[Any] = [subject_id, subject_id]
             if scoped_ids:
                 query += " AND concept_ids ?| %s::text[]"
                 params.append(list(scoped_ids))

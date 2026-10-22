@@ -85,6 +85,25 @@ def test_post_creates_persistent_request_and_guidance_uses_saved_settings():
     }
 
     with connect_postgres(dsn) as connection:
+        # Subject-scoped test selection now requires the canonical topic mapping.
+        connection.execute(
+            """
+            INSERT INTO concepts (concept_id, label, subject, topic, subtopic)
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (concept_id) DO UPDATE SET
+                label = EXCLUDED.label,
+                subject = EXCLUDED.subject,
+                topic = EXCLUDED.topic,
+                subtopic = EXCLUDED.subtopic
+            """,
+            (
+                concept_id,
+                "Rajasthan geography concept",
+                "RAJASTHAN_GEOGRAPHY",
+                "Rajasthan Geography",
+                "Test topic",
+            ),
+        )
         PostgresGeneratedQuestionRepository(connection).save(
             accepted_question(question_id, concept_id)
         )

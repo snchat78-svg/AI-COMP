@@ -1,0 +1,263 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import Any
+
+from ai_comp.database.repository import RepositoryError
+from ai_comp.domain.topic_question_bank import (
+    OneLinerVerificationStatus,
+    QuestionBankTopic,
+    TopicOneLinerQA,
+)
+
+
+class PostgresTopicQuestionBankRepository:
+    """Browse canonical concept topics and source-reviewed one-liner Q&A."""
+
+    def __init__(self, connection: Any) -> None:
+        self._connection = connection
+
+    def list_subjects(self, *, limit: int = 100, offset: int = 0) -> tuple[tuple[str, int], ...]:
+        self._validate_page(limit, offset)
+        try:
+            rows = self._connection.execute(
+                """
+                SELECT btrim(subject) AS subject_name,
+                       COUNT(DISTINCT concept_id)::INTEGER AS concept_count
+                FROM concepts
+                WHERE subject IS NOT NULL AND btrim(subject) <> ''
+                GROUP BY btrim(subject)
+                ORDER BY lower(btrim(subject)), btrim(subject)
+                LIMIT %s OFFSET %s
+                """,
+                (limit, offset),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to list question-bank subjects") from exc
+        return tuple((str(row[0]), int(row[1])) for row in rows)
+
+    def list_topics(
+        self,
+        subject: str,
+        *,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> tuple[QuestionBankTopic, ...]:
+        self._validate_page(limit, offset)
+        if not isinstance(subject, str) or not subject.strip() or subject != subject.strip():
+            raise ValueError("subject must be a non-empty trimmed string")
+        try:
+            rows = self._connection.execute(
+                """
+                SELECT c.concept_id, c.label, btrim(c.subject), c.topic, c.subtopic,
+                       COUNT(DISTINCT ol.one_liner_id)::INTEGER AS verified_one_liner_count
+                FROM concepts AS c
+                LEFT JOIN question_bank_one_liners AS ol
+                  ON ol.concept_id = c.concept_id
+                 AND ol.verification_status = 'VERIFIED'
+                WHERE lower(btrim(c.subject)) = lower(%s)
+                GROUP BY c.concept_id, c.label, c.subject, c.topic, c.subtopic
+                ORDER BY lower(COALESCE(c.topic, '')),
+                         lower(COALESCE(c.subtopic, '')),
+                         lower(c.label), c.concept_id
+                LIMIT %s OFFSET %s
+                """,
+                (subject, limit, offset),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to list question-bank topics") from exc
+        return tuple(
+            QuestionBankTopic(
+                concept_id=str(row[0]),
+                label=str(row[1]),
+                subject=str(row[2]),
+                topic=None if row[3] is None else str(row[3]),
+                subtopic=None if row[4] is None else str(row[4]),
+                verified_one_liner_count=int(row[5]),
+            )
+            for row in rows
+        )
+
+    def list_one_liners(
+        self,
+        concept_id: str,
+        *,
+        limit: int = 100,
+        offset: int = 0,
+        verified_only: bool = True,
+        language_code: str | None = None,
+    ) -> tuple[TopicOneLinerQA, ...]:
+        self._validate_page(limit, offset)
+        if not isinstance(concept_id, str) or not concept_id.strip() or concept_id != concept_id.strip():
+            raise ValueError("concept_id must be a non-empty trimmed string")
+        if language_code is not None and (
+            not language_code.strip() or language_code != language_code.strip()
+        ):
+            raise ValueError("language_code must be a non-empty trimmed string when supplied")
+
+        conditions = ["concept_id = %s"]
+        params: list[object] = [concept_id]
+        if verified_only:
+            conditions.append("verification_status = 'VERIFIED'")
+        if language_code is not None:
+            conditions.append("language_code = %s")
+            params.append(language_code)
+        params.extend((limit, offset))
+        try:
+            rows = self._connection.execute(
+                f"""
+                SELECT one_liner_id, concept_id, question_text, answer_text,
+                       language_code, source_url, source_evidence, verification_status,
+                       importance_score, reviewed_at, created_at, updated_at
+                FROM question_bank_one_liners
+                WHERE {' AND '.join(conditions)}
+                ORDER BY importance_score DESC, lower(question_text), one_liner_id
+                LIMIT %s OFFSET %s
+                """,
+                tuple(params),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to list topic one-liners") from exc
+        return tuple(self._one_liner_from_row(row) for row in rows)
+
+    def list_verified_one_liners_for_subject(
+        self,
+        subject: str,
+        *,
+        limit: int = 300,
+        offset: int = 0,
+        language_code: str | None = None,
+    ) -> tuple[TopicOneLinerQA, ...]:
+        """Load a bounded, source-reviewed Q&A set for generating subject practice."""
+        self._validate_page(limit, offset)
+        if not isinstance(subject, str) or not subject.strip() or subject != subject.strip():
+            raise ValueError("subject must be a non-empty trimmed string")
+        if language_code is not None and (
+            not language_code.strip() or language_code != language_code.strip()
+        ):
+            raise ValueError("language_code must be a non-empty trimmed string when supplied")
+        conditions = [
+            "lower(btrim(c.subject)) = lower(%s)",
+            "ol.verification_status = 'VERIFIED'",
+        ]
+        params: list[object] = [subject]
+        if language_code is not None:
+            conditions.append("ol.language_code = %s")
+            params.append(language_code)
+        params.extend((limit, offset))
+        try:
+            rows = self._connection.execute(
+                f"""
+                SELECT ol.one_liner_id, ol.concept_id, ol.question_text, ol.answer_text,
+                       ol.language_code, ol.source_url, ol.source_evidence,
+                       ol.verification_status, ol.importance_score, ol.reviewed_at,
+                       ol.created_at, ol.updated_at
+                FROM question_bank_one_liners AS ol
+                JOIN concepts AS c ON c.concept_id = ol.concept_id
+                WHERE {' AND '.join(conditions)}
+                ORDER BY ol.importance_score DESC, ol.concept_id,
+                         lower(ol.question_text), ol.one_liner_id
+                LIMIT %s OFFSET %s
+                """,
+                tuple(params),
+            ).fetchall()
+        except Exception as exc:
+            raise RepositoryError("failed to load subject one-liners") from exc
+        return tuple(self._one_liner_from_row(row) for row in rows)
+
+    def save_one_liner(self, item: TopicOneLinerQA) -> TopicOneLinerQA:
+        """Save or merge a duplicate Q&A without downgrading reviewed content."""
+        try:
+            with self._connection.transaction():
+                row = self._connection.execute(
+                    """
+                    INSERT INTO question_bank_one_liners AS existing (
+                        one_liner_id, concept_id, question_text, answer_text,
+                        language_code, source_url, source_evidence,
+                        verification_status, importance_score, content_hash,
+                        reviewed_at, created_at, updated_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                            %s, COALESCE(%s, NOW()), COALESCE(%s, NOW()))
+                    ON CONFLICT (concept_id, language_code, content_hash) DO UPDATE SET
+                        source_url = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                 OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                            THEN COALESCE(EXCLUDED.source_url, existing.source_url)
+                            ELSE existing.source_url
+                        END,
+                        source_evidence = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                 OR existing.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                            THEN COALESCE(NULLIF(EXCLUDED.source_evidence, ''), existing.source_evidence)
+                            ELSE existing.source_evidence
+                        END,
+                        verification_status = CASE
+                            WHEN EXCLUDED.verification_status IN ('VERIFIED', 'REJECTED')
+                                THEN EXCLUDED.verification_status
+                            WHEN existing.verification_status = 'DRAFT'
+                                THEN EXCLUDED.verification_status
+                            ELSE existing.verification_status
+                        END,
+                        importance_score = GREATEST(existing.importance_score, EXCLUDED.importance_score),
+                        reviewed_at = CASE
+                            WHEN EXCLUDED.verification_status = 'VERIFIED'
+                                THEN EXCLUDED.reviewed_at
+                            ELSE existing.reviewed_at
+                        END,
+                        updated_at = NOW()
+                    RETURNING one_liner_id, concept_id, question_text, answer_text,
+                              language_code, source_url, source_evidence,
+                              verification_status, importance_score, reviewed_at,
+                              created_at, updated_at
+                    """,
+                    (
+                        item.one_liner_id,
+                        item.concept_id,
+                        item.question_text,
+                        item.answer_text,
+                        item.language_code,
+                        item.source_url,
+                        item.source_evidence,
+                        item.verification_status.value,
+                        item.importance_score,
+                        item.content_hash,
+                        item.reviewed_at,
+                        item.created_at,
+                        item.updated_at,
+                    ),
+                ).fetchone()
+            if row is None:
+                raise RepositoryError("one-liner save returned no canonical record")
+            return self._one_liner_from_row(row)
+        except RepositoryError:
+            raise
+        except Exception as exc:
+            raise RepositoryError("failed to persist topic one-liner") from exc
+
+    @staticmethod
+    def _validate_page(limit: int, offset: int) -> None:
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 500:
+            raise ValueError("limit must be between 1 and 500")
+        if isinstance(offset, bool) or not isinstance(offset, int) or not 0 <= offset <= 100000:
+            raise ValueError("offset must be between 0 and 100000")
+
+    @staticmethod
+    def _one_liner_from_row(row: Sequence[object]) -> TopicOneLinerQA:
+        return TopicOneLinerQA(
+            one_liner_id=str(row[0]),
+            concept_id=str(row[1]),
+            question_text=str(row[2]),
+            answer_text=str(row[3]),
+            language_code=str(row[4]),
+            source_url=None if row[5] is None else str(row[5]),
+            source_evidence=str(row[6]),
+            verification_status=OneLinerVerificationStatus(str(row[7])),
+            importance_score=float(row[8]),
+            reviewed_at=row[9],
+            created_at=row[10],
+            updated_at=row[11],
+        )
+
+
+__all__ = ["PostgresTopicQuestionBankRepository"]

@@ -9,7 +9,7 @@ from ai_comp.api.dependencies import (
     LearnerIdentityProvider,
     PreparationContextProvider,
 )
-from ai_comp.api.preparation_guidance_routes import router
+from ai_comp.api.preparation_guidance_routes import content_admin_router, router
 from ai_comp.api.source_health_routes import router as source_health_router
 from ai_comp.api.postgres_preparation_context import (
     ConnectionScopedPreparationTestRequestRepository,
@@ -47,6 +47,7 @@ def create_app(
     app.state.preparation_test_session_repository_factory = preparation_test_session_repository_factory
     app.state.completed_test_learning_recorder = completed_test_learning_recorder
     app.state.completed_test_analytics_provider = completed_test_analytics_provider
+    app.state.question_bank_connection_factory = None
     app.state.source_health_cache = {"report": None, "expires_at": 0.0, "status_code": 200}
     app.state.source_health_lock = Lock()
 
@@ -59,6 +60,7 @@ def create_app(
         return response
 
     app.include_router(router)
+    app.include_router(content_admin_router)
     app.include_router(source_health_router)
     return app
 
@@ -126,7 +128,7 @@ def create_postgres_app(
         request_provider,
         question_pool_limit=question_pool_limit,
     )
-    return create_app(
+    app = create_app(
         preparation_guidance_api_service=service,
         learner_identity_provider=learner_identity_provider,
         preparation_context_provider=context_provider,
@@ -135,6 +137,10 @@ def create_postgres_app(
         completed_test_learning_recorder=CompletedTestSessionLearningRecorder(connection_factory),
         completed_test_analytics_provider=CompletedTestAnalyticsProvider(connection_factory),
     )
+    # The topic/question-bank endpoints create short-lived connections on demand.
+    # The unconfigured create_app factory stays fail-closed for unit tests.
+    app.state.question_bank_connection_factory = connection_factory
+    return app
 
 
 # Importable ASGI application. Without host-injected authentication and context,

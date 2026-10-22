@@ -40,6 +40,209 @@ class ApiException implements Exception {
   String toString() => '$code: $message';
 }
 
+class TopicPracticeGenerationResult {
+  const TopicPracticeGenerationResult({
+    required this.learnerId,
+    required this.subjectId,
+    required this.requestId,
+    required this.requestedQuestionCount,
+    required this.generatedAlternativeCount,
+    required this.eligibleQuestionCount,
+    required this.effectiveQuestionCount,
+    required this.durationSeconds,
+    required this.oneLinerSourceCount,
+    required this.previousPaperSourceCount,
+    required this.warnings,
+    required this.message,
+  });
+
+  final String learnerId;
+  final String subjectId;
+  final String requestId;
+  final int requestedQuestionCount;
+  final int generatedAlternativeCount;
+  final int eligibleQuestionCount;
+  final int effectiveQuestionCount;
+  final int durationSeconds;
+  final int oneLinerSourceCount;
+  final int previousPaperSourceCount;
+  final List<String> warnings;
+  final String message;
+
+  factory TopicPracticeGenerationResult.fromJson(Map<String, dynamic> json) {
+    return TopicPracticeGenerationResult(
+      learnerId: _string(json['learner_id']),
+      subjectId: _string(json['subject_id']),
+      requestId: _string(json['request_id']),
+      requestedQuestionCount: _integer(json['requested_question_count'], 1),
+      generatedAlternativeCount: _integer(json['generated_alternative_count'], 0),
+      eligibleQuestionCount: _integer(json['eligible_question_count'], 0),
+      effectiveQuestionCount: _integer(json['effective_question_count'], 1),
+      durationSeconds: _integer(json['duration_seconds'], 1800),
+      oneLinerSourceCount: _integer(json['one_liner_source_count'], 0),
+      previousPaperSourceCount: _integer(json['previous_paper_source_count'], 0),
+      warnings: _stringList(json['warnings']),
+      message: _string(json['message']),
+    );
+  }
+}
+
+class QuestionBankSubject {
+  const QuestionBankSubject({
+    required this.subjectId,
+    required this.subjectLabel,
+    required this.conceptCount,
+  });
+
+  final String subjectId;
+  final String subjectLabel;
+  final int conceptCount;
+
+  factory QuestionBankSubject.fromJson(Map<String, dynamic> json) {
+    return QuestionBankSubject(
+      subjectId: _string(json['subject_id']),
+      subjectLabel: _string(json['subject_label']),
+      conceptCount: _integer(json['concept_count'], 0),
+    );
+  }
+}
+
+class QuestionBankTopic {
+  const QuestionBankTopic({
+    required this.conceptId,
+    required this.label,
+    required this.subject,
+    required this.topic,
+    required this.subtopic,
+    required this.verifiedOneLinerCount,
+  });
+
+  final String conceptId;
+  final String label;
+  final String subject;
+  final String? topic;
+  final String? subtopic;
+  final int verifiedOneLinerCount;
+
+  factory QuestionBankTopic.fromJson(Map<String, dynamic> json) {
+    return QuestionBankTopic(
+      conceptId: _string(json['concept_id']),
+      label: _string(json['label']),
+      subject: _string(json['subject']),
+      topic: _optionalString(json['topic']),
+      subtopic: _optionalString(json['subtopic']),
+      verifiedOneLinerCount: _integer(json['verified_one_liner_count'], 0),
+    );
+  }
+}
+
+class TopicOneLinerItem {
+  const TopicOneLinerItem({
+    required this.oneLinerId,
+    required this.conceptId,
+    required this.questionText,
+    required this.answerText,
+    required this.languageCode,
+    required this.sourceUrl,
+    required this.sourceEvidence,
+    required this.verificationStatus,
+    required this.importanceScore,
+  });
+
+  final String oneLinerId;
+  final String conceptId;
+  final String questionText;
+  final String answerText;
+  final String languageCode;
+  final String? sourceUrl;
+  final String sourceEvidence;
+  final String verificationStatus;
+  final double importanceScore;
+
+  factory TopicOneLinerItem.fromJson(Map<String, dynamic> json) {
+    return TopicOneLinerItem(
+      oneLinerId: _string(json['one_liner_id']),
+      conceptId: _string(json['concept_id']),
+      questionText: _string(json['question_text']),
+      answerText: _string(json['answer_text']),
+      languageCode: _string(json['language_code'], 'hi'),
+      sourceUrl: _optionalString(json['source_url']),
+      sourceEvidence: _string(json['source_evidence']),
+      verificationStatus: _string(json['verification_status']),
+      importanceScore: _double(json['importance_score']),
+    );
+  }
+}
+
+class PreviousYearQuestion {
+  const PreviousYearQuestion({
+    required this.questionId,
+    required this.stem,
+    required this.options,
+    required this.correctOptionKey,
+    required this.explanation,
+    required this.examName,
+    required this.examId,
+    required this.examYear,
+    required this.examShift,
+    required this.examQuestionNumber,
+    required this.sourceUrl,
+    required this.answerKeySourceUrl,
+    required this.verifiedAppearanceCount,
+    required this.conceptIds,
+  });
+
+  final String questionId;
+  final String stem;
+  final List<QuestionOption> options;
+  final String correctOptionKey;
+  final String explanation;
+  final String examName;
+  final String examId;
+  final int examYear;
+  final String? examShift;
+  final int examQuestionNumber;
+  final String sourceUrl;
+  final String answerKeySourceUrl;
+  final int verifiedAppearanceCount;
+  final List<String> conceptIds;
+
+  String get correctOptionText {
+    for (final option in options) {
+      if (option.key.toUpperCase() == correctOptionKey.toUpperCase()) {
+        return option.text;
+      }
+    }
+    return 'Verified answer key: $correctOptionKey';
+  }
+
+  factory PreviousYearQuestion.fromJson(Map<String, dynamic> json) {
+    final rawOptions = json['options'];
+    final options = rawOptions is List
+        ? rawOptions
+            .whereType<Map<String, dynamic>>()
+            .map(QuestionOption.fromJson)
+            .toList(growable: false)
+        : const <QuestionOption>[];
+    return PreviousYearQuestion(
+      questionId: _string(json['question_id']),
+      stem: _string(json['stem']),
+      options: options,
+      correctOptionKey: _string(json['correct_option_key']),
+      explanation: _string(json['explanation']),
+      examName: _string(json['exam_name']),
+      examId: _string(json['exam_id']),
+      examYear: _integer(json['exam_year'], 0),
+      examShift: _optionalString(json['exam_shift']),
+      examQuestionNumber: _integer(json['exam_question_number'], 0),
+      sourceUrl: _string(json['source_url']),
+      answerKeySourceUrl: _string(json['answer_key_source_url']),
+      verifiedAppearanceCount: _integer(json['verified_appearance_count'], 0),
+      conceptIds: _stringList(json['concept_ids']),
+    );
+  }
+}
+
 class QuestionBankReadiness {
   const QuestionBankReadiness({
     required this.questionPoolLimit,
@@ -48,6 +251,7 @@ class QuestionBankReadiness {
     required this.acceptedGeneratedQuestionCount,
     required this.practiceTestAvailable,
     required this.sourceCountsScope,
+    this.subjectId,
   });
 
   final int questionPoolLimit;
@@ -56,6 +260,7 @@ class QuestionBankReadiness {
   final int acceptedGeneratedQuestionCount;
   final bool practiceTestAvailable;
   final String sourceCountsScope;
+  final String? subjectId;
 
   factory QuestionBankReadiness.fromJson(Map<String, dynamic> json) {
     return QuestionBankReadiness(
@@ -74,6 +279,7 @@ class QuestionBankReadiness {
         json['source_counts_scope'],
         'configured_eligible_pool',
       ),
+      subjectId: _optionalString(json['subject_id']),
     );
   }
 }

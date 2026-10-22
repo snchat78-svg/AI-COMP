@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import hmac
 import json
 import logging
+import os
 from collections.abc import Mapping
+from typing import Literal
 import time
 from http import HTTPStatus
 from urllib.parse import parse_qs
@@ -25,6 +28,7 @@ from ai_comp.application.preparation_guidance_http import (
     PreparationGuidanceHTTPAdapter,
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
+from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
 from ai_comp.api.preparation_client_contract import (
     AdaptivePreparationRecommendationResponse,
     AnswerReviewResponse,
@@ -36,6 +40,11 @@ from ai_comp.api.preparation_client_contract import (
     PreparationTestRequestResponse,
     PreparationTestSessionResponse,
     QuestionBankReadinessResponse,
+    QuestionBankSubjectsResponse,
+    QuestionBankTopicsResponse,
+    PreviousYearQuestionsResponse,
+    TopicOneLinerListResponse,
+    TopicPracticeGenerationResponse,
     SubmittedTestResponse,
 )
 from ai_comp.domain.personalized_preparation import PersonalizedPreparationMode
@@ -44,6 +53,7 @@ from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
 
 
 router = APIRouter(prefix="/api/v1/learners", tags=["preparation-guidance"])
+content_admin_router = APIRouter(prefix="/api/v1/admin/question-bank", tags=["question-bank-authoring"])
 
 JSON_SECURITY_HEADERS = {
     "Content-Type": "application/json; charset=utf-8",
@@ -183,6 +193,60 @@ class PreparationRequestPayload(BaseModel):
             exam_id=self.exam_id,
             subject_id=self.subject_id,
         )
+
+
+class SaveTopicOneLinerPayload(BaseModel):
+    """Direct content-editor entry for a topic-linked short Q&A item."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    concept_id: str = Field(min_length=1, max_length=128)
+    question_text: str = Field(min_length=1, max_length=1000)
+    answer_text: str = Field(min_length=1, max_length=2000)
+    language_code: str = Field(default="hi", min_length=2, max_length=20)
+    source_url: str | None = Field(default=None, max_length=2000)
+    source_evidence: str = Field(default="", max_length=4000)
+    verification_status: Literal["DRAFT", "NEEDS_REVIEW", "VERIFIED", "REJECTED"] = "NEEDS_REVIEW"
+    importance_score: float = Field(default=0.5, ge=0.0, le=1.0)
+
+    @field_validator("concept_id", "question_text", "answer_text", "language_code")
+    @classmethod
+    def required_text_must_be_trimmed(cls, value: str) -> str:
+        if not value.strip() or value != value.strip():
+            raise ValueError("required text fields must be non-empty and trimmed")
+        return value
+
+    @field_validator("source_url")
+    @classmethod
+    def source_must_be_https(cls, value: str | None) -> str | None:
+        if value is not None and (not value.startswith("https://") or value != value.strip()):
+            raise ValueError("source_url must be an absolute HTTPS URL")
+        return value
+
+    @model_validator(mode="after")
+    def verified_items_need_source_evidence(self):
+        if self.verification_status == "VERIFIED":
+            if self.source_url is None or not self.source_evidence.strip():
+                raise ValueError("VERIFIED one-liners require an HTTPS source URL and source evidence")
+        return self
+
+
+class GenerateTopicPracticePayload(BaseModel):
+    """User-selected subject/time/count for generation-grounded mixed practice."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    subject_id: str = Field(min_length=1, max_length=200)
+    question_count: int = Field(ge=1, le=500)
+    duration_seconds: int = Field(ge=1, le=86400)
+    language_code: str = Field(default="hi", min_length=2, max_length=20)
+
+    @field_validator("subject_id", "language_code")
+    @classmethod
+    def labels_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("field must not be blank")
+        return value
 
 
 class AdaptivePracticeRecommendationPayload(BaseModel):
@@ -1447,11 +1511,21 @@ def get_preparation_results_analytics(learner_id: str, request: Request) -> Resp
         },
     },
 )
-def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
-    """Return aggregate pool counts without exposing question text or learner history."""
+def get_question_bank_readiness(
+    learner_id: str,
+    request: Request,
+    subject_id: str | None = None,
+) -> Response:
+    """Return aggregate pool counts, optionally for the selected subject."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
         return error
+    if subject_id is not None and (
+        not subject_id.strip() or subject_id != subject_id.strip() or len(subject_id) > 200
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject_id must be trimmed and 1-200 characters."}
+        })
 
     context_provider = request.app.state.preparation_context_provider
     readiness_provider = getattr(context_provider, "get_question_bank_readiness", None)
@@ -1463,11 +1537,15 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
             }
         })
     try:
-        readiness = readiness_provider()
+        readiness = (
+            readiness_provider()
+            if subject_id is None
+            else readiness_provider(subject_id=subject_id)
+        )
         payload = QuestionBankReadinessResponse.model_validate({
             **readiness,
             "learner_id": authenticated_learner_id,
-        }).model_dump()
+        }).model_dump(mode="json", exclude_none=True)
     except Exception:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
@@ -1476,6 +1554,615 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
             }
         })
     return _json_response(HTTPStatus.OK, payload)
+
+
+@content_admin_router.post(
+    "/one-liners",
+    status_code=201,
+    name="create_topic_one_liner",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        201: {"model": TopicOneLinerItem, "description": "Created or deduplicated topic-linked one-liner Q&A."},
+    },
+)
+def create_topic_one_liner(payload: SaveTopicOneLinerPayload, request: Request) -> Response:
+    """Create/update a one-liner via a separate server-side content-admin token.
+
+    The learner Firebase token is not a content-editing permission. Configure
+    AI_COMP_CONTENT_ADMIN_TOKEN as a secret on the API host; never embed it in
+    the Android app or commit it to the repository.
+    """
+    configured_token = os.environ.get("AI_COMP_CONTENT_ADMIN_TOKEN", "").strip()
+    if not configured_token:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_CONTENT_AUTHORING_NOT_CONFIGURED",
+                "message": "Content authoring is not configured on this server.",
+            }
+        })
+    supplied_token = request.headers.get("X-AI-COMP-Content-Admin-Token", "")
+    if not supplied_token or not hmac.compare_digest(supplied_token, configured_token):
+        return _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {
+                "code": "CONTENT_ADMIN_AUTHENTICATION_REQUIRED",
+                "message": "Authorized content-editor credentials are required.",
+            }
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    from datetime import datetime, timezone
+    from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
+    from ai_comp.domain.topic_question_bank import OneLinerVerificationStatus, TopicOneLinerQA
+
+    status = OneLinerVerificationStatus(payload.verification_status)
+    item = TopicOneLinerQA(
+        one_liner_id=uuid4().hex,
+        concept_id=payload.concept_id,
+        question_text=payload.question_text,
+        answer_text=payload.answer_text,
+        language_code=payload.language_code,
+        source_url=payload.source_url,
+        source_evidence=payload.source_evidence,
+        verification_status=status,
+        importance_score=payload.importance_score,
+        reviewed_at=datetime.now(timezone.utc) if status is OneLinerVerificationStatus.VERIFIED else None,
+    )
+    connection = None
+    try:
+        connection = connection_factory()
+        saved = PostgresTopicQuestionBankRepository(connection).save_one_liner(item)
+        response_payload = TopicOneLinerItem.model_validate({
+            "one_liner_id": saved.one_liner_id,
+            "concept_id": saved.concept_id,
+            "question_text": saved.question_text,
+            "answer_text": saved.answer_text,
+            "language_code": saved.language_code,
+            "source_url": saved.source_url,
+            "source_evidence": saved.source_evidence,
+            "verification_status": saved.verification_status.value,
+            "importance_score": saved.importance_score,
+            "reviewed_at": saved.reviewed_at,
+            "created_at": saved.created_at,
+            "updated_at": saved.updated_at,
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.CREATED, response_payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_ONE_LINER_SAVE_FAILED",
+                "message": "The one-liner could not be saved. Verify the concept exists and check server-side database diagnostics.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/subjects",
+    name="list_question_bank_subjects",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": QuestionBankSubjectsResponse, "description": "Subjects already represented by canonical concepts."},
+    },
+)
+def list_question_bank_subjects(learner_id: str, request: Request) -> Response:
+    """List available subject labels from the existing concept taxonomy."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        rows = PostgresTopicQuestionBankRepository(connection).list_subjects(limit=100, offset=0)
+        payload = QuestionBankSubjectsResponse.model_validate({
+            "items": [
+                {"subject_id": subject, "subject_label": subject, "concept_count": count}
+                for subject, count in rows
+            ]
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_SUBJECTS_UNAVAILABLE",
+                "message": "Question-bank subjects could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/topics",
+    name="list_question_bank_topics",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": QuestionBankTopicsResponse, "description": "Bounded topic/subtopic list for a selected subject."},
+    },
+)
+def list_question_bank_topics(
+    learner_id: str,
+    request: Request,
+    subject: str,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """List canonical topic concepts for one selected subject."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not subject.strip() or subject != subject.strip() or len(subject) > 200:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject must be trimmed and 1-200 characters."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        repository = PostgresTopicQuestionBankRepository(connection)
+        rows = repository.list_topics(subject, limit=limit + 1, offset=offset)
+        selected = rows[:limit]
+        payload = QuestionBankTopicsResponse.model_validate({
+            "items": [
+                {
+                    "concept_id": item.concept_id,
+                    "label": item.label,
+                    "subject": item.subject,
+                    "topic": item.topic,
+                    "subtopic": item.subtopic,
+                    "verified_one_liner_count": item.verified_one_liner_count,
+                }
+                for item in selected
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(selected),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_TOPICS_UNAVAILABLE",
+                "message": "Topics for the selected subject could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/one-liners",
+    name="list_topic_one_liners",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": TopicOneLinerListResponse, "description": "Source-reviewed direct question-and-answer one-liners for one canonical topic."},
+    },
+)
+def list_topic_one_liners(
+    learner_id: str,
+    request: Request,
+    concept_id: str,
+    language_code: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """List only verified one-liners; Q&A are distinct from historical MCQs."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not concept_id.strip() or concept_id != concept_id.strip() or len(concept_id) > 128:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_CONCEPT_ID", "message": "concept_id must be trimmed and 1-128 characters."}
+        })
+    if language_code is not None and (
+        not language_code.strip() or language_code != language_code.strip() or len(language_code) > 20
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_LANGUAGE_CODE", "message": "language_code must be a trimmed language code."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        repository = PostgresTopicQuestionBankRepository(connection)
+        rows = repository.list_one_liners(
+            concept_id,
+            limit=limit + 1,
+            offset=offset,
+            verified_only=True,
+            language_code=language_code,
+        )
+        selected = rows[:limit]
+        payload = TopicOneLinerListResponse.model_validate({
+            "items": [
+                {
+                    "one_liner_id": item.one_liner_id,
+                    "concept_id": item.concept_id,
+                    "question_text": item.question_text,
+                    "answer_text": item.answer_text,
+                    "language_code": item.language_code,
+                    "source_url": item.source_url,
+                    "source_evidence": item.source_evidence,
+                    "verification_status": item.verification_status.value,
+                    "importance_score": item.importance_score,
+                    "reviewed_at": item.reviewed_at,
+                    "created_at": item.created_at,
+                    "updated_at": item.updated_at,
+                }
+                for item in selected
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(selected),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_ONE_LINERS_UNAVAILABLE",
+                "message": "Verified one-liners for this topic could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/previous-papers",
+    name="list_verified_previous_paper_questions",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": PreviousYearQuestionsResponse, "description": "Source-backed past-paper questions with options and verified official-key answers."},
+    },
+)
+def list_verified_previous_paper_questions(
+    learner_id: str,
+    request: Request,
+    concept_id: str,
+    subject_id: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """Browse eligible official past-paper MCQs separately from one-liner Q&A."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not concept_id.strip() or concept_id != concept_id.strip() or len(concept_id) > 128:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_CONCEPT_ID", "message": "concept_id must be trimmed and 1-128 characters."}
+        })
+    if subject_id is not None and (
+        not subject_id.strip() or subject_id != subject_id.strip() or len(subject_id) > 200
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject_id must be trimmed and 1-200 characters."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        from ai_comp.database.postgres_verified_history_question import PostgresVerifiedHistoryQuestionRepository
+
+        connection = connection_factory()
+        rows = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=limit + 1,
+            offset=offset,
+            concept_ids=(concept_id,),
+            subject_id=subject_id,
+        )
+        page = rows[:limit]
+        payload = PreviousYearQuestionsResponse.model_validate({
+            "items": [
+                {
+                    "question_id": item.generated_question_id.removeprefix("verified-history:"),
+                    "stem": item.stem,
+                    "options": [{"key": option.key, "text": option.text} for option in item.options],
+                    "correct_option_key": item.correct_option_key,
+                    "explanation": item.explanation,
+                    "exam_name": item.exam_name,
+                    "exam_id": item.exam_id,
+                    "exam_year": item.exam_year,
+                    "exam_shift": item.exam_shift,
+                    "exam_question_number": item.exam_question_number,
+                    "source_url": item.source_url,
+                    "answer_key_source_url": item.answer_key_source_url,
+                    "verified_appearance_count": item.verified_appearance_count,
+                    "concept_ids": list(item.concept_ids),
+                }
+                for item in page
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(page),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_PREVIOUS_PAPERS_UNAVAILABLE",
+                "message": "Verified previous-paper questions for this topic could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.post(
+    "/{learner_id}/question-bank/generate-practice",
+    status_code=201,
+    name="generate_subject_practice",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        201: {"model": TopicPracticeGenerationResponse, "description": "Generated, answer-verified subject alternatives and persisted test settings."},
+    },
+)
+def generate_subject_practice(
+    learner_id: str,
+    payload: GenerateTopicPracticePayload,
+    request: Request,
+) -> Response:
+    """Generate new MCQs from reviewed one-liners and verified past-paper answers.
+
+    Existing questions/history are used as source evidence, never as permission
+    to invent exam appearances. AI-generated alternatives remain in generated
+    storage, while the past-paper store remains read-only.
+    """
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_NOT_CONFIGURED",
+                "message": "AI question generation is not configured. Add the model API key to the server's secret environment, not to the app or repository.",
+            }
+        })
+
+    from ai_comp.application.topic_practice_generation import TopicPracticeAlternativeGenerator
+    from ai_comp.database.postgres_generated_question import PostgresGeneratedQuestionRepository
+    from ai_comp.database.postgres_verified_history_question import PostgresVerifiedHistoryQuestionRepository
+    from ai_comp.domain.test_engine import ScoringPolicy, TestSpecification
+    from ai_comp.domain.preparation_request import PreparationTestRequest
+    from ai_comp.material.gemini import GeminiMaterialAnalysisConfig
+    from ai_comp.material.gemini_generation import GeminiAnswerVerifier, GeminiQuestionGenerationProvider
+
+    try:
+        from google import genai
+        config = GeminiMaterialAnalysisConfig(
+            model=os.environ.get("AI_COMP_GEMINI_MODEL", "gemini-3.8-flash").strip()
+            or "gemini-3.8-flash"
+        )
+        client = genai.Client(api_key=api_key)
+        question_provider = GeminiQuestionGenerationProvider(config, client=client)
+        answer_verifier = GeminiAnswerVerifier(config, client=client)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_NOT_CONFIGURED",
+                "message": "The configured question-generation provider could not be initialized.",
+            }
+        })
+
+    connection = None
+    try:
+        connection = connection_factory()
+        bank_repository = PostgresTopicQuestionBankRepository(connection)
+        topics = bank_repository.list_topics(payload.subject_id, limit=500, offset=0)
+        one_liners = bank_repository.list_verified_one_liners_for_subject(
+            payload.subject_id,
+            limit=300,
+            offset=0,
+            language_code=payload.language_code,
+        )
+        previous_questions = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
+            limit=1000,
+            concept_ids=(),
+            subject_id=payload.subject_id,
+        )
+        existing_generated = PostgresGeneratedQuestionRepository(connection).list_accepted(
+            limit=1000,
+            concept_ids=(),
+            subject_id=payload.subject_id,
+        )
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_SOURCE_UNAVAILABLE",
+                "message": "Verified topic facts and previous-paper source records could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+    def persist_question(question) -> None:
+        scoped_connection = connection_factory()
+        try:
+            PostgresGeneratedQuestionRepository(scoped_connection).save(question)
+        finally:
+            close_scoped = getattr(scoped_connection, "close", None)
+            if callable(close_scoped):
+                close_scoped()
+
+    try:
+        generator = TopicPracticeAlternativeGenerator(
+            provider=question_provider,
+            verifier=answer_verifier,
+            persist_question=persist_question,
+            max_source_facts=300,
+        )
+        generated = generator.generate(
+            subject_id=payload.subject_id,
+            requested_count=payload.question_count,
+            topics=topics,
+            one_liners=one_liners,
+            previous_questions=previous_questions,
+            existing_generated_questions=existing_generated,
+        )
+    except Exception:
+        # Provider internals, model prompts, credentials and returned source data
+        # must not be copied into a learner-facing error response.
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_GENERATION_FAILED",
+                "message": "New MCQs could not be generated and verified. No test settings were saved; retry after checking server-side generation diagnostics.",
+            }
+        })
+
+    if generated.accepted_count < 1:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_VERIFIED_ALTERNATIVE_MCQS",
+                "message": "No new MCQ passed source-answer verification, four-option validation, topic mapping and duplicate checks. The app will not fill the test with fabricated questions.",
+            }
+        })
+
+    context_provider = request.app.state.preparation_context_provider
+    readiness_provider = getattr(context_provider, "get_question_bank_readiness", None)
+    request_repository = request.app.state.preparation_test_request_repository
+    if not callable(readiness_provider) or request_repository is None:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "SUBJECT_PRACTICE_NOT_CONFIGURED",
+                "message": "Subject-scoped question selection or test-request storage is not configured.",
+            }
+        })
+    try:
+        readiness = readiness_provider(subject_id=payload.subject_id)
+        eligible_count = readiness.get("eligible_question_count")
+        if isinstance(eligible_count, bool) or not isinstance(eligible_count, int) or eligible_count < 1:
+            raise ValueError("eligible question count is empty or invalid")
+    except Exception:
+        return _json_response(HTTPStatus.CONFLICT, {
+            "error": {
+                "code": "NO_ELIGIBLE_SUBJECT_QUESTIONS",
+                "message": "The selected subject has no eligible verified four-option MCQs after generation. Check topic mappings and answer verification.",
+            }
+        })
+
+    effective_count = min(payload.question_count, eligible_count)
+    request_id = uuid4().hex
+    title = f"{payload.subject_id} practice test"
+    specification = TestSpecification(
+        test_id=f"topic-{request_id}",
+        title=title,
+        question_count=effective_count,
+        duration_seconds=payload.duration_seconds,
+        scoring=ScoringPolicy(
+            correct_marks=1.0,
+            incorrect_marks=-0.25,
+            unattempted_marks=0.0,
+        ),
+    )
+    try:
+        domain_request = PreparationTestRequest(
+            learner_id=authenticated_learner_id,
+            specification=specification,
+            mode=PersonalizedPreparationMode.MIXED,
+            subject_id=payload.subject_id,
+        )
+        request_repository.save_active(request_id, domain_request)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "PREPARATION_REQUEST_STORE_UNAVAILABLE",
+                "message": "Generated MCQs were saved, but test settings could not be saved. Retry creating the test.",
+            }
+        })
+
+    response_payload = TopicPracticeGenerationResponse.model_validate({
+        "learner_id": authenticated_learner_id,
+        "subject_id": payload.subject_id,
+        "request_id": request_id,
+        "requested_question_count": payload.question_count,
+        "generated_alternative_count": generated.accepted_count,
+        "eligible_question_count": eligible_count,
+        "effective_question_count": effective_count,
+        "duration_seconds": payload.duration_seconds,
+        "one_liner_source_count": generated.one_liner_source_count,
+        "previous_paper_source_count": generated.previous_paper_source_count,
+        "warnings": list(generated.warnings),
+        "message": "New four-option alternatives passed answer verification and were mapped to the selected subject. The test engine will use eligible questions from this subject only.",
+    }).model_dump(mode="json")
+    return _json_response(HTTPStatus.CREATED, response_payload)
 
 
 @router.get("/{learner_id}/preparation-guidance", name="preparation_guidance")

@@ -138,6 +138,7 @@ class QuestionBankReadinessResponse(ContractModel):
     accepted_generated_question_count: int = Field(ge=0)
     practice_test_available: bool
     source_counts_scope: Literal["configured_eligible_pool"]
+    subject_id: str | None = None
 
 
 class SubmittedTestResponse(ContractModel):
@@ -237,6 +238,94 @@ class AnswerReviewResponse(ContractModel):
     questions: list[AnswerReviewQuestionResponse]
 
 
+class PreviousYearQuestionItem(ContractModel):
+    question_id: str
+    stem: str
+    options: list[QuestionOptionResponse]
+    correct_option_key: str
+    explanation: str
+    exam_name: str
+    exam_id: str
+    exam_year: int = Field(ge=1900)
+    exam_shift: str | None
+    exam_question_number: int = Field(ge=1)
+    source_url: str
+    answer_key_source_url: str
+    verified_appearance_count: int = Field(ge=1)
+    concept_ids: list[str]
+
+
+class PreviousYearQuestionsResponse(ContractModel):
+    items: list[PreviousYearQuestionItem]
+    pagination: QuestionBankPaginationResponse
+
+
+class QuestionBankPaginationResponse(ContractModel):
+    limit: int = Field(ge=1)
+    offset: int = Field(ge=0)
+    returned: int = Field(ge=0)
+    has_more: bool
+
+
+class QuestionBankSubjectItem(ContractModel):
+    subject_id: str
+    subject_label: str
+    concept_count: int = Field(ge=0)
+
+
+class QuestionBankSubjectsResponse(ContractModel):
+    items: list[QuestionBankSubjectItem]
+
+
+class QuestionBankTopicItem(ContractModel):
+    concept_id: str
+    label: str
+    subject: str
+    topic: str | None
+    subtopic: str | None
+    verified_one_liner_count: int = Field(ge=0)
+
+
+class QuestionBankTopicsResponse(ContractModel):
+    items: list[QuestionBankTopicItem]
+    pagination: QuestionBankPaginationResponse
+
+
+class TopicOneLinerItem(ContractModel):
+    one_liner_id: str
+    concept_id: str
+    question_text: str
+    answer_text: str
+    language_code: str
+    source_url: str | None
+    source_evidence: str
+    verification_status: Literal["DRAFT", "NEEDS_REVIEW", "VERIFIED", "REJECTED"]
+    importance_score: float = Field(ge=0, le=1)
+    reviewed_at: datetime | None
+    created_at: datetime | None
+    updated_at: datetime | None
+
+
+class TopicOneLinerListResponse(ContractModel):
+    items: list[TopicOneLinerItem]
+    pagination: QuestionBankPaginationResponse
+
+
+class TopicPracticeGenerationResponse(ContractModel):
+    learner_id: str
+    subject_id: str
+    request_id: str
+    requested_question_count: int = Field(ge=1, le=500)
+    generated_alternative_count: int = Field(ge=0)
+    eligible_question_count: int = Field(ge=0)
+    effective_question_count: int = Field(ge=1)
+    duration_seconds: int = Field(ge=1)
+    one_liner_source_count: int = Field(ge=0)
+    previous_paper_source_count: int = Field(ge=0)
+    warnings: list[str] = Field(default_factory=list)
+    message: str
+
+
 COMMON_API_ERROR_RESPONSES = {
     400: {"model": APIErrorResponse, "description": "Invalid path or query parameters."},
     401: {"model": APIErrorResponse, "description": "Authentication is required."},
@@ -262,5 +351,15 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "PreviousYearQuestionItem",
+    "PreviousYearQuestionsResponse",
+    "QuestionBankPaginationResponse",
+    "QuestionBankSubjectItem",
+    "QuestionBankSubjectsResponse",
+    "QuestionBankTopicItem",
+    "QuestionBankTopicsResponse",
+    "TopicOneLinerItem",
+    "TopicOneLinerListResponse",
+    "TopicPracticeGenerationResponse",
     "SubmittedTestResponse",
 ]

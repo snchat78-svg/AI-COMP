@@ -151,17 +151,22 @@ class AiCompApiClient {
   Future<void> createMixedPracticeRequest({
     required int questionCount,
     required int durationSeconds,
+    String? subjectId,
   }) async {
+    final body = <String, Object?>{
+      'title': subjectId == null ? 'Mixed practice test' : '$subjectId practice test',
+      'question_count': questionCount,
+      'duration_seconds': durationSeconds,
+      'mode': 'MIXED',
+      'concept_ids': <String>[],
+    };
+    if (subjectId != null && subjectId.trim().isNotEmpty) {
+      body['subject_id'] = subjectId.trim();
+    }
     await _send(
       'POST',
       '$_learnerPath/preparation-requests',
-      body: {
-        'title': 'Mixed practice test',
-        'question_count': questionCount,
-        'duration_seconds': durationSeconds,
-        'mode': 'MIXED',
-        'concept_ids': <String>[],
-      },
+      body: body,
     );
   }
 
@@ -236,9 +241,111 @@ class AiCompApiClient {
     return AnswerReview.fromJson(json);
   }
 
-  Future<QuestionBankReadiness> getQuestionBankReadiness() async {
-    final json = await _send('GET', '$_learnerPath/question-bank/readiness');
+  Future<QuestionBankReadiness> getQuestionBankReadiness({String? subjectId}) async {
+    final query = subjectId == null ? null : <String, String>{'subject_id': subjectId};
+    final json = await _send('GET', '$_learnerPath/question-bank/readiness', query: query);
     return QuestionBankReadiness.fromJson(json);
+  }
+
+  Future<List<QuestionBankSubject>> getQuestionBankSubjects() async {
+    final json = await _send('GET', '$_learnerPath/question-bank/subjects');
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(QuestionBankSubject.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<QuestionBankTopic>> getQuestionBankTopics(
+    String subjectId, {
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/topics',
+      query: {'subject': subjectId, 'limit': '$limit', 'offset': '$offset'},
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(QuestionBankTopic.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<TopicOneLinerItem>> getTopicOneLiners(
+    String conceptId, {
+    int limit = 100,
+    int offset = 0,
+    String? languageCode,
+  }) async {
+    final query = <String, String>{
+      'concept_id': conceptId,
+      'limit': '$limit',
+      'offset': '$offset',
+    };
+    if (languageCode != null && languageCode.trim().isNotEmpty) {
+      query['language_code'] = languageCode.trim();
+    }
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/one-liners',
+      query: query,
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(TopicOneLinerItem.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<PreviousYearQuestion>> getPreviousYearQuestions(
+    String conceptId, {
+    String? subjectId,
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    final query = <String, String>{
+      'concept_id': conceptId,
+      'limit': '$limit',
+      'offset': '$offset',
+    };
+    if (subjectId != null && subjectId.trim().isNotEmpty) {
+      query['subject_id'] = subjectId.trim();
+    }
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/previous-papers',
+      query: query,
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(PreviousYearQuestion.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<TopicPracticeGenerationResult> generateSubjectPractice({
+    required String subjectId,
+    required int questionCount,
+    required int durationSeconds,
+    String languageCode = 'hi',
+  }) async {
+    final json = await _send(
+      'POST',
+      '$_learnerPath/question-bank/generate-practice',
+      body: {
+        'subject_id': subjectId,
+        'question_count': questionCount,
+        'duration_seconds': durationSeconds,
+        'language_code': languageCode,
+      },
+    );
+    return TopicPracticeGenerationResult.fromJson(json);
   }
 
   Future<LearnerAnalytics> getAnalytics() async {

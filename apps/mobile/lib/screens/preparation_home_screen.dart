@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../api/ai_comp_api_client.dart';
 import '../models/preparation_models.dart';
 import 'test_session_screen.dart';
+import 'question_bank_screen.dart';
 
 class PreparationHomeScreen extends StatefulWidget {
   const PreparationHomeScreen({super.key, this.firebaseUser});
@@ -33,6 +34,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   ResultsSummary? _summary;
   QuestionBankReadiness? _questionBankReadiness;
   String? _questionBankReadinessError;
+  List<QuestionBankSubject> _subjects = const [];
+  String? _selectedSubjectId;
+  String? _subjectError;
   List<TestHistoryItem> _recentSessions = const [];
   bool _loading = false;
   String? _error;
@@ -87,10 +91,22 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await candidate.getAnalytics();
       final summary = await candidate.getResultsSummary();
       final sessions = await candidate.getSessions(limit: 8);
+      List<QuestionBankSubject> subjects = const [];
+      String? subjectError;
+      try {
+        subjects = await candidate.getQuestionBankSubjects();
+      } on ApiException {
+        subjectError = 'Subject catalogue is not available on this API version yet.';
+      }
+      final selectedSubjectId = subjects.any((item) => item.subjectId == _selectedSubjectId)
+          ? _selectedSubjectId
+          : (subjects.isEmpty ? null : subjects.first.subjectId);
       QuestionBankReadiness? readiness;
       String? readinessError;
       try {
-        readiness = await candidate.getQuestionBankReadiness();
+        readiness = selectedSubjectId == null
+            ? await candidate.getQuestionBankReadiness()
+            : await candidate.getQuestionBankReadiness(subjectId: selectedSubjectId);
       } on ApiException {
         readinessError = 'Question-bank status could not be checked. Refresh after the server update completes.';
       }
@@ -103,6 +119,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _analytics = analytics;
         _summary = summary;
         _recentSessions = sessions;
+        _subjects = subjects;
+        _selectedSubjectId = selectedSubjectId;
+        _subjectError = subjectError;
         _questionBankReadiness = readiness;
         _questionBankReadinessError = readinessError;
         _loading = false;
@@ -131,10 +150,22 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       final analytics = await api.getAnalytics();
       final summary = await api.getResultsSummary();
       final sessions = await api.getSessions(limit: 8);
+      List<QuestionBankSubject> subjects = const [];
+      String? subjectError;
+      try {
+        subjects = await api.getQuestionBankSubjects();
+      } on ApiException {
+        subjectError = 'Subject catalogue is not available on this API version yet.';
+      }
+      final selectedSubjectId = subjects.any((item) => item.subjectId == _selectedSubjectId)
+          ? _selectedSubjectId
+          : (subjects.isEmpty ? null : subjects.first.subjectId);
       QuestionBankReadiness? readiness;
       String? readinessError;
       try {
-        readiness = await api.getQuestionBankReadiness();
+        readiness = selectedSubjectId == null
+            ? await api.getQuestionBankReadiness()
+            : await api.getQuestionBankReadiness(subjectId: selectedSubjectId);
       } on ApiException {
         readinessError = 'Question-bank status could not be checked. Refresh after the server update completes.';
       }
@@ -143,6 +174,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         _analytics = analytics;
         _summary = summary;
         _recentSessions = sessions;
+        _subjects = subjects;
+        _selectedSubjectId = selectedSubjectId;
+        _subjectError = subjectError;
         _questionBankReadiness = readiness;
         _questionBankReadinessError = readinessError;
       });
@@ -153,26 +187,58 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     }
   }
 
+  Future<void> _browseQuestionBank() async {
+    final api = _api;
+    final subjectId = _selectedSubjectId;
+    if (api == null || subjectId == null || subjectId.isEmpty) {
+      _setError('Connect to the API and select a subject before browsing topics.');
+      return;
+    }
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => QuestionBankScreen(api: api, subjectId: subjectId),
+      ),
+    );
+  }
+
+  Future<void> _selectQuestionBankSubject(String? subjectId) async {
+    if (subjectId == null || subjectId.trim().isEmpty) return;
+    final api = _api;
+    setState(() {
+      _selectedSubjectId = subjectId;
+      _questionBankReadiness = null;
+      _questionBankReadinessError = null;
+    });
+    if (api == null) return;
+    try {
+      final readiness = await api.getQuestionBankReadiness(subjectId: subjectId);
+      if (!mounted) return;
+      setState(() {
+        _questionBankReadiness = readiness;
+        _questionBankReadinessError = null;
+      });
+    } on ApiException {
+      if (!mounted) return;
+      setState(() {
+        _questionBankReadiness = null;
+        _questionBankReadinessError = 'Question-bank status for this subject could not be checked.';
+      });
+    }
+  }
+
   Future<void> _startAdaptivePractice() async {
     final api = _api;
     if (api == null) {
       _setError('Connect to the API first.');
       return;
     }
-    final readiness = _questionBankReadiness;
-    if (_questionBankReadinessError != null || readiness == null) {
-      _setError(
-        _questionBankReadinessError ??
-            'Question-bank status has not been checked. Refresh the dashboard before starting a test.',
-      );
+    final subjectId = _selectedSubjectId;
+    if (subjectId == null || subjectId.isEmpty) {
+      _setError('Select a subject before creating a test.');
       return;
     }
-    if (!readiness.practiceTestAvailable) {
-      _setError(
-        'No eligible verified questions are available yet. The question bank is not ready; refresh after official paper and answer-key verification succeeds.',
-      );
-      return;
-    }
+    // An empty existing MCQ pool does not block a new generation attempt:
+    // the server can derive alternatives from verified one-liners/history.
     final questionCount = int.tryParse(_questionCountController.text.trim());
     final durationMinutes = int.tryParse(_durationMinutesController.text.trim());
     if (questionCount == null || questionCount < 1 || questionCount > 500) {
@@ -191,47 +257,31 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       _error = null;
     });
     try {
-      AdaptiveRecommendation? recommendation;
-      try {
-        recommendation = await api.recommendAdaptivePractice(
-          questionCount: questionCount,
-          durationSeconds: durationMinutes * 60,
-        );
-      } on ApiException catch (error) {
-        // A first-time learner (or one without a reliable focus signal) still
-        // needs to be able to take a regular test and build useful history.
-        // Keep adaptive recommendations history-driven; only fall back when
-        // the server explicitly says a focused set cannot be made.
-        if (!const {
-          'NO_ADAPTIVE_PRACTICE_SIGNAL',
-          'NO_ELIGIBLE_ADAPTIVE_QUESTIONS',
-        }.contains(error.code)) {
-          rethrow;
-        }
-        await api.createMixedPracticeRequest(
-          questionCount: questionCount,
-          durationSeconds: durationMinutes * 60,
-        );
-      }
+      // Generate source-grounded alternatives first; the API persists the
+      // selected subject/count/time and the existing test engine then builds the session.
+      final generation = await api.generateSubjectPractice(
+        subjectId: subjectId,
+        questionCount: questionCount,
+        durationSeconds: durationMinutes * 60,
+      );
       final session = await api.createSession();
       if (!mounted) return;
       setState(() => _loading = false);
-      if (session.questionCount < questionCount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Only ${session.questionCount} verified questions are available. The test has been adjusted to that count.',
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Generated ${generation.generatedAlternativeCount} verified alternative MCQs. '
+            'Starting a ${session.questionCount}-question test for $subjectId.',
           ),
-        );
-      }
+        ),
+      );
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (_) => TestSessionScreen(
             api: api,
             initialSession: session,
-            title: recommendation?.title ?? 'Mixed practice test',
-            focusConceptIds: recommendation?.focusConceptIds ?? const <String>[],
+            title: '$subjectId practice test',
+            focusConceptIds: const <String>[],
           ),
         ),
       );
@@ -289,7 +339,17 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
       case 'NO_ELIGIBLE_ADAPTIVE_QUESTIONS':
         return 'There are no eligible verified questions for the recommended topics yet.';
       case 'NO_ELIGIBLE_PREPARATION_QUESTIONS':
-        return 'No eligible verified questions are available yet. Official paper and answer-key verification must finish before a practice test can start.';
+        return 'No eligible verified questions are available yet. Check this subject\'s reviewed one-liners and official answer-key history.';
+      case 'QUESTION_GENERATION_NOT_CONFIGURED':
+        return 'AI question generation is not configured on the server. The server owner must add the model API key as a secret; never put it in the app.';
+      case 'QUESTION_BANK_SOURCE_UNAVAILABLE':
+        return 'Verified one-liners or previous-paper answers could not be loaded for this subject. Refresh and try again later.';
+      case 'QUESTION_GENERATION_FAILED':
+        return 'New MCQs could not pass generation and answer verification. No test was started; try again after the server issue is resolved.';
+      case 'NO_VERIFIED_ALTERNATIVE_MCQS':
+        return 'No new four-option MCQs passed answer verification. The app will not create a test from unverified questions.';
+      case 'NO_ELIGIBLE_SUBJECT_QUESTIONS':
+        return 'The selected subject has no eligible four-option MCQs yet. Check topic mapping and source verification.';
       case 'NETWORK_UNAVAILABLE':
         return 'Could not reach the API. Check the base URL and network connection.';
       default:
@@ -463,6 +523,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     }
     final available = readiness.eligibleQuestionCount;
     final empty = available == 0;
+    final scopeLabel = readiness.subjectId == null
+        ? ''
+        : ' for ${readiness.subjectId}';
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -488,17 +551,17 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '$available eligible questions available '
+              '$available eligible questions available$scopeLabel '
               '(${readiness.verifiedHistoryQuestionCount} from verified exam history, '
               '${readiness.acceptedGeneratedQuestionCount} accepted generated questions).',
             ),
             if (empty) ...[
               const SizedBox(height: 8),
               const Text(
-                'Past-exam questions enter the practice pool only after an official paper '
-                'is paired with a verified official answer key. Unverified items are not '
-                'used to fill the pool, and no manual previous-paper upload is required. '
-                'Practice tests remain disabled until at least one eligible question is available.',
+                'Past-paper questions enter the verified pool only after an official paper '
+                'is paired with its verified official answer key. The subject-test flow can '
+                'try to generate new alternatives from reviewed one-liners and verified past-paper '
+                'answers; it still stops when source evidence or answer verification is insufficient.',
               ),
             ],
             const SizedBox(height: 8),
@@ -521,7 +584,47 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           children: [
             Text('Practice test', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            const Text('When saved results provide a clear focus, the test targets weak topics and previous mistakes. Otherwise, a mixed practice test helps build your learning history.'),
+            const Text('Choose a subject first, set the question count and time, then start a test. Questions are taken only from the selected subject and the existing verified/accepted four-option MCQ pool.'),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _subjects.any((item) => item.subjectId == _selectedSubjectId)
+                  ? _selectedSubjectId
+                  : null,
+              decoration: const InputDecoration(
+                labelText: 'Subject',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.menu_book_outlined),
+              ),
+              items: _subjects
+                  .map(
+                    (subject) => DropdownMenuItem<String>(
+                      value: subject.subjectId,
+                      child: Text(
+                        '${subject.subjectLabel} (${subject.conceptCount} topics)',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  )
+                  .toList(growable: false),
+              onChanged: _loading || _subjects.isEmpty
+                  ? null
+                  : _selectQuestionBankSubject,
+            ),
+            if (_subjectError != null) ...[
+              const SizedBox(height: 6),
+              Text(_subjectError!, style: theme.textTheme.bodySmall),
+            ],
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _loading || !_connected || _selectedSubjectId == null
+                    ? null
+                    : _browseQuestionBank,
+                icon: const Icon(Icons.menu_book_outlined),
+                label: const Text('Browse topics, One-Liners & Previous Papers'),
+              ),
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -556,21 +659,19 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               child: FilledButton.icon(
                 onPressed: _loading ||
                         !_connected ||
-                        _questionBankReadinessError != null ||
-                        _questionBankReadiness == null ||
-                        _questionBankReadiness?.practiceTestAvailable == false
+                        _selectedSubjectId == null ||
+                        _subjects.isEmpty
                     ? null
                     : _startAdaptivePractice,
                 icon: const Icon(Icons.play_arrow),
                 label: Text(
                   !_connected
-                      ? 'Create and start test'
-                      : _questionBankReadinessError != null ||
-                              _questionBankReadiness == null
-                          ? 'Check question bank status'
-                          : _questionBankReadiness!.practiceTestAvailable
-                              ? 'Create and start test'
-                              : 'Question bank not ready',
+                      ? 'Connect to create test'
+                      : _subjects.isEmpty
+                          ? 'No subjects available'
+                          : _selectedSubjectId == null
+                              ? 'Select a subject'
+                              : 'Generate MCQs and start test',
                 ),
               ),
             ),

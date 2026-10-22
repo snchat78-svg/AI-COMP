@@ -11,10 +11,10 @@ void main() {
     expect(find.text('Learner ID'), findsOneWidget);
     expect(find.text('Access token'), findsOneWidget);
     expect(find.text('Connect & load progress'), findsOneWidget);
-    expect(find.text('Create and start test'), findsOneWidget);
+    expect(find.text('Connect to create test'), findsOneWidget);
 
     final testButton = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Create and start test'),
+      find.widgetWithText(FilledButton, 'Connect to create test'),
     );
     expect(testButton.onPressed, isNull);
   });
