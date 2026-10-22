@@ -69,6 +69,7 @@ def test_previous_paper_api_filters_exam_year_shift_and_reports_topic_count():
             "exam_id": "RAJ_EXAM",
             "exam_year": 2024,
             "exam_shift": "MORNING",
+            "source_domain": "official.example",
             "limit": 1,
             "offset": 0,
         },
@@ -100,6 +101,7 @@ def test_previous_paper_api_filters_exam_year_shift_and_reports_topic_count():
         "RAJ_EXAM", "RAJ_EXAM",
         2024, 2024,
         "MORNING", "MORNING",
+        "official.example", "official.example",
         ["catalog.rajasthan-geography.rivers"],
         ["catalog.rajasthan-geography.rivers"],
         1, 0,
@@ -133,4 +135,18 @@ def test_previous_paper_api_enforces_learner_scope_before_database_access():
 
     assert response.status_code == 403
     assert response.json()["error"]["code"] == "LEARNER_SCOPE_MISMATCH"
+    assert connection.calls == []
+
+
+def test_previous_paper_api_rejects_a_url_where_source_domain_is_expected():
+    connection = _Connection([])
+    client = _client(connection)
+
+    response = client.get(
+        "/api/v1/learners/learner-1/question-bank/previous-papers",
+        params={"concept_id": "topic-1", "source_domain": "https://official.example"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "INVALID_SOURCE_DOMAIN"
     assert connection.calls == []
