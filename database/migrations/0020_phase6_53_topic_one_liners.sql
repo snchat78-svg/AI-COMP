@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS question_bank_one_liners (
     CHECK (
         verification_status <> 'VERIFIED'
         OR (
-            source_url LIKE 'https://%'
+            source_url IS NOT NULL
+            AND source_url LIKE 'https://%'
             AND length(btrim(source_evidence)) > 0
             AND reviewed_at IS NOT NULL
         )
