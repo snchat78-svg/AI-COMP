@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import Literal
 import time
 from http import HTTPStatus
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlsplit
 from uuid import uuid4
 
 from fastapi import APIRouter, Request
@@ -221,8 +221,16 @@ class SaveTopicOneLinerPayload(BaseModel):
     @field_validator("source_url")
     @classmethod
     def source_must_be_https(cls, value: str | None) -> str | None:
-        if value is not None and (not value.startswith("https://") or value != value.strip()):
-            raise ValueError("source_url must be an absolute HTTPS URL")
+        if value is not None:
+            parsed = urlsplit(value)
+            if (
+                value != value.strip()
+                or parsed.scheme.lower() != "https"
+                or not parsed.hostname
+                or parsed.username is not None
+                or parsed.password is not None
+            ):
+                raise ValueError("source_url must be an absolute HTTPS URL with a hostname and no embedded credentials")
         return value
 
     @model_validator(mode="after")
@@ -1684,11 +1692,16 @@ def review_topic_one_liner(
     cannot claim an arbitrary reviewer.
     """
     configured_token = os.environ.get("AI_COMP_CONTENT_REVIEW_TOKEN", "").strip()
-    if not configured_token:
+    configured_author_token = os.environ.get("AI_COMP_CONTENT_ADMIN_TOKEN", "").strip()
+    if (
+        not configured_token
+        or not configured_author_token
+        or hmac.compare_digest(configured_token, configured_author_token)
+    ):
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
                 "code": "QUESTION_BANK_CONTENT_REVIEW_NOT_CONFIGURED",
-                "message": "Independent content review is not configured on this server.",
+                "message": "Independent review requires distinct author and reviewer credentials configured on this server.",
             }
         })
     supplied_token = request.headers.get("X-AI-COMP-Content-Review-Token", "")
