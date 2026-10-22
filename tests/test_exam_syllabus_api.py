@@ -13,6 +13,7 @@ _PROFILE_ROW = (
     "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf",
     "Advertisement No. 09/2026",
     "REVIEW_PENDING",
+    False,
     340,
     0,
     0,
