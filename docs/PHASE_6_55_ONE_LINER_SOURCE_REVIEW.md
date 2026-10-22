@@ -17,7 +17,7 @@ This phase reuses migration `0019_phase6_53_topic_one_liners.sql`, the canonical
 - The existing author endpoint (`POST /api/v1/admin/question-bank/one-liners`) accepts only `DRAFT` or `NEEDS_REVIEW`. Supplying `VERIFIED` is rejected.
 - The separate review endpoint is `POST /api/v1/admin/question-bank/one-liners/{one_liner_id}/review`. Decisions are `VERIFIED`, `REJECTED`, or `NEEDS_REVIEW`; a non-empty reviewer note is required. Review events record reviewer identity, decision, note and source-check timestamp.
 - A `VERIFIED` decision requires an absolute HTTPS source URL and non-empty evidence. The database additionally requires `reviewed_at`, `reviewed_by`, and `source_checked_at` for verified rows.
-- The review endpoint rejects attempts to overwrite an already verified item; use a corrected, separately submitted content version instead.
+- A verified item cannot be silently downgraded to `NEEDS_REVIEW`; an independent reviewer can explicitly reject it with a reason, which removes it from the verified learner list and adds an audit event. The author may then resubmit the same canonical Q&A with corrected source/evidence; the existing rejected duplicate is reset to `NEEDS_REVIEW` and old review events remain in the audit table.
 
 ## Server configuration
 
