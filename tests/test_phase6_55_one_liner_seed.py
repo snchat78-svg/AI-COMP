@@ -57,4 +57,4 @@ def test_phase_655_seed_has_source_backed_pending_candidates_with_valid_hashes()
         assert candidate.reviewed_at is None
 
     assert "ON CONFLICT (concept_id, language_code, content_hash) DO NOTHING" in sql
-    assert "source_checked_at" not in sql or "reviewed_at" in sql
+    assert "verification_status" in sql
