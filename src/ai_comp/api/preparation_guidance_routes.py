@@ -1451,11 +1451,21 @@ def get_preparation_results_analytics(learner_id: str, request: Request) -> Resp
         },
     },
 )
-def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
-    """Return aggregate pool counts without exposing question text or learner history."""
+def get_question_bank_readiness(
+    learner_id: str,
+    request: Request,
+    subject_id: str | None = None,
+) -> Response:
+    """Return aggregate pool counts, optionally for the selected subject."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
         return error
+    if subject_id is not None and (
+        not subject_id.strip() or subject_id != subject_id.strip() or len(subject_id) > 200
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_SUBJECT", "message": "subject_id must be trimmed and 1-200 characters."}
+        })
 
     context_provider = request.app.state.preparation_context_provider
     readiness_provider = getattr(context_provider, "get_question_bank_readiness", None)
@@ -1467,11 +1477,15 @@ def get_question_bank_readiness(learner_id: str, request: Request) -> Response:
             }
         })
     try:
-        readiness = readiness_provider()
+        readiness = (
+            readiness_provider()
+            if subject_id is None
+            else readiness_provider(subject_id=subject_id)
+        )
         payload = QuestionBankReadinessResponse.model_validate({
             **readiness,
             "learner_id": authenticated_learner_id,
-        }).model_dump()
+        }).model_dump(mode="json")
     except Exception:
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
             "error": {
