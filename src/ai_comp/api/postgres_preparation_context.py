@@ -204,6 +204,7 @@ class PostgresPreparationContextProvider:
                 stored_questions = self._load_combined_question_pool(
                     connection,
                     concept_ids=test_request.concept_ids,
+                    subject_id=test_request.subject_id,
                 )
         finally:
             close = getattr(connection, "close", None)
@@ -306,6 +307,7 @@ class PostgresPreparationContextProvider:
         connection: Any,
         *,
         concept_ids: Sequence[str],
+        subject_id: str | None = None,
     ) -> tuple[GeneratedMCQ, ...]:
         """Read generated and official-history sources separately, then deduplicate.
 
@@ -317,10 +319,12 @@ class PostgresPreparationContextProvider:
         generated = PostgresGeneratedQuestionRepository(connection).list_accepted(
             limit=self.question_pool_limit,
             concept_ids=concept_ids,
+            subject_id=subject_id,
         )
         historical = PostgresVerifiedHistoryQuestionRepository(connection).list_eligible(
             limit=self.question_pool_limit,
             concept_ids=concept_ids,
+            subject_id=subject_id,
         )
         combined: list[GeneratedMCQ] = []
         seen_stems: set[str] = set()
