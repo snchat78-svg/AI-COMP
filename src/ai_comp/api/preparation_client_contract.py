@@ -138,6 +138,7 @@ class QuestionBankReadinessResponse(ContractModel):
     accepted_generated_question_count: int = Field(ge=0)
     practice_test_available: bool
     source_counts_scope: Literal["configured_eligible_pool"]
+    subject_id: str | None = None
 
 
 class SubmittedTestResponse(ContractModel):
