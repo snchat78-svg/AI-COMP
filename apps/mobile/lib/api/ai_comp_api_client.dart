@@ -247,8 +247,32 @@ class AiCompApiClient {
     return QuestionBankReadiness.fromJson(json);
   }
 
-  Future<List<QuestionBankSubject>> getQuestionBankSubjects() async {
-    final json = await _send('GET', '$_learnerPath/question-bank/subjects');
+  Future<List<QuestionBankExamProfile>> getQuestionBankExamProfiles({
+    int limit = 100,
+  }) async {
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/exam-profiles',
+      query: {'limit': '$limit'},
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(QuestionBankExamProfile.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<QuestionBankSubject>> getQuestionBankSubjects({String? examId}) async {
+    final query = <String, String>{};
+    if (examId != null && examId.trim().isNotEmpty) {
+      query['exam_id'] = examId.trim();
+    }
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/subjects',
+      query: query.isEmpty ? null : query,
+    );
     final raw = json['items'];
     if (raw is! List) return const [];
     return raw
@@ -259,13 +283,22 @@ class AiCompApiClient {
 
   Future<List<QuestionBankTopic>> getQuestionBankTopics(
     String subjectId, {
+    String? examId,
     int limit = 100,
     int offset = 0,
   }) async {
+    final query = <String, String>{
+      'subject': subjectId,
+      'limit': '$limit',
+      'offset': '$offset',
+    };
+    if (examId != null && examId.trim().isNotEmpty) {
+      query['exam_id'] = examId.trim();
+    }
     final json = await _send(
       'GET',
       '$_learnerPath/question-bank/topics',
-      query: {'subject': subjectId, 'limit': '$limit', 'offset': '$offset'},
+      query: query,
     );
     final raw = json['items'];
     if (raw is! List) return const [];
