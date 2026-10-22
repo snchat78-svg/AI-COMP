@@ -96,6 +96,7 @@ class QuestionBankExamProfile {
     required this.sourceUrl,
     required this.notificationNumber,
     required this.sourceStatus,
+    required this.syllabusInventoryComplete,
     required this.conceptCount,
     required this.mappedConceptCount,
     required this.excludedConceptCount,
@@ -110,6 +111,7 @@ class QuestionBankExamProfile {
   final String sourceUrl;
   final String notificationNumber;
   final String sourceStatus;
+  final bool syllabusInventoryComplete;
   final int conceptCount;
   final int mappedConceptCount;
   final int excludedConceptCount;
@@ -125,6 +127,7 @@ class QuestionBankExamProfile {
       sourceUrl: _string(json['source_url']),
       notificationNumber: _string(json['notification_number']),
       sourceStatus: _string(json['source_status'], 'REVIEW_PENDING'),
+      syllabusInventoryComplete: json['syllabus_inventory_complete'] == true,
       conceptCount: _integer(json['concept_count'], 0),
       mappedConceptCount: _integer(json['mapped_concept_count'], 0),
       excludedConceptCount: _integer(json['excluded_concept_count'], 0),
