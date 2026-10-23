@@ -171,8 +171,8 @@ class SyllabusUnitDecision(BaseModel):
     @field_validator("decision")
     @classmethod
     def decision_is_allowed(cls, value: str) -> str:
-        if value not in {"VERIFIED", "REJECTED", "NEEDS_REVIEW"}:
-            raise ValueError("decision must be VERIFIED, REJECTED, or NEEDS_REVIEW")
+        if value not in {"VERIFIED", "REJECTED"}:
+            raise ValueError("decision must be VERIFIED or REJECTED")
         return value
 
     @field_validator("review_note")
