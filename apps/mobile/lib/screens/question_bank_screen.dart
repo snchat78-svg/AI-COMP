@@ -8,10 +8,12 @@ class QuestionBankScreen extends StatefulWidget {
     super.key,
     required this.api,
     required this.subjectId,
+    this.examId,
   });
 
   final AiCompApiClient api;
   final String subjectId;
+  final String? examId;
 
   @override
   State<QuestionBankScreen> createState() => _QuestionBankScreenState();
@@ -42,6 +44,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
     while (offset <= 100000 && topics.length < maximumTopics) {
       final page = await widget.api.getQuestionBankTopics(
         widget.subjectId,
+        examId: widget.examId,
         limit: pageSize,
         offset: offset,
       );
@@ -75,7 +78,9 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.subjectId} — Topics'),
+        title: Text(widget.examId == null
+            ? '${widget.subjectId} — Topics'
+            : '${widget.subjectId} — Topics · ${widget.examId}'),
         actions: [
           IconButton(
             tooltip: 'Refresh topics',

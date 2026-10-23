@@ -1,6 +1,7 @@
 # Phase 6.56 — Mobile Question Bank Navigation and Topic Search
 
 **Status:** IN_PROGRESS; the first navigation/search/paging slice was merged in PR #42 as d138d65d758efbde5c04126688566d499063da40. Official exam-profile/syllabus mapping remains the next acceptance gate.  
+**Exam-syllabus implementation slice:** in branch `phase-6-56-exam-syllabus-mapping`; see [Exam Syllabus Mapping](PHASE_6_56_EXAM_SYLLABUS_MAPPING.md). The API contract, database migration, repository, client and selector are being validated in a separate PR; do not treat them as merged or CI-passing until the registry records exact evidence.  
 **Canonical state:** [Phase Registry](PHASE_REGISTRY.md).  
 **Persistent restart location:** [Project Continuity Checkpoint](PROJECT_CONTINUITY_CHECKPOINT.md).  
 **Full subject/topic content goal:** [One-Liner coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) and [per-concept CSV ledger](QUESTION_BANK_CONTENT_COVERAGE.csv).
@@ -49,4 +50,8 @@ Current snapshot from repository files only: 340 catalogue concept rows across 1
 
 ## Next within Phase 6.56
 
-Phase 6.56 stays IN_PROGRESS. First determine the supported exam profiles from existing registered exam records, then research their official notifications/syllabi and implement an auditable exam-profile → applicable canonical concept mapping. Add the profile selector and tests proving that subject/topic options are filtered to the selected exam and that unmapped topics are visible as unmapped rather than silently included. Do not claim the full phase complete until this source-backed mapping passes CI. Keep Phase 6.55's live migration/reviewer-secret gates visible and continue source-backed candidates from QUESTION_BANK_CONTENT_COVERAGE.csv, prioritising rows with no candidates.
+A first implementation slice is now on `phase-6-56-exam-syllabus-mapping`: migration `0023_phase6_56_exam_syllabus_mapping.sql`, a repository that only reads independently reviewed mappings, `GET /question-bank/exam-profiles`, optional `exam_id` filtering for subjects/topics, and a separate mobile exam-syllabus selector. Tests were added for unreviewed-profile/learner-scope behavior and client filter parameters. Its PR and current-head CI status must be recorded in the checkpoint after review.
+
+**Still open:** the official RSSB CET Graduation Level 2026 PDF URL is identified but direct file retrieval/content/SHA-256 has not been independently confirmed. The seed deliberately stays `REVIEW_PENDING`; all 340 generic concepts currently remain unmapped to that exam and no exam-scoped subjects should be shown. Next retrieve/hash/review the actual official document, extract its complete unit/subtopic inventory and exact evidence locators, add any concepts missing from the current catalogue, review every applicable/out-of-scope concept, and only then enable the profile selector. Do not infer official coverage from secondary syllabi.
+
+Keep Phase 6.55's live migration/reviewer-secret gates visible. Continue Q&A authoring from `QUESTION_BANK_CONTENT_COVERAGE.csv` only after official profile scope is established; each topic needs full examinable-point coverage, not merely a fixed count, and draft candidates must remain `NEEDS_REVIEW` until independent review.

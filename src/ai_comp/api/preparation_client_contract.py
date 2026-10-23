@@ -275,6 +275,26 @@ class PreviousYearQuestionsResponse(ContractModel):
     pagination: TopicPreviousPaperPaginationResponse
 
 
+class QuestionBankExamProfileItem(ContractModel):
+    exam_id: str
+    exam_name: str
+    syllabus_id: str
+    syllabus_title: str
+    source_url: str
+    notification_number: str
+    source_status: Literal["DISCOVERED", "REVIEW_PENDING", "VERIFIED", "SUPERSEDED", "REJECTED"]
+    syllabus_inventory_complete: bool
+    concept_count: int = Field(ge=0)
+    mapped_concept_count: int = Field(ge=0)
+    excluded_concept_count: int = Field(ge=0)
+    unmapped_concept_count: int = Field(ge=0)
+    selection_ready: bool
+
+
+class QuestionBankExamProfilesResponse(ContractModel):
+    items: list[QuestionBankExamProfileItem]
+
+
 class QuestionBankSubjectItem(ContractModel):
     subject_id: str
     subject_label: str
@@ -372,6 +392,8 @@ __all__ = [
     "PreparationTestRequestResponse",
     "PreparationTestSessionResponse",
     "QuestionBankReadinessResponse",
+    "QuestionBankExamProfileItem",
+    "QuestionBankExamProfilesResponse",
     "PreviousYearQuestionItem",
     "PreviousYearQuestionsResponse",
     "TopicPreviousPaperPaginationResponse",

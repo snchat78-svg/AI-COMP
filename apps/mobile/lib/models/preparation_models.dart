@@ -87,6 +87,56 @@ class TopicPracticeGenerationResult {
   }
 }
 
+class QuestionBankExamProfile {
+  const QuestionBankExamProfile({
+    required this.examId,
+    required this.examName,
+    required this.syllabusId,
+    required this.syllabusTitle,
+    required this.sourceUrl,
+    required this.notificationNumber,
+    required this.sourceStatus,
+    required this.syllabusInventoryComplete,
+    required this.conceptCount,
+    required this.mappedConceptCount,
+    required this.excludedConceptCount,
+    required this.unmappedConceptCount,
+    required this.selectionReady,
+  });
+
+  final String examId;
+  final String examName;
+  final String syllabusId;
+  final String syllabusTitle;
+  final String sourceUrl;
+  final String notificationNumber;
+  final String sourceStatus;
+  final bool syllabusInventoryComplete;
+  final int conceptCount;
+  final int mappedConceptCount;
+  final int excludedConceptCount;
+  final int unmappedConceptCount;
+  final bool selectionReady;
+
+  factory QuestionBankExamProfile.fromJson(Map<String, dynamic> json) {
+    return QuestionBankExamProfile(
+      examId: _string(json['exam_id']),
+      examName: _string(json['exam_name']),
+      syllabusId: _string(json['syllabus_id']),
+      syllabusTitle: _string(json['syllabus_title']),
+      sourceUrl: _string(json['source_url']),
+      notificationNumber: _string(json['notification_number']),
+      sourceStatus: _string(json['source_status'], 'REVIEW_PENDING'),
+      syllabusInventoryComplete: json['syllabus_inventory_complete'] == true,
+      conceptCount: _integer(json['concept_count'], 0),
+      mappedConceptCount: _integer(json['mapped_concept_count'], 0),
+      excludedConceptCount: _integer(json['excluded_concept_count'], 0),
+      unmappedConceptCount: _integer(json['unmapped_concept_count'], 0),
+      selectionReady: json['selection_ready'] == true,
+    );
+  }
+}
+
 class QuestionBankSubject {
   const QuestionBankSubject({
     required this.subjectId,

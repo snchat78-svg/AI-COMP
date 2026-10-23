@@ -217,4 +217,41 @@ void main() {
     expect(find.text('No verified previous-paper questions yet'), findsOneWidget);
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsNothing);
   });
+  testWidgets('exam-scoped topic browsing does not drop the selected exam ID', (tester) async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return jsonResponse({
+        'items': [],
+        'pagination': {
+          'limit': 100,
+          'offset': 0,
+          'returned': 0,
+          'has_more': false,
+        },
+      });
+    });
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+
+    await tester.pumpWidget(MaterialApp(
+      home: QuestionBankScreen(
+        api: api,
+        subjectId: 'Rajasthan Geography',
+        examId: 'RSSB_CET_GRADUATION_2026',
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(
+      received.url.queryParameters['exam_id'],
+      'RSSB_CET_GRADUATION_2026',
+    );
+    expect(received.url.queryParameters['subject'], 'Rajasthan Geography');
+    expect(find.textContaining('RSSB_CET_GRADUATION_2026'), findsOneWidget);
+    expect(find.text('No topics are mapped yet'), findsOneWidget);
+  });
+
+
 }

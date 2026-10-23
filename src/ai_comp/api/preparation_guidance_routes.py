@@ -29,6 +29,7 @@ from ai_comp.application.preparation_guidance_http import (
 )
 from ai_comp.api.dependencies import PreparationContextUnavailable
 from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
+from ai_comp.database.postgres_exam_syllabus import PostgresExamSyllabusRepository
 from ai_comp.api.preparation_client_contract import (
     AdaptivePreparationRecommendationResponse,
     AnswerReviewResponse,
@@ -40,6 +41,7 @@ from ai_comp.api.preparation_client_contract import (
     PreparationTestRequestResponse,
     PreparationTestSessionResponse,
     QuestionBankReadinessResponse,
+    QuestionBankExamProfilesResponse,
     QuestionBankSubjectsResponse,
     QuestionBankTopicsResponse,
     PreviousYearQuestionsResponse,
@@ -1864,18 +1866,26 @@ def review_topic_one_liner(
 
 
 @router.get(
-    "/{learner_id}/question-bank/subjects",
-    name="list_question_bank_subjects",
+    "/{learner_id}/question-bank/exam-profiles",
+    name="list_question_bank_exam_profiles",
     responses={
         **COMMON_API_ERROR_RESPONSES,
-        200: {"model": QuestionBankSubjectsResponse, "description": "Subjects already represented by canonical concepts."},
+        200: {"model": QuestionBankExamProfilesResponse, "description": "Exam profiles with explicit syllabus-source and concept-mapping readiness."},
     },
 )
-def list_question_bank_subjects(learner_id: str, request: Request) -> Response:
-    """List available subject labels from the existing concept taxonomy."""
+def list_question_bank_exam_profiles(
+    learner_id: str,
+    request: Request,
+    limit: int = 100,
+) -> Response:
+    """List exam profiles without pretending an unreviewed syllabus is usable."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
         return error
+    if not 1 <= limit <= 100:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_LIMIT", "message": "limit must be between 1 and 100."}
+        })
     connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
     if not callable(connection_factory):
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
@@ -1887,7 +1897,61 @@ def list_question_bank_subjects(learner_id: str, request: Request) -> Response:
     connection = None
     try:
         connection = connection_factory()
-        rows = PostgresTopicQuestionBankRepository(connection).list_subjects(limit=100, offset=0)
+        rows = PostgresExamSyllabusRepository(connection).list_profiles(limit=limit)
+        payload = QuestionBankExamProfilesResponse.model_validate({"items": rows}).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_EXAM_PROFILES_UNAVAILABLE",
+                "message": "Exam syllabus profiles could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/subjects",
+    name="list_question_bank_subjects",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": QuestionBankSubjectsResponse, "description": "Subjects already represented by canonical concepts."},
+    },
+)
+def list_question_bank_subjects(learner_id: str, request: Request, exam_id: str | None = None) -> Response:
+    """List generic subjects or subjects proven IN_SCOPE for a selected exam."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if exam_id is not None and (
+        not exam_id.strip() or exam_id != exam_id.strip() or len(exam_id) > 128
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_EXAM_PROFILE", "message": "exam_id must be trimmed and 1-128 characters."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        if exam_id is None:
+            rows = PostgresTopicQuestionBankRepository(connection).list_subjects(limit=100, offset=0)
+        else:
+            syllabus_repository = PostgresExamSyllabusRepository(connection)
+            if not syllabus_repository.profile_exists(exam_id):
+                return _json_response(HTTPStatus.NOT_FOUND, {
+                    "error": {"code": "EXAM_PROFILE_NOT_FOUND", "message": "The selected exam syllabus profile was not found."}
+                })
+            rows = syllabus_repository.list_subjects(exam_id, limit=100)
         payload = QuestionBankSubjectsResponse.model_validate({
             "items": [
                 {"subject_id": subject, "subject_label": subject, "concept_count": count}
@@ -1922,6 +1986,7 @@ def list_question_bank_topics(
     subject: str,
     limit: int = 50,
     offset: int = 0,
+    exam_id: str | None = None,
 ) -> Response:
     """List canonical topic concepts for one selected subject."""
     authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
@@ -1935,6 +2000,12 @@ def list_question_bank_topics(
         return _json_response(HTTPStatus.BAD_REQUEST, {
             "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
         })
+    if exam_id is not None and (
+        not exam_id.strip() or exam_id != exam_id.strip() or len(exam_id) > 128
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_EXAM_PROFILE", "message": "exam_id must be trimmed and 1-128 characters."}
+        })
     connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
     if not callable(connection_factory):
         return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
@@ -1946,8 +2017,19 @@ def list_question_bank_topics(
     connection = None
     try:
         connection = connection_factory()
-        repository = PostgresTopicQuestionBankRepository(connection)
-        rows = repository.list_topics(subject, limit=limit + 1, offset=offset)
+        if exam_id is None:
+            rows = PostgresTopicQuestionBankRepository(connection).list_topics(
+                subject, limit=limit + 1, offset=offset
+            )
+        else:
+            syllabus_repository = PostgresExamSyllabusRepository(connection)
+            if not syllabus_repository.profile_exists(exam_id):
+                return _json_response(HTTPStatus.NOT_FOUND, {
+                    "error": {"code": "EXAM_PROFILE_NOT_FOUND", "message": "The selected exam syllabus profile was not found."}
+                })
+            rows = syllabus_repository.list_topics(
+                exam_id, subject, limit=limit + 1, offset=offset
+            )
         selected = rows[:limit]
         payload = QuestionBankTopicsResponse.model_validate({
             "items": [
