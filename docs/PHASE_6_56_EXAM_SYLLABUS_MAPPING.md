@@ -94,3 +94,7 @@ PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 b
 ### Official syllabus discovery status
 
 Research found a secondary transcription of RSSB CET Graduation Level 2026 that identifies Advertisement 09/2026 dated 1 July 2026 and lists 14 broad units: [TopKaro syllabus transcription](https://topkaro.com/rssb/cet-graduation/syllabus). The candidate official document URL is https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf, but direct retrieval failed in the current runtime. Official PDF bytes, complete page contents, document digest, and notification/version have not been independently verified. The secondary page can inform a draft checklist only; it cannot justify a VERIFIED exam profile or complete-inventory attestation.
+
+## Next implementation task after PR #45
+
+The direct RSSB PDF URL remains inaccessible in the current research runtime and the container has no DNS path to retrieve it. The next contained implementation is a protected source-fetch verifier: restrict requests to explicitly allowlisted official HTTPS hosts, preserve normal certificate validation across redirects, enforce timeout/byte limits and PDF magic/content checks, parse bounded metadata/page count, compute SHA-256 server-side from fetched bytes, and store immutable fetch evidence before a reviewer can set the syllabus source to VERIFIED. A reviewer-provided hash alone must not qualify as proof. No official syllabus, document digest, or full inventory is currently VERIFIED.
