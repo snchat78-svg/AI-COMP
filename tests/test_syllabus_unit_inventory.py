@@ -174,3 +174,66 @@ def test_inventory_migration_tracks_hierarchy_and_guards_complete_attestation():
     assert "syllabus inventory cannot be complete until at least one unit exists and every unit is VERIFIED" in migration
     assert "SYLLABUS_UNIT" in migration
     assert "BEFORE TRUNCATE" not in migration  # Append-only triggers live in migration 0024.
+
+
+def test_author_cannot_downgrade_a_reviewed_concept_mapping(monkeypatch):
+    _configure_tokens(monkeypatch, author_id="author-1", reviewer_id="reviewer-1")
+    connection = _Connection([
+        ("SELECT syllabus_id FROM exam_syllabus_documents", ("test-syllabus",)),
+        ("SELECT applicability_status FROM exam_concept_applicability", ("IN_SCOPE",)),
+    ])
+    response = _client(connection).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/concept-mappings",
+        headers={"X-AI-COMP-Syllabus-Admin-Token": "syllabus-author-secret"},
+        json={
+            "concept_id": "concept-1",
+            "decision": "NEEDS_REVIEW",
+            "official_unit": "Unit 1",
+            "source_locator": "p. 3",
+            "source_evidence": "Evidence",
+            "review_note": "Proposed edit",
+        },
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "MAPPING_ALREADY_REVIEWED"
+    assert not any("INSERT INTO exam_concept_applicability" in query for query, _ in connection.calls)
+
+
+def test_verified_inventory_item_must_be_reopened_by_reviewer_before_edit(monkeypatch):
+    _configure_tokens(monkeypatch, author_id="author-1", reviewer_id="reviewer-1")
+    connection = _Connection([
+        ("SELECT source_status, syllabus_inventory_complete", ("REVIEW_PENDING", False)),
+        ("SELECT review_status FROM exam_syllabus_units", ("VERIFIED",)),
+    ])
+    response = _client(connection).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/units",
+        headers={"X-AI-COMP-Syllabus-Admin-Token": "syllabus-author-secret"},
+        json=_unit_payload(),
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "SYLLABUS_UNIT_ALREADY_VERIFIED"
+    assert not any("INSERT INTO exam_syllabus_units" in query for query, _ in connection.calls)
+
+
+def test_source_review_can_attest_complete_only_when_every_inventory_row_is_verified(monkeypatch):
+    _configure_tokens(monkeypatch, author_id="author-1", reviewer_id="reviewer-1")
+    connection = _Connection([
+        ("SELECT syllabus_id FROM exam_syllabus_documents", ("test-syllabus",)),
+        ("SELECT actor_id FROM exam_syllabus_review_audit", ("author-1",)),
+        ("SELECT COUNT(*)", (3, 0)),
+    ])
+    response = _client(connection).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/source-review",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "syllabus-review-secret"},
+        json={
+            "decision": "VERIFIED",
+            "document_sha256": "b" * 64,
+            "source_evidence": "Independently checked exact official notification bytes and revision",
+            "inventory_complete": True,
+            "inventory_review_note": "Three inventory rows checked against every relevant page",
+            "review_note": "All inventory rows independently verified",
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["source_status"] == "VERIFIED"
+    assert any("UPDATE exam_syllabus_documents" in query for query, _ in connection.calls)
