@@ -4,7 +4,7 @@ import hmac
 import json
 import os
 import re
-from datetime import date, datetime
+from datetime import date
 from typing import Literal
 from urllib.parse import urlsplit
 from uuid import uuid4
@@ -255,6 +255,13 @@ class SyllabusDocumentSubmission(_StrictModel):
             raise ValueError("document_sha256 must be 64 lowercase hexadecimal characters")
         return value
 
+    @field_validator("syllabus_id", "exam_id", "source_id")
+    @classmethod
+    def identifiers_must_be_valid(cls, value: str) -> str:
+        if not _valid_identifier(value):
+            raise ValueError("identifier format is invalid")
+        return value
+
     @field_validator("source_url")
     @classmethod
     def source_must_use_valid_https(cls, value: str) -> str:
@@ -279,7 +286,14 @@ class SyllabusInventoryUnit(_StrictModel):
     source_evidence: str = Field(min_length=1, max_length=4000)
     order_index: int = Field(ge=0, le=100000)
 
-    @field_validator("unit_id", "official_label", "source_locator", "source_evidence")
+    @field_validator("unit_id")
+    @classmethod
+    def unit_identifier_must_be_valid(cls, value: str) -> str:
+        if not _valid_identifier(value):
+            raise ValueError("unit_id format is invalid")
+        return value
+
+    @field_validator("official_label", "source_locator", "source_evidence")
     @classmethod
     def text_is_trimmed(cls, value: str) -> str:
         if not value.strip() or value != value.strip():
@@ -289,8 +303,8 @@ class SyllabusInventoryUnit(_StrictModel):
     @field_validator("parent_unit_id")
     @classmethod
     def parent_is_trimmed(cls, value: str | None) -> str | None:
-        if value is not None and (not value.strip() or value != value.strip()):
-            raise ValueError("parent_unit_id must be non-empty and trimmed")
+        if value is not None and not _valid_identifier(value):
+            raise ValueError("parent_unit_id format is invalid")
         return value
 
 
@@ -313,7 +327,14 @@ class ConceptApplicabilityDraft(_StrictModel):
     source_locator: str = Field(min_length=1, max_length=500)
     source_evidence: str = Field(min_length=1, max_length=4000)
 
-    @field_validator("concept_id", "official_unit", "source_locator", "source_evidence")
+    @field_validator("concept_id")
+    @classmethod
+    def concept_identifier_must_be_valid(cls, value: str) -> str:
+        if not _valid_identifier(value):
+            raise ValueError("concept_id format is invalid")
+        return value
+
+    @field_validator("official_unit", "source_locator", "source_evidence")
     @classmethod
     def evidence_fields_are_trimmed(cls, value: str) -> str:
         if not value.strip() or value != value.strip():
@@ -332,7 +353,14 @@ class UnitConceptMappingDraft(_StrictModel):
     source_locator: str = Field(min_length=1, max_length=500)
     source_evidence: str = Field(min_length=1, max_length=4000)
 
-    @field_validator("unit_id", "concept_id", "source_locator", "source_evidence")
+    @field_validator("unit_id", "concept_id")
+    @classmethod
+    def mapping_identifiers_must_be_valid(cls, value: str) -> str:
+        if not _valid_identifier(value):
+            raise ValueError("mapping identifier format is invalid")
+        return value
+
+    @field_validator("source_locator", "source_evidence")
     @classmethod
     def mapping_fields_are_trimmed(cls, value: str) -> str:
         if not value.strip() or value != value.strip():
