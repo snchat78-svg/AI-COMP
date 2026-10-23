@@ -171,8 +171,8 @@ class SyllabusUnitDecision(BaseModel):
     @field_validator("decision")
     @classmethod
     def decision_is_allowed(cls, value: str) -> str:
-        if value not in {"VERIFIED", "REJECTED"}:
-            raise ValueError("decision must be VERIFIED or REJECTED")
+        if value not in {"VERIFIED", "REJECTED", "NEEDS_REVIEW"}:
+            raise ValueError("decision must be VERIFIED, REJECTED, or NEEDS_REVIEW")
         return value
 
     @field_validator("review_note")
@@ -343,6 +343,13 @@ def create_syllabus_unit_draft(syllabus_id: str, payload: SyllabusUnitDraft, req
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
             if str(source[0]) == "VERIFIED" or source[1] is True:
                 return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_LOCKED", "message": "Reopen source review and clear the inventory-complete attestation before changing the inventory."}})
+            existing_unit = connection.execute(
+                """SELECT review_status FROM exam_syllabus_units
+                   WHERE syllabus_id = %s AND unit_id = %s FOR UPDATE""",
+                (syllabus_id, payload.unit_id),
+            ).fetchone()
+            if existing_unit is not None and str(existing_unit[0]) == "VERIFIED":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_ALREADY_VERIFIED", "message": "A verified inventory item cannot be edited until an independent reviewer returns it to NEEDS_REVIEW."}})
             expected_parent_kind = {"TOPIC": "UNIT", "SUBTOPIC": "TOPIC"}.get(payload.unit_kind)
             if expected_parent_kind is None:
                 if payload.parent_unit_id is not None:
@@ -358,7 +365,20 @@ def create_syllabus_unit_draft(syllabus_id: str, payload: SyllabusUnitDraft, req
                 """INSERT INTO exam_syllabus_units
                    (syllabus_id, unit_id, parent_unit_id, unit_kind, official_label, page_number,
                     source_locator, source_evidence, review_status, created_by)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'NEEDS_REVIEW', %s)""",
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'NEEDS_REVIEW', %s)
+                   ON CONFLICT (syllabus_id, unit_id) DO UPDATE SET
+                     parent_unit_id = EXCLUDED.parent_unit_id,
+                     unit_kind = EXCLUDED.unit_kind,
+                     official_label = EXCLUDED.official_label,
+                     page_number = EXCLUDED.page_number,
+                     source_locator = EXCLUDED.source_locator,
+                     source_evidence = EXCLUDED.source_evidence,
+                     review_status = 'NEEDS_REVIEW',
+                     created_by = EXCLUDED.created_by,
+                     created_at = NOW(),
+                     reviewed_at = NULL,
+                     reviewed_by = NULL,
+                     review_note = ''""",
                 (syllabus_id, payload.unit_id, payload.parent_unit_id, payload.unit_kind, payload.official_label,
                  payload.page_number, payload.source_locator, payload.source_evidence, actor),
             )
@@ -412,8 +432,8 @@ def review_syllabus_unit(syllabus_id: str, unit_id: str, payload: SyllabusUnitDe
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_UNIT_NOT_FOUND", "message": "Syllabus inventory item was not found."}})
             if str(row[7]) == actor:
                 return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The unit author cannot review their own syllabus inventory item."}})
-            if str(row[6]) != "NEEDS_REVIEW":
-                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_NOT_PENDING", "message": "Only a NEEDS_REVIEW inventory item can be reviewed."}})
+            if str(row[6]) == "VERIFIED" and payload.decision == "VERIFIED":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_ALREADY_VERIFIED", "message": "A verified unit must be sent back to NEEDS_REVIEW or rejected with a reason before another authoring cycle."}})
             connection.execute(
                 """UPDATE exam_syllabus_units
                    SET review_status = %s, reviewed_at = NOW(), reviewed_by = %s, review_note = %s
