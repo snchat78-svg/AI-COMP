@@ -11,13 +11,13 @@ The existing 340 canonical concepts are a generic navigation catalogue. Their pr
 
 ## Official-source status — intentionally conservative
 
-The initial profile to research is **Rajasthan CET Graduation Level 2026**, associated with RSSB Advertisement No. 09/2026. The candidate PDF URL on the official RSSB hostname is:
+No exam profile or syllabus document is seeded by migration 0023. The candidate URL below is only an **unverified research lead**; it is not evidence that the named notification or syllabus version is valid:
 
 - `https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf`
 
-The URL was discovered, but direct retrieval/content and its SHA-256 could not be independently confirmed during this slice. A secondary transcription was not accepted as official evidence. The migration therefore seeds the document with `source_status = REVIEW_PENDING`, no document digest, and an explicit caution in the evidence note. No syllabus-to-concept rows are pre-certified. This is an exam profile to research, **not a claim that the official syllabus or its topic coverage is verified**.
+The direct PDF retrieval failed in the current research runtime, and the document contents and SHA-256 therefore remain unconfirmed. Search results for other RSSB notices do not validate this exact file. Do not assume Advertisement No. 09/2026 is correct from a URL guess, create a named learner-facing profile, extract or publish syllabus content, or mark any mapping verified on this basis.
 
-The official board site/legacy domain may be used as navigation context, but only the actual official notification / syllabus document, reviewed with a digest and exact section/page/heading locator, may be used to promote the source to VERIFIED. A source URL being on an official domain is not, by itself, verification of its file contents.
+Before adding a real profile, retrieve the exact notification/syllabus through an approved official HTTPS path; confirm issuing board, advertisement/notification number, title, relevant dates and full document contents; compute the document SHA-256 from the retrieved bytes; and record a source evidence locator. If the source cannot be independently obtained and reviewed, keep the profile absent and continue with synthetic test fixtures only. Do not weaken TLS or substitute an unauthenticated/secondary transcription.
 
 ## Storage added
 
@@ -26,7 +26,7 @@ Migration `0023_phase6_56_exam_syllabus_mapping.sql` adds:
 - `exam_syllabus_documents`: links an existing `exams` record to one current HTTPS syllabus document, notification/version, source metadata, content SHA-256, source status and review evidence. One current document is allowed per exam. A VERIFIED source requires a digest, review timestamp, reviewer identity and source evidence **and** an independently reviewed full-syllabus inventory attestation. The database will not permit `source_status = VERIFIED` while the inventory is unreviewed.
 - `exam_concept_applicability`: records each canonical concept as `IN_SCOPE`, `OUT_OF_SCOPE`, `UNMAPPED` or `NEEDS_REVIEW` for a specific syllabus document. IN_SCOPE/OUT_OF_SCOPE are rejected by the database unless independent-review metadata and evidence locator/note are present.
 - The syllabus document itself includes `syllabus_inventory_complete` with reviewer/time/note fields. `source_status = VERIFIED` is rejected unless both the official-document evidence and whole-inventory attestation are present. Read APIs also require every canonical concept to have a reviewed applicability decision before returning any exam-specific topics; they do not expose a partially mapped list.
-- An idempotent RSSB CET Graduation Level 2026 profile/source seed, kept in REVIEW_PENDING with zero asserted concept mappings.
+- No exam profile/source/mapping seed is included. A real profile must be added only after the exact official notification/syllabus has been retrieved and independently confirmed; tests use clearly synthetic profile fixtures.
 
 The mapping must remain faithful to the complete official syllabus. The repository refuses to expose exam-scoped subjects/topics unless the source is VERIFIED, the whole-syllabus inventory attestation is complete, and every current canonical concept has an independently reviewed IN_SCOPE/OUT_OF_SCOPE decision with evidence. If a syllabus includes a unit/subtopic absent from the current concept catalogue, create the missing stable concept and ledger row before the inventory reviewer attests completion. If a generic catalogue concept is not in the syllabus, record the reviewed out-of-scope decision rather than silently showing it.
 
@@ -59,7 +59,7 @@ The mobile client parses the profile status and sends optional `exam_id` filters
 
 ## Remaining work inside Phase 6.56
 
-1. Retrieve the official PDF over approved HTTPS, confirm document contents and SHA-256, and independently verify the exact notification/syllabus version.
+1. Establish an approved retrieval path for the candidate official PDF; confirm its actual issuing board, notification number, title/version, dates, full contents and SHA-256. The current candidate URL is not verified and no profile is seeded.
 2. Add a protected, auditable admin/reviewer workflow for source verification and concept-applicability authoring/review. Author and reviewer secrets must be distinct; never trust a learner token or client-supplied reviewer ID.
 3. Extract the entire official unit/subtopic inventory, cite exact page/section locators, reconcile it with the concept catalogue, add concepts for omitted units, and update the coverage ledger before an independent reviewer attests that the inventory is complete.
 4. Record a separately reviewed IN_SCOPE/OUT_OF_SCOPE decision for every catalogue concept and ensure every official syllabus unit maps to canonical concepts. Keep missing/ambiguous mappings visible. The read API must not expose partially reviewed subject/topic lists as exam-ready.

@@ -1,5 +1,7 @@
 # Phase 6.53–6.58 — Topic-wise Question Bank and Complete Preparation
 
+**Strict sequencing rule:** this is a dependency chain, not a menu of parallel phases. Finish and record each phase's exit gates before starting the next numbered phase. A merged PR or green CI is not proof that official content/live data is ready. A phase blocked by an external prerequisite stays open/blocked; never manufacture evidence, silently skip it, or mark it complete to advance. The canonical status is always in [PHASE_REGISTRY.md](PHASE_REGISTRY.md).
+
 **Phase/status source of truth:** [AI-COMP Phase Registry](PHASE_REGISTRY.md). Phase 6.53 application code is merged (PR #36 plus follow-up PR #39); the repository CI checks passed on the PR #39 head before merge. This does **not** mean the question content is complete: one-liners and verified historical questions still depend on reviewed/source-backed records, controlled migration application, and server-side secret configuration. The starter topic list is not a substitute for each exam's official syllabus.  
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
 **Primary outcome:** A learner can choose an exam profile → subject → topic/subtopic and see source-backed previous-exam questions, important one-liners, practice and revision material for that topic.
@@ -64,16 +66,15 @@ Before adding tables, APIs, services or mobile models, search the repository and
 
 **Exit tests:** direct/manual Q&A entry and retrieval; source citation/evidence required for verified status; duplicate/near-duplicate checks; topic mapping; dates and formulas rendered faithfully; Hindi/English text preserved; unverified content visibly separated; no fact can be promoted solely because a model generated it.
 
-### Phase 6.56 — Mobile Subject → Topic → Study page
+### Phase 6.56 — Mobile Question Bank navigation and exam-specific syllabus mapping
 
-**Current implementation status:** IN_PROGRESS; the first navigation/search/paging slice was merged in PR #42 at `d138d65d758efbde5c04126688566d499063da40`. Backend tests/API container passed on PR head c70313064c341b3f517c045a2dc63969b2c58341 (run `39758826307`); Flutter analysis/mobile tests/release APK build/artifact passed on the same head (run `39758826247`, artifact `12416808828`, SHA-256 `10bf4f17bf3ada321c2ce3efab1a99d442f3cc311c34d9a031656f27fcaa1f55`). The next required step is sourced exam-profile/official-syllabus → canonical concept mapping and a selector that filters applicable subjects/topics by the chosen exam. Do not mark this phase complete before this mapping passes tests. See [Phase 6.56 mobile navigation contract](PHASE_6_56_MOBILE_QUESTION_BANK_NAVIGATION.md), [Phase Registry](PHASE_REGISTRY.md), and [Project Continuity Checkpoint](PROJECT_CONTINUITY_CHECKPOINT.md).
+**Current state:** IN_PROGRESS; navigation/search/paging is merged in PR #42 at `d138d65d758efbde5c04126688566d499063da40`; exam-profile/syllabus mapping is in [PR #43](https://github.com/snchat78-svg/AI-COMP/pull/43), branch `phase-6-56-exam-syllabus-mapping`. The latest audited pre-repair SHA was `2ce303c178a3200a5407d234346350c8cd4f0457`: backend run `39788341935` had **511 passed / 1 failed**, with the single failure caused by a test still expecting an INSERT block removed by the intended no-unverified-seed policy. Flutter analyze/client/widget/release APK/artifact workflow `39788341858` passed on that pre-repair SHA. Both results must be refreshed on the repair commit before merge.
 
-**Persistent content completeness requirement:** every applicable subject/topic/subtopic for each supported exam must eventually have at least five distinct source-backed independently reviewed VERIFIED one-liners as the baseline. The assistant should proactively research and draft important Q&A, but generated facts remain NEEDS_REVIEW until independent review. The current 340-row generic starter catalogue is not proof of exam-specific syllabus coverage. Track every concept and its next action in [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv); read the [coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) before adding candidates. Exam-profile selection cannot claim official applicability until syllabus mapping is evidenced.
+**Exit gates, all required:** (1) Backend test suite and API container pass on exact head. (2) Flutter analyze, client/widget tests, release APK build, artifact verification/upload pass on same exact head. (3) Migration/API contract tests enforce non-verified defaults and refuse partial or unreviewed mappings. (4) Retrieve and independently verify the exact official notification/syllabus bytes over approved HTTPS/TLS, calculate SHA-256 and establish provenance. (5) Extract every unit/topic/subtopic with exact page/section locators, reconcile all official units to the canonical concept catalogue, add missing concepts/ledger rows, and independently review a decision for every canonical concept. (6) Provide a protected, auditable source/mapping workflow with distinct author/reviewer credentials and server-verified reviewer identity. (7) Apply migrations only through the approved live workflow and demonstrate exam-specific subject/topic filters, blocked/unmapped states, and existing login/session/result-flow regressions.
 
+**Source caution:** migration 0023 intentionally seeds no exam profile. The RSSB PDF URL in the mapping spec remains an unverified research lead; its notification/version, contents and digest have not been verified. Do not expose a real named exam as covered until source, complete inventory and every applicability decision are independently reviewed.
 
-**Deliver:** A question-bank entry point in the Flutter dashboard. Navigation: exam profile → subjects → expandable topic/subtopic list → topic page. The topic page must show **One-Liner Q&A** and **Previous Year Papers** as distinct tabs/options, plus Practice MCQs and Topic Test/Revision. One-Liners show short question → direct answer pairs; Previous Year Papers show historical MCQs with original options and verified historical answers, together with exam/year/shift/provenance metadata. Provide independent loading, empty, unavailable and partially populated states for each section.
-
-**Exit tests:** Flutter analyze and widget tests; tap-through navigation and filters; one-liner Q&A and previous-year papers open separately; previous-paper options and answer-review state are shown correctly; long lists are paginated; question source/exam metadata are visible; each section has an independent honest empty state; old login, dashboard, timed session, resume and results flows remain intact.
+**Gate:** Phase 6.57 must not start until every Phase 6.56 exit gate is accepted and the registry/checkpoint records it. See [Phase 6.56 implementation contract](PHASE_6_56_EXAM_SYLLABUS_MAPPING.md), [registry](PHASE_REGISTRY.md) and [checkpoint](PROJECT_CONTINUITY_CHECKPOINT.md).
 
 ### Phase 6.57 — Syllabus coverage, mastery and revision
 
@@ -117,14 +118,19 @@ A topic is shown as **covered** only when:
 - Add migration up/down or migration-chain checks as required by project conventions, API contract tests, repository integration tests and Flutter tests for every completed phase.
 - Maintain the master checkpoint with branch/commit, tests run, CI evidence, live-data caveats and the next exact phase. Do not restart completed Phases 1–6.52.
 
-## 6. Immediate implementation order (checkpoint updated 2026-10-22)
+## 6. No-skip implementation order (checkpoint updated 2026-10-23)
 
-1. Continue Phase 6.56 mobile topic search and independent paged One-Liner/Previous-Year views; validate Flutter widget tests and release APK CI before merge.
-2. Keep Phase 6.55 merged code at MERGED_CODE_DATA_PENDING until migrations are safely applied, distinct author/reviewer secrets are configured, and source-backed candidate review is recorded.
-3. Build candidate Q&A topic-by-topic from [the permanent coverage policy](QUESTION_BANK_CONTENT_COVERAGE.md) and [per-concept ledger](QUESTION_BANK_CONTENT_COVERAGE.csv); prioritize concepts with no candidates. Update evidence/status counts only after confirming the actual database/review audit.
-4. Implement Phase 6.57 only from its planned existing learner-session/results/mastery requirements after Phase 6.56 acceptance.
-5. Keep Phase 6.58 blocked until approved official HTTPS/TLS access is restored, persisted official paper + matched answer-key data exists, migrations/secrets are verified and a real-data mobile end-to-end test passes.
+1. **Phase 6.53 — Taxonomy and storage foundation.** Keep starter concepts labelled as scaffolding; only add factual content with attributable evidence and independent review.
+2. **Phase 6.54 — Topic-wise previous-paper API.** Preserve exam/year/shift/source filters, bounded paging/count integrity and source separation. Historical appearance claims require authentic paper evidence.
+3. **Phase 6.55 — One-Liner Q&A author/reviewer workflow.** Keep all 10 seed candidates `NEEDS_REVIEW`; controlled live migration, separate author/reviewer credentials, independent review and observed DB state are outstanding. Do not count seeds as verified.
+4. **Phase 6.56 — Mobile browsing + official exam profile/syllabus/concept mapping.** This is the CURRENT phase: resume PR #43, fix its failed migration test, and require fresh backend + Flutter/APK CI on the exact repair SHA. Then independently verify official source, whole syllabus inventory, missing concepts and every scope decision; keep exam selection unavailable until ready.
+5. **Phase 6.57 — Coverage, learner mastery and revision.** Start only after Phase 6.56's full exit gates are accepted. Reuse existing session/results/analytics, measure mastery from actual learner responses and verified topic coverage, and test revision scheduling/weak-topic behavior; opening a page or generating questions is not mastery.
+6. **Phase 6.58 — Authentic-data end-to-end proof.** Remains BLOCKED until approved certificate-valid official HTTPS/TLS access, controlled migrations and server secrets, authentic official paper + matching official answer key, source/question provenance, and a real mobile end-to-end result are demonstrated.
 
-Read [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md) before work in every new chat; do not restart Phases 6.53–6.55.
+### Mandatory phase transition checklist
 
-This document records the plan and constraints; it does not claim phases 6.53–6.58 or nationwide topic coverage have already been implemented.
+Before moving any row to the next phase: (a) verify repository/main and PR head, (b) pass code review and current-head CI, (c) satisfy the phase's official-source/live-data/security prerequisites, (d) attach exact SHA, workflow/run and artifact evidence, (e) update registry + checkpoint + this roadmap, and (f) confirm no unresolved acceptance gate. Historic numbering gaps do not authorize skipping listed dependencies; do not invent phase IDs or mark blocked work as done. Parallel maintenance of an earlier data/configuration gate is allowed only when explicitly tracked and never represented as phase completion.
+
+Read [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md) and [PHASE_REGISTRY.md](PHASE_REGISTRY.md) before work in every new chat.
+
+This roadmap records required work and observed caveats; it does not claim complete official topic coverage, verified One-Liner data, live DB readiness, or end-to-end production acceptance.

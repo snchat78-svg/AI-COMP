@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-22  
+**Last updated:** 2026-10-23  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -22,7 +22,7 @@
 
 - **Phase 6.54:** COMPLETED. PR #40 merge SHA 16f75e3c76e9c830235c39a4dc806710c116bed0. Backend tests/container and Flutter analysis/client/release APK workflows passed.
 - **Phase 6.55:** MERGED_CODE_DATA_PENDING. PR #41 merge SHA abfdfbfa8c8b732012c04a247e443032c93f6d01. The repository contains independent one-liner review code and 10 Hindi candidates (all NEEDS_REVIEW), but migrations have not been confirmed applied to the live database and reviewer credentials remain a server configuration gate.
-- **Phase 6.56:** IN_PROGRESS. PR #42 merged at d138d65d758efbde5c04126688566d499063da40 delivered paged topic search and separate One-Liner/Previous-Year states. PR #43 is open: https://github.com/snchat78-svg/AI-COMP/pull/43. Latest code/test SHA for this slice is `ddb05682058fb2344dd41c473e697ca6cb9f921d`; backend workflow `39787466831` and Flutter/APK workflow `39787466651` were still running at the last check. The latest mapping slice adds migration `0023`, exam-profile API, optional `exam_id` topic/subject filtering, separate mobile selector and review-gated data model. It requires both source verification and an independently reviewed full-syllabus inventory before the source can be VERIFIED; API queries withhold all exam-specific subjects/topics until every catalogue concept has reviewed IN_SCOPE/OUT_OF_SCOPE evidence. Current candidate RSSB CET Graduation Level 2026 official PDF URL has not been directly retrieved/content-hashed/reviewed. Status remains `REVIEW_PENDING`; the 340 concepts are generic catalogue rows, all currently unmapped to this exam. The protected author/reviewer workflow, official inventory extraction, missing-concept reconciliation and independent mapping remain open. Check PR #43's latest exact-head CI before merge.
+- **Phase 6.56:** IN_PROGRESS; navigation/search/paging was merged through PR #42 at `d138d65d758efbde5c04126688566d499063da40`. PR #43 is still open: https://github.com/snchat78-svg/AI-COMP/pull/43. Before this repair, current head was `2ce303c178a3200a5407d234346350c8cd4f0457`: backend run `39788341935` failed one stale migration-test assumption (511 passed, 1 failed because the test attempted to slice a now-absent `INSERT INTO exam_syllabus_documents` block); Flutter/APK run `39788341858` passed on that older head. Migration `0023` intentionally seeds no exam profile until the exact official notification/syllabus is verified. The RSSB PDF URL in the mapping spec remains only an unverified research lead; document contents and SHA-256 are not confirmed. Continue fixing tests/spec/registry/checkpoint on branch `phase-6-56-exam-syllabus-mapping`, then run backend pytest + API-container build and Flutter analyze/client/widget/release APK/artifact checks on the latest exact commit. Do not merge on the old CI and do not begin Phase 6.57 until Phase 6.56 gates are accepted.
 - **Phase 6.57:** PLANNED — topic coverage, learner mastery and revision.
 - **Phase 6.58:** BLOCKED on approved official-source connectivity, live database migration/secrets, real official-paper + matched answer-key records, and live end-to-end proof.
 
@@ -34,13 +34,14 @@ The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A acros
 
 ## Exact next actions at checkpoint creation
 
-1. Resume Phase 6.56 from open [PR #43](https://github.com/snchat78-svg/AI-COMP/pull/43), not by restarting or skipping to Phase 6.57. Check latest PR head and exact-head workflow checks first.
-2. Finish/repair backend and Flutter CI on the current code/test SHA; update the checkpoint/registry after any fix. Merge only when relevant exact-head checks pass; phase remains IN_PROGRESS even after merge.
-3. Add a protected, auditable syllabus source and concept-mapping author/reviewer workflow with distinct author/reviewer credentials and review-audit records; never accept a client-claimed reviewer identity.
-4. Retrieve the candidate RSSB CET Graduation Level 2026 official PDF over approved HTTPS; validate the actual contents, notification/version, and SHA-256. The official-host URL is recorded in `docs/PHASE_6_56_EXAM_SYLLABUS_MAPPING.md`, but is not yet verified.
-5. Extract the full official unit/subtopic inventory with exact page/section evidence. Reconcile every unit with canonical concepts, add missing concepts/CSV ledger rows, and independently review IN_SCOPE/OUT_OF_SCOPE mappings for every catalogue concept. Never label the profile ready based on the generic 340-topic catalogue alone.
-6. Only after source + inventory + mapping review, enable profile-scoped subject/topic browsing; test distinct exam scopes and unmapped-state behavior. Then proceed with topic-by-topic full examinable-point coverage and Q→A candidate drafting, duplicate/evidence checks and separate review.
-7. Continue Phase 6.55 live migration/reviewer-secret work only through the approved deployment workflow and explicit database-state review. Update checkpoint, registry and coverage ledger with actual CI, source, mapping and live DB evidence; do not claim VERIFIED or production-ready without evidence.
+1. Resume Phase 6.56 from open [PR #43](https://github.com/snchat78-svg/AI-COMP/pull/43) and the branch `phase-6-56-exam-syllabus-mapping`; do not restart merged phases or start Phase 6.57 early.
+2. Fix the migration test so it enforces the intended no-unverified-seed policy: no profile/source/mapping INSERT before a real source review. The code's old backend test failure has been isolated; re-run all CI on the repair commit before merge.
+3. Keep the candidate RSSB PDF URL in [the Phase 6.56 spec](PHASE_6_56_EXAM_SYLLABUS_MAPPING.md) as a research lead only. Do not claim its notification number, document contents, SHA-256 or syllabus are verified; no exam profile is seeded.
+4. Establish approved official HTTPS/TLS retrieval; verify the exact issuing board/notification/document bytes, compute SHA-256, record provenance and independently review the source. Do not disable TLS validation or trust a secondary transcription.
+5. Build a protected, auditable author/reviewer workflow with distinct server-side credentials; never accept a learner token or client-supplied reviewer identity as reviewer proof.
+6. Extract the complete syllabus unit/topic/subtopic inventory with page/section locators; reconcile every official unit with canonical concepts; add missing stable concepts and CSV ledger rows; independently review an IN_SCOPE/OUT_OF_SCOPE decision for every catalogue concept. Until all gates are satisfied, profile-scoped subjects/topics must remain unavailable.
+7. Once official source, complete inventory, and mapping are reviewed, test distinct exam scopes and unmapped behavior, finish exact-head backend + Flutter/APK CI, then complete Phase 6.56 acceptance. Only then begin Phase 6.57 (coverage/mastery/revision); Phase 6.58 remains blocked until live migrations/secrets, authentic official past-paper + matched answer key and real mobile end-to-end proof are available.
+8. Keep Phase 6.55 live migration/reviewer-secret/data work explicitly tracked; never infer live DB counts or VERIFIED content from Git seed rows. Update this checkpoint, registry, roadmap and coverage ledger only with observed evidence.
 
 ## Known live-data/security gates
 

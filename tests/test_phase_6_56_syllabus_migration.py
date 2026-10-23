@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def test_phase_6_56_syllabus_migration_is_https_and_review_gated() -> None:
+def test_phase_6_56_syllabus_migration_is_https_review_gated_and_has_no_unverified_seed() -> None:
     migration_path = (
         Path(__file__).resolve().parents[1]
         / "database"
@@ -23,6 +23,8 @@ def test_phase_6_56_syllabus_migration_is_https_and_review_gated() -> None:
     assert "applicability_status IN ('IN_SCOPE', 'OUT_OF_SCOPE', 'UNMAPPED', 'NEEDS_REVIEW')" in sql
     assert "m.reviewed_by" in sql or "reviewed_by TEXT" in sql
     assert "'REVIEW_PENDING'" in sql
-    # The seed must not automatically mark any syllabus or concept mapping verified.
-    assert "'VERIFIED'" not in sql[sql.index("INSERT INTO exam_syllabus_documents"):sql.index("COMMIT;")]
+    # No exam profile may be seeded from an unverified notification/source lead.
+    assert "No exam profile is seeded until its exact official notification/syllabus is confirmed." in sql
+    assert "INSERT INTO exam_syllabus_documents" not in sql
     assert "INSERT INTO exam_concept_applicability" not in sql
+    assert "INSERT INTO exams" not in sql
