@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-23 (PR #44 merged; PR #45 inventory work in progress)  
+**Last verified:** 2026-10-23 (PR #44 merged; Phase 6.56 inventory follow-up branch in progress)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -74,3 +74,5 @@ Never mark a phase **COMPLETED** based only on file creation, a green local chec
 | 2026-10-23 | 6.56 | Opened PR #44 for protected syllabus source authoring, independent source review, concept applicability review and append-only audit; exact-head CI pending. | [PR #44](https://github.com/snchat78-svg/AI-COMP/pull/44), branch `phase-6-56-syllabus-author-review`; migration 0024 and regression tests included. Official source remains unverified; do not merge until required checks pass. |
 
 | 2026-10-23 | 6.56 | Opened PR #45 for concrete UNIT/TOPIC/SUBTOPIC inventory, author/reviewer decisions, and database-enforced completeness attestation. | [PR #45](https://github.com/snchat78-svg/AI-COMP/pull/45); branch phase-6-56-syllabus-unit-inventory; CI pending. Official RSSB PDF retrieval/content/hash remain unverified. |
+
+| 6.56 follow-up | Individual syllabus unit/topic/subtopic inventory with independent review | IN_PROGRESS | Branch `phase-6-56-syllabus-unit-inventory`; migration 0025, author/reviewer endpoints, validation tests. | Open PR after final code/doc inspection; exact-head CI must pass. Official source and complete mapping still unverified. |
