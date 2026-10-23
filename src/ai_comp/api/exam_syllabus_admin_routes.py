@@ -1,17 +1,203 @@
 from __future__ import annotations
 
+import hashlib
 import hmac
+import io
 import json
 import os
+import socket
+import ssl
+import time
+import urllib.error
+import urllib.request
+from dataclasses import dataclass
 from http import HTTPStatus
 from urllib.parse import urlsplit
 from uuid import uuid4
 
 from fastapi import APIRouter, Request
+from pypdf import PdfReader
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from starlette.responses import Response
 
 router = APIRouter(prefix="/api/v1/admin/exam-syllabi", tags=["exam-syllabus-review"])
+
+
+_ALLOWED_OFFICIAL_SYLLABUS_HOSTS = frozenset({
+    "rssb.rajasthan.gov.in",
+    "www.rssb.rajasthan.gov.in",
+    "rsmssb.rajasthan.gov.in",
+    "www.rsmssb.rajasthan.gov.in",
+})
+_MAX_OFFICIAL_PDF_BYTES = 10 * 1024 * 1024
+_MAX_OFFICIAL_PDF_PAGES = 500
+_OFFICIAL_FETCH_TIMEOUT_SECONDS = 12
+_MAX_REDIRECTS = 5
+
+
+class OfficialSyllabusFetchError(Exception):
+    """Safe, stable error code for a failed source retrieval or PDF validation."""
+
+    def __init__(self, code: str) -> None:
+        self.code = code
+        super().__init__(code)
+
+
+@dataclass(frozen=True)
+class OfficialSyllabusPDF:
+    requested_url: str
+    final_url: str
+    content_type: str
+    document_bytes: bytes
+    document_sha256: str
+    byte_length: int
+    page_count: int
+    document_title: str
+
+
+def _validate_official_syllabus_url(url: str) -> str:
+    if not isinstance(url, str) or not url or url != url.strip():
+        raise OfficialSyllabusFetchError("SOURCE_URL_INVALID")
+    try:
+        parsed = urlsplit(url)
+        port = parsed.port
+    except ValueError:
+        raise OfficialSyllabusFetchError("SOURCE_URL_INVALID") from None
+    hostname = (parsed.hostname or "").lower()
+    if (
+        hostname.endswith(".")
+        or parsed.scheme.lower() != "https"
+        or hostname not in _ALLOWED_OFFICIAL_SYLLABUS_HOSTS
+        or port not in (None, 443)
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.fragment
+    ):
+        raise OfficialSyllabusFetchError("SOURCE_HOST_NOT_ALLOWED")
+    return url
+
+
+class _AllowlistedOfficialRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def __init__(self) -> None:
+        super().__init__()
+        self._redirect_count = 0
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        self._redirect_count += 1
+        if self._redirect_count > _MAX_REDIRECTS:
+            raise OfficialSyllabusFetchError("SOURCE_REDIRECT_LIMIT")
+        _validate_official_syllabus_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _validate_official_pdf_bytes(
+    requested_url: str,
+    final_url: str,
+    payload: bytes,
+    response_content_type: str,
+) -> OfficialSyllabusPDF:
+    _validate_official_syllabus_url(requested_url)
+    _validate_official_syllabus_url(final_url)
+    if not payload or len(payload) > _MAX_OFFICIAL_PDF_BYTES:
+        raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
+    media_type = (response_content_type or "").split(";", 1)[0].strip().lower()
+    if media_type not in {"application/pdf", "application/octet-stream"}:
+        raise OfficialSyllabusFetchError("SOURCE_CONTENT_TYPE_INVALID")
+    if b"%PDF-" not in payload[:1024] or b"%%EOF" not in payload[-2048:]:
+        raise OfficialSyllabusFetchError("SOURCE_PDF_SIGNATURE_INVALID")
+    try:
+        reader = PdfReader(io.BytesIO(payload), strict=True)
+        if reader.is_encrypted:
+            raise OfficialSyllabusFetchError("SOURCE_PDF_ENCRYPTED")
+        page_count = len(reader.pages)
+        if page_count < 1 or page_count > _MAX_OFFICIAL_PDF_PAGES:
+            raise OfficialSyllabusFetchError("SOURCE_PDF_PAGE_COUNT_INVALID")
+        metadata = reader.metadata
+        title = str(metadata.title or "").strip()[:500] if metadata else ""
+    except OfficialSyllabusFetchError:
+        raise
+    except Exception:
+        raise OfficialSyllabusFetchError("SOURCE_PDF_UNREADABLE") from None
+    return OfficialSyllabusPDF(
+        requested_url=requested_url,
+        final_url=final_url,
+        content_type="application/pdf",
+        document_bytes=payload,
+        document_sha256=hashlib.sha256(payload).hexdigest(),
+        byte_length=len(payload),
+        page_count=page_count,
+        document_title=title,
+    )
+
+
+def _fetch_official_syllabus_pdf(url: str) -> OfficialSyllabusPDF:
+    """Fetch only an allowlisted HTTPS source, with redirects/TLS/size/time controls."""
+    requested_url = _validate_official_syllabus_url(url)
+    opener = urllib.request.build_opener(
+        urllib.request.ProxyHandler({}),
+        urllib.request.HTTPSHandler(context=ssl.create_default_context()),
+        _AllowlistedOfficialRedirectHandler(),
+    )
+    request = urllib.request.Request(
+        requested_url,
+        headers={
+            "Accept": "application/pdf, application/octet-stream;q=0.8",
+            "Accept-Encoding": "identity",
+            "User-Agent": "AI-COMP-Official-Syllabus-Verifier/1.0",
+        },
+        method="GET",
+    )
+    try:
+        with opener.open(request, timeout=_OFFICIAL_FETCH_TIMEOUT_SECONDS) as response:
+            final_url = _validate_official_syllabus_url(response.geturl())
+            if response.getcode() != 200:
+                raise OfficialSyllabusFetchError("SOURCE_HTTP_STATUS_INVALID")
+            encoding = (response.headers.get("Content-Encoding") or "identity").strip().lower()
+            if encoding not in {"", "identity"}:
+                raise OfficialSyllabusFetchError("SOURCE_CONTENT_ENCODING_INVALID")
+            content_type = response.headers.get("Content-Type", "")
+            declared_length = response.headers.get("Content-Length")
+            if declared_length:
+                try:
+                    if int(declared_length) < 1 or int(declared_length) > _MAX_OFFICIAL_PDF_BYTES:
+                        raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
+                except ValueError:
+                    raise OfficialSyllabusFetchError("SOURCE_CONTENT_LENGTH_INVALID") from None
+            deadline = time.monotonic() + _OFFICIAL_FETCH_TIMEOUT_SECONDS
+            chunks: list[bytes] = []
+            total_bytes = 0
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise OfficialSyllabusFetchError("SOURCE_FETCH_TIMEOUT")
+                # Enforce a total deadline as well as the socket inactivity timeout.
+                socket_file = getattr(getattr(getattr(response, "fp", None), "raw", None), "_sock", None)
+                if socket_file is not None:
+                    socket_file.settimeout(remaining)
+                chunk = response.read(min(64 * 1024, _MAX_OFFICIAL_PDF_BYTES - total_bytes + 1))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                total_bytes += len(chunk)
+                if total_bytes > _MAX_OFFICIAL_PDF_BYTES:
+                    raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
+            payload = b"".join(chunks)
+            if declared_length and int(declared_length) != len(payload):
+                raise OfficialSyllabusFetchError("SOURCE_CONTENT_LENGTH_MISMATCH")
+            return _validate_official_pdf_bytes(requested_url, final_url, payload, content_type)
+    except OfficialSyllabusFetchError:
+        raise
+    except (TimeoutError, socket.timeout):
+        raise OfficialSyllabusFetchError("SOURCE_FETCH_TIMEOUT") from None
+    except urllib.error.HTTPError as exc:
+        raise OfficialSyllabusFetchError("SOURCE_HTTP_ERROR") from None
+    except urllib.error.URLError as exc:
+        reason = getattr(exc, "reason", None)
+        if isinstance(reason, (TimeoutError, socket.timeout)):
+            raise OfficialSyllabusFetchError("SOURCE_FETCH_TIMEOUT") from None
+        raise OfficialSyllabusFetchError("SOURCE_FETCH_FAILED") from None
+    except Exception:
+        raise OfficialSyllabusFetchError("SOURCE_FETCH_FAILED") from None
 
 
 def _response(status: HTTPStatus, payload: dict[str, object]) -> Response:
@@ -255,6 +441,111 @@ def create_syllabus_source_candidate(payload: SyllabusDraft, request: Request) -
         connection.close()
 
 
+@router.post("/{syllabus_id}/fetch-source", name="fetch_official_syllabus_source")
+def fetch_official_syllabus_source(syllabus_id: str, request: Request) -> Response:
+    """Fetch and persist the actual official PDF bytes; never accepts a caller-supplied URL."""
+    actor, error = _authorized(request, reviewer=True)
+    if error is not None:
+        return error
+    if not syllabus_id or syllabus_id != syllabus_id.strip() or len(syllabus_id) > 128:
+        return _response(HTTPStatus.BAD_REQUEST, {"error": {"code": "INVALID_SYLLABUS_ID", "message": "syllabus_id must be trimmed and 1-128 characters."}})
+
+    factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(factory):
+        return _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "QUESTION_BANK_NOT_CONFIGURED", "message": "Syllabus storage is not configured for this server."}})
+
+    connection = None
+    try:
+        connection = factory()
+        source = connection.execute(
+            "SELECT source_url, source_status FROM exam_syllabus_documents WHERE syllabus_id = %s",
+            (syllabus_id,),
+        ).fetchone()
+        if source is None:
+            return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+        if str(source[1]) in {"VERIFIED", "SUPERSEDED"}:
+            return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_IMMUTABLE", "message": "Create a new syllabus version to refresh a verified or superseded document."}})
+        requested_url = str(source[0])
+        connection.close()
+        connection = None
+        try:
+            fetched = _fetch_official_syllabus_pdf(requested_url)
+        except OfficialSyllabusFetchError as exc:
+            failure_connection = None
+            try:
+                failure_connection = factory()
+                with failure_connection.transaction():
+                    failed_fetch_id = uuid4().hex
+                    failure_connection.execute(
+                        """INSERT INTO exam_syllabus_source_fetches
+                           (fetch_id, syllabus_id, requested_url, fetch_status, failure_code, fetched_by)
+                           VALUES (%s, %s, %s, 'FAILED', %s, %s)""",
+                        (failed_fetch_id, syllabus_id, requested_url, exc.code, actor),
+                    )
+                    failure_connection.execute(
+                        """INSERT INTO exam_syllabus_review_audit
+                           (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                           VALUES (%s, %s, 'SOURCE_FETCH', %s, 'REVIEWER', %s, 'FAILED', %s, %s::jsonb)""",
+                        (uuid4().hex, syllabus_id, failed_fetch_id, actor, "Official source fetch failed safely",
+                         json.dumps({"failure_code": exc.code, "requested_url": requested_url})),
+                    )
+            except Exception:
+                pass
+            finally:
+                if failure_connection is not None:
+                    failure_connection.close()
+            return _response(HTTPStatus.BAD_GATEWAY, {"error": {"code": exc.code, "message": "The official syllabus PDF could not be safely fetched and validated."}})
+
+        connection = factory()
+        with connection.transaction():
+            current = connection.execute(
+                "SELECT source_url, source_status FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if current is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(current[0]) != requested_url or str(current[1]) in {"VERIFIED", "SUPERSEDED"}:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_CHANGED", "message": "Syllabus source changed during fetch; no evidence was saved. Create a new version and retry."}})
+            fetch_id = uuid4().hex
+            connection.execute(
+                """INSERT INTO exam_syllabus_source_fetches
+                   (fetch_id, syllabus_id, requested_url, final_url, fetch_status, content_type,
+                    byte_length, page_count, document_title, document_sha256, document_bytes, fetched_by)
+                   VALUES (%s, %s, %s, %s, 'FETCHED', %s, %s, %s, %s, %s, %s, %s)""",
+                (fetch_id, syllabus_id, fetched.requested_url, fetched.final_url, fetched.content_type,
+                 fetched.byte_length, fetched.page_count, fetched.document_title,
+                 fetched.document_sha256, fetched.document_bytes, actor),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'SOURCE_FETCH', %s, 'REVIEWER', %s, 'FETCHED', %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, fetch_id, actor, "Official PDF fetched with normal TLS validation and stored immutably",
+                 json.dumps({"requested_url": fetched.requested_url, "final_url": fetched.final_url,
+                             "content_type": fetched.content_type, "byte_length": fetched.byte_length,
+                             "page_count": fetched.page_count, "document_title": fetched.document_title,
+                             "document_sha256": fetched.document_sha256})),
+            )
+        return _response(HTTPStatus.CREATED, {
+            "syllabus_id": syllabus_id,
+            "fetch_id": fetch_id,
+            "fetch_status": "FETCHED",
+            "requested_url": fetched.requested_url,
+            "final_url": fetched.final_url,
+            "content_type": fetched.content_type,
+            "byte_length": fetched.byte_length,
+            "page_count": fetched.page_count,
+            "document_title": fetched.document_title,
+            "document_sha256": fetched.document_sha256,
+            "fetched_by": actor,
+        })
+    except Exception:
+        return _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_SOURCE_FETCH_STORE_FAILED", "message": "The source fetch evidence could not be saved."}})
+    finally:
+        if connection is not None:
+            connection.close()
+
+
 @router.post("/{syllabus_id}/source-review", name="review_syllabus_source")
 def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, request: Request) -> Response:
     actor, error = _authorized(request, reviewer=True)
@@ -283,6 +574,27 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                 return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_AUTHOR_AUDIT_MISSING", "message": "Source candidate has no author audit record; independently re-author it before review."}})
             if str(author_row[0]) == actor:
                 return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The source author cannot review their own syllabus candidate."}})
+            fetch_evidence = None
+            if payload.decision == "VERIFIED":
+                fetch_evidence = connection.execute(
+                    """SELECT fetch_id, document_sha256, requested_url, final_url, byte_length,
+                              page_count, document_title, fetched_at, fetch_status
+                       FROM exam_syllabus_source_fetches
+                       WHERE syllabus_id = %s
+                       ORDER BY fetch_sequence DESC LIMIT 1 FOR SHARE""",
+                    (syllabus_id,),
+                ).fetchone()
+                if fetch_evidence is None or str(fetch_evidence[8]) != "FETCHED":
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_REQUIRED", "message": "The latest server fetch must have successfully validated the official PDF before the source can be VERIFIED."}})
+                stored_source = connection.execute(
+                    "SELECT source_url FROM exam_syllabus_documents WHERE syllabus_id = %s",
+                    (syllabus_id,),
+                ).fetchone()
+                if stored_source is None or str(fetch_evidence[2]) != str(stored_source[0]):
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_STALE", "message": "The latest fetched PDF does not match the currently registered source URL."}})
+                fetched_digest = str(fetch_evidence[1]).strip()
+                if not payload.document_sha256 or not hmac.compare_digest(fetched_digest, payload.document_sha256):
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_DIGEST_MISMATCH", "message": "The review digest must match the server-computed digest of the stored PDF bytes."}})
             if payload.decision == "VERIFIED" and payload.inventory_complete:
                 inventory = connection.execute(
                     """SELECT COUNT(*), COUNT(*) FILTER (WHERE review_status <> 'VERIFIED')
@@ -291,9 +603,19 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                 ).fetchone()
                 if inventory is None or int(inventory[0] or 0) == 0 or int(inventory[1] or 0) != 0:
                     return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_INCOMPLETE", "message": "Every unit, topic and subtopic must have a VERIFIED inventory record before the complete-inventory attestation."}})
+            digest_to_persist = str(fetch_evidence[1]).strip() if fetch_evidence is not None else payload.document_sha256
+            source_evidence_to_persist = payload.source_evidence
+            if fetch_evidence is not None:
+                source_evidence_to_persist = (
+                    f"{payload.source_evidence}\nServer-fetched evidence: fetch_id={fetch_evidence[0]}; "
+                    f"sha256={str(fetch_evidence[1]).strip()}; bytes={fetch_evidence[4]}; "
+                    f"pages={fetch_evidence[5]}; title={fetch_evidence[6]}; "
+                    f"final_url={fetch_evidence[3]}; fetched_at={fetch_evidence[7]}"
+                )
             connection.execute(
                 """UPDATE exam_syllabus_documents
-                   SET source_status = %s, document_sha256 = COALESCE(%s, document_sha256),
+                   SET source_status = %s,
+                       document_sha256 = CASE WHEN %s = 'VERIFIED' THEN %s ELSE COALESCE(%s, document_sha256) END,
                        source_evidence = CASE WHEN %s <> '' THEN %s ELSE source_evidence END,
                        source_checked_at = CASE WHEN %s = 'REVIEW_PENDING' THEN NULL ELSE NOW() END,
                        source_checked_by = CASE WHEN %s = 'REVIEW_PENDING' THEN NULL ELSE %s END,
@@ -302,7 +624,8 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                        inventory_reviewed_by = CASE WHEN %s THEN %s ELSE NULL END,
                        inventory_review_note = CASE WHEN %s THEN %s ELSE '' END
                    WHERE syllabus_id = %s""",
-                (payload.decision, payload.document_sha256, payload.source_evidence, payload.source_evidence,
+                (payload.decision, payload.decision, digest_to_persist, payload.document_sha256,
+                 source_evidence_to_persist, source_evidence_to_persist,
                  payload.decision, payload.decision, actor, payload.inventory_complete,
                  payload.inventory_complete, payload.inventory_complete, actor, payload.inventory_complete,
                  payload.inventory_review_note, syllabus_id),
@@ -312,10 +635,14 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                    (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
                    VALUES (%s, %s, 'SOURCE', %s, 'REVIEWER', %s, %s, %s, %s::jsonb)""",
                 (uuid4().hex, syllabus_id, syllabus_id, actor, payload.decision, payload.review_note,
-                 json.dumps({"document_sha256": payload.document_sha256, "source_evidence": payload.source_evidence,
+                 json.dumps({"document_sha256": digest_to_persist, "source_evidence": source_evidence_to_persist,
+                             "server_fetch_id": fetch_evidence[0] if fetch_evidence is not None else None,
                              "inventory_complete": payload.inventory_complete, "inventory_review_note": payload.inventory_review_note})),
             )
-        return _response(HTTPStatus.OK, {"syllabus_id": syllabus_id, "source_status": payload.decision, "reviewed_by": actor})
+        return _response(HTTPStatus.OK, {
+            "syllabus_id": syllabus_id, "source_status": payload.decision, "reviewed_by": actor,
+            "document_sha256": digest_to_persist,
+        })
     except Exception:
         return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_REVIEW_FAILED", "message": "Review was not saved; verify the source evidence and database constraints."}})
     finally:
