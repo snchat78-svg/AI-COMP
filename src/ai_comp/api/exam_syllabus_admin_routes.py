@@ -209,6 +209,14 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
             ).fetchone()
             if existing is None:
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            author_row = connection.execute(
+                """SELECT actor_id FROM exam_syllabus_review_audit
+                   WHERE syllabus_id = %s AND entity_type = 'SOURCE' AND entity_id = %s AND actor_role = 'AUTHOR'
+                   ORDER BY created_at DESC LIMIT 1""",
+                (syllabus_id, syllabus_id),
+            ).fetchone()
+            if author_row is not None and str(author_row[0]) == actor:
+                return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The source author cannot review their own syllabus candidate."}})
             connection.execute(
                 """UPDATE exam_syllabus_documents
                    SET source_status = %s, document_sha256 = COALESCE(%s, document_sha256),
@@ -240,6 +248,52 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
         connection.close()
 
 
+@router.post("/{syllabus_id}/concept-mappings", name="create_syllabus_concept_mapping_draft")
+def create_syllabus_concept_mapping_draft(syllabus_id: str, payload: ConceptMappingReview, request: Request) -> Response:
+    """Create a mapping proposal in NEEDS_REVIEW state; authors cannot certify it."""
+    actor, error = _authorized(request, reviewer=False)
+    if error is not None:
+        return error
+    if not syllabus_id or syllabus_id != syllabus_id.strip() or len(syllabus_id) > 128:
+        return _response(HTTPStatus.BAD_REQUEST, {"error": {"code": "INVALID_SYLLABUS_ID", "message": "syllabus_id must be trimmed and 1-128 characters."}})
+    connection, error = _connection_or_error(request)
+    if error is not None:
+        return error
+    try:
+        with connection.transaction():
+            source = connection.execute(
+                "SELECT syllabus_id FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if source is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            connection.execute(
+                """INSERT INTO exam_concept_applicability
+                   (syllabus_id, concept_id, applicability_status, official_unit, source_locator,
+                    source_evidence, reviewed_at, reviewed_by, review_note, updated_at)
+                   VALUES (%s, %s, 'NEEDS_REVIEW', %s, %s, %s, NULL, NULL, '', NOW())
+                   ON CONFLICT (syllabus_id, concept_id) DO UPDATE SET
+                     applicability_status = 'NEEDS_REVIEW', official_unit = EXCLUDED.official_unit,
+                     source_locator = EXCLUDED.source_locator, source_evidence = EXCLUDED.source_evidence,
+                     reviewed_at = NULL, reviewed_by = NULL, review_note = '', updated_at = NOW()""",
+                (syllabus_id, payload.concept_id, payload.official_unit, payload.source_locator, payload.source_evidence),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'CONCEPT_MAPPING', %s, 'AUTHOR', %s, 'NEEDS_REVIEW', %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, payload.concept_id, actor, payload.review_note,
+                 json.dumps({"proposed_decision": payload.decision, "official_unit": payload.official_unit,
+                             "source_locator": payload.source_locator, "source_evidence": payload.source_evidence})),
+            )
+        return _response(HTTPStatus.CREATED, {"syllabus_id": syllabus_id, "concept_id": payload.concept_id,
+                                              "applicability_status": "NEEDS_REVIEW", "created_by": actor})
+    except Exception:
+        return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_MAPPING_DRAFT_FAILED", "message": "Mapping draft was not saved; verify syllabus/concept IDs."}})
+    finally:
+        connection.close()
+
+
 @router.post("/{syllabus_id}/concept-mappings/review", name="review_syllabus_concept_mapping")
 def review_syllabus_concept_mapping(syllabus_id: str, payload: ConceptMappingReview, request: Request) -> Response:
     actor, error = _authorized(request, reviewer=True)
@@ -258,20 +312,34 @@ def review_syllabus_concept_mapping(syllabus_id: str, payload: ConceptMappingRev
             ).fetchone()
             if source is None:
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(source[0]) != "VERIFIED":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_NOT_VERIFIED", "message": "Concept mappings can be reviewed only after the source and complete inventory are verified."}})
+            author_row = connection.execute(
+                """SELECT actor_id FROM exam_syllabus_review_audit
+                   WHERE syllabus_id = %s AND entity_type = 'CONCEPT_MAPPING'
+                     AND entity_id = %s AND actor_role = 'AUTHOR'
+                   ORDER BY created_at DESC LIMIT 1""",
+                (syllabus_id, payload.concept_id),
+            ).fetchone()
+            if author_row is None:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "MAPPING_DRAFT_NOT_FOUND", "message": "Create a mapping draft before independent review."}})
+            if str(author_row[0]) == actor:
+                return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The mapping author cannot review their own concept mapping."}})
+            pending = connection.execute(
+                """SELECT applicability_status FROM exam_concept_applicability
+                   WHERE syllabus_id = %s AND concept_id = %s FOR UPDATE""",
+                (syllabus_id, payload.concept_id),
+            ).fetchone()
+            if pending is None or str(pending[0]) != "NEEDS_REVIEW":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "MAPPING_NOT_PENDING", "message": "Only an existing NEEDS_REVIEW mapping draft can be reviewed."}})
             connection.execute(
-                """INSERT INTO exam_concept_applicability
-                   (syllabus_id, concept_id, applicability_status, official_unit, source_locator,
-                    source_evidence, reviewed_at, reviewed_by, review_note, updated_at)
-                   VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s, %s, NOW())
-                   ON CONFLICT (syllabus_id, concept_id) DO UPDATE SET
-                     applicability_status = EXCLUDED.applicability_status,
-                     official_unit = EXCLUDED.official_unit,
-                     source_locator = EXCLUDED.source_locator,
-                     source_evidence = EXCLUDED.source_evidence,
-                     reviewed_at = NOW(), reviewed_by = EXCLUDED.reviewed_by,
-                     review_note = EXCLUDED.review_note, updated_at = NOW()""",
-                (syllabus_id, payload.concept_id, payload.decision, payload.official_unit,
-                 payload.source_locator, payload.source_evidence, actor, payload.review_note),
+                """UPDATE exam_concept_applicability
+                   SET applicability_status = %s, official_unit = %s, source_locator = %s,
+                       source_evidence = %s, reviewed_at = NOW(), reviewed_by = %s,
+                       review_note = %s, updated_at = NOW()
+                   WHERE syllabus_id = %s AND concept_id = %s""",
+                (payload.decision, payload.official_unit, payload.source_locator, payload.source_evidence,
+                 actor, payload.review_note, syllabus_id, payload.concept_id),
             )
             connection.execute(
                 """INSERT INTO exam_syllabus_review_audit
