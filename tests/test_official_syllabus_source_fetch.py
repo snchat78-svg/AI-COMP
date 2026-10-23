@@ -277,3 +277,43 @@ def test_fetch_evidence_migration_keeps_successful_pdf_bytes_and_audit_immutable
     assert "BEFORE UPDATE OR DELETE" in migration
     assert "BEFORE TRUNCATE" in migration
     assert "SOURCE_FETCH" in migration
+
+
+def test_fetch_rejects_mismatched_content_length(monkeypatch):
+    pdf_bytes = _sample_pdf()
+    url = "https://rssb.rajasthan.gov.in/storage/syllabus.pdf"
+    response = _FakeResponse(pdf_bytes, url)
+    response.headers["Content-Length"] = str(len(pdf_bytes) + 1)
+    opener = _FakeOpener(response)
+    monkeypatch.setattr(routes.urllib.request, "build_opener", lambda *handlers: opener)
+
+    with pytest.raises(routes.OfficialSyllabusFetchError) as exc:
+        routes._fetch_official_syllabus_pdf(url)
+    assert exc.value.code == "SOURCE_CONTENT_LENGTH_MISMATCH"
+
+
+def test_failed_official_fetch_is_persisted_and_audited(monkeypatch):
+    _set_review_secrets(monkeypatch)
+    url = "https://rssb.rajasthan.gov.in/storage/syllabus.pdf"
+    monkeypatch.setattr(
+        routes,
+        "_fetch_official_syllabus_pdf",
+        lambda _url: (_ for _ in ()).throw(routes.OfficialSyllabusFetchError("SOURCE_FETCH_FAILED")),
+    )
+    lookup = _Connection([
+        ("SELECT source_url, source_status", (url, "REVIEW_PENDING")),
+    ])
+    failure = _Connection([])
+    connections = iter((lookup, failure))
+    response = _client(lambda: next(connections)).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/fetch-source",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
+    )
+
+    assert response.status_code == 502, response.text
+    assert response.json()["error"]["code"] == "SOURCE_FETCH_FAILED"
+    failed_insert = next((params for query, params in failure.calls if "INSERT INTO exam_syllabus_source_fetches" in query))
+    audit_insert = next((params for query, params in failure.calls if "'SOURCE_FETCH'" in query))
+    assert failed_insert[0] == audit_insert[2]
+    assert failed_insert[3] == "SOURCE_FETCH_FAILED"
+    assert lookup.closed and failure.closed
