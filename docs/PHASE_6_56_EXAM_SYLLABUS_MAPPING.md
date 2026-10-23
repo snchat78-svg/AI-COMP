@@ -106,4 +106,13 @@ PR [#46](https://github.com/snchat78-svg/AI-COMP/pull/46) adds reviewer-only `PO
 
 Migration `0026_phase6_56_source_fetch_evidence.sql` stores the exact PDF bytes, digest, source/final URLs, page count, title, fetcher, timestamp and immutable audit evidence. Failed fetch attempts are audited, and the latest failed attempt blocks verification. Source review must match the SHA-256 from the latest successful server fetch for the same registered URL; a reviewer-entered digest alone is insufficient.
 
-PR #46 is open on branch `phase-6-56-official-source-fetch`; exact-head CI is pending. Do not merge until backend tests and API container build pass on the current head. The actual RSSB PDF remains inaccessible to this research runtime, so no official PDF or digest is claimed as verified. After this code passes, deploy/apply the migration through the controlled workflow, use the protected endpoint from an approved API host with outbound DNS/network, independently inspect the exact stored PDF, complete the inventory and mappings, and prove live mobile E2E. Phase 6.56 remains IN_PROGRESS; do not start Phase 6.57.
+PR #46 was squash-merged as `ea59fc9e4712b3b646c707e2abf6f30f3690975c`. Tested head `c0e293d58c70a3621f5bf6d51741384838c24549` passed [workflow 39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed, 14 warnings; API container build passed. The actual RSSB PDF remains inaccessible to this research runtime, so no official PDF or digest is claimed verified. Next, apply migrations only through the controlled workflow and use the protected endpoint from an approved API host with outbound DNS/network; independently inspect the exact stored PDF, complete the inventory/mappings and prove live mobile E2E. Phase 6.56 remains IN_PROGRESS; do not start Phase 6.57.
+
+
+## PR #46 merge evidence
+
+- Merge SHA: `ea59fc9e4712b3b646c707e2abf6f30f3690975c`.
+- Tested PR head: `c0e293d58c70a3621f5bf6d51741384838c24549`.
+- [CI workflow 39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed, 14 warnings; API container build succeeded.
+- Migration 0026 stores immutable source-fetch attempts and exact successful PDF bytes. Latest failed fetch blocks source verification; VERIFIED requires a digest matching the latest successful fetch for the exact stored source URL.
+- This is code/CI completion only. The real RSSB source, its notification/version/content/digest, the full syllabus inventory and concept mapping remain unverified until live data review is performed.
