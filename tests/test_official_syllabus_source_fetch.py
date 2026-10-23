@@ -75,6 +75,7 @@ def test_official_url_validator_allows_only_https_allowlisted_hosts():
         "http://rssb.rajasthan.gov.in/syllabus.pdf",
         "https://evil.example/syllabus.pdf",
         "https://rssb.rajasthan.gov.in:8443/syllabus.pdf",
+        "https://rssb.rajasthan.gov.in./syllabus.pdf",
         "https://user:password@rssb.rajasthan.gov.in/syllabus.pdf",
     ):
         with pytest.raises(routes.OfficialSyllabusFetchError):
@@ -131,7 +132,12 @@ def test_fetch_source_endpoint_uses_database_url_and_stores_immutable_evidence(m
         page_count=1,
         document_title="Synthetic test fixture",
     )
-    monkeypatch.setattr(routes, "_fetch_official_syllabus_pdf", lambda url: fetched)
+    fetched_urls = []
+    monkeypatch.setattr(
+        routes,
+        "_fetch_official_syllabus_pdf",
+        lambda url: (fetched_urls.append(url) or fetched),
+    )
 
     lookup = _Connection([
         ("SELECT source_url, source_status", ("https://rssb.rajasthan.gov.in/storage/syllabus.pdf", "REVIEW_PENDING")),
@@ -149,6 +155,7 @@ def test_fetch_source_endpoint_uses_database_url_and_stores_immutable_evidence(m
 
     assert response.status_code == 201, response.text
     payload = response.json()
+    assert fetched_urls == [fetched.requested_url]
     assert payload["document_sha256"] == digest
     assert payload["page_count"] == 1
     assert any("INSERT INTO exam_syllabus_source_fetches" in q for q, _ in writer.calls)
