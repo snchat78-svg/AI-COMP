@@ -7,6 +7,7 @@ import json
 import os
 import socket
 import ssl
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -162,9 +163,25 @@ def _fetch_official_syllabus_pdf(url: str) -> OfficialSyllabusPDF:
                         raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
                 except ValueError:
                     raise OfficialSyllabusFetchError("SOURCE_CONTENT_LENGTH_INVALID") from None
-            payload = response.read(_MAX_OFFICIAL_PDF_BYTES + 1)
-            if len(payload) > _MAX_OFFICIAL_PDF_BYTES:
-                raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
+            deadline = time.monotonic() + _OFFICIAL_FETCH_TIMEOUT_SECONDS
+            chunks: list[bytes] = []
+            total_bytes = 0
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise OfficialSyllabusFetchError("SOURCE_FETCH_TIMEOUT")
+                # Enforce a total deadline as well as the socket inactivity timeout.
+                socket_file = getattr(getattr(getattr(response, "fp", None), "raw", None), "_sock", None)
+                if socket_file is not None:
+                    socket_file.settimeout(remaining)
+                chunk = response.read(min(64 * 1024, _MAX_OFFICIAL_PDF_BYTES - total_bytes + 1))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                total_bytes += len(chunk)
+                if total_bytes > _MAX_OFFICIAL_PDF_BYTES:
+                    raise OfficialSyllabusFetchError("SOURCE_PDF_SIZE_INVALID")
+            payload = b"".join(chunks)
             if declared_length and int(declared_length) != len(payload):
                 raise OfficialSyllabusFetchError("SOURCE_CONTENT_LENGTH_MISMATCH")
             return _validate_official_pdf_bytes(requested_url, final_url, payload, content_type)
