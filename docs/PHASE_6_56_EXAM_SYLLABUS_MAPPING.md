@@ -106,3 +106,14 @@ The next Phase 6.56 slice adds migration `0025_phase6_56_syllabus_unit_inventory
 - Regression tests cover payload hierarchy and migration invariants. Exact-head CI remains required before merge.
 
 The candidate RSSB syllabus is still unverified; no exam profile is seeded. Phase 6.57 remains blocked.
+
+
+## Follow-up slice: individually reviewed syllabus inventory
+
+Migration `0025_phase6_56_syllabus_unit_inventory.sql` and author/reviewer endpoints add individual source-located inventory rows for official syllabus UNIT, TOPIC and SUBTOPIC:
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/units` creates a row in `NEEDS_REVIEW`; hierarchy is enforced (UNIT → TOPIC → SUBTOPIC).
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/units/{unit_id}/review` lets an independent server-configured reviewer mark a pending row VERIFIED or REJECTED.
+- Complete-inventory attestation is rejected unless at least one row exists and every row is independently VERIFIED. Database triggers enforce the invariant and lock the inventory while marked complete.
+- Each row captures official label, page when known, locator, evidence, author/reviewer and audit entry. These records do not independently prove source authenticity; a human must compare every row with the actual official document.
+
+Exact-head CI remains required before merge. The candidate RSSB syllabus is still unverified, no exam profile is seeded, and Phase 6.57 remains blocked.
