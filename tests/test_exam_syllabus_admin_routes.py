@@ -63,4 +63,5 @@ def test_syllabus_migration_creates_append_only_audit_table():
     sql = migration.read_text(encoding="utf-8")
     assert "exam_syllabus_review_audit" in sql
     assert "BEFORE UPDATE OR DELETE" in sql
+    assert "BEFORE TRUNCATE" in sql
     assert "append-only" in sql
