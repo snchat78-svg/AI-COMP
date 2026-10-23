@@ -559,14 +559,20 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
             if payload.decision == "VERIFIED":
                 fetch_evidence = connection.execute(
                     """SELECT fetch_id, document_sha256, requested_url, final_url, byte_length,
-                              page_count, document_title, fetched_at
+                              page_count, document_title, fetched_at, fetch_status
                        FROM exam_syllabus_source_fetches
-                       WHERE syllabus_id = %s AND fetch_status = 'FETCHED'
-                       ORDER BY fetched_at DESC LIMIT 1 FOR SHARE""",
+                       WHERE syllabus_id = %s
+                       ORDER BY fetched_at DESC, fetch_id DESC LIMIT 1 FOR SHARE""",
                     (syllabus_id,),
                 ).fetchone()
-                if fetch_evidence is None:
-                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_REQUIRED", "message": "The server must fetch and validate the official PDF before a source can be VERIFIED."}})
+                if fetch_evidence is None or str(fetch_evidence[8]) != "FETCHED":
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_REQUIRED", "message": "The latest server fetch must have successfully validated the official PDF before the source can be VERIFIED."}})
+                stored_source = connection.execute(
+                    "SELECT source_url FROM exam_syllabus_documents WHERE syllabus_id = %s",
+                    (syllabus_id,),
+                ).fetchone()
+                if stored_source is None or str(fetch_evidence[2]) != str(stored_source[0]):
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_STALE", "message": "The latest fetched PDF does not match the currently registered source URL."}})
                 fetched_digest = str(fetch_evidence[1]).strip()
                 if not payload.document_sha256 or not hmac.compare_digest(fetched_digest, payload.document_sha256):
                     return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_DIGEST_MISMATCH", "message": "The review digest must match the server-computed digest of the stored PDF bytes."}})
