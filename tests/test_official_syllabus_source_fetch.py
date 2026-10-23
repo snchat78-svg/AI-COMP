@@ -189,8 +189,8 @@ def test_source_review_cannot_verify_using_only_reviewer_supplied_sha(monkeypatc
             "decision": "VERIFIED",
             "document_sha256": "a" * 64,
             "source_evidence": "Reviewer supplied a digest, but no valid fetch exists",
-            "inventory_complete": False,
-            "inventory_review_note": "",
+            "inventory_complete": True,
+            "inventory_review_note": "Test claim only",
             "review_note": "Cannot approve on manual digest alone",
         },
     )
