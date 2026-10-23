@@ -94,3 +94,15 @@ PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 b
 ### Official syllabus discovery status
 
 Research found a secondary transcription of RSSB CET Graduation Level 2026 that identifies Advertisement 09/2026 dated 1 July 2026 and lists 14 broad units: [TopKaro syllabus transcription](https://topkaro.com/rssb/cet-graduation/syllabus). The candidate official document URL is https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf, but direct retrieval failed in the current runtime. Official PDF bytes, complete page contents, document digest, and notification/version have not been independently verified. The secondary page can inform a draft checklist only; it cannot justify a VERIFIED exam profile or complete-inventory attestation.
+
+## Follow-up slice: individually reviewed syllabus inventory (PR in preparation)
+
+The next Phase 6.56 slice adds migration `0025_phase6_56_syllabus_unit_inventory.sql` and author/reviewer endpoints for each official syllabus UNIT, TOPIC and SUBTOPIC:
+
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/units` creates an individual source-located inventory row in `NEEDS_REVIEW`; parent hierarchy is enforced (UNIT → TOPIC → SUBTOPIC).
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/units/{unit_id}/review` permits an independent server-configured reviewer to mark a pending row VERIFIED or REJECTED.
+- A source cannot receive the complete-inventory attestation unless at least one inventory row exists and every row is independently VERIFIED. A database trigger enforces this invariant, and the inventory is locked while marked complete.
+- Review records include page number when known, official label, locator, source evidence, author/reviewer and audit entry. These fields are evidence records, not proof that an external source is official; humans must compare every row against the actual official document.
+- Regression tests cover payload hierarchy and migration invariants. Exact-head CI remains required before merge.
+
+The candidate RSSB syllabus is still unverified; no exam profile is seeded. Phase 6.57 remains blocked.
