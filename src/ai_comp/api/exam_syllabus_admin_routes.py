@@ -62,9 +62,10 @@ def _validate_official_syllabus_url(url: str) -> str:
         port = parsed.port
     except ValueError:
         raise OfficialSyllabusFetchError("SOURCE_URL_INVALID") from None
-    hostname = (parsed.hostname or "").lower().rstrip(".")
+    hostname = (parsed.hostname or "").lower()
     if (
-        parsed.scheme.lower() != "https"
+        hostname.endswith(".")
+        or parsed.scheme.lower() != "https"
         or hostname not in _ALLOWED_OFFICIAL_SYLLABUS_HOSTS
         or port not in (None, 443)
         or parsed.username is not None
@@ -562,7 +563,7 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                               page_count, document_title, fetched_at, fetch_status
                        FROM exam_syllabus_source_fetches
                        WHERE syllabus_id = %s
-                       ORDER BY fetched_at DESC, fetch_id DESC LIMIT 1 FOR SHARE""",
+                       ORDER BY fetch_sequence DESC LIMIT 1 FOR SHARE""",
                     (syllabus_id,),
                 ).fetchone()
                 if fetch_evidence is None or str(fetch_evidence[8]) != "FETCHED":
