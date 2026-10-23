@@ -154,7 +154,7 @@ def test_fetch_source_endpoint_uses_database_url_and_stores_immutable_evidence(m
     assert any("INSERT INTO exam_syllabus_source_fetches" in q for q, _ in writer.calls)
     fetch_insert = next((q, p) for q, p in writer.calls if "INSERT INTO exam_syllabus_source_fetches" in q)
     assert fetch_insert[1][2] == fetched.requested_url
-    assert fetch_insert[1][10] == pdf_bytes
+    assert fetch_insert[1][9] == pdf_bytes
     assert any("'SOURCE_FETCH'" in q for q, _ in writer.calls)
     assert lookup.closed and writer.closed
 
