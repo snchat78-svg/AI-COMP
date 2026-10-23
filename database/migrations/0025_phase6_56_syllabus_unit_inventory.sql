@@ -50,8 +50,6 @@ CREATE OR REPLACE FUNCTION enforce_exam_syllabus_inventory_rows()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 DECLARE
     target_syllabus_id TEXT;
-    unit_total BIGINT;
-    pending_total BIGINT;
 BEGIN
     IF TG_OP = 'DELETE' THEN
         target_syllabus_id := OLD.syllabus_id;
@@ -67,7 +65,10 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'syllabus inventory is locked while marked complete; reopen source review first';
     END IF;
-    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    END IF;
+    RETURN NEW;
 END;
 $$;
 
