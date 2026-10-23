@@ -134,3 +134,14 @@ Before moving any row to the next phase: (a) verify repository/main and PR head,
 Read [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md) and [PHASE_REGISTRY.md](PHASE_REGISTRY.md) before work in every new chat.
 
 This roadmap records required work and observed caveats; it does not claim complete official topic coverage, verified One-Liner data, live DB readiness, or end-to-end production acceptance.
+
+
+### 2026-10-23 continuity update — PR #44 in review
+
+- Continue within Phase 6.56; do not start Phase 6.57 yet.
+- PR #44: https://github.com/snchat78-svg/AI-COMP/pull/44
+- Branch: `phase-6-56-syllabus-author-review`
+- Scope: server-protected syllabus candidate authoring; separate reviewer credential and server-derived reviewer identity; source review with SHA-256/evidence/full-inventory attestation; concept applicability review; append-only audit migration 0024; security/validation regression tests.
+- CI status at checkpoint creation: **not yet evidenced**. Run backend pytest, migration tests and API container build on exact PR head; fix all failures before merge.
+- The API records a reviewer attestation; it does not retrieve or independently authenticate official PDF bytes. The candidate RSSB PDF remains unverified until the exact official document/version/content and SHA-256 are independently confirmed over normal certificate-validated HTTPS.
+- Next after PR #44 CI is green: inspect any security/test failures, then complete official syllabus inventory and reconcile all official units/subtopics against canonical concepts. Phase 6.56 remains IN_PROGRESS; Phase 6.57 is blocked until all acceptance gates pass.

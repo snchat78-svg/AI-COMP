@@ -57,6 +57,18 @@ The mobile client parses the profile status and sends optional `exam_id` filters
 - Review the generated OpenAPI contract and migration against the existing schema.
 - Re-check all gates after CI runs on the latest commit; earlier green SHA is not enough.
 
+## Protected author/reviewer workflow — implementation in review
+
+The follow-up implementation is being developed on branch `phase-6-56-syllabus-author-review` and must pass exact-head CI before merge:
+
+- `POST /api/v1/admin/exam-syllabi` allows an authenticated server-side author to create a source candidate only as `REVIEW_PENDING`; it cannot self-certify a source as VERIFIED.
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/source-review` requires a distinct reviewer token and server-configured reviewer ID. VERIFIED is rejected unless SHA-256, source evidence, and a reviewer attestation that the full inventory is complete are supplied.
+- `POST /api/v1/admin/exam-syllabi/{syllabus_id}/concept-mappings/review` records evidence-backed concept applicability decisions; IN_SCOPE/OUT_OF_SCOPE require official-unit, source-locator and evidence fields.
+- Migration `0024_phase6_56_syllabus_review_workflow.sql` adds an append-only audit table and a database trigger that rejects UPDATE/DELETE of audit events.
+- Configuration is server-side only: `AI_COMP_SYLLABUS_ADMIN_TOKEN`, `AI_COMP_SYLLABUS_REVIEW_TOKEN`, `AI_COMP_SYLLABUS_AUTHOR_ID`, and `AI_COMP_SYLLABUS_REVIEWER_ID`. Author and reviewer tokens must differ and must not reuse the Phase 6.55 one-liner credentials. Never put these values in Git, mobile config, or learner requests.
+
+This workflow records a human reviewer attestation; it does not automatically retrieve or cryptographically validate a remote official PDF. Reviewers must independently retrieve the official document over normal certificate-validated HTTPS, confirm its issuing authority/version and complete contents, compute SHA-256 from the actual bytes, and inspect every page/unit before choosing VERIFIED. CI success alone does not satisfy those live evidence gates.
+
 ## Remaining work inside Phase 6.56
 
 1. Establish an approved retrieval path for the candidate official PDF; confirm its actual issuing board, notification number, title/version, dates, full contents and SHA-256. A secondary source now points to the same URL, but official bytes remain inaccessible here and no profile is seeded.
