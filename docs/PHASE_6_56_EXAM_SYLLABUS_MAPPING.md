@@ -89,7 +89,7 @@ PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 b
 - POST /api/v1/admin/exam-syllabi/{syllabus_id}/units/{unit_id}/review records independent VERIFIED, REJECTED or NEEDS_REVIEW decisions in the append-only audit log. Authors cannot review their own inventory rows.
 - Source verification requires at least one inventory row and every row to be VERIFIED. A database trigger independently enforces this invariant.
 - Inventory edits are blocked while the source is attested complete; an independent reviewer must reopen source review before changing the inventory. Authors cannot directly downgrade an approved concept mapping.
-- PR #45 is open and exact-head CI must pass before merge. This proposed implementation is not complete until validation succeeds.
+- PR #45 merged at `9694e01c11528157b8a1107fcf78c4c3a1e01ef9`; tested head `7b746257cbf06bc6c9d2a5f96a907ab637834adf` passed [backend run 39906458179](https://github.com/snchat78-svg/AI-COMP/actions/runs/39906458179): 527 passed, 14 warnings; API container build passed.
 
 ### Official syllabus discovery status
 
@@ -98,3 +98,12 @@ Research found a secondary transcription of RSSB CET Graduation Level 2026 that 
 ## Next implementation task after PR #45
 
 The direct RSSB PDF URL remains inaccessible in the current research runtime and the container has no DNS path to retrieve it. The next contained implementation is a protected source-fetch verifier: restrict requests to explicitly allowlisted official HTTPS hosts, preserve normal certificate validation across redirects, enforce timeout/byte limits and PDF magic/content checks, parse bounded metadata/page count, compute SHA-256 server-side from fetched bytes, and store immutable fetch evidence before a reviewer can set the syllabus source to VERIFIED. A reviewer-provided hash alone must not qualify as proof. No official syllabus, document digest, or full inventory is currently VERIFIED.
+
+
+## PR #46 — official PDF fetch and immutable evidence
+
+PR [#46](https://github.com/snchat78-svg/AI-COMP/pull/46) adds reviewer-only `POST /api/v1/admin/exam-syllabi/{syllabus_id}/fetch-source`. The URL is loaded from PostgreSQL; caller-supplied URLs are ignored. Requests are restricted to an explicit RSSB/RSMSSB HTTPS host allowlist, redirects are validated at every hop, ambient proxies are disabled, default TLS certificate validation is retained, and nonstandard ports/userinfo/HTTP URLs are rejected. The fetch has a 12-second overall deadline and 10 MiB cap, checks content length/encoding/PDF header/EOF, parses at most 500 pages, rejects encrypted or unreadable PDFs, and computes SHA-256 from the actual bytes.
+
+Migration `0026_phase6_56_source_fetch_evidence.sql` stores the exact PDF bytes, digest, source/final URLs, page count, title, fetcher, timestamp and immutable audit evidence. Failed fetch attempts are audited, and the latest failed attempt blocks verification. Source review must match the SHA-256 from the latest successful server fetch for the same registered URL; a reviewer-entered digest alone is insufficient.
+
+PR #46 is open on branch `phase-6-56-official-source-fetch`; exact-head CI is pending. Do not merge until backend tests and API container build pass on the current head. The actual RSSB PDF remains inaccessible to this research runtime, so no official PDF or digest is claimed as verified. After this code passes, deploy/apply the migration through the controlled workflow, use the protected endpoint from an approved API host with outbound DNS/network, independently inspect the exact stored PDF, complete the inventory and mappings, and prove live mobile E2E. Phase 6.56 remains IN_PROGRESS; do not start Phase 6.57.
