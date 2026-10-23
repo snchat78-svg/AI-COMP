@@ -45,6 +45,7 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
             340,
             0,
             0,
+            False,
         )
     ])
 
@@ -65,6 +66,8 @@ def test_pending_syllabus_profile_reports_every_concept_unmapped() -> None:
     assert "applicability_status = 'IN_SCOPE'" in query
     assert "d.source_status = 'VERIFIED'" in query
     assert "d.syllabus_inventory_complete = TRUE" in query
+    assert "exam_syllabus_inventory_units" in query
+    assert "exam_syllabus_unit_concepts" in query
     assert params == (100,)
 
 
@@ -82,6 +85,7 @@ def test_profile_is_ready_only_after_inventory_and_all_concepts_are_reviewed() -
             340,
             300,
             40,
+            True,
         )
     ])
 
@@ -148,6 +152,8 @@ def test_exam_topic_query_filters_profile_and_preserves_verified_one_liner_count
     assert "ol.verification_status = 'VERIFIED'" in query
     assert "NOT EXISTS" in query
     assert "required_map.source_evidence" in query
+    assert "exam_syllabus_inventory_units" in query
+    assert "exam_syllabus_unit_concepts" in query
     assert params == ("TEST_EXAM_001", "Rajasthan Geography", 10, 20)
 
 
