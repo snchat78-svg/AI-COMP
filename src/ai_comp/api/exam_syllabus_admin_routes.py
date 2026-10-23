@@ -127,7 +127,8 @@ def _authorized(request: Request, *, reviewer: bool) -> tuple[str | None, Respon
     content_reviewer = os.environ.get("AI_COMP_CONTENT_REVIEW_TOKEN", "").strip()
     if not author or not reviewer_token or hmac.compare_digest(author, reviewer_token):
         return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_REVIEW_NOT_CONFIGURED", "message": "Distinct syllabus author and reviewer credentials must be configured server-side."}})
-    if (content_author and hmac.compare_digest(author, content_author)) or (content_reviewer and hmac.compare_digest(reviewer_token, content_reviewer)):
+    content_tokens = tuple(token for token in (content_author, content_reviewer) if token)
+    if any(hmac.compare_digest(token, content_token) for token in (author, reviewer_token) for content_token in content_tokens):
         return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_CREDENTIAL_REUSE", "message": "Syllabus credentials must not reuse one-liner author or reviewer credentials."}})
     expected = reviewer_token if reviewer else author
     header = "X-AI-COMP-Syllabus-Review-Token" if reviewer else "X-AI-COMP-Syllabus-Admin-Token"
