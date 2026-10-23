@@ -458,17 +458,18 @@ def fetch_official_syllabus_source(syllabus_id: str, request: Request) -> Respon
             try:
                 failure_connection = factory()
                 with failure_connection.transaction():
+                    failed_fetch_id = uuid4().hex
                     failure_connection.execute(
                         """INSERT INTO exam_syllabus_source_fetches
                            (fetch_id, syllabus_id, requested_url, fetch_status, failure_code, fetched_by)
                            VALUES (%s, %s, %s, 'FAILED', %s, %s)""",
-                        (uuid4().hex, syllabus_id, requested_url, exc.code, actor),
+                        (failed_fetch_id, syllabus_id, requested_url, exc.code, actor),
                     )
                     failure_connection.execute(
                         """INSERT INTO exam_syllabus_review_audit
                            (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
                            VALUES (%s, %s, 'SOURCE_FETCH', %s, 'REVIEWER', %s, 'FAILED', %s, %s::jsonb)""",
-                        (uuid4().hex, syllabus_id, syllabus_id, actor, "Official source fetch failed safely",
+                        (uuid4().hex, syllabus_id, failed_fetch_id, actor, "Official source fetch failed safely",
                          json.dumps({"failure_code": exc.code, "requested_url": requested_url})),
                     )
             except Exception:
