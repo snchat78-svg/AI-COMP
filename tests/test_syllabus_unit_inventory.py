@@ -241,3 +241,130 @@ def test_source_review_can_attest_complete_only_when_every_inventory_row_is_veri
     assert response.status_code == 200, response.text
     assert response.json()["source_status"] == "VERIFIED"
     assert any("UPDATE exam_syllabus_documents" in query for query, _ in connection.calls)
+
+
+def _valid_test_pdf_bytes():
+    from io import BytesIO
+    from pypdf import PdfWriter
+
+    output = BytesIO()
+    writer = PdfWriter()
+    writer.add_blank_page(width=72, height=72)
+    writer.add_metadata({"/Title": "Synthetic official syllabus test fixture"})
+    writer.write(output)
+    return output.getvalue()
+
+
+def test_official_source_url_allowlist_rejects_non_https_userinfo_ports_and_hosts():
+    from ai_comp.api.exam_syllabus_admin_routes import (
+        OfficialSyllabusFetchError,
+        _validate_official_syllabus_url,
+    )
+
+    for url in (
+        "http://rssb.rajasthan.gov.in/syllabus.pdf",
+        "https://attacker.example/rssb.rajasthan.gov.in/syllabus.pdf",
+        "https://rssb.rajasthan.gov.in.evil.example/syllabus.pdf",
+        "https://user@rssb.rajasthan.gov.in/syllabus.pdf",
+        "https://rssb.rajasthan.gov.in:8443/syllabus.pdf",
+        "https://rssb.rajasthan.gov.in./syllabus.pdf",
+    ):
+        try:
+            _validate_official_syllabus_url(url)
+        except OfficialSyllabusFetchError:
+            pass
+        else:
+            raise AssertionError(f"Unsafe official-source URL was accepted: {url}")
+
+
+def test_official_pdf_validation_computes_sha256_from_exact_bytes():
+    import hashlib
+    from ai_comp.api.exam_syllabus_admin_routes import _validate_official_pdf_bytes
+
+    payload = _valid_test_pdf_bytes()
+    result = _validate_official_pdf_bytes(
+        "https://rssb.rajasthan.gov.in/syllabus.pdf",
+        "https://rssb.rajasthan.gov.in/syllabus.pdf",
+        payload,
+        "application/pdf; charset=binary",
+    )
+    assert result.document_bytes == payload
+    assert result.document_sha256 == hashlib.sha256(payload).hexdigest()
+    assert result.byte_length == len(payload)
+    assert result.page_count == 1
+    assert result.document_title == "Synthetic official syllabus test fixture"
+
+
+def test_official_pdf_validation_rejects_html_disguised_as_pdf():
+    from ai_comp.api.exam_syllabus_admin_routes import (
+        OfficialSyllabusFetchError,
+        _validate_official_pdf_bytes,
+    )
+
+    try:
+        _validate_official_pdf_bytes(
+            "https://rssb.rajasthan.gov.in/syllabus.pdf",
+            "https://rssb.rajasthan.gov.in/syllabus.pdf",
+            b"<html><body>not a PDF</body></html>",
+            "application/pdf",
+        )
+    except OfficialSyllabusFetchError as exc:
+        assert exc.code == "SOURCE_PDF_SIGNATURE_INVALID"
+    else:
+        raise AssertionError("HTML body must not be accepted as a PDF")
+
+
+def test_official_pdf_validation_rejects_unapproved_final_redirect_host():
+    from ai_comp.api.exam_syllabus_admin_routes import (
+        OfficialSyllabusFetchError,
+        _validate_official_pdf_bytes,
+    )
+
+    try:
+        _validate_official_pdf_bytes(
+            "https://rssb.rajasthan.gov.in/syllabus.pdf",
+            "https://attacker.example/collect.pdf",
+            _valid_test_pdf_bytes(),
+            "application/pdf",
+        )
+    except OfficialSyllabusFetchError as exc:
+        assert exc.code == "SOURCE_HOST_NOT_ALLOWED"
+    else:
+        raise AssertionError("Unapproved redirect target must not be accepted")
+
+
+def test_official_pdf_validation_rejects_oversized_payload():
+    from ai_comp.api.exam_syllabus_admin_routes import (
+        OfficialSyllabusFetchError,
+        _MAX_OFFICIAL_PDF_BYTES,
+        _validate_official_pdf_bytes,
+    )
+
+    try:
+        _validate_official_pdf_bytes(
+            "https://rssb.rajasthan.gov.in/syllabus.pdf",
+            "https://rssb.rajasthan.gov.in/syllabus.pdf",
+            b"%PDF-" + b"x" * _MAX_OFFICIAL_PDF_BYTES,
+            "application/pdf",
+        )
+    except OfficialSyllabusFetchError as exc:
+        assert exc.code == "SOURCE_PDF_SIZE_INVALID"
+    else:
+        raise AssertionError("Oversized source payload must be rejected")
+
+
+def test_official_redirect_handler_rejects_unapproved_host_before_following():
+    from ai_comp.api.exam_syllabus_admin_routes import (
+        OfficialSyllabusFetchError,
+        _AllowlistedOfficialRedirectHandler,
+    )
+
+    handler = _AllowlistedOfficialRedirectHandler()
+    try:
+        handler.redirect_request(
+            None, None, 302, "Found", {}, "https://attacker.example/redirected.pdf"
+        )
+    except OfficialSyllabusFetchError as exc:
+        assert exc.code == "SOURCE_HOST_NOT_ALLOWED"
+    else:
+        raise AssertionError("Redirect handler must reject an unapproved target")
