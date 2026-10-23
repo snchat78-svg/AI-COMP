@@ -79,6 +79,11 @@ class PostgresExamSyllabusRepository:
                     AND verified_concept_link.review_status = 'VERIFIED'
               )
         )
+        AND NOT EXISTS (
+            SELECT 1 FROM exam_syllabus_unit_concepts AS pending_link
+            WHERE pending_link.syllabus_id = d.syllabus_id
+              AND pending_link.review_status = 'NEEDS_REVIEW'
+        )
     """
 
     def __init__(self, connection: Any) -> None:
@@ -140,6 +145,11 @@ class PostgresExamSyllabusRepository:
                                    AND link.concept_id = in_scope.concept_id
                                    AND link.review_status = 'VERIFIED'
                              )
+                       )
+                       AND NOT EXISTS (
+                           SELECT 1 FROM exam_syllabus_unit_concepts AS pending_link
+                           WHERE pending_link.syllabus_id = d.syllabus_id
+                             AND pending_link.review_status = 'NEEDS_REVIEW'
                        )
                    THEN TRUE ELSE FALSE END AS inventory_mapping_ready
             FROM exams AS e
