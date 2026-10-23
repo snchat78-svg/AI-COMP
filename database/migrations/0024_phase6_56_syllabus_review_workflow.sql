@@ -30,4 +30,9 @@ CREATE TRIGGER trg_exam_syllabus_audit_no_update
 BEFORE UPDATE OR DELETE ON exam_syllabus_review_audit
 FOR EACH ROW EXECUTE FUNCTION prevent_exam_syllabus_audit_mutation();
 
+DROP TRIGGER IF EXISTS trg_exam_syllabus_audit_no_truncate ON exam_syllabus_review_audit;
+CREATE TRIGGER trg_exam_syllabus_audit_no_truncate
+BEFORE TRUNCATE ON exam_syllabus_review_audit
+FOR EACH STATEMENT EXECUTE FUNCTION prevent_exam_syllabus_audit_mutation();
+
 COMMIT;
