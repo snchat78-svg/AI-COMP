@@ -21,7 +21,12 @@ class PostgresExamSyllabusRepository:
     """
 
     _PROFILE_COMPLETENESS_SQL = """
-        NOT EXISTS (
+        EXISTS (
+            SELECT 1
+            FROM exam_syllabus_inventory_units AS reviewed_inventory
+            WHERE reviewed_inventory.syllabus_id = d.syllabus_id
+        )
+        AND NOT EXISTS (
             SELECT 1
             FROM concepts AS required_concept
             LEFT JOIN exam_concept_applicability AS required_map
@@ -34,6 +39,45 @@ class PostgresExamSyllabusRepository:
                OR btrim(required_map.reviewed_by) = ''
                OR btrim(required_map.source_locator) = ''
                OR btrim(required_map.source_evidence) = ''
+               OR btrim(required_map.review_note) = ''
+        )
+        AND NOT EXISTS (
+            SELECT 1
+            FROM exam_syllabus_inventory_units AS required_unit
+            WHERE required_unit.syllabus_id = d.syllabus_id
+              AND (
+                  required_unit.review_status <> 'VERIFIED'
+                  OR required_unit.reviewed_at IS NULL
+                  OR required_unit.reviewed_by IS NULL
+                  OR btrim(required_unit.reviewed_by) = ''
+                  OR btrim(required_unit.review_note) = ''
+                  OR NOT EXISTS (
+                      SELECT 1
+                      FROM exam_syllabus_unit_concepts AS verified_link
+                      WHERE verified_link.syllabus_id = required_unit.syllabus_id
+                        AND verified_link.unit_id = required_unit.unit_id
+                        AND verified_link.review_status = 'VERIFIED'
+                        AND verified_link.reviewed_at IS NOT NULL
+                        AND verified_link.reviewed_by IS NOT NULL
+                        AND btrim(verified_link.reviewed_by) <> ''
+                        AND btrim(verified_link.source_locator) <> ''
+                        AND btrim(verified_link.source_evidence) <> ''
+                        AND btrim(verified_link.review_note) <> ''
+                  )
+              )
+        )
+        AND NOT EXISTS (
+            SELECT 1
+            FROM exam_concept_applicability AS in_scope
+            WHERE in_scope.syllabus_id = d.syllabus_id
+              AND in_scope.applicability_status = 'IN_SCOPE'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM exam_syllabus_unit_concepts AS verified_concept_link
+                  WHERE verified_concept_link.syllabus_id = in_scope.syllabus_id
+                    AND verified_concept_link.concept_id = in_scope.concept_id
+                    AND verified_concept_link.review_status = 'VERIFIED'
+              )
         )
     """
 
@@ -55,6 +99,49 @@ class PostgresExamSyllabusRepository:
                        WHERE m.applicability_status = 'OUT_OF_SCOPE'
                          AND {self._VERIFIED_MAPPING_SQL}
                    )::INTEGER AS excluded_concept_count
+                   ,
+                   CASE WHEN
+                       EXISTS (
+                           SELECT 1 FROM exam_syllabus_inventory_units AS inventory
+                           WHERE inventory.syllabus_id = d.syllabus_id
+                       )
+                       AND NOT EXISTS (
+                           SELECT 1
+                           FROM exam_syllabus_inventory_units AS inventory
+                           WHERE inventory.syllabus_id = d.syllabus_id
+                             AND (
+                                 inventory.review_status <> 'VERIFIED'
+                                 OR inventory.reviewed_at IS NULL
+                                 OR inventory.reviewed_by IS NULL
+                                 OR btrim(inventory.reviewed_by) = ''
+                                 OR btrim(inventory.review_note) = ''
+                                 OR NOT EXISTS (
+                                     SELECT 1 FROM exam_syllabus_unit_concepts AS link
+                                     WHERE link.syllabus_id = inventory.syllabus_id
+                                       AND link.unit_id = inventory.unit_id
+                                       AND link.review_status = 'VERIFIED'
+                                       AND link.reviewed_at IS NOT NULL
+                                       AND link.reviewed_by IS NOT NULL
+                                       AND btrim(link.reviewed_by) <> ''
+                                       AND btrim(link.source_locator) <> ''
+                                       AND btrim(link.source_evidence) <> ''
+                                       AND btrim(link.review_note) <> ''
+                                 )
+                             )
+                       )
+                       AND NOT EXISTS (
+                           SELECT 1
+                           FROM exam_concept_applicability AS in_scope
+                           WHERE in_scope.syllabus_id = d.syllabus_id
+                             AND in_scope.applicability_status = 'IN_SCOPE'
+                             AND NOT EXISTS (
+                                 SELECT 1 FROM exam_syllabus_unit_concepts AS link
+                                 WHERE link.syllabus_id = in_scope.syllabus_id
+                                   AND link.concept_id = in_scope.concept_id
+                                   AND link.review_status = 'VERIFIED'
+                             )
+                       )
+                   THEN TRUE ELSE FALSE END AS inventory_mapping_ready
             FROM exams AS e
             JOIN exam_syllabus_documents AS d
               ON d.exam_id = e.exam_id AND d.is_current = TRUE
@@ -85,6 +172,8 @@ class PostgresExamSyllabusRepository:
                 and inventory_complete
                 and total > 0
                 and unmapped == 0
+                and len(row) > 11
+                and row[11] is True
             )
             profiles.append({
                 "exam_id": str(row[0]),
