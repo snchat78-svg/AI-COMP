@@ -32,6 +32,12 @@ The target is full examinable-point coverage for every applicable subject/topic/
 
 The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A across 6 concept IDs; the other 334 catalogue concepts have no candidate in that seed migration. Live database counts have not been queried and are labelled NOT_QUERIED_LIVE_DB.
 
+## Current in-progress implementation slice (2026-10-23)
+
+Branch `phase-6-56-syllabus-author-review` adds a protected syllabus-source author/reviewer API, concept-applicability review API, server-derived reviewer identity, and migration `0024_phase6_56_syllabus_review_workflow.sql` for append-only audit. The new endpoints are wired into the FastAPI app and have initial security/validation regression tests. This is **not yet merged or CI-verified**. Review the PR and require backend tests, migration tests and API container build to pass on the exact PR head before merge. Phase 6.56 stays IN_PROGRESS.
+
+The workflow does not itself fetch the official PDF or prove that a source is official. The RSSB PDF remains an unverified lead until the actual official bytes, notification/version, complete contents and SHA-256 are independently confirmed. Do not seed a named profile or mark it VERIFIED on secondary-site transcription alone.
+
 ## Exact next actions at checkpoint creation
 
 1. Phase 6.56 implementation slice PR #43 is merged at `a3eeb95ef9557e56c0bad3005a8850d4b1013ba6`. Tested code head `6841d953be73608e1f0fd59bddfa2f674b639141` passed backend run [39899673677](https://github.com/snchat78-svg/AI-COMP/actions/runs/39899673677) (512 passed, 14 warnings + API container) and Flutter/APK run [39899673666](https://github.com/snchat78-svg/AI-COMP/actions/runs/39899673666) (analyze, client/widget tests, release APK, artifact verification/upload). Artifact [12478965187](https://github.com/snchat78-svg/AI-COMP/actions/runs/39899673666/artifacts/12478965187), SHA-256 `8e838dcde7a4e87f226b3114abf10b198a05868cf5dda7581cac424ee5675434`. Verify current `main` head/CI before the next code change.
