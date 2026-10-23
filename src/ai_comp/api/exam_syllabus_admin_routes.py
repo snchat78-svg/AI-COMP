@@ -120,6 +120,69 @@ class ConceptMappingReview(BaseModel):
         return self
 
 
+class SyllabusUnitDraft(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    unit_id: str = Field(min_length=1, max_length=128)
+    parent_unit_id: str | None = Field(default=None, min_length=1, max_length=128)
+    unit_kind: str
+    official_label: str = Field(min_length=1, max_length=1000)
+    page_number: int | None = Field(default=None, ge=1, le=10000)
+    source_locator: str = Field(min_length=1, max_length=500)
+    source_evidence: str = Field(min_length=1, max_length=4000)
+    author_note: str = Field(default="Submitted for independent review", min_length=1, max_length=2000)
+
+    @field_validator("unit_id", "official_label", "source_locator", "source_evidence", "author_note")
+    @classmethod
+    def trimmed_required(cls, value: str) -> str:
+        if not value or value != value.strip():
+            raise ValueError("required fields must be trimmed and non-empty")
+        return value
+
+    @field_validator("parent_unit_id")
+    @classmethod
+    def parent_id_trimmed(cls, value: str | None) -> str | None:
+        if value is not None and (not value or value != value.strip()):
+            raise ValueError("parent_unit_id must be trimmed and non-empty when supplied")
+        return value
+
+    @field_validator("unit_kind")
+    @classmethod
+    def kind_is_allowed(cls, value: str) -> str:
+        if value not in {"UNIT", "TOPIC", "SUBTOPIC"}:
+            raise ValueError("unit_kind must be UNIT, TOPIC, or SUBTOPIC")
+        return value
+
+    @model_validator(mode="after")
+    def hierarchy_is_consistent(self):
+        if self.unit_kind == "UNIT" and self.parent_unit_id is not None:
+            raise ValueError("top-level UNIT must not have a parent")
+        if self.unit_kind in {"TOPIC", "SUBTOPIC"} and self.parent_unit_id is None:
+            raise ValueError("TOPIC and SUBTOPIC require a parent_unit_id")
+        return self
+
+
+class SyllabusUnitDecision(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    decision: str
+    review_note: str = Field(min_length=1, max_length=2000)
+
+    @field_validator("decision")
+    @classmethod
+    def decision_is_allowed(cls, value: str) -> str:
+        if value not in {"VERIFIED", "REJECTED", "NEEDS_REVIEW"}:
+            raise ValueError("decision must be VERIFIED, REJECTED, or NEEDS_REVIEW")
+        return value
+
+    @field_validator("review_note")
+    @classmethod
+    def note_is_trimmed(cls, value: str) -> str:
+        if not value or value != value.strip():
+            raise ValueError("review_note must be trimmed and non-empty")
+        return value
+
+
 def _authorized(request: Request, *, reviewer: bool) -> tuple[str | None, Response | None]:
     author = os.environ.get("AI_COMP_SYLLABUS_ADMIN_TOKEN", "").strip()
     reviewer_token = os.environ.get("AI_COMP_SYLLABUS_REVIEW_TOKEN", "").strip()
@@ -135,15 +198,15 @@ def _authorized(request: Request, *, reviewer: bool) -> tuple[str | None, Respon
     supplied = request.headers.get(header, "")
     if not supplied or not hmac.compare_digest(supplied, expected):
         return None, _response(HTTPStatus.UNAUTHORIZED, {"error": {"code": "SYLLABUS_AUTHENTICATION_REQUIRED", "message": "Authorized syllabus credentials are required."}})
-    if reviewer:
-        actor = os.environ.get("AI_COMP_SYLLABUS_REVIEWER_ID", "").strip()
-        if not actor or len(actor) > 128:
-            return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_REVIEWER_ID_NOT_CONFIGURED", "message": "A server-side syllabus reviewer ID is required."}})
-    else:
-        actor = os.environ.get("AI_COMP_SYLLABUS_AUTHOR_ID", "syllabus-author").strip()
-        if not actor or len(actor) > 128:
-            return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_AUTHOR_ID_NOT_CONFIGURED", "message": "A server-side syllabus author ID is required."}})
-    return actor, None
+    reviewer_id = os.environ.get("AI_COMP_SYLLABUS_REVIEWER_ID", "").strip()
+    author_id = os.environ.get("AI_COMP_SYLLABUS_AUTHOR_ID", "syllabus-author").strip()
+    if not reviewer_id or len(reviewer_id) > 128:
+        return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_REVIEWER_ID_NOT_CONFIGURED", "message": "A server-side syllabus reviewer ID is required."}})
+    if not author_id or len(author_id) > 128:
+        return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_AUTHOR_ID_NOT_CONFIGURED", "message": "A server-side syllabus author ID is required."}})
+    if hmac.compare_digest(reviewer_id, author_id):
+        return None, _response(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "SYLLABUS_ACTOR_ID_REUSE", "message": "Syllabus author and reviewer identities must be distinct server-side values."}})
+    return (reviewer_id if reviewer else author_id), None
 
 
 def _connection_or_error(request: Request):
@@ -216,8 +279,18 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                    ORDER BY created_at DESC LIMIT 1""",
                 (syllabus_id, syllabus_id),
             ).fetchone()
-            if author_row is not None and str(author_row[0]) == actor:
+            if author_row is None:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_AUTHOR_AUDIT_MISSING", "message": "Source candidate has no author audit record; independently re-author it before review."}})
+            if str(author_row[0]) == actor:
                 return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The source author cannot review their own syllabus candidate."}})
+            if payload.decision == "VERIFIED" and payload.inventory_complete:
+                inventory = connection.execute(
+                    """SELECT COUNT(*), COUNT(*) FILTER (WHERE review_status <> 'VERIFIED')
+                       FROM exam_syllabus_units WHERE syllabus_id = %s""",
+                    (syllabus_id,),
+                ).fetchone()
+                if inventory is None or int(inventory[0] or 0) == 0 or int(inventory[1] or 0) != 0:
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_INCOMPLETE", "message": "Every unit, topic and subtopic must have a VERIFIED inventory record before the complete-inventory attestation."}})
             connection.execute(
                 """UPDATE exam_syllabus_documents
                    SET source_status = %s, document_sha256 = COALESCE(%s, document_sha256),
@@ -249,6 +322,140 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
         connection.close()
 
 
+@router.post("/{syllabus_id}/units", status_code=201, name="create_syllabus_unit_draft")
+def create_syllabus_unit_draft(syllabus_id: str, payload: SyllabusUnitDraft, request: Request) -> Response:
+    """Create an individual UNIT/TOPIC/SUBTOPIC draft; author cannot self-verify it."""
+    actor, error = _authorized(request, reviewer=False)
+    if error is not None:
+        return error
+    if not syllabus_id or syllabus_id != syllabus_id.strip() or len(syllabus_id) > 128:
+        return _response(HTTPStatus.BAD_REQUEST, {"error": {"code": "INVALID_SYLLABUS_ID", "message": "syllabus_id must be trimmed and 1-128 characters."}})
+    connection, error = _connection_or_error(request)
+    if error is not None:
+        return error
+    try:
+        with connection.transaction():
+            source = connection.execute(
+                "SELECT source_status, syllabus_inventory_complete FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if source is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(source[0]) == "VERIFIED" or source[1] is True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_LOCKED", "message": "Reopen source review and clear the inventory-complete attestation before changing the inventory."}})
+            existing_unit = connection.execute(
+                """SELECT review_status FROM exam_syllabus_units
+                   WHERE syllabus_id = %s AND unit_id = %s FOR UPDATE""",
+                (syllabus_id, payload.unit_id),
+            ).fetchone()
+            if existing_unit is not None and str(existing_unit[0]) == "VERIFIED":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_ALREADY_VERIFIED", "message": "A verified inventory item cannot be edited until an independent reviewer returns it to NEEDS_REVIEW."}})
+            expected_parent_kind = {"TOPIC": "UNIT", "SUBTOPIC": "TOPIC"}.get(payload.unit_kind)
+            if expected_parent_kind is None:
+                if payload.parent_unit_id is not None:
+                    return _response(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": {"code": "INVALID_UNIT_HIERARCHY", "message": "UNIT must be a top-level record."}})
+            else:
+                parent = connection.execute(
+                    "SELECT unit_kind FROM exam_syllabus_units WHERE syllabus_id = %s AND unit_id = %s",
+                    (syllabus_id, payload.parent_unit_id),
+                ).fetchone()
+                if parent is None or str(parent[0]) != expected_parent_kind:
+                    return _response(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": {"code": "INVALID_UNIT_HIERARCHY", "message": f"{payload.unit_kind} must reference an existing {expected_parent_kind} parent in the same syllabus."}})
+            connection.execute(
+                """INSERT INTO exam_syllabus_units
+                   (syllabus_id, unit_id, parent_unit_id, unit_kind, official_label, page_number,
+                    source_locator, source_evidence, review_status, created_by)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'NEEDS_REVIEW', %s)
+                   ON CONFLICT (syllabus_id, unit_id) DO UPDATE SET
+                     parent_unit_id = EXCLUDED.parent_unit_id,
+                     unit_kind = EXCLUDED.unit_kind,
+                     official_label = EXCLUDED.official_label,
+                     page_number = EXCLUDED.page_number,
+                     source_locator = EXCLUDED.source_locator,
+                     source_evidence = EXCLUDED.source_evidence,
+                     review_status = 'NEEDS_REVIEW',
+                     created_by = EXCLUDED.created_by,
+                     created_at = NOW(),
+                     reviewed_at = NULL,
+                     reviewed_by = NULL,
+                     review_note = ''""",
+                (syllabus_id, payload.unit_id, payload.parent_unit_id, payload.unit_kind, payload.official_label,
+                 payload.page_number, payload.source_locator, payload.source_evidence, actor),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'SYLLABUS_UNIT', %s, 'AUTHOR', %s, 'NEEDS_REVIEW', %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, payload.unit_id, actor, payload.author_note,
+                 json.dumps({"unit_kind": payload.unit_kind, "parent_unit_id": payload.parent_unit_id,
+                             "official_label": payload.official_label, "page_number": payload.page_number,
+                             "source_locator": payload.source_locator, "source_evidence": payload.source_evidence})),
+            )
+        return _response(HTTPStatus.CREATED, {"syllabus_id": syllabus_id, "unit_id": payload.unit_id,
+                                              "unit_kind": payload.unit_kind, "review_status": "NEEDS_REVIEW",
+                                              "created_by": actor})
+    except Exception:
+        return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_SAVE_FAILED", "message": "Syllabus unit was not saved; verify its identifiers, hierarchy and source fields."}})
+    finally:
+        connection.close()
+
+
+@router.post("/{syllabus_id}/units/{unit_id}/review", name="review_syllabus_unit")
+def review_syllabus_unit(syllabus_id: str, unit_id: str, payload: SyllabusUnitDecision, request: Request) -> Response:
+    """Independently review one inventoried syllabus unit, topic or subtopic."""
+    actor, error = _authorized(request, reviewer=True)
+    if error is not None:
+        return error
+    if not syllabus_id or syllabus_id != syllabus_id.strip() or len(syllabus_id) > 128 or not unit_id or unit_id != unit_id.strip() or len(unit_id) > 128:
+        return _response(HTTPStatus.BAD_REQUEST, {"error": {"code": "INVALID_SYLLABUS_UNIT_ID", "message": "Syllabus and unit IDs must be trimmed and 1-128 characters."}})
+    connection, error = _connection_or_error(request)
+    if error is not None:
+        return error
+    try:
+        with connection.transaction():
+            source = connection.execute(
+                "SELECT source_status, syllabus_inventory_complete FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if source is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(source[0]) == "VERIFIED" or source[1] is True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_LOCKED", "message": "Reopen source review before changing the reviewed inventory."}})
+            row = connection.execute(
+                """SELECT unit_id, unit_kind, official_label, page_number, source_locator, source_evidence,
+                          review_status, created_by
+                   FROM exam_syllabus_units
+                   WHERE syllabus_id = %s AND unit_id = %s FOR UPDATE""",
+                (syllabus_id, unit_id),
+            ).fetchone()
+            if row is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_UNIT_NOT_FOUND", "message": "Syllabus inventory item was not found."}})
+            if str(row[7]) == actor:
+                return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The unit author cannot review their own syllabus inventory item."}})
+            if str(row[6]) == "VERIFIED" and payload.decision == "VERIFIED":
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_ALREADY_VERIFIED", "message": "A verified unit must be sent back to NEEDS_REVIEW or rejected with a reason before another authoring cycle."}})
+            connection.execute(
+                """UPDATE exam_syllabus_units
+                   SET review_status = %s, reviewed_at = NOW(), reviewed_by = %s, review_note = %s
+                   WHERE syllabus_id = %s AND unit_id = %s""",
+                (payload.decision, actor, payload.review_note, syllabus_id, unit_id),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'SYLLABUS_UNIT', %s, 'REVIEWER', %s, %s, %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, unit_id, actor, payload.decision, payload.review_note,
+                 json.dumps({"unit_kind": row[1], "official_label": row[2], "page_number": row[3],
+                             "source_locator": row[4], "source_evidence": row[5]})),
+            )
+        return _response(HTTPStatus.OK, {"syllabus_id": syllabus_id, "unit_id": unit_id,
+                                         "review_status": payload.decision, "reviewed_by": actor})
+    except Exception:
+        return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_UNIT_REVIEW_FAILED", "message": "Syllabus inventory review was not saved; check the record and database constraints."}})
+    finally:
+        connection.close()
+
+
 @router.post("/{syllabus_id}/concept-mappings", name="create_syllabus_concept_mapping_draft")
 def create_syllabus_concept_mapping_draft(syllabus_id: str, payload: ConceptMappingReview, request: Request) -> Response:
     """Create a mapping proposal in NEEDS_REVIEW state; authors cannot certify it."""
@@ -268,6 +475,13 @@ def create_syllabus_concept_mapping_draft(syllabus_id: str, payload: ConceptMapp
             ).fetchone()
             if source is None:
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            existing_mapping = connection.execute(
+                """SELECT applicability_status FROM exam_concept_applicability
+                   WHERE syllabus_id = %s AND concept_id = %s FOR UPDATE""",
+                (syllabus_id, payload.concept_id),
+            ).fetchone()
+            if existing_mapping is not None and str(existing_mapping[0]) in {"IN_SCOPE", "OUT_OF_SCOPE"}:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "MAPPING_ALREADY_REVIEWED", "message": "An author cannot downgrade a reviewed mapping; an independent reviewer must return it to NEEDS_REVIEW first."}})
             connection.execute(
                 """INSERT INTO exam_concept_applicability
                    (syllabus_id, concept_id, applicability_status, official_unit, source_locator,

@@ -145,3 +145,12 @@ This roadmap records required work and observed caveats; it does not claim compl
 - CI status at checkpoint creation: **not yet evidenced**. Run backend pytest, migration tests and API container build on exact PR head; fix all failures before merge.
 - The API records a reviewer attestation; it does not retrieve or independently authenticate official PDF bytes. The candidate RSSB PDF remains unverified until the exact official document/version/content and SHA-256 are independently confirmed over normal certificate-validated HTTPS.
 - Next after PR #44 CI is green: inspect any security/test failures, then complete official syllabus inventory and reconcile all official units/subtopics against canonical concepts. Phase 6.56 remains IN_PROGRESS; Phase 6.57 is blocked until all acceptance gates pass.
+
+### 2026-10-23 continuation — PR #45
+
+- PR #44 merged at 44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c. Tested head 4189742e9981f8f0d288e1260bd79b0a3b4d4918 passed backend run 39904691212 (517 passed, 14 warnings; API container build passed).
+- PR #45: https://github.com/snchat78-svg/AI-COMP/pull/45 — branch phase-6-56-syllabus-unit-inventory.
+- This Phase 6.56 slice models UNIT, TOPIC and SUBTOPIC as rows with parent hierarchy, page/section locator, source evidence, and independent review. Source completeness requires at least one row and every row VERIFIED; PostgreSQL enforces the invariant.
+- PR #45 exact-head CI is pending. Do not merge without green backend tests, migration validation and API container build.
+- Research lead only: secondary page https://topkaro.com/rssb/cet-graduation/syllabus transcribes 14 units for RSSB CET Graduation Level 2026, Advertisement 09/2026 dated 1 July 2026. Candidate official URL https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf remains inaccessible to this runtime. No PDF bytes, official digest or verified inventory have been collected; do not seed the profile or mark data VERIFIED.
+- Next after PR #45 CI is green: verify exact official source via approved HTTPS, extract all units/subtopics with page locators, reconcile the concept catalogue, independently review mappings, then perform controlled live migration and real mobile E2E. Phase 6.56 remains IN_PROGRESS; Phase 6.57 must not start early.

@@ -79,3 +79,18 @@ This workflow records a human reviewer attestation; it does not automatically re
 6. Then resume topic-by-topic source-backed Q&A creation; complete knowledge-point coverage, not only a target question count, and keep drafts NEEDS_REVIEW until independent review.
 
 Phase 6.56 must remain IN_PROGRESS until official-source retrieval, source evidence, mapping completeness, current-head CI and the remaining acceptance checks have been demonstrated.
+
+## Structured unit/topic/subtopic inventory — PR #45
+
+PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 by replacing the bare inventory-complete assertion with concrete reviewable rows.
+
+- Migration 0025 adds UNIT, TOPIC and SUBTOPIC rows with stable IDs, parent hierarchy, page numbers, section locators, supporting evidence, author identity and independent review metadata.
+- POST /api/v1/admin/exam-syllabi/{syllabus_id}/units creates drafts only as NEEDS_REVIEW; server code validates the parent hierarchy.
+- POST /api/v1/admin/exam-syllabi/{syllabus_id}/units/{unit_id}/review records independent VERIFIED, REJECTED or NEEDS_REVIEW decisions in the append-only audit log. Authors cannot review their own inventory rows.
+- Source verification requires at least one inventory row and every row to be VERIFIED. A database trigger independently enforces this invariant.
+- Inventory edits are blocked while the source is attested complete; an independent reviewer must reopen source review before changing the inventory. Authors cannot directly downgrade an approved concept mapping.
+- PR #45 is open and exact-head CI must pass before merge. This proposed implementation is not complete until validation succeeds.
+
+### Official syllabus discovery status
+
+Research found a secondary transcription of RSSB CET Graduation Level 2026 that identifies Advertisement 09/2026 dated 1 July 2026 and lists 14 broad units: [TopKaro syllabus transcription](https://topkaro.com/rssb/cet-graduation/syllabus). The candidate official document URL is https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf, but direct retrieval failed in the current runtime. Official PDF bytes, complete page contents, document digest, and notification/version have not been independently verified. The secondary page can inform a draft checklist only; it cannot justify a VERIFIED exam profile or complete-inventory attestation.
