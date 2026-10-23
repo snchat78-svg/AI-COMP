@@ -65,3 +65,34 @@ def test_syllabus_migration_creates_append_only_audit_table():
     assert "BEFORE UPDATE OR DELETE" in sql
     assert "BEFORE TRUNCATE" in sql
     assert "append-only" in sql
+
+
+
+def test_syllabus_unit_payload_requires_hierarchical_parent_and_source_evidence():
+    import pytest
+    from pydantic import ValidationError
+    from ai_comp.api.exam_syllabus_admin_routes import SyllabusUnitDraft, SyllabusUnitDecision
+
+    with pytest.raises(ValidationError):
+        SyllabusUnitDraft(
+            unit_id="topic-1", unit_kind="TOPIC", official_label="Topic",
+            source_locator="page 1", source_evidence="Synthetic test evidence",
+        )
+    with pytest.raises(ValidationError):
+        SyllabusUnitDraft(
+            unit_id="unit-1", unit_kind="UNIT", parent_unit_id="other",
+            official_label="Unit", source_locator="page 1", source_evidence="Synthetic test evidence",
+        )
+    with pytest.raises(ValidationError):
+        SyllabusUnitDecision(decision="NEEDS_REVIEW", review_note="cannot be a reviewer decision")
+
+
+def test_syllabus_unit_inventory_migration_requires_reviewed_rows_before_complete():
+    from pathlib import Path
+    migration = Path(__file__).resolve().parents[1] / "database" / "migrations" / "0025_phase6_56_syllabus_unit_inventory.sql"
+    sql = migration.read_text(encoding="utf-8")
+    assert "CREATE TABLE IF NOT EXISTS exam_syllabus_units" in sql
+    assert "UNIT" in sql and "TOPIC" in sql and "SUBTOPIC" in sql
+    assert "review_status <> 'VERIFIED'" in sql
+    assert "syllabus inventory cannot be complete until at least one unit exists and every unit is VERIFIED" in sql
+    assert "trg_exam_syllabus_units_inventory_lock" in sql
