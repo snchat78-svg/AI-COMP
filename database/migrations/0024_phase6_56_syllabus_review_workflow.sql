@@ -8,6 +8,21 @@ ALTER TABLE exam_concept_applicability
         CHECK (proposed_status IS NULL OR proposed_status IN ('IN_SCOPE', 'OUT_OF_SCOPE')),
     ADD COLUMN IF NOT EXISTS authored_by TEXT;
 
+DO $
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'ck_exam_concept_applicability_independent_review'
+    ) THEN
+        ALTER TABLE exam_concept_applicability
+            ADD CONSTRAINT ck_exam_concept_applicability_independent_review
+            CHECK (
+                authored_by IS NULL OR reviewed_by IS NULL OR authored_by <> reviewed_by
+            ) NOT VALID;
+    END IF;
+END;
+$;
+
 CREATE TABLE IF NOT EXISTS exam_syllabus_inventory_units (
     syllabus_id TEXT NOT NULL
         REFERENCES exam_syllabus_documents(syllabus_id) ON DELETE CASCADE,
@@ -42,7 +57,8 @@ CREATE TABLE IF NOT EXISTS exam_syllabus_inventory_units (
             AND length(btrim(reviewed_by)) > 0
             AND length(btrim(review_note)) > 0
         )
-    )
+    ),
+    CHECK (reviewed_by IS NULL OR reviewed_by <> authored_by)
 );
 
 CREATE INDEX IF NOT EXISTS idx_exam_syllabus_inventory_unit_order
@@ -77,7 +93,8 @@ CREATE TABLE IF NOT EXISTS exam_syllabus_unit_concepts (
             AND length(btrim(reviewed_by)) > 0
             AND length(btrim(review_note)) > 0
         )
-    )
+    ),
+    CHECK (reviewed_by IS NULL OR reviewed_by <> authored_by)
 );
 
 CREATE INDEX IF NOT EXISTS idx_exam_syllabus_unit_concepts_review
