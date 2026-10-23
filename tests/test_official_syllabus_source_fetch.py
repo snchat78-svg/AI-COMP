@@ -107,6 +107,70 @@ def test_pdf_validator_computes_digest_from_actual_validated_bytes():
     assert checked.content_type == "application/pdf"
 
 
+class _FakeResponse:
+    def __init__(self, payload: bytes, url: str, content_type: str = "application/pdf"):
+        self.payload = payload
+        self.url = url
+        self.position = 0
+        self.headers = {
+            "Content-Type": content_type,
+            "Content-Length": str(len(payload)),
+            "Content-Encoding": "identity",
+        }
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+    def geturl(self):
+        return self.url
+
+    def getcode(self):
+        return 200
+
+    def read(self, size=-1):
+        if size < 0:
+            size = len(self.payload)
+        chunk = self.payload[self.position:self.position + size]
+        self.position += len(chunk)
+        return chunk
+
+
+class _FakeOpener:
+    def __init__(self, response):
+        self.response = response
+        self.request = None
+        self.timeout = None
+
+    def open(self, request, timeout):
+        self.request = request
+        self.timeout = timeout
+        return self.response
+
+
+def test_official_fetch_uses_tls_opener_and_computes_digest_from_streamed_bytes(monkeypatch):
+    pdf_bytes = _sample_pdf()
+    url = "https://rssb.rajasthan.gov.in/storage/syllabus.pdf"
+    opener = _FakeOpener(_FakeResponse(pdf_bytes, url))
+    received_handlers = []
+    monkeypatch.setattr(
+        routes.urllib.request,
+        "build_opener",
+        lambda *handlers: (received_handlers.extend(handlers) or opener),
+    )
+
+    result = routes._fetch_official_syllabus_pdf(url)
+
+    assert result.document_bytes == pdf_bytes
+    assert result.document_sha256 == hashlib.sha256(pdf_bytes).hexdigest()
+    assert opener.request.full_url == url
+    assert opener.timeout == routes._OFFICIAL_FETCH_TIMEOUT_SECONDS
+    assert any(isinstance(h, routes.urllib.request.HTTPSHandler) for h in received_handlers)
+    assert any(isinstance(h, routes._AllowlistedOfficialRedirectHandler) for h in received_handlers)
+
+
 def test_pdf_validator_rejects_html_even_when_returned_from_allowlisted_host():
     with pytest.raises(routes.OfficialSyllabusFetchError) as exc:
         routes._validate_official_pdf_bytes(
