@@ -555,6 +555,21 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                 return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_AUTHOR_AUDIT_MISSING", "message": "Source candidate has no author audit record; independently re-author it before review."}})
             if str(author_row[0]) == actor:
                 return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "The source author cannot review their own syllabus candidate."}})
+            fetch_evidence = None
+            if payload.decision == "VERIFIED":
+                fetch_evidence = connection.execute(
+                    """SELECT fetch_id, document_sha256, requested_url, final_url, byte_length,
+                              page_count, document_title, fetched_at
+                       FROM exam_syllabus_source_fetches
+                       WHERE syllabus_id = %s AND fetch_status = 'FETCHED'
+                       ORDER BY fetched_at DESC LIMIT 1 FOR SHARE""",
+                    (syllabus_id,),
+                ).fetchone()
+                if fetch_evidence is None:
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_REQUIRED", "message": "The server must fetch and validate the official PDF before a source can be VERIFIED."}})
+                fetched_digest = str(fetch_evidence[1]).strip()
+                if not payload.document_sha256 or not hmac.compare_digest(fetched_digest, payload.document_sha256):
+                    return _response(HTTPStatus.CONFLICT, {"error": {"code": "SOURCE_FETCH_DIGEST_MISMATCH", "message": "The review digest must match the server-computed digest of the stored PDF bytes."}})
             if payload.decision == "VERIFIED" and payload.inventory_complete:
                 inventory = connection.execute(
                     """SELECT COUNT(*), COUNT(*) FILTER (WHERE review_status <> 'VERIFIED')
@@ -563,9 +578,19 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                 ).fetchone()
                 if inventory is None or int(inventory[0] or 0) == 0 or int(inventory[1] or 0) != 0:
                     return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_INVENTORY_INCOMPLETE", "message": "Every unit, topic and subtopic must have a VERIFIED inventory record before the complete-inventory attestation."}})
+            digest_to_persist = str(fetch_evidence[1]).strip() if fetch_evidence is not None else payload.document_sha256
+            source_evidence_to_persist = payload.source_evidence
+            if fetch_evidence is not None:
+                source_evidence_to_persist = (
+                    f"{payload.source_evidence}\nServer-fetched evidence: fetch_id={fetch_evidence[0]}; "
+                    f"sha256={str(fetch_evidence[1]).strip()}; bytes={fetch_evidence[4]}; "
+                    f"pages={fetch_evidence[5]}; title={fetch_evidence[6]}; "
+                    f"final_url={fetch_evidence[3]}; fetched_at={fetch_evidence[7]}"
+                )
             connection.execute(
                 """UPDATE exam_syllabus_documents
-                   SET source_status = %s, document_sha256 = COALESCE(%s, document_sha256),
+                   SET source_status = %s,
+                       document_sha256 = CASE WHEN %s = 'VERIFIED' THEN %s ELSE COALESCE(%s, document_sha256) END,
                        source_evidence = CASE WHEN %s <> '' THEN %s ELSE source_evidence END,
                        source_checked_at = CASE WHEN %s = 'REVIEW_PENDING' THEN NULL ELSE NOW() END,
                        source_checked_by = CASE WHEN %s = 'REVIEW_PENDING' THEN NULL ELSE %s END,
@@ -574,7 +599,8 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                        inventory_reviewed_by = CASE WHEN %s THEN %s ELSE NULL END,
                        inventory_review_note = CASE WHEN %s THEN %s ELSE '' END
                    WHERE syllabus_id = %s""",
-                (payload.decision, payload.document_sha256, payload.source_evidence, payload.source_evidence,
+                (payload.decision, payload.decision, digest_to_persist, payload.document_sha256,
+                 source_evidence_to_persist, source_evidence_to_persist,
                  payload.decision, payload.decision, actor, payload.inventory_complete,
                  payload.inventory_complete, payload.inventory_complete, actor, payload.inventory_complete,
                  payload.inventory_review_note, syllabus_id),
@@ -584,10 +610,14 @@ def review_syllabus_source(syllabus_id: str, payload: SyllabusSourceDecision, re
                    (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
                    VALUES (%s, %s, 'SOURCE', %s, 'REVIEWER', %s, %s, %s, %s::jsonb)""",
                 (uuid4().hex, syllabus_id, syllabus_id, actor, payload.decision, payload.review_note,
-                 json.dumps({"document_sha256": payload.document_sha256, "source_evidence": payload.source_evidence,
+                 json.dumps({"document_sha256": digest_to_persist, "source_evidence": source_evidence_to_persist,
+                             "server_fetch_id": fetch_evidence[0] if fetch_evidence is not None else None,
                              "inventory_complete": payload.inventory_complete, "inventory_review_note": payload.inventory_review_note})),
             )
-        return _response(HTTPStatus.OK, {"syllabus_id": syllabus_id, "source_status": payload.decision, "reviewed_by": actor})
+        return _response(HTTPStatus.OK, {
+            "syllabus_id": syllabus_id, "source_status": payload.decision, "reviewed_by": actor,
+            "document_sha256": digest_to_persist,
+        })
     except Exception:
         return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_REVIEW_FAILED", "message": "Review was not saved; verify the source evidence and database constraints."}})
     finally:
