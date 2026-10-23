@@ -17,6 +17,7 @@ _PROFILE_ROW = (
     340,
     0,
     0,
+    False,
 )
 
 
