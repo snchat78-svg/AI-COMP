@@ -138,6 +138,8 @@ def test_inventory_cannot_be_attested_complete_while_any_unit_is_pending(monkeyp
     connection = _Connection([
         ("SELECT syllabus_id FROM exam_syllabus_documents", ("test-syllabus",)),
         ("SELECT actor_id FROM exam_syllabus_review_audit", ("author-1",)),
+        ("FROM exam_syllabus_source_fetches", ("fetch-1", "a" * 64, "https://rssb.rajasthan.gov.in/syllabus.pdf", "https://rssb.rajasthan.gov.in/syllabus.pdf", 1234, 3, "CET Syllabus", "2026-10-23T10:00:00Z", "FETCHED")),
+        ("SELECT source_url FROM exam_syllabus_documents", ("https://rssb.rajasthan.gov.in/syllabus.pdf",)),
         ("SELECT COUNT(*)", (4, 1)),
     ])
     response = _client(connection).post(
@@ -220,6 +222,8 @@ def test_source_review_can_attest_complete_only_when_every_inventory_row_is_veri
     connection = _Connection([
         ("SELECT syllabus_id FROM exam_syllabus_documents", ("test-syllabus",)),
         ("SELECT actor_id FROM exam_syllabus_review_audit", ("author-1",)),
+        ("FROM exam_syllabus_source_fetches", ("fetch-2", "b" * 64, "https://rssb.rajasthan.gov.in/syllabus.pdf", "https://rssb.rajasthan.gov.in/syllabus.pdf", 2000, 3, "CET Syllabus", "2026-10-23T10:00:00Z", "FETCHED")),
+        ("SELECT source_url FROM exam_syllabus_documents", ("https://rssb.rajasthan.gov.in/syllabus.pdf",)),
         ("SELECT COUNT(*)", (3, 0)),
     ])
     response = _client(connection).post(
