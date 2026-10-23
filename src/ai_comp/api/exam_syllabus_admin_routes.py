@@ -455,6 +455,13 @@ def create_syllabus_concept_mapping_draft(syllabus_id: str, payload: ConceptMapp
             ).fetchone()
             if source is None:
                 return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            existing_mapping = connection.execute(
+                """SELECT applicability_status FROM exam_concept_applicability
+                   WHERE syllabus_id = %s AND concept_id = %s FOR UPDATE""",
+                (syllabus_id, payload.concept_id),
+            ).fetchone()
+            if existing_mapping is not None and str(existing_mapping[0]) in {"IN_SCOPE", "OUT_OF_SCOPE"}:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "MAPPING_ALREADY_REVIEWED", "message": "An author cannot downgrade a reviewed mapping; an independent reviewer must return it to NEEDS_REVIEW first."}})
             connection.execute(
                 """INSERT INTO exam_concept_applicability
                    (syllabus_id, concept_id, applicability_status, official_unit, source_locator,
