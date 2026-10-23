@@ -34,7 +34,7 @@ The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A acros
 
 ## Current in-progress implementation slice (2026-10-23)
 
-Branch `phase-6-56-syllabus-author-review` adds a protected syllabus-source author/reviewer API, concept-applicability review API, server-derived reviewer identity, and migration `0024_phase6_56_syllabus_review_workflow.sql` for append-only audit. The new endpoints are wired into the FastAPI app and have initial security/validation regression tests. This is **not yet merged or CI-verified**. Review the PR and require backend tests, migration tests and API container build to pass on the exact PR head before merge. Phase 6.56 stays IN_PROGRESS.
+PR [#44](https://github.com/snchat78-svg/AI-COMP/pull/44), branch `phase-6-56-syllabus-author-review`, adds a protected syllabus-source author/reviewer API, concept-applicability review API, server-derived reviewer identity, and migration `0024_phase6_56_syllabus_review_workflow.sql` for append-only audit. The new endpoints are wired into the FastAPI app and have initial security/validation regression tests. This is **not yet merged or CI-verified**. Review the PR and require backend tests, migration tests and API container build to pass on the exact PR head before merge. Phase 6.56 stays IN_PROGRESS.
 
 The workflow does not itself fetch the official PDF or prove that a source is official. The RSSB PDF remains an unverified lead until the actual official bytes, notification/version, complete contents and SHA-256 are independently confirmed. Do not seed a named profile or mark it VERIFIED on secondary-site transcription alone.
 
