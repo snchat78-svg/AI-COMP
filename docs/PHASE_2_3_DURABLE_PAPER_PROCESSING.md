@@ -47,6 +47,10 @@ This stage stores extracted QuestionCandidate and AnswerKeyEntry rows. It intent
 
 Therefore this phase alone does not fix “No verified questions are available yet.” The next phase must pair official paper metadata and answer keys, reconcile question numbers/options, persist explicit source verification, and expose verified historical questions through a distinct test-pool source without mislabelling them as AI-generated.
 
+## Latest live processing evidence (24 October 2026)
+
+The scheduled [official-paper-processing run #10](https://github.com/snchat78-svg/AI-COMP/actions/runs/40073489696) exited successfully but reported `processed=0`, `question_candidates=0`, and `failed=0`. This was a clean empty-queue run, not successful ingestion of a document. Do not mark Phase 2.3 data acceptance complete until Phase 2.2 persists real candidates and a subsequent processing run demonstrates fetched document bytes, SHA-256 identity, private storage and extraction counters.
+
 ## Test coverage
 
 Unit tests exercise private-bucket behavior, SHA-256 idempotency, candidate download policy boundaries, duplicate document skipping, text extraction, question/answer separation, and the absence of false historical-appearance writes. Full repository CI remains the release gate.
