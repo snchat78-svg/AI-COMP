@@ -95,10 +95,17 @@ PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 b
 
 Research found a secondary transcription of RSSB CET Graduation Level 2026 that identifies Advertisement 09/2026 dated 1 July 2026 and lists 14 broad units: [TopKaro syllabus transcription](https://topkaro.com/rssb/cet-graduation/syllabus). The candidate official document URL is https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf, but direct retrieval failed in the current runtime. Official PDF bytes, complete page contents, document digest, and notification/version have not been independently verified. The secondary page can inform a draft checklist only; it cannot justify a VERIFIED exam profile or complete-inventory attestation.
 
-## Next implementation task after PR #45
+## Next live acceptance task after PR #46
 
-The direct RSSB PDF URL remains inaccessible in the current research runtime and the container has no DNS path to retrieve it. The next contained implementation is a protected source-fetch verifier: restrict requests to explicitly allowlisted official HTTPS hosts, preserve normal certificate validation across redirects, enforce timeout/byte limits and PDF magic/content checks, parse bounded metadata/page count, compute SHA-256 server-side from fetched bytes, and store immutable fetch evidence before a reviewer can set the syllabus source to VERIFIED. A reviewer-provided hash alone must not qualify as proof. No official syllabus, document digest, or full inventory is currently VERIFIED.
+The protected official-source fetch implementation is already merged in PR #46 and passed its exact-head backend/container CI. Do not reimplement the fetcher or migration. The remaining work is operational and evidence-based:
 
+1. Through the controlled migration workflow, confirm migrations 0024–0026 are applied to the intended live database and configure distinct server-side author/reviewer credentials and reviewer identity. Never commit or expose secrets in the mobile client.
+2. From an approved deployed API host with outbound DNS/network access, use the reviewer-only `POST /api/v1/admin/exam-syllabi/{syllabus_id}/fetch-source` endpoint. It must fetch only the source URL already registered in the database; do not weaken TLS, bypass allowlists, or use unreviewed redirects.
+3. Inspect the exact persisted PDF bytes, issuing board, advertisement/notification number, version/date, page count and content. A secondary transcription or synthetic CI fixture is not official evidence. No real document digest is currently verified.
+4. Inventory every official UNIT/TOPIC/SUBTOPIC with source page/section locators, reconcile missing canonical concepts, and have an independent reviewer approve all IN_SCOPE/OUT_OF_SCOPE mappings. Only after every inventory row and mapping is reviewed may the profile become usable.
+5. Verify end-to-end with real deployed data and the mobile app, including authentication, topic filtering, readiness counts and question display.
+
+The latest source-research workflow [39908982194](https://github.com/snchat78-svg/AI-COMP/actions/runs/39908982194) failed with source-host TCP timeouts, legacy-host TLS renegotiation failure and RPSC network failure; it persisted zero paper candidates. PR #49 adds regression coverage for the merged fetcher; its exact test head `70667ae6dd4a61b6f45551809fdade2010c3613e` passed 544 tests/14 warnings plus API container build in [run 40061630368](https://github.com/snchat78-svg/AI-COMP/actions/runs/40061630368). This verifies code/tests only—not live official source access. Phase 6.56 remains IN_PROGRESS and Phase 6.57 must not start until the acceptance gates above pass.
 
 ## PR #46 — official PDF fetch and immutable evidence
 
