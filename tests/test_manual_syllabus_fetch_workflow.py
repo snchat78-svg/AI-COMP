@@ -34,8 +34,7 @@ def test_fetch_uses_only_registered_candidate_and_never_accepts_a_fetch_url() ->
     assert "quote(syllabus_id, safe='')" in workflow
 
     fetch_call = workflow.split("result = call_api(", 1)[1].split("if result.get(", 1)[0]
-    assert "source_url" not in fetch_call
-    assert "source_url" not in fetch_call.lower().replace("source_url", "", 1)  # No caller URL reaches fetch endpoint.
+    assert "source_url" not in fetch_call  # The fetch endpoint reads its URL from its database record.
     assert "successful fetch is not human verification" in workflow
     assert "source or syllabus content was promoted to VERIFIED" in workflow
 
@@ -53,6 +52,8 @@ def test_workflow_restricts_candidate_host_and_keeps_secrets_out_of_logs() -> No
 
     assert "urlsplit" in workflow
     assert "ssl.create_default_context()" in workflow
+    assert "class NoRedirect(HTTPRedirectHandler)" in workflow
+    assert "Never forward an author/reviewer" in workflow
     assert "print(admin_token)" not in workflow
     assert "print(review_token)" not in workflow
     assert "No credential values or raw response bodies were written to the log." in workflow
