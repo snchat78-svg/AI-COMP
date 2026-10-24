@@ -370,3 +370,37 @@ def test_rssb_legacy_archive_discovers_papers_via_current_navigation_under_robot
     assert question_archive in transport.requested
     assert answer_archive in transport.requested
     assert base + "robots.txt" in transport.requested
+
+def test_http_transport_does_not_retry_permanent_tls_failures(monkeypatch):
+    import ssl
+    from urllib.error import URLError
+
+    calls = []
+
+    class FakeOpener:
+        def open(self, request, timeout):
+            calls.append((request.full_url, timeout))
+            raise URLError(
+                ssl.SSLError(
+                    1,
+                    "[SSL: UNSAFE_LEGACY_RENEGOTIATION_DISABLED] "
+                    "unsafe legacy renegotiation disabled",
+                )
+            )
+
+    monkeypatch.setattr("urllib.request.build_opener", lambda _handler: FakeOpener())
+    monkeypatch.setattr("ai_comp.research.live_discovery.sleep", lambda _delay: None)
+
+    try:
+        HttpTransport(
+            timeout_seconds=3,
+            retries=3,
+            retry_delay_seconds=0,
+        ).get("https://rsmssb.rajasthan.gov.in/robots.txt")
+    except URLError as exc:
+        assert isinstance(exc.reason, ssl.SSLError)
+    else:
+        raise AssertionError("permanent TLS errors must be surfaced without retries")
+
+    assert len(calls) == 1
+
