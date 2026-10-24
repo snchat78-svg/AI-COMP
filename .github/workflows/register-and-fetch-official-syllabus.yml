@@ -1,0 +1,253 @@
+name: register-and-fetch-official-syllabus
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_action:
+        description: "Explicitly authorize creating a REVIEW_PENDING candidate and fetching the registered official PDF"
+        type: choice
+        options:
+          - DO_NOT_RUN
+          - REGISTER_AND_FETCH
+        default: DO_NOT_RUN
+        required: true
+      syllabus_id:
+        description: "Unique identifier for this unverified syllabus candidate"
+        type: string
+        required: false
+      exam_id:
+        description: "Existing canonical exam ID (for RSSB CET use RSSB_CET)"
+        type: string
+        default: RSSB_CET
+        required: true
+      source_id:
+        description: "Existing official source registry ID"
+        type: string
+        default: RSSB_OFFICIAL
+        required: true
+      source_url:
+        description: "Candidate URL on an approved RSSB/RSMSSB host; fetched bytes still require independent human review"
+        type: string
+        default: "https://rssb.rajasthan.gov.in/storage/advertisement_item/1782966142.pdf"
+        required: true
+      source_title:
+        description: "Use an explicitly unverified candidate title until the actual PDF is inspected"
+        type: string
+        default: "UNVERIFIED candidate — inspect actual PDF title before source approval"
+        required: true
+      notification_number:
+        description: "Notification lead only; do not present it as verified"
+        type: string
+        default: "UNCONFIRMED lead: Advertisement 09/2026"
+        required: true
+      version_label:
+        description: "Candidate version label, not an official version assertion"
+        type: string
+        default: "candidate-unverified"
+        required: true
+      source_evidence:
+        description: "Provenance note for the pending candidate; must state limitations"
+        type: string
+        default: "Research lead only: a secondary syllabus page points to this RSSB URL and labels it Advertisement 09/2026. Exact official PDF bytes, title, notification/version and SHA-256 have not yet been independently verified. This record must remain REVIEW_PENDING until a human reviewer inspects the fetched official document and complete contents."
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-official-syllabus-candidate-fetch
+  cancel-in-progress: false
+
+jobs:
+  register-and-fetch:
+    if: ${{ inputs.confirm_action == 'REGISTER_AND_FETCH' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: official-source-review
+    env:
+      AI_COMP_API_BASE_URL: https://ai-comp-api.onrender.com
+      AI_COMP_SYLLABUS_ADMIN_TOKEN: ${{ secrets.AI_COMP_SYLLABUS_ADMIN_TOKEN }}
+      AI_COMP_SYLLABUS_REVIEW_TOKEN: ${{ secrets.AI_COMP_SYLLABUS_REVIEW_TOKEN }}
+      INPUT_SYLLABUS_ID: ${{ inputs.syllabus_id }}
+      INPUT_EXAM_ID: ${{ inputs.exam_id }}
+      INPUT_SOURCE_ID: ${{ inputs.source_id }}
+      INPUT_SOURCE_URL: ${{ inputs.source_url }}
+      INPUT_SOURCE_TITLE: ${{ inputs.source_title }}
+      INPUT_NOTIFICATION_NUMBER: ${{ inputs.notification_number }}
+      INPUT_VERSION_LABEL: ${{ inputs.version_label }}
+      INPUT_SOURCE_EVIDENCE: ${{ inputs.source_evidence }}
+    steps:
+      - name: Validate server-side credentials and candidate metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${AI_COMP_SYLLABUS_ADMIN_TOKEN}" ] || [ -z "${AI_COMP_SYLLABUS_REVIEW_TOKEN}" ]; then
+            echo "::error::Configure AI_COMP_SYLLABUS_ADMIN_TOKEN and AI_COMP_SYLLABUS_REVIEW_TOKEN as secrets in the official-source-review GitHub environment."
+            exit 1
+          fi
+          python - <<'PY'
+          import os
+          import re
+          from urllib.parse import urlsplit
+
+          def require(name: str, pattern: str, message: str) -> str:
+              value = os.environ.get(name, "")
+              if not re.fullmatch(pattern, value):
+                  raise SystemExit(message)
+              return value
+
+          require("INPUT_SYLLABUS_ID", r"[A-Za-z0-9._-]{1,128}", "syllabus_id must be a unique 1-128 character identifier using letters, digits, dot, underscore or hyphen.")
+          require("INPUT_EXAM_ID", r"[A-Za-z0-9._-]{1,128}", "exam_id has an invalid format.")
+          require("INPUT_SOURCE_ID", r"[A-Za-z0-9._-]{1,128}", "source_id has an invalid format.")
+          for name, maximum in (
+              ("INPUT_SOURCE_TITLE", 500),
+              ("INPUT_NOTIFICATION_NUMBER", 200),
+              ("INPUT_VERSION_LABEL", 200),
+              ("INPUT_SOURCE_EVIDENCE", 4000),
+          ):
+              value = os.environ.get(name, "")
+              if not value.strip() or value != value.strip() or len(value) > maximum:
+                  raise SystemExit(f"{name} must be trimmed, non-empty and at most {maximum} characters.")
+
+          parsed = urlsplit(os.environ.get("INPUT_SOURCE_URL", ""))
+          allowed_hosts = {
+              "rssb.rajasthan.gov.in",
+              "www.rssb.rajasthan.gov.in",
+              "rsmssb.rajasthan.gov.in",
+              "www.rsmssb.rajasthan.gov.in",
+          }
+          if (
+              parsed.scheme.lower() != "https"
+              or parsed.hostname not in allowed_hosts
+              or parsed.username is not None
+              or parsed.password is not None
+              or parsed.port not in (None, 443)
+              or parsed.fragment
+          ):
+              raise SystemExit("source_url must use HTTPS on the approved RSSB/RSMSSB host allowlist, without userinfo, nonstandard ports or fragments.")
+          if os.environ["AI_COMP_SYLLABUS_ADMIN_TOKEN"] == os.environ["AI_COMP_SYLLABUS_REVIEW_TOKEN"]:
+              raise SystemExit("Author and reviewer secrets must be different.")
+          print("Candidate metadata is structurally valid. It remains unverified; source approval is not performed by this workflow.")
+          PY
+
+      - name: Register unverified candidate and fetch the server-registered PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import ssl
+          import sys
+          from pathlib import Path
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import quote
+          from urllib.request import HTTPRedirectHandler, HTTPSHandler, Request, build_opener
+
+          base = os.environ["AI_COMP_API_BASE_URL"].rstrip("/")
+          syllabus_id = os.environ["INPUT_SYLLABUS_ID"]
+          admin_token = os.environ["AI_COMP_SYLLABUS_ADMIN_TOKEN"]
+          review_token = os.environ["AI_COMP_SYLLABUS_REVIEW_TOKEN"]
+
+          class SafeAPIError(Exception):
+              def __init__(self, status: int | None, code: str):
+                  self.status = status
+                  self.code = code
+                  super().__init__(code)
+
+          class NoRedirect(HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, msg, headers, newurl):
+                  # The API base URL is fixed. Never forward an author/reviewer
+                  # credential to a redirect target, even if the target is HTTPS.
+                  return None
+
+          def call_api(path: str, method: str, token: str, header: str, payload: dict | None = None) -> dict:
+              body = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
+              headers = {header: token, "Accept": "application/json"}
+              if body is not None:
+                  headers["Content-Type"] = "application/json"
+              request = Request(base + path, data=body, headers=headers, method=method)
+              opener = build_opener(NoRedirect, HTTPSHandler(context=ssl.create_default_context()))
+              try:
+                  with opener.open(request, timeout=45) as response:
+                      parsed = json.loads(response.read().decode("utf-8"))
+                      if not isinstance(parsed, dict):
+                          raise SafeAPIError(response.status, "INVALID_API_RESPONSE")
+                      return parsed
+              except HTTPError as exc:
+                  code = "HTTP_ERROR"
+                  try:
+                      data = json.loads(exc.read().decode("utf-8"))
+                      error = data.get("error", {})
+                      if isinstance(error, dict) and isinstance(error.get("code"), str):
+                          code = error["code"]
+                  except (UnicodeDecodeError, json.JSONDecodeError, OSError):
+                      pass
+                  raise SafeAPIError(exc.code, code) from None
+              except (URLError, TimeoutError, OSError) as exc:
+                  raise SafeAPIError(None, type(exc.reason).__name__ if isinstance(exc, URLError) else type(exc).__name__) from None
+
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          candidate_created = False
+          lines = [
+              "# Official syllabus candidate fetch",
+              "",
+              "- This workflow only creates an unverified REVIEW_PENDING candidate and fetches its bytes through the deployed API.",
+              "- A successful fetch is not human verification; do not mark the source VERIFIED until the actual document and every page/unit are independently reviewed.",
+              "",
+          ]
+
+          try:
+              candidate = call_api(
+                  "/api/v1/admin/exam-syllabi",
+                  "POST",
+                  admin_token,
+                  "X-AI-COMP-Syllabus-Admin-Token",
+                  {
+                      "syllabus_id": syllabus_id,
+                      "exam_id": os.environ["INPUT_EXAM_ID"],
+                      "source_id": os.environ["INPUT_SOURCE_ID"],
+                      "source_title": os.environ["INPUT_SOURCE_TITLE"],
+                      "source_url": os.environ["INPUT_SOURCE_URL"],
+                      "notification_number": os.environ["INPUT_NOTIFICATION_NUMBER"],
+                      "version_label": os.environ["INPUT_VERSION_LABEL"],
+                      "source_evidence": os.environ["INPUT_SOURCE_EVIDENCE"],
+                  },
+              )
+              candidate_created = True
+              if candidate.get("source_status") != "REVIEW_PENDING":
+                  raise SafeAPIError(201, "CANDIDATE_NOT_PENDING")
+              lines.extend([
+                  f"- Candidate ID: `{syllabus_id}`",
+                  "- Candidate state: `REVIEW_PENDING`",
+              ])
+
+              result = call_api(
+                  f"/api/v1/admin/exam-syllabi/{quote(syllabus_id, safe='')}/fetch-source",
+                  "POST",
+                  review_token,
+                  "X-AI-COMP-Syllabus-Review-Token",
+              )
+              if result.get("fetch_status") != "FETCHED" or not isinstance(result.get("document_sha256"), str):
+                  raise SafeAPIError(502, "FETCH_EVIDENCE_INCOMPLETE")
+              lines.extend([
+                  "- Server fetch: `FETCHED`",
+                  f"- Fetch ID: `{result.get('fetch_id', 'unknown')}`",
+                  f"- Document pages: {result.get('page_count', 'unknown')}",
+                  f"- Bytes stored: {result.get('byte_length', 'unknown')}",
+                  f"- Server-computed SHA-256: `{result['document_sha256']}`",
+                  "- Verification state: `REVIEW_PENDING` — no source or syllabus content was promoted to VERIFIED.",
+              ])
+              print("Official source bytes fetched and stored by the deployed API. The candidate remains REVIEW_PENDING.")
+          except SafeAPIError as exc:
+              state = "The candidate remains REVIEW_PENDING; fetch evidence may not have been stored." if candidate_created else "The candidate was not created."
+              lines.extend([
+                  f"- Outcome: failed safely (HTTP {exc.status if exc.status is not None else 'network'}; code `{exc.code}`).",
+                  f"- {state}",
+                  "- No credential values or raw response bodies were written to the log.",
+              ])
+              print(f"::error::Official syllabus operation failed safely (HTTP {exc.status if exc.status is not None else 'network'}; code {exc.code}).")
+              summary_path.open("a", encoding="utf-8").write("\n".join(lines) + "\n")
+              raise SystemExit(1)
+          summary_path.open("a", encoding="utf-8").write("\n".join(lines) + "\n")
+          PY
