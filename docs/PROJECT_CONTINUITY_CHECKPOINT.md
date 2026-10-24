@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-23 (PR #44–#46 merged; live official-source fetch is next)  
+**Last updated:** 2026-10-24 (PR #44–#46 merged; isolated security tests pass in PR #49; live official-source retrieval remains blocked)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -32,11 +32,17 @@ The target is full examinable-point coverage for every applicable subject/topic/
 
 The CSV ledger currently shows candidate seeds in Git only: 10 pending Q&A across 6 concept IDs; the other 334 catalogue concepts have no candidate in that seed migration. Live database counts have not been queried and are labelled NOT_QUERIED_LIVE_DB.
 
-## Current in-progress implementation slice (2026-10-23)
+## Current Phase 6.56 continuation (updated 2026-10-24)
 
-PR [#44](https://github.com/snchat78-svg/AI-COMP/pull/44), branch `phase-6-56-syllabus-author-review`, adds a protected syllabus-source author/reviewer API, concept-applicability review API, server-derived reviewer identity, and migration `0024_phase6_56_syllabus_review_workflow.sql` for append-only audit. The new endpoints are wired into the FastAPI app and have initial security/validation regression tests. This is **not yet merged or CI-verified**. Review the PR and require backend tests, migration tests and API container build to pass on the exact PR head before merge. Phase 6.56 stays IN_PROGRESS.
+Phase 6.56 remains **IN_PROGRESS**. Do not start Phase 6.57 until the official source, complete reviewed inventory, all concept mappings, controlled live migrations and real-data/mobile E2E gates pass.
 
-The workflow does not itself fetch the official PDF or prove that a source is official. The RSSB PDF remains an unverified lead until the actual official bytes, notification/version, complete contents and SHA-256 are independently confirmed. Do not seed a named profile or mark it VERIFIED on secondary-site transcription alone.
+- PR #44 (protected syllabus author/reviewer workflow) is merged at `44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c`; tested head passed 517 tests and API-container build (run `39904691212`).
+- PR #45 (hierarchical UNIT/TOPIC/SUBTOPIC inventory) is merged at `9694e01c11528157b8a1107fcf78c4c3a1e01ef9`; tested head passed 527 tests and API-container build (run `39906458179`).
+- PR #46 (server-side official PDF fetch and immutable SHA-256 evidence) is merged at `ea59fc9e4712b3b646c707e2abf6f30f3690975c`; tested head passed 538 tests and API-container build (run `39907825229`).
+- PR [#49](https://github.com/snchat78-svg/AI-COMP/pull/49), branch `phase-6-56-source-fetch-tests-clean`, adds six isolated source-fetch security regression tests on top of current `main`. Exact test head `70667ae6dd4a61b6f45551809fdade2010c3613e` passed **544 tests, 14 warnings, and API container build** in [workflow 40061630368](https://github.com/snchat78-svg/AI-COMP/actions/runs/40061630368). PR #48 was closed as superseded because its stale branch history repeated already-merged implementation/migration changes.
+- The latest scheduled official-source discovery run [39908982194](https://github.com/snchat78-svg/AI-COMP/actions/runs/39908982194) failed operationally and persisted **zero paper candidates**. Logs show TCP timeouts for the current RSSB host, a legacy TLS renegotiation failure for the legacy RSSB host, and network-unreachable/timeout results for RPSC. Do not weaken TLS or bypass source policy.
+- No real RSSB official PDF bytes, version, content digest, complete syllabus inventory or verified exam profile has been confirmed. The source-fetch endpoint is implemented, but it still must be used from an approved deployed API host with outbound network access; the fetched PDF must be independently inspected against the official notification/version.
+- Remaining work: controlled migration/secrets gate; successful retrieval of the DB-registered official PDF and review of exact bytes/version/pages; independently reviewed inventory of every unit/topic/subtopic; reconcile missing catalogue concepts and independently review every applicability mapping; then prove real-data/mobile E2E. Phase 6.55 live reviewer-secret/data gates also remain open; Phase 6.58 remains externally blocked.
 
 ## Exact next actions at checkpoint creation
 
@@ -55,4 +61,13 @@ Do not include credentials in Git or chat. Content authoring uses server-side AI
 - PR: https://github.com/snchat78-svg/AI-COMP/pull/46; branch `phase-6-56-official-source-fetch`.
 - Migration 0026 stores exact fetched PDF bytes and immutable metadata/audit. Reviewer-only fetch uses a DB-owned source URL, strict official-host allowlist, normal TLS verification, redirect revalidation, no environment proxies, time/size limits, PDF validation and server SHA-256. Source review refuses VERIFIED without a matching latest successful server fetch for the same registered URL; latest failed fetch blocks verification.
 - Exact-head CI passed: 538 tests, 14 warnings; API container build succeeded (run `39907825229`). PR #46 is merged.
-- Actual RSSB PDF is still inaccessible from this research runtime; no official PDF/digest is claimed verified. Once the PR passes, use the endpoint on an approved API host, inspect the stored exact bytes and official document/version, complete the reviewed syllabus inventory and mapping, then run controlled migration and real mobile E2E. Phase 6.57 stays PLANNED.
+- Actual RSSB PDF is still inaccessible from this research runtime; no official PDF/digest is claimed verified. Use the merged endpoint on an approved API host, inspect the stored exact bytes and official document/version, complete the reviewed syllabus inventory and mapping, then run controlled migration and real mobile E2E. Phase 6.57 stays PLANNED.
+
+
+## PR #49 — isolated source-fetch security regression tests (2026-10-24)
+
+- PR: https://github.com/snchat78-svg/AI-COMP/pull/49; branch `phase-6-56-source-fetch-tests-clean`.
+- Exact test head: `70667ae6dd4a61b6f45551809fdade2010c3613e`; [workflow 40061630368](https://github.com/snchat78-svg/AI-COMP/actions/runs/40061630368) passed 544 tests with 14 warnings and the API container build.
+- Six additional tests cover deceptive/unsafe URLs, digest and metadata derived from exact PDF bytes, HTML masquerading as PDF, unapproved redirects, size limits and redirect-host validation. Only synthetic PDF fixtures were used; no official syllabus was marked verified.
+- PR #48 is closed as superseded because its stale branch compared already-merged implementation history again. PR #49 is based directly on current main and carries only the incremental tests plus this continuity update.
+- Next: review current PR checks and merge only if all required checks remain green; then continue the live source/migration/inventory gates above. Phase 6.56 remains IN_PROGRESS.
