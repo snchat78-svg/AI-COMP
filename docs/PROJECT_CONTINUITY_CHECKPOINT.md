@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (Phase 2 ledger reconciled; PR #52 merged and CI passed; source run #14 failed with zero candidates; Phase 7.1/7.2 stale draft stack audited)  
+**Last updated:** 2026-10-24 (PR #53 merged; Phase 2.2 live-source blocker reconciled; Phase 6.56 manual fetch runbook in review)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -102,3 +102,12 @@ Do not include credentials in Git or chat. Content authoring uses server-side AI
 - Six additional tests cover deceptive/unsafe URLs, digest and metadata derived from exact PDF bytes, HTML masquerading as PDF, unapproved redirects, size limits and redirect-host validation. Only synthetic PDF fixtures were used; no official syllabus was marked verified.
 - PR #48 is closed as superseded because its stale branch compared already-merged implementation history again. PR #49 is based directly on current main and carries only the incremental tests plus this continuity update.
 - Next: continue the live source/migration/inventory gates above; do not restart the completed security-test slice. Phase 6.56 remains IN_PROGRESS.
+
+## Phase 6.56 next small implementation slice — manual official-source fetch
+
+- Branch: `phase-6-56-manual-source-fetch` (PR/CI pending). This is still Phase 6.56, not Phase 6.57.
+- Workflow: `.github/workflows/register-and-fetch-official-syllabus.yml`. It defaults to `DO_NOT_RUN`; an operator must select `REGISTER_AND_FETCH`. It registers only a REVIEW_PENDING candidate through the existing protected endpoint, then calls the already-merged `fetch-source` endpoint using the server-registered URL. It uses an allowlist, normal TLS validation, rejects API redirects, and never prints credentials or raw API response bodies.
+- Before manually running it: use the existing `.github/workflows/database-migrations.yml` to apply unapplied migrations 0024–0026 to the verified target DB (secret `AI_COMP_DATABASE_URL`), only after confirming that DB target. Do not create or edit an alternate migration path.
+- Create GitHub Actions environment `official-source-review` and add secrets `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN`; these must match the Render service's values exactly and be different from one another and from the Phase 6.55 content tokens. On Render, ensure server-side `AI_COMP_SYLLABUS_AUTHOR_ID` and `AI_COMP_SYLLABUS_REVIEWER_ID` are configured and distinct. Never put values in Git/chat/mobile config.
+- Run manually from Actions only when the prerequisites are verified: choose workflow `register-and-fetch-official-syllabus`, confirm `REGISTER_AND_FETCH`, supply a unique `syllabus_id`, and retain candidate title/version/notification as unverified until the exact PDF is reviewed. The workflow cannot mark VERIFIED.
+- After a successful fetch, independently inspect the stored PDF bytes, notification/issuer/version/date and all pages, inventory every official unit/topic/subtopic, reconcile missing concepts, review every mapping, and complete real mobile E2E. If the fetch fails, keep the candidate pending and inspect the audit before retrying. Phase 6.56 remains IN_PROGRESS and Phase 6.57 remains PLANNED.
