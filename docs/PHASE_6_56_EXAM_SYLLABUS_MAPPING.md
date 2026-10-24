@@ -143,3 +143,11 @@ The workflow `.github/workflows/register-and-fetch-official-syllabus.yml` is the
 - After a successful fetch, an independent human reviewer must inspect the exact persisted PDF, identify the issuing board/notification/version/date, check every page and full unit/topic/subtopic inventory, and record evidence. Then the reviewer can complete inventory/mapping reviews through the existing gated APIs. Do not infer official content from the secondary TopKaro transcription.
 
 Because this workflow is manually dispatched, the CI test suite validates its safeguards but does not run it against the live database during PR CI. Phase 6.56 remains IN_PROGRESS until controlled migration state, successful official PDF retrieval, human review, complete concept mapping and real mobile E2E are evidenced. Phase 6.57 stays PLANNED.
+## PR #54 merge and CI evidence — manual fetch workflow
+
+- PR [#54](https://github.com/snchat78-svg/AI-COMP/pull/54) was squash-merged at `1b3d1e7534f6bf0802caf396020bca0762c1769f`.
+- Tested PR head: `23ae408ccb321b258bd88482b7ad65850984f666`.
+- [Backend CI run 40073840875](https://github.com/snchat78-svg/AI-COMP/actions/runs/40073840875): **548 passed, 14 warnings; API container build passed**.
+- The workflow `.github/workflows/register-and-fetch-official-syllabus.yml` is available in current main. It is manually dispatched, defaults to DO_NOT_RUN, requires REGISTER_AND_FETCH, registers the candidate only as REVIEW_PENDING, then calls the existing server-side source fetch endpoint without supplying a URL. API redirects are rejected to prevent forwarding review credentials.
+- This workflow was not executed against live data during CI. Before a live run, apply any pending migrations 0024–0026 to the verified target through `.github/workflows/database-migrations.yml`, then configure the GitHub `official-source-review` environment secrets to exactly match server-side author/reviewer tokens and ensure server-side actor IDs are distinct.
+- The candidate RSSB PDF has not been retrieved/independently inspected, and no real official document digest or complete mapping is claimed verified. Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED.
