@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-24 (PR #51 reconciled Phase 2 ledger; PR #52 merged after 545 tests/14 warnings and API container build passed; live official-source retrieval remains blocked)  
+**Last verified:** 2026-10-24 (PR #51 reconciled Phase 2 ledger; PR #52 merged and passed 545 tests/14 warnings + container build; post-merge source run #14 persisted zero candidates; Phase 7.1/7.2 draft stack audited)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -57,6 +57,9 @@ Never mark a phase **COMPLETED** based only on file creation, a green local chec
 | 6.56 inventory | Structured syllabus unit/topic/subtopic inventory | MERGED_CODE_DATA_PENDING | [PR #45](https://github.com/snchat78-svg/AI-COMP/pull/45), merge SHA 9694e01c11528157b8a1107fcf78c4c3a1e01ef9; migration 0025 and author/reviewer endpoints. | Tested head 7b746257cbf06bc6c9d2a5f96a907ab637834adf passed 527 tests/14 warnings + API container (run 39906458179). Official source retrieval/content/hash, real inventory, live migration and E2E remain open. |
 | 6.57 | Topic coverage, learner mastery and revision | PLANNED | `docs/PHASE_6_53_TOPICWISE_QUESTION_BANK_ROADMAP.md` | Reuse existing learner-session/results/analytics; browsing alone must not count as mastery |
 | 6.58 | Real-data end-to-end proof | BLOCKED on external/live-data gates | Roadmap's official-source connectivity checkpoint and verification gates | Confirm approved official HTTPS/TLS access, apply migrations, configure secrets, ingest paper + matched key and run mobile end-to-end test |
+
+| 7.1 | YouTube Study Notes architecture freeze | DRAFT — REVIEW/REBASE REQUIRED | [PR #19](https://github.com/snchat78-svg/AI-COMP/pull/19), branch `phase-7-1-youtube-study-notes-architecture`, head `19d76655405266338a4a5e077a2a09ab29ccfd1c`; old CI [38916367924](https://github.com/snchat78-svg/AI-COMP/actions/runs/38916367924) passed | Documentation-only architecture contract, not merged and not current-main validated. Its PR base is old main SHA `08f9ebf538422f9320c7e14a17cd791bbd84b8d7`. Before continuing this lane, review against current architecture and rebase/revalidate. PR #20 must not merge before this phase is reviewed and accepted. |
+| 7.2 | YouTube Study Notes API contracts and safe URL validation | DRAFT — STACKED ON UNMERGED 7.1 | [PR #20](https://github.com/snchat78-svg/AI-COMP/pull/20), branch `phase-7-2-youtube-notes-api-contracts`, head `fa9171ddd9128916b7f5e0a589b010c7035f0802`; old CI [38916533266](https://github.com/snchat78-svg/AI-COMP/actions/runs/38916533266) passed | Typed contracts, network-free URL parsing and tests exist only on a draft branch; no provider fetch, transcript ingestion or DB writes are included. PR targets the unmerged PR #19 branch and was tested against an older base. Do not recreate these modules; rebase onto current main only after Phase 7.1 review/acceptance, then rerun full current CI and audit the diff. |
 
 ## Anti-duplication checklist (required before every new phase)
 
