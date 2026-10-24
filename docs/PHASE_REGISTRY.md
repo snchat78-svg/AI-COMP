@@ -30,6 +30,8 @@ Never mark a phase **COMPLETED** based only on file creation, a green local chec
 
 ## Phase ledger
 
+| Phase ID | Short name | Status | Evidence / work location | Remaining gate / next action |
+|---|---|---|---|---|
 | 1 | Source/exam registry foundation | MERGED | `docs/PHASE_1.md`, `docs/PHASE_1_COMPLETION.md`, `src/ai_comp/database/postgres_registry.py`, `src/ai_comp/research/seed_registry.py` | Reuse the existing conducting-body, exam, category and source registry. Validate live source completeness; do not recreate the registry. |
 | 2 | Paper research engine (umbrella) | IN_PROGRESS — operational acceptance pending | `docs/PHASE_2.md`; phases 2.2–2.5.3 below | Follow the dependency chain. The earliest outstanding gate is official-source connectivity/discovery at Phase 2.2; do not restart already-merged code. |
 | 2.2 | Durable official-source discovery | BLOCKED — official-source network/TLS access | Merged PR #15; `docs/PHASE_2_2_DURABLE_OFFICIAL_DISCOVERY.md`; `src/ai_comp/research/research_cli.py`; `src/ai_comp/research/live_discovery.py`; `.github/workflows/official-source-research.yml` | Registry upsert, bounded live discovery, robots/host policy, deterministic candidate IDs, PostgreSQL persistence, workflow and tests already exist. Latest inspected/user-provided run: `RSSB_OFFICIAL` TCP timeout, `RSSB_LEGACY_OFFICIAL` certificate-validated TLS fails with unsafe legacy renegotiation disabled, `RPSC_OFFICIAL` network/TCP failure; persisted candidates = 0. **Do not implement Phase 2.2 again.** Resume only at the external access gate: one registered official host must pass DNS/TCP/certificate-validated TLS, robots must be accessible/permitted, and real candidates must persist. |
@@ -40,8 +42,6 @@ Never mark a phase **COMPLETED** based only on file creation, a green local chec
 | 2.5.2 | Registry-aware health polling | COMPLETED | Merged PR #32; phase 2.5.1 source-ID presence guard in the Render health workflow | Confirms the deployed report contains the expected current registry entry; it does not mean the host is reachable. Reuse this guard. |
 | 2.5.3 | Honest operational connectivity gate | COMPLETED | Merged PR #33; `docs/PHASE_2_5_3_HEALTH_OPERATIONAL_GATE.md` | The gate correctly fails when no registered official host passes TCP plus certificate-validated TLS. Keep the gate; unblock the source path rather than weakening the check. |
 
-| Phase ID | Short name | Status | Evidence / work location | Remaining gate / next action |
-|---|---|---|---|---|
 | 6.39 | PostgreSQL learning feedback loop | MERGED (historical README record) | README phase history | No reimplementation; change only for a documented defect |
 | 6.40 | Client-facing OpenAPI contracts | MERGED (historical README record) | README phase history | Extend existing contracts |
 | 6.41 | Flutter adaptive-preparation foundation | MERGED (historical README record) | README phase history and `apps/mobile/` | Preserve login, timed session, resume and results flows |
