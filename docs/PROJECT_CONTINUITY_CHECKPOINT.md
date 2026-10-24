@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (PR #44–#46 and #49 merged; live official-source retrieval remains blocked)  
+**Last updated:** 2026-10-24 (Phase 2.2–2.5.3 ledger reconciled; PR #44–#46 and #49 merged; live official-source retrieval remains blocked)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -25,6 +25,26 @@
 - **Phase 6.56:** IN_PROGRESS. Navigation/search/paging PR #42 merged at `d138d65d758efbde5c04126688566d499063da40`; exam-profile mapping PR #43 merged at `a3eeb95ef9557e56c0bad3005a8850d4b1013ba6` (backend run `39899673677`: 512 passed/14 warnings + container; Flutter/APK run `39899673666` passed). Protected author/reviewer + append-only audit PR #44 merged `44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c` (run `39904691212`: 517 passed/14 warnings + API container). Structured UNIT/TOPIC/SUBTOPIC inventory PR #45 merged `9694e01c11528157b8a1107fcf78c4c3a1e01ef9` (run `39906458179`: 527 passed/14 warnings + container). Secure official-source fetch/evidence PR #46 merged `ea59fc9e4712b3b646c707e2abf6f30f3690975c`; tested head `c0e293d58c70a3621f5bf6d51741384838c24549` passed [run 39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed/14 warnings; API container build passed. The source-fetch endpoint validates official-host HTTPS/redirects, size/time and PDF structure; computes SHA-256 from actual bytes and stores immutable evidence. No official exam profile is seeded; the candidate RSSB PDF has not been retrieved here. Remaining gates are controlled application of migrations, actual source fetch from approved API-host networking, independent notification/version/content review, complete topic/subtopic inventory, concept reconciliation and independent scope reviews, then real-data/mobile E2E. Phase 6.57 must not start early; Phase 6.55 live reviewer-secret/data gates and Phase 6.58 are still open.
 - **Phase 6.57:** PLANNED — topic coverage, learner mastery and revision.
 - **Phase 6.58:** BLOCKED on approved official-source connectivity, live database migration/secrets, real official-paper + matched answer-key records, and live end-to-end proof.
+
+## Cross-lane restart guard: Phase 2.2 is implemented, not a new start
+
+The Phase Registry now records the older paper-research lane alongside the current Phase 6.56 work. This prevents a new chat from confusing a blocked live gate with an unimplemented phase.
+
+- **Phase 2.2 — Durable official-source discovery:** implementation and tests were merged previously (PR #15). Registry synchronization, controlled discovery, robots/host restrictions, deterministic candidate IDs, PostgreSQL persistence and the scheduled/manual workflow already exist. The current blocker is **operational source reachability**, not missing Phase 2.2 code.
+- **Phase 2.3 — Paper processing/extraction:** implemented and merged (PR #16). Reuse the existing bounded downloader, SHA-256 identity, private storage and Hindi/English extraction. Do not build another downloader.
+- **Phase 2.4 — Answer-key verification/history:** implemented and merged (PR #17). Reuse the existing conservative pairing/provenance gates; do not rebuild answer-key matching.
+- **Phase 2.5–2.5.3:** source diagnostics and the registry-aware/fail-closed health gates are already merged (PRs #25–#33). The gate correctly fails while all official sources fail TCP or certificate-validated TLS.
+- **Phase 2.5.1:** the legacy RSSB fallback is registered, but it remains operationally blocked by `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`. Keep TLS verification on; do not enable unsafe renegotiation or bypass robots/terms.
+- **Known repeat risk:** PR #48 was closed as superseded because its stale branch repeated Phase 6.56 source-fetch implementation already merged in PR #46. PR #49 was based cleanly on current main and added only isolated regression tests. Check current main before creating every new branch/PR.
+
+### Exact next action for the Phase 2 pipeline
+
+1. Restore access to at least one **verified official** host from the relevant runtime using DNS + TCP + certificate-validated TLS, and confirm current `robots.txt` and allowed-path rules.
+2. Run the existing `official-source-research` workflow. Require a registered source to complete discovery and persist a **nonzero** number of real paper candidates. A diagnostic response or a green zero-row downstream workflow is not completion.
+3. Only after candidates exist, run the existing Phase 2.3 processing workflow, then Phase 2.4 official answer-key verification. Check fetched/extracted/paired/appearance/eligible-pool counts at every boundary.
+4. If all current official hosts remain unreachable, record the run as blocked and make no duplicate downloader, retry workflow or unofficial-source implementation to disguise the blocker. Do not advance past the unsatisfied dependency.
+
+**Phase selection:** Phase 2.2 should not be “started from scratch” again. It is **BLOCKED at live acceptance**. The current mainline development phase remains **6.56 IN_PROGRESS**; Phase 6.57 remains **PLANNED**, and Phase 6.58 remains **BLOCKED** until its source, migration and real-data E2E gates pass. These lanes share the official-source dependency, so the same blocker should be fixed once and evidenced in both records—not reimplemented in separate chats.
 
 ## Full One-Liner coverage requirement
 
