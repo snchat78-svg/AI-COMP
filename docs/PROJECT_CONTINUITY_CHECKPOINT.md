@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (Phase 2 run #15 remains blocked; processing run #10 and verification run #8 had empty queues; Phase 6.56 manual fetch workflow CI passed but live fetch/review remains pending)  
+**Last updated:** 2026-10-24 (Phase 2 run #15 blocked; processing #10 and verification #8 empty; Phase registry chronology audit added 6.43 and 6.47–6.51; live fetch/review pending)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -25,6 +25,10 @@
 - **Phase 6.56:** IN_PROGRESS. Navigation/search/paging PR #42 merged at `d138d65d758efbde5c04126688566d499063da40`; exam-profile mapping PR #43 merged at `a3eeb95ef9557e56c0bad3005a8850d4b1013ba6` (backend run `39899673677`: 512 passed/14 warnings + container; Flutter/APK run `39899673666` passed). Protected author/reviewer + append-only audit PR #44 merged `44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c` (run `39904691212`: 517 passed/14 warnings + API container). Structured UNIT/TOPIC/SUBTOPIC inventory PR #45 merged `9694e01c11528157b8a1107fcf78c4c3a1e01ef9` (run `39906458179`: 527 passed/14 warnings + container). Secure official-source fetch/evidence PR #46 merged `ea59fc9e4712b3b646c707e2abf6f30f3690975c`; tested head `c0e293d58c70a3621f5bf6d51741384838c24549` passed [run 39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed/14 warnings; API container build passed. The source-fetch endpoint validates official-host HTTPS/redirects, size/time and PDF structure; computes SHA-256 from actual bytes and stores immutable evidence. No official exam profile is seeded; the candidate RSSB PDF has not been retrieved here. Remaining gates are controlled application of migrations, actual source fetch from approved API-host networking, independent notification/version/content review, complete topic/subtopic inventory, concept reconciliation and independent scope reviews, then real-data/mobile E2E. Phase 6.57 must not start early; Phase 6.55 live reviewer-secret/data gates and Phase 6.58 are still open.
 - **Phase 6.57:** PLANNED — topic coverage, learner mastery and revision.
 - **Phase 6.58:** BLOCKED on approved official-source connectivity, live database migration/secrets, real official-paper + matched answer-key records, and live end-to-end proof.
+
+## Phase chronology audit (24 October 2026)
+
+The canonical registry now includes the previously omitted merged milestones **6.43** and **6.47–6.51** from PRs #5, #10–#14, and separates the Phase 6.44 verified-email/English-UI work from the Phase 6.43 Firebase client-auth foundation. These are historical merged phases, not new work to repeat. Continue from the active/incomplete status in `docs/PHASE_REGISTRY.md`; do not infer that a later number means its prerequisites have passed.
 
 ## Cross-lane restart guard: Phase 2.2 is implemented, not a new start
 
