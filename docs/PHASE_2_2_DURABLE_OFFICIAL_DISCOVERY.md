@@ -31,6 +31,12 @@ The workflow does not yet populate the practice-test pool. The next incremental 
 - If `robots.txt` is missing, inaccessible, or disallows traversal, discovery fails closed and the run summary explains the source-level outcome.
 - Storage of raw PDF bytes across ephemeral runners is intentionally not claimed by this increment; object storage integration is a follow-up before long-lived processing is enabled.
 
+## Latest hardening and current acceptance gate (24 October 2026)
+
+PR [#52](https://github.com/snchat78-svg/AI-COMP/pull/52) was merged at `5baf6601c7addbecdf849fbcbaa16e966f6b386f`. It adds a fail-fast rule for permanent TLS protocol/certificate errors while preserving the existing bounded retry behavior for transient network errors. Exact tested head `36c3db3d91d9bb69d8ccfdb7f9d1e5c3df3f1861` passed [workflow 40066852069](https://github.com/snchat78-svg/AI-COMP/actions/runs/40066852069): 545 tests passed with 14 warnings, and the API container build passed.
+
+**Operational status remains BLOCKED:** the latest supplied research result persisted zero candidates; the current RSSB source times out, the legacy RSSB TLS negotiation fails securely, and RPSC is unreachable from the research runner. This transport improvement reduces pointless retries; it does not fix outbound connectivity or satisfy Phase 2.2 acceptance. Keep TLS validation, same-host restrictions, robots and terms checks enabled. Do not begin Phase 2.3 data processing until real candidates have persisted.
+
 ## Exit checks
 
 - Python tests cover idempotent registry persistence and live discovery persistence.
