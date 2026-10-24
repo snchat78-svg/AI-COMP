@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (PR #53 and PR #54 merged; Phase 6.56 manual fetch workflow CI passed; live official-source review remains pending)  
+**Last updated:** 2026-10-24 (Phase 2 run #15 remains blocked; processing run #10 and verification run #8 had empty queues; Phase 6.56 manual fetch workflow CI passed but live fetch/review remains pending)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -56,6 +56,15 @@ These two phases exist as **draft branches only**, not as features merged into c
 - The draft Phase 7.1 architecture also sketches **7.3 transcript acquisition, 7.4 notes builder, 7.5 persistence/API, 7.6 visual evidence/OCR, 7.7 Flutter integration, 7.8 PDF/E2E hardening, and optional 7.9 local/open model adapter**. The Registry records them as provisional planned dependencies only; no implementation for 7.3–7.9 is accepted in current main. Do not start them until the architecture is reviewed and the prior phase accepted.
 
 The current accepted mainline remains **Phase 6.56 IN_PROGRESS** with Phase 6.57 PLANNED and Phase 6.58 BLOCKED. Phase 2.2 is a shared external dependency blocker across the research/data-ingestion areas. The registry is the source of truth; PRs on old or stacked branches are not completed phases.
+
+## Latest live source/data pipeline evidence (24 October 2026)
+
+- Official-source research [run #15](https://github.com/snchat78-svg/AI-COMP/actions/runs/40067718339) failed closed again after the Phase 2.2 retry hardening was merged. All three official sources were blocked/failed and **0 paper candidates** persisted. DNS resolves, but current RSSB TCP times out, legacy RSSB certificate-validated TLS fails with `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`, and RPSC TCP is unavailable. Do not weaken TLS or create a duplicate discovery implementation.
+- Paper processing [run #10](https://github.com/snchat78-svg/AI-COMP/actions/runs/40073489696) was green but reports `processed=0`, `question_candidates=0`, `failed=0`. This is an empty queue, not successful ingestion.
+- Official answer-key verification [run #8](https://github.com/snchat78-svg/AI-COMP/actions/runs/40077069998) was green but reports `selected_candidates=0`, `pairs_matched=0`, `extracted_questions_seen=0`, `failed=0`. This is also an empty queue, not verified history.
+- The safe manual workflow added by PR [#54](https://github.com/snchat78-svg/AI-COMP/pull/54) has passing code CI, but a live `REGISTER_AND_FETCH` run is still required. Open [register-and-fetch-official-syllabus](https://github.com/snchat78-svg/AI-COMP/actions/workflows/register-and-fetch-official-syllabus.yml) only after migrations 0024–0026 and the protected `official-source-review` GitHub environment have been configured. Author/reviewer secrets must match Render's server-side values, remain distinct, and never be placed in Git or chat. Use the existing unverified candidate metadata and review the audit/result; the workflow must not mark the source VERIFIED by itself.
+
+**Do not start Phase 6.57 or Phase 2.3 data processing yet.** The next work is still live acceptance within Phase 6.56 / the Phase 2.2 shared source-access gate: retrieve and store actual official PDF bytes on the approved API host, independently inspect the document/version/all pages, complete the reviewed syllabus inventory and mappings, apply required migrations through the controlled workflow, then complete real-data/mobile E2E. Do not treat a successful workflow with zero records as phase completion.
 
 ## Full One-Liner coverage requirement
 
