@@ -12,6 +12,7 @@ The repository already contains the Phase 1 source/exam domain contracts, safe l
 - Persist likely question-paper / answer-key URLs to `paper_candidates`.
 - Give live-discovered candidates deterministic IDs from source ID + URL so a changed sitemap order cannot overwrite another candidate.
 - Record discovery timestamps.
+- Fail fast on permanent TLS protocol/certificate errors instead of retrying them; retain bounded retries for transient network errors. Certificate validation remains enabled, and this hardening does not restore host reachability.
 - Add a daily GitHub Actions workflow at 06:45 IST plus manual dispatch and a per-run summary.
 - Continue when one registered source is inaccessible; report that source as blocked/failed rather than disabling discovery for the other source.
 - Add unit tests for registry upserts, safe URL filtering, candidate persistence and unknown-source rejection.

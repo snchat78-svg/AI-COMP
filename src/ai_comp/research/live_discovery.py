@@ -29,6 +29,36 @@ class _SameHostRedirectHandler(HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
+def _is_permanent_tls_error(exc: BaseException) -> bool:
+    """Return True for TLS failures that a retry cannot repair.
+
+    Network timeouts and connection errors can be transient and retain their
+    bounded retry behavior. TLS protocol/certificate failures must fail fast;
+    callers must fix the official endpoint or transport path rather than
+    weakening certificate validation or enabling unsafe renegotiation.
+    """
+    import ssl
+    from urllib.error import URLError
+
+    pending: list[BaseException] = [exc]
+    seen: set[int] = set()
+    while pending:
+        current = pending.pop()
+        current_id = id(current)
+        if current_id in seen:
+            continue
+        seen.add(current_id)
+        if isinstance(current, ssl.SSLError):
+            return True
+        if isinstance(current, URLError) and isinstance(current.reason, BaseException):
+            pending.append(current.reason)
+        if isinstance(current.__cause__, BaseException):
+            pending.append(current.__cause__)
+        if isinstance(current.__context__, BaseException):
+            pending.append(current.__context__)
+    return False
+
+
 class HttpTransport:
     """Small bounded HTTP transport with retries for transient network failures."""
 
@@ -75,8 +105,8 @@ class HttpTransport:
                     body.decode("utf-8", errors="replace"),
                     response.headers.get("Content-Type", ""),
                 )
-            except (URLError, TimeoutError, OSError):
-                if attempt >= self.retries:
+            except (URLError, TimeoutError, OSError) as exc:
+                if _is_permanent_tls_error(exc) or attempt >= self.retries:
                     raise
                 sleep(self.retry_delay_seconds * (2**attempt))
         raise RuntimeError("unreachable HTTP retry state")
