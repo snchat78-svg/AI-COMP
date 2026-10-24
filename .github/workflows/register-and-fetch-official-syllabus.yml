@@ -142,7 +142,7 @@ jobs:
           from pathlib import Path
           from urllib.error import HTTPError, URLError
           from urllib.parse import quote
-          from urllib.request import Request, urlopen
+          from urllib.request import HTTPRedirectHandler, HTTPSHandler, Request, build_opener
 
           base = os.environ["AI_COMP_API_BASE_URL"].rstrip("/")
           syllabus_id = os.environ["INPUT_SYLLABUS_ID"]
@@ -155,14 +155,21 @@ jobs:
                   self.code = code
                   super().__init__(code)
 
+          class NoRedirect(HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, msg, headers, newurl):
+                  # The API base URL is fixed. Never forward an author/reviewer
+                  # credential to a redirect target, even if the target is HTTPS.
+                  return None
+
           def call_api(path: str, method: str, token: str, header: str, payload: dict | None = None) -> dict:
               body = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
               headers = {header: token, "Accept": "application/json"}
               if body is not None:
                   headers["Content-Type"] = "application/json"
               request = Request(base + path, data=body, headers=headers, method=method)
+              opener = build_opener(NoRedirect, HTTPSHandler(context=ssl.create_default_context()))
               try:
-                  with urlopen(request, timeout=45, context=ssl.create_default_context()) as response:
+                  with opener.open(request, timeout=45) as response:
                       parsed = json.loads(response.read().decode("utf-8"))
                       if not isinstance(parsed, dict):
                           raise SafeAPIError(response.status, "INVALID_API_RESPONSE")
