@@ -42,6 +42,10 @@ Never paste service-role keys, database passwords, or connection strings into ch
 - The number reported is the number of supported records in this database, not a claim of full coverage of all government exams.
 - The current workflow does not claim the learner practice-test pool has been populated. That needs the next test-selection increment to expose verified historical questions as a distinct source, without inserting them into the AI-generated question table.
 
+## Latest live verification evidence (24 October 2026)
+
+The scheduled [official-answer-key-verification run #8](https://github.com/snchat78-svg/AI-COMP/actions/runs/40077069998) exited successfully but reported `selected_candidates=0`, `pairs_matched=0`, `extracted_questions_seen=0`, and `failed=0`. This is an empty-queue run, not completed answer-key verification or historical ingestion. Rerun only after Phase 2.2 discovery persists real candidates and Phase 2.3 extracts real paper/key records; verify matched pairs, review states, resolved answers and source-linked appearance counts.
+
 ## Tests
 
 Coverage includes explicit exam/year resolution, ambiguity-safe pairing, empty-extraction rejection, separate source-document provenance, database question-pool loading, and existing end-to-end verified-ingestion contracts. The full repository pytest suite and Docker build are the merge gate.
