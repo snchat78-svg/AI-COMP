@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (Phase 2.2–2.5.3 ledger reconciled in PR #51; Phase 2.2 TLS retry hardening PR #52 merged and CI passed; live official-source retrieval remains blocked)  
+**Last updated:** 2026-10-24 (Phase 2 ledger reconciled; PR #52 merged and CI passed; source run #14 failed with zero candidates; Phase 7.1/7.2 stale draft stack audited)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -45,6 +45,16 @@ The Phase Registry now records the older paper-research lane alongside the curre
 4. If all current official hosts remain unreachable, record the run as blocked and make no duplicate downloader, retry workflow or unofficial-source implementation to disguise the blocker. Do not advance past the unsatisfied dependency.
 
 **Phase selection:** Phase 2.2 should not be “started from scratch” again. It is **BLOCKED at live acceptance**. The current mainline development phase remains **6.56 IN_PROGRESS**; Phase 6.57 remains **PLANNED**, and Phase 6.58 remains **BLOCKED** until its source, migration and real-data E2E gates pass. These lanes share the official-source dependency, so the same blocker should be fixed once and evidenced in both records—not reimplemented in separate chats.
+
+## Separate draft lane: Phase 7.1 / 7.2 YouTube Study Notes
+
+These two phases exist as **draft branches only**, not as features merged into current `main`:
+
+- [PR #19 / Phase 7.1](https://github.com/snchat78-svg/AI-COMP/pull/19) is a documentation-only architecture freeze. It was tested at old head `19d76655405266338a4a5e077a2a09ab29ccfd1c` by workflow [38916367924](https://github.com/snchat78-svg/AI-COMP/actions/runs/38916367924), but its base is older than current main. It still needs review/rebase against current architecture.
+- [PR #20 / Phase 7.2](https://github.com/snchat78-svg/AI-COMP/pull/20) is a draft contract/URL-validation implementation, stacked on the unmerged PR #19 branch. Its old-head workflow [38916533266](https://github.com/snchat78-svg/AI-COMP/actions/runs/38916533266) passed at the time, but it is not validated against current main and cannot merge ahead of its prerequisite.
+- Do **not** recreate the URL parser/contracts or treat these PRs as completed. Do not merge or continue this later-numbered lane until Phase 7.1 is reviewed and the mainline ordering is explicitly confirmed. If resumed, rebase/port once on current main and rerun full CI. No YouTube provider, transcript ingestion or database writes are part of PR #20.
+
+The current accepted mainline remains **Phase 6.56 IN_PROGRESS** with Phase 6.57 PLANNED and Phase 6.58 BLOCKED. Phase 2.2 is a shared external dependency blocker across the research/data-ingestion areas. The registry is the source of truth; PRs on old or stacked branches are not completed phases.
 
 ## Full One-Liner coverage requirement
 
