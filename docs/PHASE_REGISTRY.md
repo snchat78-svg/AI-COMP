@@ -2,14 +2,14 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-24 (PR #53 merged; Phase 2.2 still source-blocked; Phase 6.56 manual source-fetch workflow in review)  
+**Last verified:** 2026-10-24 (PR #53 and PR #54 merged; exact-head CI passed for the manual source-fetch workflow; live official-source review pending)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
 
 **Cross-chat start gate:** Read this registry before every phase and follow [PHASE_CONTINUITY_STANDARD.md](PHASE_CONTINUITY_STANDARD.md). Verify `main` head and latest exact-SHA CI before changing code; do not repeat phases already completed here.
 
-**Continuity setup evidence (updated 2026-10-23):**
+**Continuity setup evidence (updated 2026-10-24):**
 - The reusable phase policy is in `docs/PHASE_CONTINUITY_STANDARD.md`; read it before every next phase.
 - PR #43 is **merged** as `a3eeb95ef9557e56c0bad3005a8850d4b1013ba6`. Tested code head `6841d953be73608e1f0fd59bddfa2f674b639141` passed backend workflow `39899673677` (512 passed, 14 existing warnings; API container build passed) and Flutter/APK workflow `39899673666` (analyze, client/widget tests, release APK build, artifact verification/upload). APK artifact `12478965187` has ZIP SHA-256 `8e838dcde7a4e87f226b3114abf10b198a05868cf5dda7581cac424ee5675434`.
 - Phase 6.56 remains **IN_PROGRESS**. PR #44 merge `44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c` passed backend run [39904691212](https://github.com/snchat78-svg/AI-COMP/actions/runs/39904691212): 517 passed, 14 warnings + API container. PR #45 merge `9694e01c11528157b8a1107fcf78c4c3a1e01ef9` passed run [39906458179](https://github.com/snchat78-svg/AI-COMP/actions/runs/39906458179): 527 passed, 14 warnings + API container. PR #46 merge `ea59fc9e4712b3b646c707e2abf6f30f3690975c`; tested head `c0e293d58c70a3621f5bf6d51741384838c24549` passed run [39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed, 14 warnings; API container build passed. Migrations 0024-0026 add protected author/reviewer workflows, structured topic/subtopic inventory and immutable server-fetched PDF evidence. No official exam profile is seeded; candidate RSSB PDF bytes, version/content and digest remain unverified because this runtime could not retrieve it. Remaining gates: apply migrations through controlled workflow, fetch the actual official PDF from approved API-host networking, independently verify notification/version/full contents, inventory every syllabus topic/subtopic, reconcile/add missing concepts, independently review all concept mappings, and prove real mobile E2E. Do not start Phase 6.57 yet.
