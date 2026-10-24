@@ -123,3 +123,23 @@ PR #46 was squash-merged as `ea59fc9e4712b3b646c707e2abf6f30f3690975c`. Tested h
 - [CI workflow 39907825229](https://github.com/snchat78-svg/AI-COMP/actions/runs/39907825229): 538 passed, 14 warnings; API container build succeeded.
 - Migration 0026 stores immutable source-fetch attempts and exact successful PDF bytes. Latest failed fetch blocks source verification; VERIFIED requires a digest matching the latest successful fetch for the exact stored source URL.
 - This is code/CI completion only. The real RSSB source, its notification/version/content/digest, the full syllabus inventory and concept mapping remain unverified until live data review is performed.
+
+## Manual live candidate fetch workflow — branch `phase-6-56-manual-source-fetch`
+
+The workflow `.github/workflows/register-and-fetch-official-syllabus.yml` is the next operational bridge for the existing PR #46 source-fetch endpoint. It is manually triggered, defaults to `DO_NOT_RUN`, and only runs when the operator explicitly chooses `REGISTER_AND_FETCH`. It does not introduce a new downloader or a second verification implementation.
+
+### Required setup before running
+
+1. Confirm database migrations `0024`, `0025`, and `0026` have been applied to the intended production database. Use the existing `.github/workflows/database-migrations.yml` with repository secret `AI_COMP_DATABASE_URL`; do not modify or print the secret. Run `confirm_apply=APPLY` only after verifying the target database, because that workflow applies all unapplied repository migrations.
+2. Configure a GitHub Actions environment named `official-source-review`; put `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN` in that environment as secrets. They must exactly match the corresponding server-side Render environment values, be distinct from one another, and must not reuse the Phase 6.55 content-author/reviewer tokens. Consider enabling required reviewers for this environment.
+3. Verify on the server that `AI_COMP_SYLLABUS_AUTHOR_ID` and `AI_COMP_SYLLABUS_REVIEWER_ID` are present, non-empty and different. The API is fail-closed if these values or the distinct author/reviewer tokens are missing.
+
+### What the workflow does and does not do
+
+- It accepts only the four approved RSSB/RSMSSB HTTPS hosts; normal certificate validation remains enabled. It does not permit userinfo, a nonstandard port, or a URL fragment. API redirects are rejected so author/reviewer credentials cannot be forwarded to another host.
+- It first submits the candidate through the protected author endpoint, which can create only `REVIEW_PENDING`, then calls `POST /api/v1/admin/exam-syllabi/{syllabus_id}/fetch-source` without passing a URL. The deployed API fetches only the source URL stored in the database, validates the PDF, computes SHA-256 from actual bytes and stores immutable evidence.
+- The candidate title and notification number default to explicitly **UNVERIFIED/UNCONFIRMED** values. A successful fetch proves only that bytes were retrieved safely; it does not prove the source is the correct notification or that the syllabus is complete. The workflow never sets source status to `VERIFIED`.
+- If the actual PDF cannot be fetched, the job reports a safe error code without printing tokens or raw API response bodies. The candidate stays pending if it was already created; check the audit table before retrying so duplicate syllabus IDs are not reused.
+- After a successful fetch, an independent human reviewer must inspect the exact persisted PDF, identify the issuing board/notification/version/date, check every page and full unit/topic/subtopic inventory, and record evidence. Then the reviewer can complete inventory/mapping reviews through the existing gated APIs. Do not infer official content from the secondary TopKaro transcription.
+
+Because this workflow is manually dispatched, the CI test suite validates its safeguards but does not run it against the live database during PR CI. Phase 6.56 remains IN_PROGRESS until controlled migration state, successful official PDF retrieval, human review, complete concept mapping and real mobile E2E are evidenced. Phase 6.57 stays PLANNED.
