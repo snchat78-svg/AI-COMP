@@ -57,9 +57,9 @@ The mobile client parses the profile status and sends optional `exam_id` filters
 - Review the generated OpenAPI contract and migration against the existing schema.
 - Re-check all gates after CI runs on the latest commit; earlier green SHA is not enough.
 
-## Protected author/reviewer workflow — implementation in review
+## Protected author/reviewer workflow — merged implementation; live gates pending
 
-The follow-up implementation is being developed on branch `phase-6-56-syllabus-author-review` and must pass exact-head CI before merge:
+The protected author/reviewer workflow merged in [PR #44](https://github.com/snchat78-svg/AI-COMP/pull/44), merge SHA `44a1da0ef6c5afd79e81e7367ea57fac15dbfc7c`. Tested head `4189742e9981f8f0d288e1260bd79b0a3b4d4918` passed [workflow 39904691212](https://github.com/snchat78-svg/AI-COMP/actions/runs/39904691212): 517 tests passed, 14 warnings and API container build passed. The merged code still requires live migration/secrets setup and independent review of the actual official PDF; it does not independently authenticate source contents.
 
 - `POST /api/v1/admin/exam-syllabi` allows an authenticated server-side author to create a source candidate only as `REVIEW_PENDING`; it cannot self-certify a source as VERIFIED.
 - `POST /api/v1/admin/exam-syllabi/{syllabus_id}/source-review` requires a distinct reviewer token and server-configured reviewer ID. VERIFIED is rejected unless SHA-256, source evidence, and a reviewer attestation that the full inventory is complete are supplied.
@@ -80,7 +80,7 @@ This workflow records a human reviewer attestation; it does not automatically re
 
 Phase 6.56 must remain IN_PROGRESS until official-source retrieval, source evidence, mapping completeness, current-head CI and the remaining acceptance checks have been demonstrated.
 
-## Structured unit/topic/subtopic inventory — PR #45
+## Structured unit/topic/subtopic inventory — merged PR #45
 
 PR [#45](https://github.com/snchat78-svg/AI-COMP/pull/45) continues Phase 6.56 by replacing the bare inventory-complete assertion with concrete reviewable rows.
 
