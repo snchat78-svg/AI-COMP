@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (PR #55 merged; phase IDs 6.43 and 6.47–6.51 reconciled; 548 tests/14 warnings + container passed; live fetch/review pending)  
+**Last updated:** 2026-10-25 (main `dd676617d5c4ac0feb123a309b6ba4984aec531d`; live source run #16 blocked; downstream empty-queue runs #11/#9 verified; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -117,6 +117,15 @@ Do not include credentials in Git or chat. Content authoring uses server-side AI
 - PR #48 is closed as superseded because its stale branch compared already-merged implementation history again. PR #49 is based directly on current main and carries only the incremental tests plus this continuity update.
 - Next: continue the live source/migration/inventory gates above; do not restart the completed security-test slice. Phase 6.56 remains IN_PROGRESS.
 
+## Latest live-gate evidence (25 October 2026)
+
+- Current main: `dd676617d5c4ac0feb123a309b6ba4984aec531d`.
+- Official-source research [run #16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40167821936) failed closed. `RSSB_OFFICIAL` TCP timed out; `RSSB_LEGACY_OFFICIAL` TLS negotiation failed with `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`; `RPSC_OFFICIAL` TCP timed out/network was unreachable. **0 paper candidates persisted.**
+- Paper-processing [run #11](https://github.com/snchat78-svg/AI-COMP/actions/runs/40173279948) was job-successful but produced **0 question candidates**.
+- Answer-key verification [run #9](https://github.com/snchat78-svg/AI-COMP/actions/runs/40176782796) was job-successful but selected **0 candidates** and matched **0 paper/key pairs**.
+- Interpret the latter two as successful no-op/empty-queue runs, not completed processing or verified exam data. Do not advance Phase 2.3, Phase 6.57 or Phase 6.58.
+- **Next single operational gate within Phase 6.56:** confirm migrations 0024–0026 have been applied through the controlled migration workflow; configure the protected GitHub Actions environment `official-source-review` with `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN` matching the deployed Render service, plus distinct server-side author/reviewer IDs. Never send tokens in chat or commit them. Then manually dispatch the existing `register-and-fetch-official-syllabus` workflow with `REGISTER_AND_FETCH` and a unique `syllabus_id`. Keep the candidate unverified until a human inspects the exact stored PDF, notification/version and all pages. Do not implement another downloader or weaken TLS.
+
 ## Phase 6.56 manual official-source fetch workflow — operator runbook
 
 - PR [#54](https://github.com/snchat78-svg/AI-COMP/pull/54) merged at `1b3d1e7534f6bf0802caf396020bca0762c1769f`; tested head `23ae408ccb321b258bd88482b7ad65850984f666` passed [workflow 40073840875](https://github.com/snchat78-svg/AI-COMP/actions/runs/40073840875): 548 tests passed, 14 warnings, API container build passed. This is still Phase 6.56, not Phase 6.57.
@@ -125,3 +134,19 @@ Do not include credentials in Git or chat. Content authoring uses server-side AI
 - Create GitHub Actions environment `official-source-review` and add secrets `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN`; these must match the Render service's values exactly and be different from one another and from the Phase 6.55 content tokens. On Render, ensure server-side `AI_COMP_SYLLABUS_AUTHOR_ID` and `AI_COMP_SYLLABUS_REVIEWER_ID` are configured and distinct. Never put values in Git/chat/mobile config.
 - Run manually from Actions only when the prerequisites are verified: choose workflow `register-and-fetch-official-syllabus`, confirm `REGISTER_AND_FETCH`, supply a unique `syllabus_id`, and retain candidate title/version/notification as unverified until the exact PDF is reviewed. The workflow cannot mark VERIFIED.
 - After a successful fetch, independently inspect the stored PDF bytes, notification/issuer/version/date and all pages, inventory every official unit/topic/subtopic, reconcile missing concepts, review every mapping, and complete real mobile E2E. If the fetch fails, keep the candidate pending and inspect the audit before retrying. Phase 6.56 remains IN_PROGRESS and Phase 6.57 remains PLANNED.
+
+## Migration checkpoint update — 25 October 2026
+
+The supplied successful migration run #3 checked out commit `22d0fcb3a5972b241550b5d64de37207dcc651a2`. That exact commit contained only migrations `0001`–`0018`; the log `Applied migration versions: 0018` is historical evidence for migration 0018 only. Current `main` contains `0001`–`0026`, so this run predates migrations `0019`–`0026` and does not prove that migrations `0024`, `0025`, or `0026` are live.
+
+Before starting the workflow again, verify the GitHub Actions secret `AI_COMP_DATABASE_URL` targets the intended Supabase project `ai-comp-db`. Review the known impact of migration `0021`: any existing one-liner with status `VERIFIED` but no independently recorded reviewer identity is reset to `NEEDS_REVIEW`; live affected-row count is unknown. Then, only after that target/impact check, use the existing `.github/workflows/database-migrations.yml` on current `main` with the explicit `APPLY` choice. Do not edit SQL, create an alternate migration workflow, or claim success until the run's exact commit and applied-version output are checked. Phase 6.56 remains IN_PROGRESS, Phase 6.57 remains PLANNED.
+
+## Controlled migration verification update — 25 October 2026
+
+The current-main [Apply database migrations run #4](https://github.com/snchat78-svg/AI-COMP/actions/runs/40190212101) succeeded on commit `dd676617d5c4ac0feb123a309b6ba4984aec531d`. Its job log reports `Applied migration versions: 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026`. The Phase 6.56 schema migration gate is therefore cleared for migrations 0024–0026; do not rerun migration workflow without a new documented reason.
+
+Migration 0021 also demotes legacy `VERIFIED` one-liners without a recorded independent reviewer to `NEEDS_REVIEW`. The workflow output does not report how many records were affected, so that count remains unknown; do not assume seeded or live content is verified.
+
+Latest documentation PR #57 head `757ad0c56cf51cc5b30d5f580671028a3bd737cc` passed CI in [run #583](https://github.com/snchat78-svg/AI-COMP/actions/runs/40190025937).
+
+**Next single operational gate:** verify the protected GitHub Actions environment `official-source-review` contains `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN`, with values matching the deployed API and not equal to one another; verify Render has distinct `AI_COMP_SYLLABUS_AUTHOR_ID` and `AI_COMP_SYLLABUS_REVIEWER_ID`. Do not share secret values in chat. Once those prerequisites are confirmed, use the existing `.github/workflows/register-and-fetch-official-syllabus.yml` workflow with `REGISTER_AND_FETCH`. Its result must remain pending until the fetched PDF bytes, document identity/version and every syllabus page are independently reviewed. Phase 6.56 remains IN_PROGRESS and Phase 6.57 remains PLANNED.

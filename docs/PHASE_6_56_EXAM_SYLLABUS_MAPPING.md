@@ -151,3 +151,28 @@ Because this workflow is manually dispatched, the CI test suite validates its sa
 - The workflow `.github/workflows/register-and-fetch-official-syllabus.yml` is available in current main. It is manually dispatched, defaults to DO_NOT_RUN, requires REGISTER_AND_FETCH, registers the candidate only as REVIEW_PENDING, then calls the existing server-side source fetch endpoint without supplying a URL. API redirects are rejected to prevent forwarding review credentials.
 - This workflow was not executed against live data during CI. Before a live run, apply any pending migrations 0024–0026 to the verified target through `.github/workflows/database-migrations.yml`, then configure the GitHub `official-source-review` environment secrets to exactly match server-side author/reviewer tokens and ensure server-side actor IDs are distinct.
 - The candidate RSSB PDF has not been retrieved/independently inspected, and no real official document digest or complete mapping is claimed verified. Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Latest operational evidence — 25 October 2026
+
+Current main `dd676617d5c4ac0feb123a309b6ba4984aec531d` was rechecked after the earlier runbook update:
+
+- Official-source research [40167821936](https://github.com/snchat78-svg/AI-COMP/actions/runs/40167821936) failed closed across the three registered hosts; no paper candidates persisted.
+- Paper processing [40173279948](https://github.com/snchat78-svg/AI-COMP/actions/runs/40173279948) completed with zero question candidates.
+- Answer-key verification [40176782796](https://github.com/snchat78-svg/AI-COMP/actions/runs/40176782796) completed with zero selected candidates and zero matched pairs.
+- These green downstream jobs are empty-queue no-ops; they do not establish a verified paper, answer key, mapping coverage or E2E success.
+
+The next action is still within Phase 6.56: confirm controlled application of migrations 0024–0026, configure the protected `official-source-review` environment and matching-but-distinct author/reviewer credentials, then run the existing manually gated fetch workflow. Review exact stored PDF bytes and metadata before source approval. Do not start Phase 6.57, duplicate the fetch implementation, or relax TLS.
+
+## Live migration evidence — 25 October 2026
+
+The operator-provided successful migration run #3 checked out historical commit `22d0fcb3a5972b241550b5d64de37207dcc651a2`. That commit contained only SQL migrations `0001`–`0018`; the output `Applied migration versions: 0018` does not cover the later `0019`–`0026` migrations now present on `main). Therefore migrations `0024`–`0026` remain **NOT CONFIRMED applied to the live database**.
+
+Before a new controlled run, verify that `AI_COMP_DATABASE_URL` is the intended `ai-comp-db` database and review migration `0021`'s safety effect: pre-existing `VERIFIED` one-liners without independent reviewer identity are demoted to `NEEDS_REVIEW`. The affected live-row count has not been queried. After the target/impact review, apply the pending migrations using the existing database-migrations workflow on current `main`, then record the exact run ID, checkout SHA and applied versions. Only after that should the existing official-source fetch workflow be considered. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Controlled migration verification — 25 October 2026
+
+The controlled [database migration run #4](https://github.com/snchat78-svg/AI-COMP/actions/runs/40190212101) succeeded on current-main commit `dd676617d5c4ac0feb123a309b6ba4984aec531d`. The supplied job log explicitly lists `0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026` as applied. Migrations `0024`–`0026` are now applied according to the migration runner output; no repeat run is needed.
+
+Migration `0021` demotes legacy one-liners that were marked `VERIFIED` without independent reviewer identity to `NEEDS_REVIEW`. No affected-row count was emitted. Do not infer the live question-bank pool is populated or verified from migration success.
+
+Next step remains Phase 6.56 live acceptance: configure/check the protected `official-source-review` environment secrets and distinct server-side author/reviewer actor IDs, then use the existing manually gated official syllabus fetch workflow. A successful fetch will store unverified evidence only; the exact PDF and complete syllabus still require independent human review. Phase 6.57 stays PLANNED.
