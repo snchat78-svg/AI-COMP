@@ -168,3 +168,11 @@ The next action is still within Phase 6.56: confirm controlled application of mi
 The operator-provided successful migration run #3 checked out historical commit `22d0fcb3a5972b241550b5d64de37207dcc651a2`. That commit contained only SQL migrations `0001`–`0018`; the output `Applied migration versions: 0018` does not cover the later `0019`–`0026` migrations now present on `main). Therefore migrations `0024`–`0026` remain **NOT CONFIRMED applied to the live database**.
 
 Before a new controlled run, verify that `AI_COMP_DATABASE_URL` is the intended `ai-comp-db` database and review migration `0021`'s safety effect: pre-existing `VERIFIED` one-liners without independent reviewer identity are demoted to `NEEDS_REVIEW`. The affected live-row count has not been queried. After the target/impact review, apply the pending migrations using the existing database-migrations workflow on current `main`, then record the exact run ID, checkout SHA and applied versions. Only after that should the existing official-source fetch workflow be considered. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Controlled migration verification — 25 October 2026
+
+The controlled [database migration run #4](https://github.com/snchat78-svg/AI-COMP/actions/runs/40190212101) succeeded on current-main commit `dd676617d5c4ac0feb123a309b6ba4984aec531d`. The supplied job log explicitly lists `0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026` as applied. Migrations `0024`–`0026` are now applied according to the migration runner output; no repeat run is needed.
+
+Migration `0021` demotes legacy one-liners that were marked `VERIFIED` without independent reviewer identity to `NEEDS_REVIEW`. No affected-row count was emitted. Do not infer the live question-bank pool is populated or verified from migration success.
+
+Next step remains Phase 6.56 live acceptance: configure/check the protected `official-source-review` environment secrets and distinct server-side author/reviewer actor IDs, then use the existing manually gated official syllabus fetch workflow. A successful fetch will store unverified evidence only; the exact PDF and complete syllabus still require independent human review. Phase 6.57 stays PLANNED.
