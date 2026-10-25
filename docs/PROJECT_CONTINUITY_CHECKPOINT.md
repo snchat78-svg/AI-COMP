@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-24 (PR #55 merged; phase IDs 6.43 and 6.47–6.51 reconciled; 548 tests/14 warnings + container passed; live fetch/review pending)  
+**Last updated:** 2026-10-25 (main `dd676617d5c4ac0feb123a309b6ba4984aec531d`; live source run #16 blocked; downstream empty-queue runs #11/#9 verified; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -116,6 +116,15 @@ Do not include credentials in Git or chat. Content authoring uses server-side AI
 - Six additional tests cover deceptive/unsafe URLs, digest and metadata derived from exact PDF bytes, HTML masquerading as PDF, unapproved redirects, size limits and redirect-host validation. Only synthetic PDF fixtures were used; no official syllabus was marked verified.
 - PR #48 is closed as superseded because its stale branch compared already-merged implementation history again. PR #49 is based directly on current main and carries only the incremental tests plus this continuity update.
 - Next: continue the live source/migration/inventory gates above; do not restart the completed security-test slice. Phase 6.56 remains IN_PROGRESS.
+
+## Latest live-gate evidence (25 October 2026)
+
+- Current main: `dd676617d5c4ac0feb123a309b6ba4984aec531d`.
+- Official-source research [run #16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40167821936) failed closed. `RSSB_OFFICIAL` TCP timed out; `RSSB_LEGACY_OFFICIAL` TLS negotiation failed with `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`; `RPSC_OFFICIAL` TCP timed out/network was unreachable. **0 paper candidates persisted.**
+- Paper-processing [run #11](https://github.com/snchat78-svg/AI-COMP/actions/runs/40173279948) was job-successful but produced **0 question candidates**.
+- Answer-key verification [run #9](https://github.com/snchat78-svg/AI-COMP/actions/runs/40176782796) was job-successful but selected **0 candidates** and matched **0 paper/key pairs**.
+- Interpret the latter two as successful no-op/empty-queue runs, not completed processing or verified exam data. Do not advance Phase 2.3, Phase 6.57 or Phase 6.58.
+- **Next single operational gate within Phase 6.56:** confirm migrations 0024–0026 have been applied through the controlled migration workflow; configure the protected GitHub Actions environment `official-source-review` with `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN` matching the deployed Render service, plus distinct server-side author/reviewer IDs. Never send tokens in chat or commit them. Then manually dispatch the existing `register-and-fetch-official-syllabus` workflow with `REGISTER_AND_FETCH` and a unique `syllabus_id`. Keep the candidate unverified until a human inspects the exact stored PDF, notification/version and all pages. Do not implement another downloader or weaken TLS.
 
 ## Phase 6.56 manual official-source fetch workflow — operator runbook
 
