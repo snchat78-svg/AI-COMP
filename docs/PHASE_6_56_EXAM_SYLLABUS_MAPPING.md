@@ -151,3 +151,15 @@ Because this workflow is manually dispatched, the CI test suite validates its sa
 - The workflow `.github/workflows/register-and-fetch-official-syllabus.yml` is available in current main. It is manually dispatched, defaults to DO_NOT_RUN, requires REGISTER_AND_FETCH, registers the candidate only as REVIEW_PENDING, then calls the existing server-side source fetch endpoint without supplying a URL. API redirects are rejected to prevent forwarding review credentials.
 - This workflow was not executed against live data during CI. Before a live run, apply any pending migrations 0024–0026 to the verified target through `.github/workflows/database-migrations.yml`, then configure the GitHub `official-source-review` environment secrets to exactly match server-side author/reviewer tokens and ensure server-side actor IDs are distinct.
 - The candidate RSSB PDF has not been retrieved/independently inspected, and no real official document digest or complete mapping is claimed verified. Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Latest operational evidence — 25 October 2026
+
+Current main `dd676617d5c4ac0feb123a309b6ba4984aec531d` was rechecked after the earlier runbook update:
+
+- Official-source research [40167821936](https://github.com/snchat78-svg/AI-COMP/actions/runs/40167821936) failed closed across the three registered hosts; no paper candidates persisted.
+- Paper processing [40173279948](https://github.com/snchat78-svg/AI-COMP/actions/runs/40173279948) completed with zero question candidates.
+- Answer-key verification [40176782796](https://github.com/snchat78-svg/AI-COMP/actions/runs/40176782796) completed with zero selected candidates and zero matched pairs.
+- These green downstream jobs are empty-queue no-ops; they do not establish a verified paper, answer key, mapping coverage or E2E success.
+
+The next action is still within Phase 6.56: confirm controlled application of migrations 0024–0026, configure the protected `official-source-review` environment and matching-but-distinct author/reviewer credentials, then run the existing manually gated fetch workflow. Review exact stored PDF bytes and metadata before source approval. Do not start Phase 6.57, duplicate the fetch implementation, or relax TLS.
+
