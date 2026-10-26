@@ -174,3 +174,13 @@ The diagnostic URL compatibility fix reached main as `f49511a3ebca0a875c4ba8bae3
 - `RPSC_OFFICIAL`: DNS OK; IPv4 TCP FAIL (`TimeoutError`); IPv6 TCP FAIL (`OSError`); TLS not reached.
 
 No official source currently passes both TCP connectivity and certificate-validated TLS. The workflow failure is evidence of the real source-network blocker, not a failure of the fixed diagnostic URL. Keep Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED. Candidate `rssb-cet-graduation-2026-candidate-20261026-01` remains `REVIEW_PENDING`; no official PDF bytes/SHA-256 have been verified. Next task: restore or identify an approved, reachable official HTTPS route, then fetch and independently review the exact PDF and complete syllabus inventory.
+
+
+## User-confirmed Question Bank behaviour — 26 October 2026
+
+Read [QUESTION_BANK_PRODUCT_CONTRACT.md](QUESTION_BANK_PRODUCT_CONTRACT.md) before changing Question Bank code.
+
+- **Old/Previous Year Papers is a separate section.** Actual papers come from official exam/recruitment sources. Registered official sources should be checked on schedule; newly published papers should be added automatically after validation, de-duplication and required review. Keep original paper identity/provenance and pair only the matching verified answer key where available.
+- **All remaining topic-wise learning content is One-Liner Q&A.** Navigate Subject → Topic → Subtopic. Cover all examinable points in each applicable official-syllabus topic; write concise question → direct answer, not short notes. Count alone is not completion; missing points, unreviewed drafts and coverage gaps stay visible.
+- A paper in Old Papers is not automatically a verified One-Liner. Keep the two lanes separate and use existing repositories/review workflows.
+- The live official-source network/TLS gate is still blocked as of 26 October 2026. Automatic new-paper ingestion is the target behaviour but is not yet live-verified. Continue the existing Phase 2.2 / Phase 6.56 blocker; do not claim successful auto-update, weaken TLS, or advance phases based on empty-queue success.
