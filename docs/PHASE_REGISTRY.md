@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-26 (main deployment commit `1db1e06cef6e6cfcd6090678a89e8fd95496b21c`; PRs #63–#65 merged; official-source run #18 blocked with zero candidates; Render egress investigation recorded; no phase advancement)  
+**Last verified:** 2026-10-26 (main deployment commit `2ea757053b5eaa1cda3b037e6ddd5776333645a8`; PRs #63–#66 merged; fresh Render source-health rerun #11 at 13:02 UTC still blocked; no phase advancement)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -188,3 +188,16 @@ The current official RPSC navigation uses [Question Papers](https://rpsc.rajasth
 - Next diagnostic action: from the Render Dashboard service details, inspect **Connect → Outbound** and record the displayed ranges (not secrets); then obtain evidence from the official host/operator or an authorized network contact about whether connections from those ranges are rejected/filtered. Keep certificate validation on. Do not purchase a paid static-IP feature, add a proxy, migrate regions, or change the service architecture without explicit cost/architecture approval and a tested plan.
 - Do not retry the already-failed syllabus candidate repeatedly while source reachability is unresolved. The candidate `rssb-cet-graduation-2026-candidate-20261026-01` remains pending until a protected fetch succeeds and the exact official PDF is independently reviewed.
 - **Phase status:** Phase 2.2 remains **BLOCKED**; Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 6.58 remains **BLOCKED**. No verified paper, key pairing, syllabus bytes/digest, or automatic Old Papers update is established.
+
+
+## Fresh egress probe after user supplied Render outbound ranges — 26 October 2026
+
+- User confirmed the Render Dashboard **Connect → Outbound** panel lists `74.220.48.0/24` and `74.220.56.0/24` for `ai-comp-api`. These are shared Oregon-region outbound ranges, not a unique static address. Render describes region-specific shared outbound ranges in its [official documentation](https://render.com/docs/outbound-ip-addresses).
+- After PR #66 merged at `2ea757053b5eaa1cda3b037e6ddd5776333645a8`, Render deployment `dep-dbfksue7bikc73cbqujg` became LIVE (deployment log at `2026-10-26T12:59:10Z`). The existing source-health probe was safely rerun using job [#121586949254](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472). The endpoint responded on attempt 1 and returned a fresh (not cached) source-health report at approximately `2026-10-26T13:02:40Z`. The workflow then failed at its intended operational gate; no paper content was fetched and no database records were changed.
+- Fresh results:
+  - `RSSB_OFFICIAL`: DNS `OK`; IPv4 TCP `FAIL` (`TimeoutError`); TLS not reached; no IPv6 records.
+  - `RSSB_LEGACY_OFFICIAL`: DNS `OK`; IPv4 TCP `PASS`; certificate-validated TLS `FAIL` (`SSLError`); no IPv6 records.
+  - `RPSC_OFFICIAL`: DNS `OK`; IPv4 TCP `FAIL` (`TimeoutError`); IPv6 TCP `FAIL` (`OSError`); TLS not reached.
+- The measurements are materially unchanged from the preceding probe. The shared CIDRs are now recorded, but the evidence does **not** identify the actual remote-side cause or prove that RSSB/RPSC explicitly block these ranges. The DNS/TCP/TLS health endpoint is diagnostic only.
+- **Next single action:** have an authorized official-host/network contact verify whether outbound connections from `74.220.48.0/24` and `74.220.56.0/24` are filtered or rate-limited. If this cannot be verified, compare a tested approved runtime/network route before considering an architecture change. Do not buy dedicated IPs, add a proxy, migrate region or weaken TLS without separate explicit approval. No repeated candidate fetch until there is evidence of a working route.
+- **Status unchanged:** Phase 2.2 `BLOCKED`; Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED`. No official paper bytes, answer-key pairing, full syllabus inventory or live auto-update has been verified.
