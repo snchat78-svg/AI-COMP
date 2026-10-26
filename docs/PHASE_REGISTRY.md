@@ -157,3 +157,10 @@ The link-tracking-parameter fix is on main at `f49511a3ebca0a875c4ba8bae30f8ed66
 | `RPSC_OFFICIAL` | OK | FAIL (`TimeoutError`) | NOT_REACHED | TCP FAIL (`OSError`); TLS NOT_REACHED |
 
 **Next action:** keep Phase 2.2 BLOCKED and Phase 6.56 IN_PROGRESS. Investigate official-host outbound reachability using normal DNS/TCP/TLS; do not weaken certificate validation, enable unsafe legacy renegotiation, or use a secondary mirror as official evidence. The existing RSSB syllabus candidate is still `REVIEW_PENDING`; no actual PDF bytes or digest have been confirmed. Retry the official PDF only after a validated official HTTPS route is reachable.
+
+
+## Permanent Question Bank product split — 26 October 2026
+
+The product contract is documented in [QUESTION_BANK_PRODUCT_CONTRACT.md](QUESTION_BANK_PRODUCT_CONTRACT.md). The learner-facing Question Bank has two separate lanes: (1) **One-Liners**, navigated Subject → Topic → Subtopic and targeting full official-syllabus examinable-point coverage as concise Q → A; and (2) **Previous Year Papers / Old Papers**, holding actual historical and newly published official papers. The existing source-discovery/paper-processing pipeline must continuously check registered official sources and surface new papers after authenticity/integrity and review gates pass. A paper record must not automatically become a verified One-Liner.
+
+Current live status is **not** successful auto-update: latest 26 October source-health measurements report RSSB/RPSC TCP timeouts and legacy RSSB TLS failure, with zero new paper candidates. Keep Phase 2.2 blocked, Phase 6.56 in progress, and do not advance dependent phases until reachable official-source discovery, real paper ingestion, answer-key pairing where available, and live mobile end-to-end checks are evidenced. Do not weaken TLS or substitute unofficial mirrors.
