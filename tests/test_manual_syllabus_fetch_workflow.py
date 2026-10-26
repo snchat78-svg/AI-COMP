@@ -16,7 +16,8 @@ def test_manual_syllabus_candidate_fetch_is_explicit_and_review_gated() -> None:
     assert "workflow_dispatch:" in workflow
     assert "default: DO_NOT_RUN" in workflow
     assert "REGISTER_AND_FETCH" in workflow
-    assert "if: ${{ inputs.confirm_action == 'REGISTER_AND_FETCH' }}" in workflow
+    assert "FETCH_EXISTING" in workflow
+    assert "if: ${{ inputs.confirm_action == 'REGISTER_AND_FETCH' || inputs.confirm_action == 'FETCH_EXISTING' }}" in workflow
     assert "environment: official-source-review" in workflow
     assert "secrets.AI_COMP_SYLLABUS_ADMIN_TOKEN" in workflow
     assert "secrets.AI_COMP_SYLLABUS_REVIEW_TOKEN" in workflow
@@ -32,6 +33,9 @@ def test_fetch_uses_only_registered_candidate_and_never_accepts_a_fetch_url() ->
     assert '"/api/v1/admin/exam-syllabi"' in workflow
     assert "fetch-source" in workflow
     assert "quote(syllabus_id, safe='')" in workflow
+    assert 'if mode == "REGISTER_AND_FETCH":' in workflow
+    assert 'elif mode == "FETCH_EXISTING":' in workflow
+    assert "Registration: skipped; no duplicate candidate was created." in workflow
 
     fetch_call = workflow.split("result = call_api(", 1)[1].split("if result.get(", 1)[0]
     assert "source_url" not in fetch_call  # The fetch endpoint reads its URL from its database record.

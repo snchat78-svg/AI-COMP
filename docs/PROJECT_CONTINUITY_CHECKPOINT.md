@@ -150,3 +150,11 @@ Migration 0021 also demotes legacy `VERIFIED` one-liners without a recorded inde
 Latest documentation PR #57 head `757ad0c56cf51cc5b30d5f580671028a3bd737cc` passed CI in [run #583](https://github.com/snchat78-svg/AI-COMP/actions/runs/40190025937).
 
 **Next single operational gate:** verify the protected GitHub Actions environment `official-source-review` contains `AI_COMP_SYLLABUS_ADMIN_TOKEN` and `AI_COMP_SYLLABUS_REVIEW_TOKEN`, with values matching the deployed API and not equal to one another; verify Render has distinct `AI_COMP_SYLLABUS_AUTHOR_ID` and `AI_COMP_SYLLABUS_REVIEWER_ID`. Do not share secret values in chat. Once those prerequisites are confirmed, use the existing `.github/workflows/register-and-fetch-official-syllabus.yml` workflow with `REGISTER_AND_FETCH`. Its result must remain pending until the fetched PDF bytes, document identity/version and every syllabus page are independently reviewed. Phase 6.56 remains IN_PROGRESS and Phase 6.57 remains PLANNED.
+
+## Live syllabus-fetch incident and next action — 26 October 2026
+
+The first live workflow run passed candidate input validation and created `rssb-cet-graduation-2026-candidate-20261026-01` (`201 Created`). The subsequent API fetch returned `502 SOURCE_FETCH_TIMEOUT`. Render logs confirm both requests; the candidate remains pending and the unsuccessful fetch is audited. Do not reuse its ID with `REGISTER_AND_FETCH`, because that action attempts a new insert.
+
+A fix is being proposed in branch `fix/phase-6-56-retry-existing-syllabus-fetch`: it adds a separately explicit `FETCH_EXISTING` action that retries the protected API fetch for the existing candidate without registering another row. Await exact-head CI and merge before using the new action. If the retry still times out, treat that as a live network/official-host access blocker—not an auth or ID-format issue. Keep TLS verification enabled and use no secondary mirror as official evidence.
+
+Next after the retry: confirm persisted PDF bytes, title, issuing board, notification/version, page count and SHA-256; independently inspect all pages; then complete the full syllabus inventory, evidence-backed concept mappings and real mobile E2E. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
