@@ -122,3 +122,56 @@ def test_source_health_route_returns_503_without_exposing_probe_exception_detail
     assert response.json()["error"]["code"] == "SOURCE_HEALTH_UNAVAILABLE"
     assert response.json()["error"]["exception_type"] == "RuntimeError"
     assert "private database or runtime details" not in response.text
+
+def test_source_health_route_allows_only_chat_link_tracking_query(monkeypatch):
+    calls = []
+
+    def fake_report(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.5-source-health",
+            "probes_are_diagnostic_only": True,
+            "results": [
+                {
+                    "source_id": "RSSB_OFFICIAL",
+                    "host": "rssb.rajasthan.gov.in",
+                    "dns_status": "OK",
+                    "ipv4_records": 1,
+                    "ipv4_tcp": "FAIL",
+                    "ipv4_tls": "NOT_REACHED",
+                    "ipv4_tcp_errors": ["TimeoutError"],
+                    "ipv4_tls_errors": [],
+                    "ipv6_records": 0,
+                    "ipv6_tcp": "NO_RECORDS",
+                    "ipv6_tls": "NO_RECORDS",
+                    "ipv6_tcp_errors": [],
+                    "ipv6_tls_errors": [],
+                }
+            ],
+        }
+
+    monkeypatch.setattr(source_health_routes, "source_health_report", fake_report)
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/diagnostics/official-source-health?utm_source=chatgpt.com"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["results"][0]["source_id"] == "RSSB_OFFICIAL"
+    assert response.json()["results"][0]["ipv4_tcp"] == "FAIL"
+    assert calls == [0.75]
+
+
+def test_source_health_route_rejects_other_or_duplicate_tracking_parameters():
+    client = TestClient(create_app())
+
+    responses = (
+        client.get("/diagnostics/official-source-health?utm_source=elsewhere"),
+        client.get("/diagnostics/official-source-health?utm_source=chatgpt.com&url=https://example.org/"),
+        client.get("/diagnostics/official-source-health?utm_source=chatgpt.com&utm_source=chatgpt.com"),
+    )
+
+    assert [response.status_code for response in responses] == [400, 400, 400]
+    assert all(response.json()["error"]["code"] == "UNSUPPORTED_QUERY" for response in responses)
+
