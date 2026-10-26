@@ -187,3 +187,9 @@ The first explicit live run of `.github/workflows/register-and-fetch-official-sy
 - Do **not** rerun `REGISTER_AND_FETCH` with this same ID: registration is insert-only and would conflict with the existing candidate. This PR adds explicit `FETCH_EXISTING` mode to retry the already-registered ID without creating a duplicate.
 - This retry-mode change does not make the RSSB host reachable. If a retry returns the same timeout, treat it as an external source-network blocker and inspect/restore the deployed Render service's outbound route or obtain an approved, reachable official RSSB URL. Do not weaken certificate validation, use a third-party mirror as official evidence, increase limits blindly, or mark the candidate verified.
 - Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED** until the exact official document and its complete inventory/mappings are independently reviewed.
+
+## Diagnostic-link tracking parameter incident — 26 October 2026
+
+Render logs established why the diagnostic link returned `UNSUPPORTED_QUERY`: link navigation appended the analytics parameter `utm_source=chatgpt.com`, and the endpoint correctly rejected every query string. This was a diagnostic-link compatibility issue, separate from the actual `SOURCE_FETCH_TIMEOUT` error.
+
+The diagnostic route is being hardened to allow only the exact single tracking pair `utm_source=chatgpt.com`. It continues to reject arbitrary host/URL selectors, other values, and duplicate/additional parameters; the source registry remains hard-coded. After the fix is deployed, reopen `https://ai-comp-api.onrender.com/diagnostics/official-source-health` and inspect the `RSSB_OFFICIAL` DNS/TCP/TLS fields. That result determines the next source-fetch fix. The underlying PDF fetch remains unverified and Phase 6.56 remains IN_PROGRESS.
