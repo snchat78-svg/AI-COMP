@@ -158,3 +158,9 @@ The first live workflow run passed candidate input validation and created `rssb-
 A fix is being proposed in branch `fix/phase-6-56-retry-existing-syllabus-fetch`: it adds a separately explicit `FETCH_EXISTING` action that retries the protected API fetch for the existing candidate without registering another row. Await exact-head CI and merge before using the new action. If the retry still times out, treat that as a live network/official-host access blocker—not an auth or ID-format issue. Keep TLS verification enabled and use no secondary mirror as official evidence.
 
 Next after the retry: confirm persisted PDF bytes, title, issuing board, notification/version, page count and SHA-256; independently inspect all pages; then complete the full syllabus inventory, evidence-backed concept mappings and real mobile E2E. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Diagnostic-link query compatibility — 26 October 2026
+
+Render request logs pinpoint the diagnostic failure: the clicked URL carried `utm_source=chatgpt.com`, so `/diagnostics/official-source-health` returned `400 UNSUPPORTED_QUERY` before running DNS/TCP/TLS probes. A narrowly scoped fix is in branch `fix/source-health-chatgpt-tracking-query`: accept exactly the single `utm_source=chatgpt.com` analytics pair and continue rejecting arbitrary URL/host parameters, different values, or extra/duplicate parameters. Regression tests cover both behavior classes.
+
+After the PR exact-head CI passes and the change is deployed to Render, reopen the existing diagnostic link and inspect `RSSB_OFFICIAL` fields. Then diagnose the real `SOURCE_FETCH_TIMEOUT` according to measured DNS/TCP/TLS outcome. This tracking-query bug is separate from RSSB fetch connectivity and does not prove the PDF was fetched. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.

@@ -139,3 +139,9 @@ The operator supplied the logs for successful migration workflow run #3. Its che
 - A failed source-fetch attempt is audited. Since candidate registration is insert-only, do not rerun `REGISTER_AND_FETCH` with the same ID. The accompanying fix adds explicit `FETCH_EXISTING` mode to call only the protected fetch endpoint for a previously registered pending candidate.
 - The timeout is still an external live acceptance blocker; code changes alone cannot prove outbound reachability to RSSB. If the controlled retry also times out, continue network diagnosis from Render/official-host access and preserve standard TLS validation. No unofficial mirror may be declared an official source.
 - **Current phase remains 6.56 IN_PROGRESS. Phase 6.57 remains PLANNED.** Reassess only after successful fetch, exact PDF inspection, complete topic/subtopic inventory, independent mapping review and real mobile E2E evidence.
+
+## Diagnostic endpoint query-parameter root cause — 26 October 2026
+
+Render logs show the user-facing diagnostic link was requested as `/diagnostics/official-source-health?utm_source=chatgpt.com` (HTTP 400). This was caused by link-tracking metadata, not a DNS/TCP/TLS result. A targeted compatibility fix now allows only that exact one tracking parameter while retaining rejection of arbitrary URL/host parameters and duplicate/extra parameters. Exact-head CI must pass and the Render deployment must succeed before asking the operator to reopen the diagnostic URL.
+
+The actual `SOURCE_FETCH_TIMEOUT` on the registered RSSB PDF remains unresolved until the endpoint returns connectivity measurements and the source-fetch path succeeds. Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED.
