@@ -32,11 +32,15 @@ def _response(status_code: int, payload: dict[str, Any]) -> Response:
 @router.get("/diagnostics/official-source-health", include_in_schema=False)
 def official_source_health(request: Request) -> Response:
     """Probe registered official hosts only; no arbitrary host input or content fetch."""
-    if request.query_params:
+    # ChatGPT adds this exact, non-functional tracking parameter to opened links.
+    # Accept only that known value; never let callers supply a URL, host, or probe target.
+    query_items = list(request.query_params.multi_items())
+    allowed_link_tracking = [("utm_source", "chatgpt.com")]
+    if query_items and query_items != allowed_link_tracking:
         return _response(400, {
             "error": {
                 "code": "UNSUPPORTED_QUERY",
-                "message": "This fixed diagnostic endpoint accepts no query parameters.",
+                "message": "This fixed diagnostic endpoint accepts no query parameters other than the known link-tracking parameter.",
             }
         })
 
