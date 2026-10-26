@@ -109,3 +109,13 @@ Whenever a content seed, review, syllabus mapping, source check or live migratio
 3. Continue the phase currently marked IN_PROGRESS or the next PLANNED phase. Do not repeat merged phases; reopen them only for a concrete defect.
 4. Prioritize the oldest/highest-gap ledger rows and source the facts. Keep all unreviewed candidates NEEDS_REVIEW.
 5. Record completed work, PR/commit SHA, CI, live migration status, verified candidate counts and the exact next action back into the checkpoint/registry.
+
+
+## Product separation: One-Liners vs Previous Year Papers (permanent requirement)
+
+See the full [Question Bank Product Contract](QUESTION_BANK_PRODUCT_CONTRACT.md). Keep these as two separate learner-facing lanes:
+
+- **One-Liners:** Subject → Topic → Subtopic → concise Q → A. The target is full examinable-point coverage for every topic applicable to the selected exam's official syllabus, with evidence, deduplication and independent review. A question-count threshold alone does not prove completeness.
+- **Previous Year Papers / Old Papers:** actual historical and newly published paper artifacts from official sources, with paper identity, year, source provenance, original document and verified matching answer-key information where available.
+- Existing official-source discovery/processing should poll registered sources on schedule and automatically surface newly published papers only after integrity and review gates pass. A paper appearing here does not automatically promote its questions into the approved One-Liner bank.
+- Record blocked/failed connectivity honestly. As of 2026-10-26, the official-source network/TLS gate remains blocked; no successful live auto-update has been demonstrated. Do not claim otherwise or weaken TLS.
