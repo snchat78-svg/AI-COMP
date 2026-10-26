@@ -158,3 +158,11 @@ The first live workflow run passed candidate input validation and created `rssb-
 A fix is being proposed in branch `fix/phase-6-56-retry-existing-syllabus-fetch`: it adds a separately explicit `FETCH_EXISTING` action that retries the protected API fetch for the existing candidate without registering another row. Await exact-head CI and merge before using the new action. If the retry still times out, treat that as a live network/official-host access blocker—not an auth or ID-format issue. Keep TLS verification enabled and use no secondary mirror as official evidence.
 
 Next after the retry: confirm persisted PDF bytes, title, issuing board, notification/version, page count and SHA-256; independently inspect all pages; then complete the full syllabus inventory, evidence-backed concept mappings and real mobile E2E. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Repeated official PDF fetch timeout — 26 October 2026
+
+The live retry after PR #58 and Render deploy `dep-dbfak7ss728c73dbp5o0` again returned `502 SOURCE_FETCH_TIMEOUT` for existing candidate `rssb-cet-graduation-2026-candidate-20261026-01`. `FETCH_EXISTING` correctly avoided another registration, but did not make the official host reachable. The API's safe error does not identify whether the failing stage is DNS, TCP connect, TLS, response read, or the overall deadline. Do not make blind timeout changes.
+
+**Only next step:** open `https://ai-comp-api.onrender.com/diagnostics/official-source-health` from the deployed service and inspect the JSON for `RSSB_OFFICIAL` (`dns_status`, `ipv4_tcp`, `ipv4_tls`, and IPv6 equivalents). This fixed-host endpoint is already implemented in the repo and performs diagnostic-only DNS/TCP/default-certificate TLS probes; it will not download or verify the PDF. Use the result to choose a targeted network/TLS or bounded-read fix. Do not weaken TLS, use a third-party mirror as official proof, or repeatedly register/retry without a new diagnostic finding.
+
+Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED. No live official PDF bytes, content, or SHA-256 are verified yet.
