@@ -145,3 +145,15 @@ The operator supplied the logs for successful migration workflow run #3. Its che
 Render logs show the user-facing diagnostic link was requested as `/diagnostics/official-source-health?utm_source=chatgpt.com` (HTTP 400). This was caused by link-tracking metadata, not a DNS/TCP/TLS result. A targeted compatibility fix now allows only that exact one tracking parameter while retaining rejection of arbitrary URL/host parameters and duplicate/extra parameters. Exact-head CI must pass and the Render deployment must succeed before asking the operator to reopen the diagnostic URL.
 
 The actual `SOURCE_FETCH_TIMEOUT` on the registered RSSB PDF remains unresolved until the endpoint returns connectivity measurements and the source-fetch path succeeds. Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Render connectivity evidence — 26 October 2026 (run #11)
+
+The link-tracking-parameter fix is on main at `f49511a3ebca0a875c4ba8bae30f8ed66964e0a5` and Render deployment `dep-dbfea6dg1s2s73a8labg` is LIVE. The post-deploy [Render source-health workflow run #11](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) reached the endpoint and received diagnostic results, then exited nonzero because no registered source passed both TCP and certificate-validated TLS. This is an expected operational gate, not a regression in the diagnostic route.
+
+| Source | DNS | IPv4 TCP | IPv4 TLS | IPv6 TCP/TLS |
+|---|---|---|---|---|
+| `RSSB_OFFICIAL` | OK | FAIL (`TimeoutError`) | NOT_REACHED | NO_RECORDS |
+| `RSSB_LEGACY_OFFICIAL` | OK | PASS | FAIL (`SSLError`) | NO_RECORDS |
+| `RPSC_OFFICIAL` | OK | FAIL (`TimeoutError`) | NOT_REACHED | TCP FAIL (`OSError`); TLS NOT_REACHED |
+
+**Next action:** keep Phase 2.2 BLOCKED and Phase 6.56 IN_PROGRESS. Investigate official-host outbound reachability using normal DNS/TCP/TLS; do not weaken certificate validation, enable unsafe legacy renegotiation, or use a secondary mirror as official evidence. The existing RSSB syllabus candidate is still `REVIEW_PENDING`; no actual PDF bytes or digest have been confirmed. Retry the official PDF only after a validated official HTTPS route is reachable.

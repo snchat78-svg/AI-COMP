@@ -164,3 +164,13 @@ Next after the retry: confirm persisted PDF bytes, title, issuing board, notific
 Render request logs pinpoint the diagnostic failure: the clicked URL carried `utm_source=chatgpt.com`, so `/diagnostics/official-source-health` returned `400 UNSUPPORTED_QUERY` before running DNS/TCP/TLS probes. A narrowly scoped fix is in branch `fix/source-health-chatgpt-tracking-query`: accept exactly the single `utm_source=chatgpt.com` analytics pair and continue rejecting arbitrary URL/host parameters, different values, or extra/duplicate parameters. Regression tests cover both behavior classes.
 
 After the PR exact-head CI passes and the change is deployed to Render, reopen the existing diagnostic link and inspect `RSSB_OFFICIAL` fields. Then diagnose the real `SOURCE_FETCH_TIMEOUT` according to measured DNS/TCP/TLS outcome. This tracking-query bug is separate from RSSB fetch connectivity and does not prove the PDF was fetched. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+
+## Latest Render source-health measurements — 26 October 2026
+
+The diagnostic URL compatibility fix reached main as `f49511a3ebca0a875c4ba8bae30f8ed66964e0a5` and Render deploy `dep-dbfea6dg1s2s73a8labg` is LIVE. [Render source-health workflow run #11](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) successfully queried the endpoint and emitted these results before its deliberate connectivity gate failed:
+
+- `RSSB_OFFICIAL`: DNS OK; IPv4 TCP FAIL (`TimeoutError`); TLS NOT_REACHED; no IPv6 records.
+- `RSSB_LEGACY_OFFICIAL`: DNS OK; IPv4 TCP PASS; TLS FAIL (`SSLError`); no IPv6 records. Prior measurements identified unsafe legacy renegotiation; do not weaken TLS.
+- `RPSC_OFFICIAL`: DNS OK; IPv4 TCP FAIL (`TimeoutError`); IPv6 TCP FAIL (`OSError`); TLS not reached.
+
+No official source currently passes both TCP connectivity and certificate-validated TLS. The workflow failure is evidence of the real source-network blocker, not a failure of the fixed diagnostic URL. Keep Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED. Candidate `rssb-cet-graduation-2026-candidate-20261026-01` remains `REVIEW_PENDING`; no official PDF bytes/SHA-256 have been verified. Next task: restore or identify an approved, reachable official HTTPS route, then fetch and independently review the exact PDF and complete syllabus inventory.
