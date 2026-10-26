@@ -63,3 +63,16 @@ The discovery implementation had been seeding the non-current `viewcommon?Slice=
 - Official RPSC answer keys: https://rpsc.rajasthan.gov.in/answerkeys
 
 This is a discovery-path correction, not proof of live source ingestion. The measured GitHub Actions/Render connectivity gate still has RSSB/RPSC TCP failures and legacy RSSB TLS failure. The crawler must still obey the registered source's `robots.txt`, allowlisted same-host redirects and URL policy; do not relax TLS or use mirrors. Keep Phase 2.2 BLOCKED until the scheduled workflow successfully reaches an official source and persists nonzero real candidates.
+
+
+## Live source recheck after RPSC archive-route fix — 26 October 2026
+
+PR [#64](https://github.com/snchat78-svg/AI-COMP/pull/64) merged as `9984f3892a62740840b93db276ae13ec77ca8001`. Exact-head CI run [40279750490](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279750490) passed the pytest suite and API container build. The change corrects the RPSC discovery seeds to the current official [Question Papers](https://rpsc.rajasthan.gov.in/quespapers) and [Answer Keys](https://rpsc.rajasthan.gov.in/answerkeys) routes.
+
+The merge automatically triggered [official-source-research run #18](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279924824) on that exact main commit. It failed closed and persisted **0 paper candidates**:
+- `RSSB_OFFICIAL`: DNS OK; IPv4 TCP timeout; TLS not reached.
+- `RSSB_LEGACY_OFFICIAL`: TCP connects, but certificate-validated TLS fails with `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`.
+- `RPSC_OFFICIAL`: IPv4 TCP timeout and IPv6 network-unreachable error; TLS not reached.
+- All three crawl results were `BLOCKED_OR_FAILED`; total persisted candidates: **0**.
+
+The RPSC route correction is therefore an implemented and CI-tested code fix, but it does not resolve the separate egress/TLS blocker. Keep Phase 2.2 **BLOCKED** and Phase 6.56 **IN_PROGRESS**. Do not weaken TLS, use an unofficial mirror as official evidence, rerun empty-queue downstream processing as if complete, or advance phases. The next acceptance gate remains successful, robots-compliant retrieval from at least one registered official HTTPS source and nonzero persisted real paper candidates, followed by existing paper processing, answer-key matching, independent review and mobile E2E.

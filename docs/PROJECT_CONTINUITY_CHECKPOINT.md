@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-26 (main `45cd41ca2d437277f2497deb45165e8ed5a24922`; PR #63 product contract merged; live source run #16 blocked; downstream empty-queue runs #11/#9 verified; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-26 (main `9984f3892a62740840b93db276ae13ec77ca8001`; PR #63 product contract and PR #64 RPSC route fix merged; official-source run #18 blocked with 0 candidates; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -189,3 +189,12 @@ Read [QUESTION_BANK_PRODUCT_CONTRACT.md](QUESTION_BANK_PRODUCT_CONTRACT.md) befo
 ## Current RPSC official archive route finding — 26 October 2026
 
 A code review against the live official RPSC navigation found a concrete path mismatch: the existing discovery seeded `viewcommon?Slice=QP` and `viewcommon?Slice=AK`, whereas the official site exposes [Question Papers](https://rpsc.rajasthan.gov.in/quespapers) and [Answer Keys](https://rpsc.rajasthan.gov.in/answerkeys). Current branch `fix/rpsc-official-paper-archive-routes` corrects those seeds and adds regression coverage. This route fix must pass exact-head CI before merge. It does not make the site reachable from the ingestion runtime; Phase 2.2 / Phase 6.56 source-network gates stay blocked until real official documents are discovered and processed.
+
+
+## Latest live run after official RPSC route correction — 26 October 2026
+
+PR #64 is merged at `9984f3892a62740840b93db276ae13ec77ca8001`; exact-head CI [40279750490](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279750490) passed pytest and API-container build. It corrects the RPSC crawl seed to official `/quespapers` and `/answerkeys` routes.
+
+The merge automatically started [official-source-research run #18](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279924824), which failed closed and persisted **0 paper candidates**. Measured errors: current RSSB TCP timeout; legacy RSSB TLS failure `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`; RPSC IPv4 timeout and IPv6 network unreachable. This is live runtime connectivity, not proof that the route fix failed. Do not disable TLS or switch to an unofficial mirror.
+
+**Next action:** continue the same blocked Phase 2.2 / Phase 6.56 acceptance gate: find/restore an approved, reachable official HTTPS path for the existing crawler, then demonstrate nonzero real candidates before running paper extraction and answer-key matching. Keep Phase 6.57 PLANNED and do not report Old Papers auto-update as live until an official new-paper end-to-end test succeeds.

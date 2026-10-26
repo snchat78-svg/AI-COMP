@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-26 (main commit `45cd41ca2d437277f2497deb45165e8ed5a24922`; product-contract PR #63 merged; RPSC official archive route correction in progress; live run #16 blocked; paper-processing run #11 and answer-key-verification run #9 completed with empty queues; no phase advancement)  
+**Last verified:** 2026-10-26 (main commit `9984f3892a62740840b93db276ae13ec77ca8001`; PR #63 product contract and PR #64 RPSC route fix merged; live official-source run #18 blocked with zero candidates; no phase advancement)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -169,3 +169,12 @@ Current live status is **not** successful auto-update: latest 26 October source-
 ## RPSC official archive-route correction — 26 October 2026
 
 The current official RPSC navigation uses [Question Papers](https://rpsc.rajasthan.gov.in/quespapers) and [Answer Keys](https://rpsc.rajasthan.gov.in/answerkeys). Discovery previously seeded the non-current `viewcommon?Slice=QP/AK` paths; the active fix branch `fix/rpsc-official-paper-archive-routes` switches those seeds to `/quespapers` and `/answerkeys` and updates the regression test to check that titled same-host paper/key links are discovered. This closes an identified discovery-path gap but does **not** resolve or conceal the measured outbound connectivity failure. Phase 2.2 remains BLOCKED; source-health, robots/TLS requirements and nonzero real-candidate persistence are still live acceptance gates.
+
+
+## Latest source research after RPSC route correction — 26 October 2026
+
+- PR [#63](https://github.com/snchat78-svg/AI-COMP/pull/63) merged the permanent [Question Bank Product Contract](QUESTION_BANK_PRODUCT_CONTRACT.md), explicitly separating One-Liners (Subject → Topic → Subtopic, full-syllabus Q → A coverage) from actual Previous Year Papers.
+- PR [#64](https://github.com/snchat78-svg/AI-COMP/pull/64) merged as `9984f3892a62740840b93db276ae13ec77ca8001`; exact-head CI [40279750490](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279750490) passed pytest and API-container build. It corrects RPSC archive seeds from stale `viewcommon?Slice=QP/AK` routes to the official `/quespapers` and `/answerkeys` pages.
+- The merge-triggered official-source-research run [#18](https://github.com/snchat78-svg/AI-COMP/actions/runs/40279924824) then failed closed: RSSB current host TCP timeout; RSSB legacy host TLS failure `UNSAFE_LEGACY_RENEGOTIATION_DISABLED`; RPSC IPv4 TCP timeout and IPv6 network unreachable; **0 candidates persisted**.
+- Current gate: Phase 2.2 **BLOCKED**; Phase 6.56 **IN_PROGRESS**; Phase 6.57 **PLANNED**; Phase 6.58 **BLOCKED**. No verified official paper, answer-key pairing, syllabus bytes/digest or live Old Papers auto-update has been established by this run.
+- Next single dependency gate: restore or identify an approved, reachable official HTTPS route from the scheduled discovery runtime without weakening certificate validation, then rerun the existing discovery workflow and require nonzero real candidate persistence. Only then continue the established processing → answer-key matching → review → mobile E2E chain.
