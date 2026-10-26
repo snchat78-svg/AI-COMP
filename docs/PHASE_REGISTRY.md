@@ -139,3 +139,11 @@ The operator supplied the logs for successful migration workflow run #3. Its che
 - A failed source-fetch attempt is audited. Since candidate registration is insert-only, do not rerun `REGISTER_AND_FETCH` with the same ID. The accompanying fix adds explicit `FETCH_EXISTING` mode to call only the protected fetch endpoint for a previously registered pending candidate.
 - The timeout is still an external live acceptance blocker; code changes alone cannot prove outbound reachability to RSSB. If the controlled retry also times out, continue network diagnosis from Render/official-host access and preserve standard TLS validation. No unofficial mirror may be declared an official source.
 - **Current phase remains 6.56 IN_PROGRESS. Phase 6.57 remains PLANNED.** Reassess only after successful fetch, exact PDF inspection, complete topic/subtopic inventory, independent mapping review and real mobile E2E evidence.
+
+## Repeated source-fetch timeout — 26 October 2026
+
+After PR #58 merged as `7c2d73a1915022c42d474b3b6520b0a032415a8c` and its Render deploy succeeded (`dep-dbfak7ss728c73dbp5o0`), the operator retried the existing candidate with `FETCH_EXISTING`; the run again returned `502 SOURCE_FETCH_TIMEOUT`. The exact failing network stage is not exposed by this safe error response. Candidate remains `REVIEW_PENDING`; no official PDF bytes or digest are confirmed.
+
+**Roadmap action (stay in Phase 6.56):** inspect the existing Render-side fixed-source diagnostic at `https://ai-comp-api.onrender.com/diagnostics/official-source-health`. Read DNS, TCP and certificate-validated TLS fields for `RSSB_OFFICIAL`, and only then decide whether the fix belongs in DNS/egress routing, TLS configuration, or bounded download-read timeout. Do not blindly extend limits, retry registration, weaken TLS, or substitute a third-party mirror.
+
+Phase 6.56 is still IN_PROGRESS; Phase 6.57 remains PLANNED until official retrieval, exact-document review, complete inventory/mapping, and mobile E2E gates pass.
