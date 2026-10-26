@@ -187,3 +187,24 @@ The first explicit live run of `.github/workflows/register-and-fetch-official-sy
 - Do **not** rerun `REGISTER_AND_FETCH` with this same ID: registration is insert-only and would conflict with the existing candidate. This PR adds explicit `FETCH_EXISTING` mode to retry the already-registered ID without creating a duplicate.
 - This retry-mode change does not make the RSSB host reachable. If a retry returns the same timeout, treat it as an external source-network blocker and inspect/restore the deployed Render service's outbound route or obtain an approved, reachable official RSSB URL. Do not weaken certificate validation, use a third-party mirror as official evidence, increase limits blindly, or mark the candidate verified.
 - Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED** until the exact official document and its complete inventory/mappings are independently reviewed.
+
+## Repeated live timeout and required diagnosis — 26 October 2026
+
+After PR #58 was merged and its Render deployment succeeded, the operator retried candidate `rssb-cet-graduation-2026-candidate-20261026-01` using `FETCH_EXISTING`. The next workflow again returned `502 SOURCE_FETCH_TIMEOUT`.
+
+This confirms the duplicate-registration problem is addressed, but **the source fetch itself is still not fixed**. The safe API error does not distinguish DNS, TCP connect, TLS handshake, response-read, or total-deadline timeout. Do not repeatedly retry and do not increase the 12-second fetch bound without evidence about which stage timed out.
+
+### Next gate: inspect connectivity from the deployed Render runtime
+
+Use the already implemented fixed-host diagnostic endpoint:
+
+`GET https://ai-comp-api.onrender.com/diagnostics/official-source-health`
+
+It returns DNS/TCP/certificate-validated TLS results for the registered official hosts only; it accepts no arbitrary URL and does not fetch or alter source documents. Inspect the `RSSB_OFFICIAL` row first:
+
+- `dns_status=ERROR` or `NO_RECORDS`: diagnose the Render runtime resolver / DNS path.
+- DNS is `OK`, but `ipv4_tcp=FAIL` and TLS is `NOT_REACHED`: investigate outbound routing/connectivity or official-host reachability from Render.
+- TCP passes but TLS fails: preserve normal certificate validation; diagnose the precise TLS failure. Never enable unsafe legacy renegotiation.
+- TCP/TLS both pass but PDF fetch still times out: only then investigate response-read/total-deadline behavior and consider a bounded timeout adjustment with regression tests.
+
+The probe uses a short timeout and is diagnostic—not proof the complete PDF download will succeed. Report its JSON result before choosing a code change. A reachable secondary transcription is not an official source substitute. Candidate remains `REVIEW_PENDING`; no PDF bytes or SHA-256 has yet been verified. Phase 6.56 remains IN_PROGRESS and Phase 6.57 PLANNED.
