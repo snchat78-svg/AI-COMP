@@ -193,3 +193,17 @@ The first explicit live run of `.github/workflows/register-and-fetch-official-sy
 Render logs established why the diagnostic link returned `UNSUPPORTED_QUERY`: link navigation appended the analytics parameter `utm_source=chatgpt.com`, and the endpoint correctly rejected every query string. This was a diagnostic-link compatibility issue, separate from the actual `SOURCE_FETCH_TIMEOUT` error.
 
 The diagnostic route is being hardened to allow only the exact single tracking pair `utm_source=chatgpt.com`. It continues to reject arbitrary host/URL selectors, other values, and duplicate/additional parameters; the source registry remains hard-coded. After the fix is deployed, reopen `https://ai-comp-api.onrender.com/diagnostics/official-source-health` and inspect the `RSSB_OFFICIAL` DNS/TCP/TLS fields. That result determines the next source-fetch fix. The underlying PDF fetch remains unverified and Phase 6.56 remains IN_PROGRESS.
+
+## Latest deployed connectivity diagnostic — 26 October 2026
+
+After the diagnostic URL fix deployed, [Render official-source-health run #11](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) returned live measurements. The action ended in failure intentionally because it found no approved source passing both TCP and default-certificate TLS:
+
+| Registered source | DNS | IPv4 TCP | IPv4 TLS | IPv6 |
+|---|---|---|---|---|
+| RSSB current host | OK | FAIL (`TimeoutError`) | NOT_REACHED | no records |
+| RSSB legacy host | OK | PASS | FAIL (`SSLError`) | no records |
+| RPSC | OK | FAIL (`TimeoutError`) | NOT_REACHED | TCP FAIL (`OSError`); TLS NOT_REACHED |
+
+This is the first useful deployed-source network measurement after fixing the ChatGPT-added `utm_source` query guard. It does not yet identify why Render cannot complete a TCP connection to the current RSSB/RPSC hosts; it does establish that simply retrying the fetch and changing candidate metadata is not a fix. Preserve certificate validation—especially for the legacy host—and do not use secondary transcriptions as official evidence.
+
+Candidate `rssb-cet-graduation-2026-candidate-20261026-01` stays `REVIEW_PENDING`; no official bytes or SHA-256 are verified. Phase 6.56 remains IN_PROGRESS until an allowed official HTTPS source becomes reachable, the actual PDF is fetched and independently reviewed, the full syllabus inventory/mappings are reviewed, and live mobile E2E passes.
