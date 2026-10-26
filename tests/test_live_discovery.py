@@ -103,7 +103,7 @@ def test_rpsc_discovery_uses_current_official_question_and_answer_key_archives()
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: AI-COMP/phase2\\nAllow: /\\nSitemap: " + base + "sitemap.xml\\n",
+            "User-agent: AI-COMP/phase2\nAllow: /\nSitemap: " + base + "sitemap.xml\n",
             "text/plain",
         ),
         base: HttpResponse(
