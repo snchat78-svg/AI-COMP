@@ -87,6 +87,30 @@ def test_source_health_route_caches_probe_results_for_sixty_seconds(monkeypatch)
     assert calls == [0.75]
 
 
+def test_source_health_route_ignores_exact_chatgpt_link_tracking_parameter(monkeypatch):
+    calls = []
+
+    def fake_report(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.5-source-health",
+            "probes_are_diagnostic_only": True,
+            "results": [],
+        }
+
+    monkeypatch.setattr(source_health_routes, "source_health_report", fake_report)
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/diagnostics/official-source-health?utm_source=chatgpt.com"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["phase"] == "2.5-source-health"
+    assert response.json()["cache"]["cached"] is False
+    assert calls == [0.75]
+
+
 def test_source_health_route_rejects_query_parameters_and_arbitrary_hosts():
     client = TestClient(create_app())
 
