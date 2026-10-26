@@ -187,3 +187,9 @@ The first explicit live run of `.github/workflows/register-and-fetch-official-sy
 - Do **not** rerun `REGISTER_AND_FETCH` with this same ID: registration is insert-only and would conflict with the existing candidate. This PR adds explicit `FETCH_EXISTING` mode to retry the already-registered ID without creating a duplicate.
 - This retry-mode change does not make the RSSB host reachable. If a retry returns the same timeout, treat it as an external source-network blocker and inspect/restore the deployed Render service's outbound route or obtain an approved, reachable official RSSB URL. Do not weaken certificate validation, use a third-party mirror as official evidence, increase limits blindly, or mark the candidate verified.
 - Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED** until the exact official document and its complete inventory/mappings are independently reviewed.
+
+## Diagnostic-link tracking parameter fix — 26 October 2026
+
+Render logs confirmed the diagnostic endpoint was reached as `/diagnostics/official-source-health?utm_source=chatgpt.com`, producing `400 UNSUPPORTED_QUERY`. The link-opening wrapper adds this tracking parameter; it is unrelated to the PDF download timeout. A focused code change now accepts **only** the exact non-functional pair `utm_source=chatgpt.com`, while other query parameters (including arbitrary URL/host input) are still rejected. Regression tests cover both cases.
+
+This correction only makes the diagnostic visible through the supplied link; it does not itself fix `SOURCE_FETCH_TIMEOUT`. Once the change is deployed, read the returned DNS/TCP/validated-TLS results for `RSSB_OFFICIAL`, then choose the source-network fix based on evidence. Keep candidate `rssb-cet-graduation-2026-candidate-20261026-01` in `REVIEW_PENDING` until a real PDF is fetched and independently reviewed.
