@@ -176,3 +176,14 @@ The controlled [database migration run #4](https://github.com/snchat78-svg/AI-CO
 Migration `0021` demotes legacy one-liners that were marked `VERIFIED` without independent reviewer identity to `NEEDS_REVIEW`. No affected-row count was emitted. Do not infer the live question-bank pool is populated or verified from migration success.
 
 Next step remains Phase 6.56 live acceptance: configure/check the protected `official-source-review` environment secrets and distinct server-side author/reviewer actor IDs, then use the existing manually gated official syllabus fetch workflow. A successful fetch will store unverified evidence only; the exact PDF and complete syllabus still require independent human review. Phase 6.57 stays PLANNED.
+
+## Live fetch timeout incident — 26 October 2026
+
+The first explicit live run of `.github/workflows/register-and-fetch-official-syllabus.yml` used candidate `rssb-cet-graduation-2026-candidate-20261026-01`.
+
+- The GitHub job passed structural validation for the candidate inputs.
+- Render logs confirm the author endpoint returned `201 Created`, so the candidate exists in the database and remains `REVIEW_PENDING`.
+- The reviewer fetch endpoint returned `502 Bad Gateway` with safe code `SOURCE_FETCH_TIMEOUT`. The fetcher has a strict 12-second network/deadline bound. A failed fetch attempt is audited; no official PDF bytes or SHA-256 have been confirmed.
+- Do **not** rerun `REGISTER_AND_FETCH` with this same ID: registration is insert-only and would conflict with the existing candidate. This PR adds explicit `FETCH_EXISTING` mode to retry the already-registered ID without creating a duplicate.
+- This retry-mode change does not make the RSSB host reachable. If a retry returns the same timeout, treat it as an external source-network blocker and inspect/restore the deployed Render service's outbound route or obtain an approved, reachable official RSSB URL. Do not weaken certificate validation, use a third-party mirror as official evidence, increase limits blindly, or mark the candidate verified.
+- Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED** until the exact official document and its complete inventory/mappings are independently reviewed.
