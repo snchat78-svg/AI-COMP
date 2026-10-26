@@ -4,11 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       confirm_action:
-        description: "Explicitly authorize creating a REVIEW_PENDING candidate and fetching the registered official PDF"
+        description: "Choose whether to register a new REVIEW_PENDING candidate and fetch it, or retry fetching an existing pending candidate"
         type: choice
         options:
           - DO_NOT_RUN
           - REGISTER_AND_FETCH
+          - FETCH_EXISTING
         default: DO_NOT_RUN
         required: true
       syllabus_id:
@@ -60,7 +61,7 @@ concurrency:
 
 jobs:
   register-and-fetch:
-    if: ${{ inputs.confirm_action == 'REGISTER_AND_FETCH' }}
+    if: ${{ inputs.confirm_action == 'REGISTER_AND_FETCH' || inputs.confirm_action == 'FETCH_EXISTING' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: official-source-review
@@ -68,6 +69,7 @@ jobs:
       AI_COMP_API_BASE_URL: https://ai-comp-api.onrender.com
       AI_COMP_SYLLABUS_ADMIN_TOKEN: ${{ secrets.AI_COMP_SYLLABUS_ADMIN_TOKEN }}
       AI_COMP_SYLLABUS_REVIEW_TOKEN: ${{ secrets.AI_COMP_SYLLABUS_REVIEW_TOKEN }}
+      INPUT_CONFIRM_ACTION: ${{ inputs.confirm_action }}
       INPUT_SYLLABUS_ID: ${{ inputs.syllabus_id }}
       INPUT_EXAM_ID: ${{ inputs.exam_id }}
       INPUT_SOURCE_ID: ${{ inputs.source_id }}
@@ -188,39 +190,50 @@ jobs:
                   raise SafeAPIError(None, type(exc.reason).__name__ if isinstance(exc, URLError) else type(exc).__name__) from None
 
           summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          mode = os.environ["INPUT_CONFIRM_ACTION"]
           candidate_created = False
           lines = [
               "# Official syllabus candidate fetch",
               "",
-              "- This workflow only creates an unverified REVIEW_PENDING candidate and fetches its bytes through the deployed API.",
-              "- A successful fetch is not human verification; do not mark the source VERIFIED until the actual document and every page/unit are independently reviewed.",
+              "- The deployed API fetches only the URL already registered for the selected candidate.",
+              "- A successful fetch is not human verification; the candidate remains REVIEW_PENDING until the actual document and every page/unit are independently reviewed.",
               "",
           ]
 
           try:
-              candidate = call_api(
-                  "/api/v1/admin/exam-syllabi",
-                  "POST",
-                  admin_token,
-                  "X-AI-COMP-Syllabus-Admin-Token",
-                  {
-                      "syllabus_id": syllabus_id,
-                      "exam_id": os.environ["INPUT_EXAM_ID"],
-                      "source_id": os.environ["INPUT_SOURCE_ID"],
-                      "source_title": os.environ["INPUT_SOURCE_TITLE"],
-                      "source_url": os.environ["INPUT_SOURCE_URL"],
-                      "notification_number": os.environ["INPUT_NOTIFICATION_NUMBER"],
-                      "version_label": os.environ["INPUT_VERSION_LABEL"],
-                      "source_evidence": os.environ["INPUT_SOURCE_EVIDENCE"],
-                  },
-              )
-              candidate_created = True
-              if candidate.get("source_status") != "REVIEW_PENDING":
-                  raise SafeAPIError(201, "CANDIDATE_NOT_PENDING")
-              lines.extend([
-                  f"- Candidate ID: `{syllabus_id}`",
-                  "- Candidate state: `REVIEW_PENDING`",
-              ])
+              if mode == "REGISTER_AND_FETCH":
+                  candidate = call_api(
+                      "/api/v1/admin/exam-syllabi",
+                      "POST",
+                      admin_token,
+                      "X-AI-COMP-Syllabus-Admin-Token",
+                      {
+                          "syllabus_id": syllabus_id,
+                          "exam_id": os.environ["INPUT_EXAM_ID"],
+                          "source_id": os.environ["INPUT_SOURCE_ID"],
+                          "source_title": os.environ["INPUT_SOURCE_TITLE"],
+                          "source_url": os.environ["INPUT_SOURCE_URL"],
+                          "notification_number": os.environ["INPUT_NOTIFICATION_NUMBER"],
+                          "version_label": os.environ["INPUT_VERSION_LABEL"],
+                          "source_evidence": os.environ["INPUT_SOURCE_EVIDENCE"],
+                      },
+                  )
+                  candidate_created = True
+                  if candidate.get("source_status") != "REVIEW_PENDING":
+                      raise SafeAPIError(201, "CANDIDATE_NOT_PENDING")
+                  lines.extend([
+                      f"- Candidate ID: `{syllabus_id}`",
+                      "- Candidate state: `REVIEW_PENDING`",
+                      "- Registration: created a new pending candidate.",
+                  ])
+              elif mode == "FETCH_EXISTING":
+                  lines.extend([
+                      f"- Candidate ID: `{syllabus_id}`",
+                      "- Registration: skipped; no duplicate candidate was created.",
+                      "- The existing candidate will be fetched again through the same protected API endpoint.",
+                  ])
+              else:
+                  raise SafeAPIError(None, "INVALID_CONFIRM_ACTION")
 
               result = call_api(
                   f"/api/v1/admin/exam-syllabi/{quote(syllabus_id, safe='')}/fetch-source",
@@ -240,7 +253,12 @@ jobs:
               ])
               print("Official source bytes fetched and stored by the deployed API. The candidate remains REVIEW_PENDING.")
           except SafeAPIError as exc:
-              state = "The candidate remains REVIEW_PENDING; fetch evidence may not have been stored." if candidate_created else "The candidate was not created."
+              if mode == "FETCH_EXISTING":
+                  state = "No new candidate was created; inspect the returned safe code for the existing candidate outcome."
+              elif candidate_created:
+                  state = "The candidate remains REVIEW_PENDING; fetch evidence may not have been stored."
+              else:
+                  state = "The candidate was not created."
               lines.extend([
                   f"- Outcome: failed safely (HTTP {exc.status if exc.status is not None else 'network'}; code `{exc.code}`).",
                   f"- {state}",
