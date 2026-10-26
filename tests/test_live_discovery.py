@@ -88,7 +88,7 @@ def test_live_candidate_ids_are_stable_when_sitemap_order_changes():
 
 
 
-def test_rpsc_discovery_includes_registered_question_and_answer_key_archives():
+def test_rpsc_discovery_uses_current_official_question_and_answer_key_archives():
     base = "https://rpsc.rajasthan.gov.in/"
     rpsc_source = SourceRecord(
         "RPSC_OFFICIAL",
@@ -97,14 +97,21 @@ def test_rpsc_discovery_includes_registered_question_and_answer_key_archives():
         SourceType.OFFICIAL_WEBSITE,
         SourcePriority.OFFICIAL,
     )
-    question_archive = base + "viewcommon?Slice=QP"
-    answer_archive = base + "viewcommon?Slice=AK"
+    question_archive = base + "quespapers"
+    answer_archive = base + "answerkeys"
     transport = FakeTransport({
         base + "robots.txt": HttpResponse(
             base + "robots.txt",
             200,
-            "User-agent: AI-COMP/phase2\nSitemap: " + base + "sitemap.xml\n",
+            "User-agent: AI-COMP/phase2\nAllow: /\nSitemap: " + base + "sitemap.xml\n",
             "text/plain",
+        ),
+        base: HttpResponse(
+            base,
+            200,
+            '<a href="/quespapers">Question Papers</a>'
+            '<a href="/answerkeys">Answer Keys</a>',
+            "text/html",
         ),
         base + "sitemap.xml": HttpResponse(
             base + "sitemap.xml",
@@ -139,8 +146,9 @@ def test_rpsc_discovery_includes_registered_question_and_answer_key_archives():
     assert titles[base + "Static/AnswerKeys/final-key.pdf"] == "RAS final answer key"
     assert question_archive in transport.requested
     assert answer_archive in transport.requested
+    assert base + "viewcommon?Slice=QP" not in transport.requested
+    assert base + "viewcommon?Slice=AK" not in transport.requested
     assert base + "robots.txt" in transport.requested
-
 
 
 def test_rssb_registry_uses_current_official_host():

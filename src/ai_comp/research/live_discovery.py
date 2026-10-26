@@ -151,11 +151,11 @@ class LiveOfficialSourceDiscovery:
         # Legacy RSSB show_archived routes belonged to the retired host and must
         # not be assumed to exist on the current rssb.rajasthan.gov.in portal.
         if source.source_id == "RPSC_OFFICIAL":
-            # Current RPSC navigation exposes Question Papers and Answer Keys
-            # through these slice routes; older .aspx routes now return 404.
+            # The live official RPSC navigation links to these maintained archive
+            # pages. Keep the crawl anchored to the registered official host.
             seeds.extend((
-                urljoin(source.base_url, "viewcommon?Slice=QP"),
-                urljoin(source.base_url, "viewcommon?Slice=AK"),
+                urljoin(source.base_url, "quespapers"),
+                urljoin(source.base_url, "answerkeys"),
             ))
         seeds = self._unique_allowed(source, policy, parser, seeds)
         sitemap_urls, feed_urls, archive_urls, paper_links = [], [], [], []

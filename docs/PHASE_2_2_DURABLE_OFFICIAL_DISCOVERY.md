@@ -52,3 +52,14 @@ After the fixed diagnostic endpoint was updated to accept only the exact ChatGPT
 - `RPSC_OFFICIAL`: DNS OK, IPv4 TCP FAIL (`TimeoutError`), IPv6 TCP FAIL (`OSError`), TLS NOT_REACHED.
 
 Therefore the failed run is not a diagnostic-route or source-code regression; it confirms Phase 2.2's live connectivity acceptance is still blocked. Current RSSB and RPSC hosts do not complete a TCP connection from the deployed source-health runtime, while the legacy RSSB host cannot complete a standard validated TLS handshake. Do not disable TLS, switch to an unofficial mirror, or treat a zero-candidate workflow as success. Continue only after a verified official HTTPS route becomes reachable and persists nonzero real candidates.
+
+
+## Official RPSC archive route correction — 26 October 2026
+
+Review of the live official RPSC site found that its own navigation links **Question Papers** to `https://rpsc.rajasthan.gov.in/quespapers` and **Answer Keys** to `https://rpsc.rajasthan.gov.in/answerkeys`. The corresponding public pages currently show titled paper/key entries (for example, the Question Papers page lists multiple 2025 recruitment paper entries and the Answer Keys page lists dated 2026 entries).
+
+The discovery implementation had been seeding the non-current `viewcommon?Slice=QP` and `viewcommon?Slice=AK` routes instead. This increment replaces those seeds with the official `/quespapers` and `/answerkeys` routes and adds deterministic mocked regression coverage for both page traversal, retained paper titles and same-host PDF links. Source links:
+- Official RPSC question papers: https://rpsc.rajasthan.gov.in/quespapers
+- Official RPSC answer keys: https://rpsc.rajasthan.gov.in/answerkeys
+
+This is a discovery-path correction, not proof of live source ingestion. The measured GitHub Actions/Render connectivity gate still has RSSB/RPSC TCP failures and legacy RSSB TLS failure. The crawler must still obey the registered source's `robots.txt`, allowlisted same-host redirects and URL policy; do not relax TLS or use mirrors. Keep Phase 2.2 BLOCKED until the scheduled workflow successfully reaches an official source and persists nonzero real candidates.
