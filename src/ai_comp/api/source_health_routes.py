@@ -32,11 +32,15 @@ def _response(status_code: int, payload: dict[str, Any]) -> Response:
 @router.get("/diagnostics/official-source-health", include_in_schema=False)
 def official_source_health(request: Request) -> Response:
     """Probe registered official hosts only; no arbitrary host input or content fetch."""
-    if request.query_params:
+    # ChatGPT link navigation appends this analytics-only parameter to links.
+    # Permit only that exact single pair so the diagnostic is usable from chat;
+    # no query parameter can select or override the registered hosts.
+    query_items = list(request.query_params.multi_items())
+    if query_items and query_items != [("utm_source", "chatgpt.com")]:
         return _response(400, {
             "error": {
                 "code": "UNSUPPORTED_QUERY",
-                "message": "This fixed diagnostic endpoint accepts no query parameters.",
+                "message": "This fixed diagnostic endpoint does not accept source/host query parameters.",
             }
         })
 
