@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-25 (main commit `dd676617d5c4ac0feb123a309b6ba4984aec531d`; live run #16 blocked; paper-processing run #11 and answer-key-verification run #9 completed with empty queues; no phase advancement)  
+**Last verified:** 2026-10-26 (main commit `45cd41ca2d437277f2497deb45165e8ed5a24922`; product-contract PR #63 merged; RPSC official archive route correction in progress; live run #16 blocked; paper-processing run #11 and answer-key-verification run #9 completed with empty queues; no phase advancement)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -164,3 +164,8 @@ The link-tracking-parameter fix is on main at `f49511a3ebca0a875c4ba8bae30f8ed66
 The product contract is documented in [QUESTION_BANK_PRODUCT_CONTRACT.md](QUESTION_BANK_PRODUCT_CONTRACT.md). The learner-facing Question Bank has two separate lanes: (1) **One-Liners**, navigated Subject → Topic → Subtopic and targeting full official-syllabus examinable-point coverage as concise Q → A; and (2) **Previous Year Papers / Old Papers**, holding actual historical and newly published official papers. The existing source-discovery/paper-processing pipeline must continuously check registered official sources and surface new papers after authenticity/integrity and review gates pass. A paper record must not automatically become a verified One-Liner.
 
 Current live status is **not** successful auto-update: latest 26 October source-health measurements report RSSB/RPSC TCP timeouts and legacy RSSB TLS failure, with zero new paper candidates. Keep Phase 2.2 blocked, Phase 6.56 in progress, and do not advance dependent phases until reachable official-source discovery, real paper ingestion, answer-key pairing where available, and live mobile end-to-end checks are evidenced. Do not weaken TLS or substitute unofficial mirrors.
+
+
+## RPSC official archive-route correction — 26 October 2026
+
+The current official RPSC navigation uses [Question Papers](https://rpsc.rajasthan.gov.in/quespapers) and [Answer Keys](https://rpsc.rajasthan.gov.in/answerkeys). Discovery previously seeded the non-current `viewcommon?Slice=QP/AK` paths; the active fix branch `fix/rpsc-official-paper-archive-routes` switches those seeds to `/quespapers` and `/answerkeys` and updates the regression test to check that titled same-host paper/key links are discovered. This closes an identified discovery-path gap but does **not** resolve or conceal the measured outbound connectivity failure. Phase 2.2 remains BLOCKED; source-health, robots/TLS requirements and nonzero real-candidate persistence are still live acceptance gates.
