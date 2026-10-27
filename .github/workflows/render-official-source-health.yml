@@ -33,15 +33,15 @@ jobs:
 
           # A main push starts Render auto-deploy and this workflow near the same
           # time. Retry for a bounded window until the new diagnostic route exists.
-          for attempt in $(seq 1 24); do
-            status_code="$(curl --silent --max-time 5 --output render-source-health.json --write-out '%{http_code}' "$url" || true)"
-            if [ "$status_code" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("render-source-health.json").read_text(encoding="utf-8")); results=d.get("results"); seen={item.get("source_id") for item in results if isinstance(item, dict)} if isinstance(results, list) else set(); control=d.get("network_control"); sys.exit(0 if d.get("phase") == "2.5-source-health" and "RSSB_LEGACY_OFFICIAL" in seen and isinstance(control, dict) and control.get("source_id") == "NETWORK_CONTROL" and control.get("host") == "example.com" else 1)'; then
+          for attempt in $(seq 1 18); do
+            status_code="$(curl --silent --max-time 10 --output render-source-health.json --write-out '%{http_code}' "$url" || true)"
+            if [ "$status_code" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("render-source-health.json").read_text(encoding="utf-8")); results=d.get("results"); seen={item.get("source_id") for item in results if isinstance(item, dict)} if isinstance(results, list) else set(); control=d.get("network_control"); portals=d.get("government_portal_controls"); portal_ids={item.get("source_id") for item in portals if isinstance(item, dict)} if isinstance(portals, list) else set(); expected={"RAJASTHAN_RECRUITMENT_PORTAL_CONTROL", "RAJASTHAN_LANDREVENUE_PORTAL_CONTROL"}; sys.exit(0 if d.get("phase") == "2.5-source-health" and "RSSB_LEGACY_OFFICIAL" in seen and isinstance(control, dict) and control.get("source_id") == "NETWORK_CONTROL" and control.get("host") == "example.com" and expected.issubset(portal_ids) else 1)'; then
               echo "Render source-health endpoint responded with the updated official-source registry (attempt $attempt)."
               found=true
               break
             fi
             rm -f render-source-health.json
-            sleep 5
+            sleep 4
           done
 
           if [ "$found" != "true" ]; then
@@ -96,6 +96,29 @@ jobs:
                       lines.append(f"- Network control {label}: {', '.join(errors)}")
           else:
               lines.extend(["", "## General HTTPS control", "- Not present in this report."])
+          portal_controls = data.get("government_portal_controls")
+          lines.extend([
+              "",
+              "## Potential public government routes (diagnostic only; not approved paper sources)",
+              "| Fixed government portal | DNS | IPv4 TCP | IPv4 TLS | IPv6 TCP | IPv6 TLS |",
+              "|---|---|---|---|---|---|",
+          ])
+          for item in portal_controls if isinstance(portal_controls, list) else []:
+              lines.append(
+                  "| {source} ({host}) | {dns} | {v4tcp} | {v4tls} | {v6tcp} | {v6tls} |".format(
+                      source=item.get("source_id", "unknown"),
+                      host=item.get("host", "unknown"),
+                      dns=item.get("dns_status", "unknown"),
+                      v4tcp=item.get("ipv4_tcp", "unknown"),
+                      v4tls=item.get("ipv4_tls", "unknown"),
+                      v6tcp=item.get("ipv6_tcp", "unknown"),
+                      v6tls=item.get("ipv6_tls", "unknown"),
+                  )
+              )
+              for label in ("ipv4_tcp_errors", "ipv4_tls_errors", "ipv6_tcp_errors", "ipv6_tls_errors"):
+                  errors = item.get(label, [])
+                  if errors:
+                      lines.append(f"- {item.get('source_id', 'unknown')} {label}: {', '.join(errors)}")
           Path("render-source-health-summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
           print("\n".join(lines))
           PY
