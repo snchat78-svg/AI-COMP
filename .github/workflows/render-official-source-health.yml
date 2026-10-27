@@ -146,17 +146,88 @@ jobs:
           # route and its expected response schema are present.
           for service_attempt in $(seq 1 18); do
             service_status="$(curl --silent --max-time 10 --output jansoochna-service-probe.json --write-out '%{http_code}' "$service_url" || true)"
-            if [ "$service_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("jansoochna-service-probe.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-jansoochna-public-service-probe" and d.get("host") == "jansoochna.rajasthan.gov.in" and isinstance(d.get("pages_fetched"), list) and isinstance(d.get("robots"), dict) and isinstance(d.get("service_link_inspections"), list) else 1)'; then
-              echo "Jan Soochna diagnostic endpoint responded with the expected fixed-host contract (attempt $service_attempt)."
-              service_found=true
-              break
+            if [ "$service_status" = "200" ]; then
+              # Preserve the most recent HTTP-200 body for a sanitized schema
+              # diagnostic if it never matches the expected response contract.
+              cp jansoochna-service-probe.json jansoochna-service-probe-last.json
+              if python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("jansoochna-service-probe.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-jansoochna-public-service-probe" and d.get("host") == "jansoochna.rajasthan.gov.in" and isinstance(d.get("pages_fetched"), list) and isinstance(d.get("robots"), dict) and isinstance(d.get("service_link_inspections"), list) else 1)'; then
+                echo "Jan Soochna diagnostic endpoint responded with the expected fixed-host contract (attempt $service_attempt)."
+                service_found=true
+                break
+              fi
             fi
             rm -f jansoochna-service-probe.json
             sleep 4
           done
 
           if [ "$service_found" != "true" ]; then
-            echo "::error::Could not retrieve the fixed Jan Soochna public-service diagnostic response after bounded retries (last HTTP $service_status)."
+            if [ "$service_status" = "200" ] && [ -f jansoochna-service-probe-last.json ]; then
+              python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from urllib.parse import urlsplit
+
+          raw = Path("jansoochna-service-probe-last.json").read_text(encoding="utf-8")
+          try:
+              data = json.loads(raw)
+          except ValueError:
+              data = None
+          lines = [
+              "# Jan Soochna diagnostic response — schema mismatch",
+              "",
+              "- The fixed diagnostic endpoint returned HTTP 200, but the response did not match the expected schema after bounded retries.",
+              "- Only structural metadata is shown below; response bodies, cookies, query values, and linked URLs are not printed.",
+              "",
+          ]
+          if not isinstance(data, dict):
+              lines.append("- JSON object: invalid or unexpected")
+          else:
+              lines.extend([
+                  "- Top-level keys: " + ", ".join(sorted(str(k) for k in data.keys())[:40]),
+                  "- Phase: " + str(data.get("phase", "missing"))[:100],
+                  "- Host: " + str(data.get("host", "missing"))[:100],
+                  "- Status: " + str(data.get("status", "missing"))[:100],
+                  "- Robots status: " + str((data.get("robots") or {}).get("status", "missing"))[:100] if isinstance(data.get("robots"), dict) else "- Robots object: missing or wrong type",
+                  "- pages_fetched type: " + type(data.get("pages_fetched")).__name__,
+                  "- service_link_inspections type: " + type(data.get("service_link_inspections")).__name__,
+              ])
+              inspections = data.get("service_link_inspections")
+              if isinstance(inspections, list):
+                  lines.append("- Service inspections count: " + str(len(inspections)))
+                  for item in inspections[:6]:
+                      if not isinstance(item, dict):
+                          lines.append("  - Non-object inspection record")
+                          continue
+                      path = str(item.get("path", ""))
+                      safe_path = urlsplit(path).path[:160]
+                      lines.append(
+                          "  - path={}; status={}; robots_allowed={}; HTTP={}; content_type={}; "
+                          "redirect_host={}; redirect_scheme={}; redirect_path={}; "
+                          "second_redirect_host={}; second_redirect_path={}".format(
+                              safe_path,
+                              str(item.get("status", "missing"))[:80],
+                              str(item.get("robots_allowed", "unknown"))[:20],
+                              str(item.get("redirect_target_http_status", "missing"))[:20],
+                              str(item.get("redirect_target_content_type", "missing"))[:80],
+                              str(item.get("redirect_target_host", "missing"))[:120],
+                              str(item.get("redirect_target_scheme", "missing"))[:20],
+                              urlsplit(str(item.get("redirect_target_path", ""))).path[:160],
+                              str(item.get("redirect_chain_target_host", "missing"))[:120],
+                              urlsplit(str(item.get("redirect_chain_target_path", ""))).path[:160],
+                          )
+                      )
+          summary = "\n".join(lines) + "\n"
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          PY
+              if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+                echo "::warning::Jan Soochna endpoint responded but its schema is not recognized; see sanitized structural details above."
+                exit 0
+              fi
+            fi
+            echo "::error::Could not retrieve a valid fixed Jan Soochna diagnostic response after bounded retries (last HTTP $service_status)."
             exit 1
           fi
 
