@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `7c7f4111c277c374302dff5c40201d99a2599d27`; PR #77 merged; Render fresh control shows Jan Soochna TLS PASS; service-page inspection now in PR)  
+**Last verified:** 2026-10-27 (main `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`; PR #79 merged; PR #80 service-detail inspection open. Code fix `164536a1f84319a60e39b3305895108f97f03e5b` passed [exact-head CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): 565 tests passed, 14 warnings, API container build passed. Follow-up docs CI and post-deploy service-detail report remain pending.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -314,3 +314,11 @@ After PR #79 merged at `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`, Render diagno
 The current branch `phase-2-5-jansoochna-detail-inspection` adds a second bounded layer: it checks robots permission for each exact same-host service link before requesting it, refuses redirects so a redirected path cannot bypass robots rules, and accepts only text/HTML/JSON. MIME type is checked before reading a body; if the server responds with a PDF, its body is not read. The detail-page parser only reports likely same-host PDF links / external target hostnames; those links remain unfetched.
 
 This is still source investigation, not paper ingestion. No candidate, source registry record, or database row is created. Do not mark the official route as available until the existing registered RSSB/RPSC hosts pass TCP + certificate-validated TLS or a directly hosted official PDF route is verified through the established review gates. No call or email was made.
+
+## Robots-rule precedence regression fix — 27 October 2026
+
+The initial PR #80 head `f30b154fa8de64e09c737c9dcea8c21d87ec2ead` failed [CI run #629](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464857614): 564 tests passed and one robots-policy regression test failed. Python's standard `RobotFileParser` returned the first matching `Allow: /Services` rule before the longer `Disallow: /Services/GetMoreData` rule. This could cause a service URL explicitly disallowed by the more-specific path rule to be requested.
+
+The fix uses the parsed robots rules but resolves the most-specific matching path first; an `Allow` wins only when specificity ties. Updated code head `164536a1f84319a60e39b3305895108f97f03e5b` passed [CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): **565 tests passed, 14 warnings; API container build passed**. Documentation follow-up commit(s) require their own exact-head CI before merge.
+
+**Live gate remains open:** PR #80 must pass final exact-head CI, deploy to Render, and produce a real report showing the service-detail result. No PDF bytes or paper candidates have been fetched. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
