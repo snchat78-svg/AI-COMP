@@ -196,3 +196,70 @@ def test_safe_fetch_refuses_pdf_content_before_reading_body(monkeypatch):
     assert result.content_type == "application/pdf"
     assert result.error == "content_type_not_allowed"
     assert result.body == ""
+
+def test_probe_records_redirect_host_and_path_without_following():
+    detail_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
+    robots = FetchResult(
+        200, f"{ORIGIN}/robots.txt", "text/plain",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\n",
+    )
+    services = FetchResult(
+        200, f"{ORIGIN}/Services", "text/html",
+        '<a href="/Services/GetMoreData?q=opaque-public-token">Question Papers of RSSB</a>',
+    )
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": robots,
+        f"{ORIGIN}/Services": services,
+        f"{ORIGIN}/Scheme": FetchResult(200, f"{ORIGIN}/Scheme", "text/html", ""),
+        detail_url: FetchResult(
+            302, detail_url, "text/html",
+            redirect_location="https://rssb.rajasthan.gov.in/papers/2025.pdf?token=secret-value#fragment",
+        ),
+    })
+
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    inspection = report["service_link_inspections"][0]
+    assert inspection["status"] == "REDIRECT_NOT_FOLLOWED"
+    assert inspection["redirect_target_scheme"] == "https"
+    assert inspection["redirect_target_host"] == "rssb.rajasthan.gov.in"
+    assert inspection["redirect_target_path"] == "/papers/2025.pdf"
+    assert "secret-value" not in str(inspection)
+    assert "fragment" not in str(inspection)
+    assert requested == [
+        f"{ORIGIN}/robots.txt",
+        f"{ORIGIN}/Services",
+        f"{ORIGIN}/Scheme",
+        detail_url,
+    ]
+    assert not any("rssb.rajasthan.gov.in" in url for url in requested)
+    assert report["paper_bytes_fetched"] is False
+    assert report["source_registry_modified"] is False
+
+
+def test_safe_fetch_preserves_only_redirect_location_metadata(monkeypatch):
+    from email.message import Message
+    from urllib.error import HTTPError
+    from ai_comp.research import jansoochna_service_probe as probe_module
+
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
+    headers = Message()
+    headers["Content-Type"] = "text/html"
+    headers["Location"] = "https://rssb.rajasthan.gov.in/papers/2025.pdf?token=secret-value"
+
+    class Opener:
+        def open(self, request, *, timeout):
+            assert request.full_url == service_url
+            raise HTTPError(service_url, 302, "Found", headers, None)
+
+    monkeypatch.setattr(probe_module, "build_opener", lambda *_args: Opener())
+    result = probe_module._safe_fetch_text(
+        service_url,
+        max_bytes=1024,
+        timeout_seconds=1.0,
+        allowed_content_types=("text/html",),
+    )
+
+    assert result.status_code == 302
+    assert result.redirect_location == "https://rssb.rajasthan.gov.in/papers/2025.pdf?token=secret-value"
+    assert result.body == ""

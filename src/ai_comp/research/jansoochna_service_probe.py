@@ -35,6 +35,7 @@ class FetchResult:
     content_type: str
     body: str = ""
     error: str | None = None
+    redirect_location: str | None = None
 
 
 class _BlockedRedirect(ValueError):
@@ -99,8 +100,14 @@ def _safe_fetch_text(
                 return FetchResult(None, final_url, content_type, error="response_size_limit_exceeded")
             return FetchResult(int(response.status), final_url, content_type, raw.decode("utf-8", errors="replace"))
     except HTTPError as exc:
-        # Do not follow redirects or read their bodies; expose only the status.
-        return FetchResult(int(exc.code), url, exc.headers.get_content_type().lower())
+        # Do not follow redirects or read their bodies. Preserve only the Location
+        # header as metadata; the reporter later strips query/fragment details.
+        return FetchResult(
+            int(exc.code),
+            url,
+            exc.headers.get_content_type().lower(),
+            redirect_location=exc.headers.get("Location"),
+        )
     except (URLError, TimeoutError, OSError) as exc:
         return FetchResult(None, url, "", error=type(exc).__name__)
 
@@ -490,6 +497,15 @@ def probe_jansoochna_rssb_service(
             inspection.update({"status": "FETCH_ERROR", "error_type": detail.error})
         elif detail.status_code in {301, 302, 303, 307, 308}:
             inspection.update({"status": "REDIRECT_NOT_FOLLOWED", "http_status": detail.status_code})
+            if detail.redirect_location:
+                # Report sanitized destination metadata only. Never follow it and
+                # never include query/fragment values from potentially tokenized URLs.
+                redirect = urlsplit(urljoin(service_url, detail.redirect_location))
+                inspection.update({
+                    "redirect_target_scheme": redirect.scheme.lower(),
+                    "redirect_target_host": (redirect.hostname or "").lower(),
+                    "redirect_target_path": redirect.path or "/",
+                })
         elif detail.status_code != 200:
             inspection.update({"status": "HTTP_ERROR", "http_status": detail.status_code})
         elif detail.content_type not in {"text/html", "application/xhtml+xml", "application/json", "text/plain"}:
