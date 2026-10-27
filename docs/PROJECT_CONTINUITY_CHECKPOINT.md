@@ -367,3 +367,14 @@ No third request was made and no paper bytes were fetched. Current RSSB/RPSC TCP
 Open PR [#85](https://github.com/snchat78-svg/AI-COMP/pull/85) changes the diagnostic transport to reuse a single in-memory CookieJar within one bounded probe. This tests a hypothesis only; it does not bypass cookies/authentication or follow redirects. Keep fixed HTTPS host constraints, exact robots checks and existing byte/time bounds. If the deployed report still loops, stop this public portal route investigation and continue to treat Phase 2.2 as blocked pending an approved direct official source.
 
 Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No call/email, proxy, TLS bypass, paper candidate registration or source-registry/database mutation.
+
+
+## Phase 2.2 continuation — PR #85 deployed, response outcome not yet observed (27 October 2026)
+
+- Current main commit: `1946891bcbd97cf456af430b12b62dcb0580fc25`; Render deployment `dep-dbg5vio473hc73fdsb4g` is LIVE.
+- PR #85 test head `c3226b0f195c367fc9f6e5d3de8a73cdcd5467e0` passed [CI run #40473032296](https://github.com/snchat78-svg/AI-COMP/actions/runs/40473032296): 571 tests, 14 warnings and API container build.
+- Render app logs show the post-deploy fixed Jan Soochna endpoint `/diagnostics/jansoochna-rssb-service` returned HTTP 200 at `2026-10-27T08:25:08Z` and again at `2026-10-27T08:26:17Z`. These logs contain status only, not the JSON body. A direct read from this workspace failed at DNS resolution, so the cookie-session result is **unknown**, not PASS.
+- The last captured pre-cookie report showed the Jan Soochna service URLs cycling between `/Services/GetMoreData`, `/Services/ClickablePDF` and `/Services`; it read no PDF bytes. Do not infer that the cookie experiment succeeded or failed until the corresponding post-deploy GitHub Actions summary has been reviewed.
+- No official document bytes, content hash, newly persisted candidate, or verified answer key is established. Phase 2.2 remains **BLOCKED**; Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 6.58 remains **BLOCKED**. No email/call has been made.
+
+**Next action:** inspect the latest `render-official-source-health` workflow summary for the post-PR #85 `service_link_inspections`. If the 302 loop persists, stop this Jan Soochna route and continue only with a directly accessible, approved official HTTPS source. Never weaken TLS, proxy around access controls, or register a guessed source.

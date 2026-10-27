@@ -228,3 +228,10 @@ After exact-head CI and deployment:
 - Do not persist candidates or change the registered official-source inventory until official document provenance and the existing protected fetch/review gates pass.
 
 Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+
+## PR #85 cookie-session experiment — deployment confirmed, result not captured (27 October 2026)
+
+PR #85 is merged/deployed at main commit `1946891bcbd97cf456af430b12b62dcb0580fc25`. Its test head `c3226b0f195c367fc9f6e5d3de8a73cdcd5467e0` passed [CI #40473032296](https://github.com/snchat78-svg/AI-COMP/actions/runs/40473032296): 571 tests, 14 warnings and API container build. Render logs confirm the Jan Soochna diagnostic endpoint returned HTTP 200 after deployment, but the logs do not include its JSON body and this workspace could not resolve the service hostname for a direct read. Therefore the cookie-session hypothesis outcome is **UNKNOWN**. HTTP 200 only means the diagnostic route responded; it does not prove the redirect loop changed.
+
+**Next:** inspect the post-deploy `render-official-source-health` workflow summary for `service_link_inspections`. The last captured report before PR #85 showed the same-host loop `/Services/GetMoreData → /Services/ClickablePDF → /Services` and the reverse starting from `/Services`; no paper/answer-key bytes were fetched. If that loop remains, stop probing Jan Soochna service routes. Phase 2.2 remains BLOCKED until a directly accessible, approved official HTTPS route passes normal TLS and yields full source bytes that pass provenance, hash and review gates. No call/email, proxy, TLS bypass, or candidate registration is authorized.
