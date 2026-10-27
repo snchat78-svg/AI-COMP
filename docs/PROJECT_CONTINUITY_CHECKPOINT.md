@@ -315,3 +315,11 @@ Post-PR #79 Render diagnostic workflow [run #17](https://github.com/snchat78-svg
 The current implementation extension inspects only the same-host service URLs surfaced by those public index pages, after evaluating robots permission for each exact URL. It does not follow redirects, only reads text/HTML/JSON content, and rejects a PDF/binary MIME type before reading body bytes. It reports PDF-like links from a service detail response but never requests those links. This will decide whether Jan Soochna itself hosts a public PDF link or redirects/references another host.
 
 Current main at this checkpoint is `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`; the detail-inspection changes are in PR preparation on branch `phase-2-5-jansoochna-detail-inspection`. Wait for exact-head CI and post-deploy diagnostic before deciding whether a direct government-hosted document path exists. The question-paper candidate remains unverified. No phone call or email was made.
+
+## PR #80 robots precedence fix — 27 October 2026
+
+The first service-detail inspection implementation failed one regression in [CI run #629](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464857614): Python's `RobotFileParser` used the first matching rule, so a broad `Allow: /Services` could override a more-specific `Disallow: /Services/GetMoreData`. The service URL must not be requested if its exact path is disallowed.
+
+Fix commit `164536a1f84319a60e39b3305895108f97f03e5b` resolves robots permission using the longest matching rule, with `Allow` preferred on equal-length ties. [Exact-head CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564) passed **565 tests, 14 warnings, and the API container build**. A docs-only follow-up is being recorded in PR #80 and must pass a new exact-head run before merge.
+
+**Next action:** once final exact-head CI passes, merge PR #80 and inspect the post-deploy Render report. If the detail route reports a PDF/binary content type, it must remain unread by this diagnostic. If document-like links appear, they remain metadata only. Do not register a candidate or invoke the protected PDF fetch until a directly hosted official document path and access policy are established. No phone call/email was made. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
