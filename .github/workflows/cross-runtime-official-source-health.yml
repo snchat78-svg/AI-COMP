@@ -1,0 +1,101 @@
+name: cross-runtime-official-source-health
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cross-runtime-official-source-health.yml"
+      - "src/ai_comp/research/source_health.py"
+      - "src/ai_comp/research/seed_registry.py"
+      - "src/ai_comp/domain/sources.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-comp-cross-runtime-official-source-health
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install diagnostic dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[postgres]"
+
+      - name: Probe official hosts and fixed general HTTPS control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m ai_comp.research.source_health \
+            --source all \
+            --timeout-seconds 1.5 > github-runner-source-health.json
+
+      - name: Publish diagnostic summary (read-only)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("github-runner-source-health.json").read_text(encoding="utf-8"))
+          lines = [
+              "# GitHub-hosted runner source connectivity",
+              "",
+              "- Diagnostic only: no paper content fetched, no database connections or writes, no secrets used.",
+              "- Runner environment: GitHub-hosted ubuntu-latest; IP/region may vary between runs.",
+              "",
+              "| Registered official source | DNS | IPv4 TCP | IPv4 TLS | IPv6 TCP | IPv6 TLS |",
+              "|---|---|---|---|---|---|",
+          ]
+          for item in data.get("results", []):
+              lines.append(
+                  "| {source} | {dns} | {v4tcp} | {v4tls} | {v6tcp} | {v6tls} |".format(
+                      source=item.get("source_id", "unknown"),
+                      dns=item.get("dns_status", "unknown"),
+                      v4tcp=item.get("ipv4_tcp", "unknown"),
+                      v4tls=item.get("ipv4_tls", "unknown"),
+                      v6tcp=item.get("ipv6_tcp", "unknown"),
+                      v6tls=item.get("ipv6_tls", "unknown"),
+                  )
+              )
+              for family in ("ipv4", "ipv6"):
+                  errors = sorted(set(item.get(f"{family}_tcp_errors", []) + item.get(f"{family}_tls_errors", [])))
+                  if errors:
+                      lines.append(f"- {item.get('source_id', 'unknown')} {family} error types: {', '.join(errors)}")
+          control = data.get("network_control")
+          lines.extend(["", "## General HTTPS control (fixed host; not a content source)"])
+          if isinstance(control, dict):
+              lines.extend([
+                  "- Host: example.com",
+                  f"- DNS={control.get('dns_status', 'unknown')}; IPv4 TCP={control.get('ipv4_tcp', 'unknown')}; IPv4 TLS={control.get('ipv4_tls', 'unknown')}; IPv6 TCP={control.get('ipv6_tcp', 'unknown')}; IPv6 TLS={control.get('ipv6_tls', 'unknown')}",
+              ])
+              for family in ("ipv4", "ipv6"):
+                  errors = sorted(set(control.get(f"{family}_tcp_errors", []) + control.get(f"{family}_tls_errors", [])))
+                  if errors:
+                      lines.append(f"- Control {family} error types: {', '.join(errors)}")
+          else:
+              lines.append("- ERROR: network_control object missing from source-health report.")
+          summary = "\n".join(lines) + "\n"
+          Path("github-runner-source-health-summary.md").write_text(summary, encoding="utf-8")
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          if not isinstance(control, dict) or control.get("source_id") != "NETWORK_CONTROL":
+              raise SystemExit("network_control was missing or invalid; expected diagnostic contract.")
+          PY
