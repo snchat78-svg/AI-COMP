@@ -301,3 +301,16 @@ Render diagnostic workflow [run #16](https://github.com/snchat78-svg/AI-COMP/act
 The fix branch `fix/jansoochna-diagnostic-deploy-retry` updates only the Render workflow to retry the fixed endpoint up to 18 times, with bounded request timeouts and pauses, until the expected phase/host/robots/pages response schema appears. The final official-source TCP/TLS gate remains unchanged. No calls or emails were made; no paper bytes were downloaded and no phase status was advanced.
 
 **Next:** exact-head tests and container build; deploy; inspect the Jan Soochna endpoint's robots outcome and link report. If robots.txt cannot be read or disallows the pages, stop. If permitted, inspect only public listing links; do not follow external links or fetch the exam PDFs in this diagnostic.
+
+
+## Jan Soochna robots gate passed; service detail links identified — 27 October 2026
+
+After PR #79 merged at `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`, Render diagnostic workflow [run #17](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464311120) returned the new Jan Soochna report successfully. The relevant evidence from the fresh report is:
+- `jansoochna.rajasthan.gov.in`: DNS OK, IPv4 TCP PASS, certificate-validated TLS PASS.
+- `robots.txt`: READ; `/Services=True`, `/Scheme=True`.
+- Both public pages returned HTTP 200 and exposed same-host RSSB Question Papers service links: `/Services/GetMoreData?q=...` and `/Services?q=...`.
+- The earlier diagnostic intentionally did **not** follow either service link and did **not** download PDF bytes. The workflow later failed only at the unchanged registered-official-source gate: RSSB current host and RPSC still timed out; legacy RSSB TLS remained invalid.
+
+The current branch `phase-2-5-jansoochna-detail-inspection` adds a second bounded layer: it checks robots permission for each exact same-host service link before requesting it, refuses redirects so a redirected path cannot bypass robots rules, and accepts only text/HTML/JSON. MIME type is checked before reading a body; if the server responds with a PDF, its body is not read. The detail-page parser only reports likely same-host PDF links / external target hostnames; those links remain unfetched.
+
+This is still source investigation, not paper ingestion. No candidate, source registry record, or database row is created. Do not mark the official route as available until the existing registered RSSB/RPSC hosts pass TCP + certificate-validated TLS or a directly hosted official PDF route is verified through the established review gates. No call or email was made.
