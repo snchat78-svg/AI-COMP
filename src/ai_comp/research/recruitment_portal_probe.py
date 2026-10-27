@@ -176,12 +176,18 @@ def _robots_allows_url(parser: RobotFileParser, user_agent: str, url: str) -> bo
     incorrectly allow a path when a broad Allow precedes a narrower Disallow.
     Reuse its parsed groups but evaluate rule specificity explicitly.
     """
-    if parser.disallow_all:
-        return False
-    if parser.allow_all:
-        return True
     if not parser.last_checked:
         return False
+
+    # RobotFileParser can set allow_all for a broad Allow / rule and that
+    # shortcut may mask a later, narrower Disallow rule. Honor global flags
+    # only when the robots file contains no parsed path rules.
+    parsed_entries = list(parser.entries)
+    if parser.default_entry is not None:
+        parsed_entries.append(parser.default_entry)
+    has_path_rules = any(entry.rulelines for entry in parsed_entries)
+    if not has_path_rules:
+        return not parser.disallow_all
 
     specific_entries = [
         entry
