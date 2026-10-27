@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[postgres]"
 
-      - name: Probe official hosts and fixed general HTTPS control
+      - name: Probe official hosts, general HTTPS control and public government route controls
         shell: bash
         run: |
           set -euo pipefail
@@ -91,6 +91,34 @@ jobs:
                       lines.append(f"- Control {family} error types: {', '.join(errors)}")
           else:
               lines.append("- ERROR: network_control object missing from source-health report.")
+          portal_controls = data.get("government_portal_controls")
+          lines.extend([
+              "",
+              "## Potential public government routes (diagnostic only; not approved paper sources)",
+              "| Fixed government portal | DNS | IPv4 TCP | IPv4 TLS | IPv6 TCP | IPv6 TLS |",
+              "|---|---|---|---|---|---|",
+          ])
+          expected_portal_ids = {
+              "RAJASTHAN_RECRUITMENT_PORTAL_CONTROL",
+              "RAJASTHAN_LANDREVENUE_PORTAL_CONTROL",
+          }
+          observed_portal_ids = set()
+          for item in portal_controls if isinstance(portal_controls, list) else []:
+              observed_portal_ids.add(item.get("source_id", "unknown"))
+              lines.append(
+                  "| {source} ({host}) | {dns} | {v4tcp} | {v4tls} | {v6tcp} | {v6tls} |".format(
+                      source=item.get("source_id", "unknown"),
+                      host=item.get("host", "unknown"),
+                      dns=item.get("dns_status", "unknown"),
+                      v4tcp=item.get("ipv4_tcp", "unknown"),
+                      v4tls=item.get("ipv4_tls", "unknown"),
+                      v6tcp=item.get("ipv6_tcp", "unknown"),
+                      v6tls=item.get("ipv6_tls", "unknown"),
+                  )
+              )
+          missing_portals = expected_portal_ids - observed_portal_ids
+          if missing_portals:
+              raise SystemExit("government portal control results missing: " + ", ".join(sorted(missing_portals)))
           summary = "\n".join(lines) + "\n"
           Path("github-runner-source-health-summary.md").write_text(summary, encoding="utf-8")
           print(summary)
