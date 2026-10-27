@@ -185,6 +185,22 @@ jobs:
                               lines.append(f"  - Same-host public link (not fetched): {item.get('url', '')}")
                           else:
                               lines.append(f"  - External link not followed; target host: {item.get('target_host', 'unknown')}")
+          for inspection in data.get("service_link_inspections", []):
+              lines.append("")
+              lines.append(
+                  "## Service detail {path} — {status} (robots allowed={allowed})".format(
+                      path=inspection.get("path", "unknown"),
+                      status=inspection.get("status", "unknown"),
+                      allowed=inspection.get("robots_allowed", "unknown"),
+                  )
+              )
+              for item in inspection.get("document_links", []):
+                  if item.get("same_host") is True:
+                      lines.append("  - {kind}: {url}".format(kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"), url=item.get("url", "")))
+                  else:
+                      lines.append("  - {kind}: external link not followed (target host={host})".format(kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"), host=item.get("target_host", "unknown")))
+          lines.append("")
+          lines.append("- Confirmed: no paper or answer-key file bytes were fetched.")
           summary = "\n".join(lines) + "\n"
           print(summary)
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
