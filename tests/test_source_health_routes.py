@@ -259,3 +259,83 @@ def test_jansoochna_service_diagnostic_is_not_exposed_in_public_openapi():
     response = client.get("/openapi.json")
     assert response.status_code == 200
     assert "/diagnostics/jansoochna-rssb-service" not in response.json()["paths"]
+
+
+
+def test_recruitment_portal_route_diagnostic_returns_bounded_report_without_admitting_sources(monkeypatch):
+    report = {
+        "phase": "2.2-recruitment-portal-route-probe",
+        "diagnostic_only": True,
+        "host": "recruitment.rajasthan.gov.in",
+        "status": "PUBLIC_INDEX_READ_BUT_NO_PAPER_OR_KEY_LINK_FOUND",
+        "robots": {"status": "READ", "allowed_index_paths": {"/": True}},
+        "pages_inspected": [{"path": "/", "status": "READ_ONLY_PUBLIC_HTML", "paper_links": []}],
+        "source_registry_modified": False,
+        "paper_bytes_fetched": False,
+        "database_written": False,
+        "candidate_promotions": 0,
+    }
+    calls = []
+    monkeypatch.setattr(
+        source_health_routes,
+        "probe_recruitment_portal_route",
+        lambda *, timeout_seconds: calls.append(timeout_seconds) or report,
+    )
+    client = TestClient(create_app())
+
+    response = client.get("/diagnostics/recruitment-portal-paper-route")
+
+    assert response.status_code == 200
+    assert response.json()["phase"] == "2.2-recruitment-portal-route-probe"
+    assert response.json()["source_registry_modified"] is False
+    assert response.json()["paper_bytes_fetched"] is False
+    assert response.json()["database_written"] is False
+    assert response.json()["candidate_promotions"] == 0
+    assert response.json()["cache"] == {"cached": False, "ttl_seconds": 60}
+    assert calls == [1.0]
+
+
+def test_recruitment_portal_route_diagnostic_caches_report(monkeypatch):
+    calls = []
+
+    def fake_probe(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.2-recruitment-portal-route-probe",
+            "diagnostic_only": True,
+            "host": "recruitment.rajasthan.gov.in",
+            "status": "ROBOTS_UNAVAILABLE",
+            "pages_inspected": [],
+            "source_registry_modified": False,
+            "paper_bytes_fetched": False,
+            "database_written": False,
+            "candidate_promotions": 0,
+        }
+
+    monkeypatch.setattr(source_health_routes, "probe_recruitment_portal_route", fake_probe)
+    client = TestClient(create_app())
+
+    first = client.get("/diagnostics/recruitment-portal-paper-route")
+    second = client.get("/diagnostics/recruitment-portal-paper-route")
+
+    assert first.status_code == second.status_code == 200
+    assert first.json()["cache"]["cached"] is False
+    assert second.json()["cache"]["cached"] is True
+    assert calls == [1.0]
+
+
+def test_recruitment_portal_route_diagnostic_rejects_supplied_host_or_url():
+    client = TestClient(create_app())
+    response = client.get("/diagnostics/recruitment-portal-paper-route?url=https://example.org/")
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "UNSUPPORTED_QUERY"
+    assert "example.org" not in response.text
+
+
+def test_recruitment_portal_route_diagnostic_is_not_in_openapi():
+    client = TestClient(create_app())
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+    assert "/diagnostics/recruitment-portal-paper-route" not in response.json()["paths"]

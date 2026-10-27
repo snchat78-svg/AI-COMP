@@ -10,6 +10,7 @@ from starlette.responses import Response
 
 from ai_comp.research.source_health import source_health_report
 from ai_comp.research.jansoochna_service_probe import probe_jansoochna_rssb_service
+from ai_comp.research.recruitment_portal_probe import probe_recruitment_portal_route
 
 
 router = APIRouter(tags=["operations"])
@@ -129,6 +130,58 @@ def jansoochna_rssb_service_diagnostic(request: Request) -> Response:
         cache["jansoochna_service_report"] = report
         cache["jansoochna_service_status_code"] = status_code
         cache["jansoochna_service_expires_at"] = time.monotonic() + CACHE_TTL_SECONDS
+        return _response(status_code, {
+            **report,
+            "cache": {"cached": False, "ttl_seconds": CACHE_TTL_SECONDS},
+        })
+
+
+@router.get("/diagnostics/recruitment-portal-paper-route", include_in_schema=False)
+def recruitment_portal_paper_route_diagnostic(request: Request) -> Response:
+    """Inspect fixed public recruitment-index routes after robots permission."""
+    query_items = list(request.query_params.multi_items())
+    if query_items and query_items != [("utm_source", "chatgpt.com")]:
+        return _response(400, {
+            "error": {
+                "code": "UNSUPPORTED_QUERY",
+                "message": "This fixed diagnostic endpoint does not accept URL or host parameters.",
+            }
+        })
+
+    cache = request.app.state.source_health_cache
+    lock = request.app.state.source_health_lock
+    with lock:
+        now = time.monotonic()
+        cached_report = cache.get("recruitment_portal_report")
+        expires_at = float(cache.get("recruitment_portal_expires_at", 0.0))
+        if isinstance(cached_report, dict) and now < expires_at:
+            return _response(int(cache.get("recruitment_portal_status_code", 200)), {
+                **cached_report,
+                "cache": {"cached": True, "ttl_seconds": CACHE_TTL_SECONDS},
+            })
+
+        try:
+            report = probe_recruitment_portal_route(timeout_seconds=1.0)
+        except Exception as exc:
+            report = {
+                "phase": "2.2-recruitment-portal-route-probe",
+                "diagnostic_only": True,
+                "host": "recruitment.rajasthan.gov.in",
+                "status": "PROBE_UNAVAILABLE",
+                "error_type": type(exc).__name__,
+                "pages_inspected": [],
+                "source_registry_modified": False,
+                "paper_bytes_fetched": False,
+                "database_written": False,
+                "candidate_promotions": 0,
+            }
+            status_code = 503
+        else:
+            status_code = 200
+
+        cache["recruitment_portal_report"] = report
+        cache["recruitment_portal_status_code"] = status_code
+        cache["recruitment_portal_expires_at"] = time.monotonic() + CACHE_TTL_SECONDS
         return _response(status_code, {
             **report,
             "cache": {"cached": False, "ttl_seconds": CACHE_TTL_SECONDS},

@@ -403,3 +403,15 @@ PR [#89](https://github.com/snchat78-svg/AI-COMP/pull/89) merged as 3b050227321b
 This evidence does not support a Render-only egress issue or an untested extra IPv4 record. It does not reveal the cause of the destination-specific failures, so do not guess at or override network controls. Jan Soochna remains blocked before service-link inspection because its robots fetch returns HTTP_ERROR; no PDF or paper bytes were downloaded.
 
 **Next:** pursue only another directly accessible, officially documented HTTPS paper route with normal TLS and a permitted robots/terms policy. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email/phone contact or proxy/TLS bypass.
+
+
+## Phase 2.2 — Recruitment Portal route investigation started (27 October 2026)
+
+- Branch: `phase-2-2-recruitment-portal-route-probe`, base main SHA `73420ffe112424e725e6011c95bca2e0e66e37d7`.
+- Added `src/ai_comp/research/recruitment_portal_probe.py`: only the fixed public Recruitment Portal host is permitted; `robots.txt` must return valid plain text before any public index path is requested; redirects are not followed; PDF/document links are metadata only.
+- Added deterministic tests for robots-unavailable fail-closed behavior, robots allow/disallow, same-host/external link classification, query redaction, no document fetching and no DB/source-registry promotion.
+- Added an internal, cached, query-rejecting API diagnostic `/diagnostics/recruitment-portal-paper-route` and a post-deploy workflow check to capture the live report on main. PR event skips only this live observation because the new API route is not deployed until merge.
+- External-source acceptance remains OPEN: this route is a candidate investigation only. Must not promote a recruitment notice or generic document as a question paper; require official paper provenance, normal TLS/robots permission, actual bytes and SHA-256 through the existing protected fetch path. Current RSSB/RPSC evidence remains unchanged.
+- No email/phone contact, TLS bypass, proxy, arbitrary host input, paper bytes, or database/source registry writes were used.
+
+**Handoff:** Phase 2.2 remains BLOCKED until a permitted official paper route yields real candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until Phase 6.56 acceptance; Phase 6.58 remains BLOCKED.
