@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (base main `29d59f696b03db37c3d5f56c293fb9154726da61`; PR #63–#67 merged; official-source run #18 still has 0 candidates; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (main `7564cf4b2dcf251098da6e6662fbe159b5993932`; PR #68 merged + exact-head CI passed; Render deploy LIVE; official source gate still blocked; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -228,3 +228,12 @@ Current Render egress ranges supplied by the user: `74.220.48.0/24` and `74.220.
 The current implementation increment adds one fixed, non-user-selectable `example.com:443` control to full source-health reports. It remains outside the official `results` collection; the operational gate still checks only registered official hosts. No page content is fetched; normal certificate validation and all existing host/robots restrictions remain unchanged. The Render source-health workflow will publish the control outcome separately from the official-source table. Single-source diagnostic calls do not probe the extra control host.
 
 Next: merge only after exact-head tests and container CI pass, then inspect the automatic post-deploy Render source-health run. A control PASS combined with official-host failures would narrow the investigation to destination/path-specific reachability; it is not proof of an IP block. A control failure would indicate a broader runtime egress/TLS issue. Keep Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED until the actual official HTTPS and paper-ingestion gates pass.
+
+
+## Phase 2.5 fixed HTTPS control — post-deploy evidence (27 October 2026)
+
+- PR [#68](https://github.com/snchat78-svg/AI-COMP/pull/68) merged at `7564cf4b2dcf251098da6e6662fbe159b5993932`. Exact-head [CI run #609](https://github.com/snchat78-svg/AI-COMP/actions/runs/40449133149): **552 passed, 14 warnings**, API container build passed.
+- Render deployment `dep-dbg2dlg473hc73fac31g` for that merge is `LIVE`. Render logs show the new `GET /diagnostics/official-source-health` route returned `200 OK` at `2026-10-27T04:22:16Z`.
+- The response body is not present in connector-accessible Render logs, and an attempt to fetch the URL from this execution environment could not resolve the host. Therefore the actual `network_control` result (fixed `example.com:443`) is **unknown in this checkpoint**. A 200 status does not show that TCP/TLS to the control passed, and does not prove official connectivity.
+- Next action: open [the diagnostic endpoint](https://ai-comp-api.onrender.com/diagnostics/official-source-health), read `network_control` plus the official-source results from the same response, and use those values to choose the next network diagnosis. A control PASS with official-host failures only narrows the problem to destination/path-specific behavior; it does not prove these CIDRs are explicitly blocked. No proxy/static-IP purchase/region migration/TLS relaxation is authorized by current evidence.
+- Keep the candidate `rssb-cet-graduation-2026-candidate-20261026-01` pending and do not retry until a reachable approved official HTTPS route is demonstrated. Full PDF identity/digest review, complete syllabus inventory and mapping review, and real mobile E2E remain gates. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.

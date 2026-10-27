@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (base main `29d59f696b03db37c3d5f56c293fb9154726da61`; PRs #63–#67 merged; fresh Render probe at 13:02 UTC on 26 October remained blocked; Phase 6.56 stays IN_PROGRESS)  
+**Last verified:** 2026-10-27 (main `7564cf4b2dcf251098da6e6662fbe159b5993932`; PR #68 merged, CI #609 passed 552 tests + API container; Render deploy `dep-dbg2dlg473hc73fac31g` LIVE; official source access remains blocked)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -210,3 +210,13 @@ The user supplied Render's shared outbound CIDRs `74.220.48.0/24` and `74.220.56
 The next scoped code increment on branch `phase-2-5-egress-control-probe` adds a fixed `example.com:443` connectivity control to all-source reports, kept outside the registered official-source `results` array and permanently marked diagnostic-only. No user-supplied URL is accepted, no HTTP page or paper bytes are fetched, no official-source acceptance gate is weakened, and certificate validation remains enabled. The Render workflow summary will report the control result independently while its gate continues to require an official source to pass TCP plus validated TLS. Single-source probes remain narrowly scoped.
 
 **Acceptance for this increment:** tests prove control/official result separation, no IP leakage and no control probe on single-source runs; exact-head CI passes; the newly deployed Render diagnostic report supplies fresh control-vs-official results. The result can distinguish general egress failure from an official-host-specific failure pattern, but it cannot by itself prove IP blocking. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 stays PLANNED; Phase 6.58 stays BLOCKED.
+
+
+## Post-deploy validation of fixed HTTPS control — 27 October 2026
+
+- PR [#68](https://github.com/snchat78-svg/AI-COMP/pull/68) merged at `7564cf4b2dcf251098da6e6662fbe159b5993932`. Exact-head CI [run #609](https://github.com/snchat78-svg/AI-COMP/actions/runs/40449133149) passed **552 tests, 14 warnings**, and the API container build.
+- Render deploy `dep-dbg2dlg473hc73fac31g` completed successfully and is `LIVE` for the same commit. Render app logs record `GET /diagnostics/official-source-health` returning `200 OK` at approximately `2026-10-27T04:22:16Z`.
+- The connector-visible Render logs include the HTTP status, not the response JSON body. A direct fetch of the endpoint from this execution environment also failed DNS resolution. Therefore the new `network_control` field's actual `example.com` DNS/TCP/TLS result has **not been captured/verified here**. Do not mark the general-control test as live-accepted merely from HTTP 200 or the successful deploy.
+- The code keeps `network_control` outside the official-source `results` list. The control cannot satisfy the required official-host gate. Standard TLS validation and source policy remain unchanged.
+- **Next single step:** inspect the JSON body returned when opening [the deployed source-health endpoint](https://ai-comp-api.onrender.com/diagnostics/official-source-health) and record the `network_control` field together with the official source statuses. If its general HTTPS control passes while the official hosts fail, classify that as a destination/path-specific pattern only—not proof of a CIDR block. If the control fails too, investigate broader outbound connectivity. Obtain authorized confirmation before claiming the government hosts block the listed Render CIDRs.
+- Phase status does not change: Phase 2.2 **BLOCKED**, Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, Phase 6.58 **BLOCKED**. No real paper candidate or syllabus bytes/digest have been verified and no live Old Papers auto-update is claimed.
