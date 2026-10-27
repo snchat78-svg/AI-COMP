@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `784913ad62435658948ddaae232c1d8c6eba45d6`; PR #76 merged; Jan Soochna RSSB-papers service route is next to test; no calls/emails; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (main `7c7f4111c277c374302dff5c40201d99a2599d27`; PR #77 merged; Jan Soochna IPv4 TCP/validated TLS pass; robots-gated service-page inspection underway in PR)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -283,3 +283,17 @@ The fresh Render report after PR #76 ([workflow #14](https://github.com/snchat78
 Public Rajasthan Jan Soochna listings expose separate service names for `Question Papers of RSSB` and `Answer Key of RSSB` ([services listing](https://jansoochna.rajasthan.gov.in/Services), [scheme listing](https://jansoochna.rajasthan.gov.in/Scheme)). The pages are currently only a lead, not proof that a paper PDF is directly hosted there.
 
 A fixed Jan Soochna TLS control is being added to the existing read-only diagnostic and workflow summaries. It stays separate from official exam sources. After deploy, if reachable, inspect the public RSSB question-paper service to see whether it serves exact official files from Jan Soochna or links back to the blocked RSSB hostname. Do not guess document IDs, scrape protected endpoints, or treat a general service index as source evidence. No contact has been initiated; no proxies or TLS bypasses are planned.
+
+
+## Jan Soochna public service inspection — 27 October 2026
+
+The fresh Render diagnostic from workflow [#15](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462990677) confirmed `jansoochna.rajasthan.gov.in` DNS OK, IPv4 TCP PASS and certificate-validated TLS PASS. The same report retained RSSB current-host and RPSC TCP timeouts and a legacy RSSB TLS failure; no official-source candidate was discovered by this diagnostic.
+
+The next implementation adds a separate hidden diagnostic endpoint that:
+1. Requests only Jan Soochna's fixed `/robots.txt`.
+2. Refuses to read page content if robots is unavailable, invalid, or disallows the chosen user-agent for the page.
+3. Reads only public `/Services` and `/Scheme` HTML where robots permits.
+4. Parses anchor labels for RSSB Question Papers / Answer Key services. It does not follow those links, fetch a PDF, persist a candidate, or change the official-source registry.
+5. Returns only same-host HTTPS link URLs for further public inspection, or a target hostname for external links without following them.
+
+The route has no URL/host parameters, is absent from OpenAPI, bounded by time/size limits, verifies ordinary TLS and is read-only. After exact-head CI and Render deploy, inspect its result. If the service routes back to RSSB, maintain the block; don't use a proxy or bypass. Any directly hosted PDF must pass source identity, access policy, full-byte SHA-256 and independent review before ingestion.

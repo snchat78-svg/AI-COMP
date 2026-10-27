@@ -9,6 +9,7 @@ on:
       - "src/ai_comp/api/source_health_routes.py"
       - "src/ai_comp/api/app.py"
       - "src/ai_comp/research/source_health.py"
+      - "src/ai_comp/research/jansoochna_service_probe.py"
       - "src/ai_comp/research/seed_registry.py"
   workflow_dispatch:
 
@@ -123,6 +124,57 @@ jobs:
           print("\n".join(lines))
           PY
           cat render-source-health-summary.md >> "$GITHUB_STEP_SUMMARY"
+          # Inspect the public Jan Soochna RSSB service index separately from the
+          # official-source acceptance gate. This diagnostic follows robots.txt
+          # and never fetches any paper/answer-key documents.
+          service_url="https://ai-comp-api.onrender.com/diagnostics/jansoochna-rssb-service"
+          service_status="$(curl --silent --max-time 10 --output jansoochna-service-probe.json --write-out '%{http_code}' "$service_url" || true)"
+          if [ "$service_status" != "200" ]; then
+            echo "::error::Could not retrieve the fixed Jan Soochna public-service diagnostic response (HTTP $service_status)."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("jansoochna-service-probe.json").read_text(encoding="utf-8"))
+          if data.get("phase") != "2.5-jansoochna-public-service-probe" or data.get("host") != "jansoochna.rajasthan.gov.in":
+              raise SystemExit("Jan Soochna diagnostic response did not match its fixed-host contract.")
+
+          lines = [
+              "# Jan Soochna RSSB public-service route inspection",
+              "",
+              "- Read-only diagnostic; only robots.txt and explicitly permitted public HTML index pages are fetched.",
+              "- No paper or answer-key bytes fetched; no database records or source registry changed.",
+              f"- Overall route status: {data.get('status', 'unknown')}",
+              f"- robots.txt status: {data.get('robots', {}).get('status', 'unknown')}",
+          ]
+          robots = data.get("robots", {})
+          if isinstance(robots, dict):
+              lines.append(f"- Robots permission: /Services={robots.get('can_fetch_services', 'unknown')}; /Scheme={robots.get('can_fetch_scheme', 'unknown')}")
+
+          for page in data.get("pages_fetched", []):
+              lines.append("")
+              lines.append(f"## {page.get('path', 'unknown')} — {page.get('status', 'unknown')}")
+              if page.get("http_status") is not None:
+                  lines.append(f"- HTTP status: {page.get('http_status')}")
+              for key, title in (("question_papers", "RSSB question-paper service links"), ("answer_keys", "RSSB answer-key service links")):
+                  links = page.get(key, [])
+                  if links:
+                      lines.append(f"- {title}:")
+                      for item in links:
+                          if item.get("same_host") is True:
+                              lines.append(f"  - Same-host public link (not fetched): {item.get('url', '')}")
+                          else:
+                              lines.append(f"  - External link not followed; target host: {item.get('target_host', 'unknown')}")
+          summary = "\n".join(lines) + "\n"
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          PY
+
 
       - name: Require at least one official source to complete validated TCP and TLS
         shell: bash

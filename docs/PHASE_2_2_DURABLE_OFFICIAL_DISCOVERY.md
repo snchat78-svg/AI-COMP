@@ -141,3 +141,17 @@ The Render-side probe in [run #14](https://github.com/snchat78-svg/AI-COMP/actio
 Public Jan Soochna listings include a named `Question Papers of RSSB` service and a separate `Answer Key of RSSB` service ([services listing](https://jansoochna.rajasthan.gov.in/Services), [scheme listing](https://jansoochna.rajasthan.gov.in/Scheme)). This is a promising public lead, not an approved source or evidence that PDFs are directly hosted there.
 
 A fixed Jan Soochna connectivity control is now included in the read-only route probe. If it passes, examine only public service navigation and inspect the resolved URLs. If URLs lead back to the inaccessible RSSB host, do not attempt to proxy or route around that restriction; record that the public portal does not provide an independent accessible content path. If a PDF is directly hosted on the government portal, verify title, issuing board, notification/exam identity, source access policy, SHA-256 and complete file before adding a candidate.
+
+
+## Jan Soochna public RSSB service index — guarded inspection (27 October 2026)
+
+The post-PR #77 Render report [workflow #15](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462990677) shows Jan Soochna IPv4 TCP and normal certificate-validated TLS PASS from Render. Current RSSB and RPSC connections remain blocked at TCP; legacy RSSB still fails certificate-validated TLS. Thus the portal is reachable but no official paper file has been demonstrated or fetched.
+
+The next increment adds a read-only probe of Jan Soochna's public RSSB service listing:
+- It must fetch a valid `robots.txt` first and stops if unavailable or if `/Services` or `/Scheme` is disallowed.
+- It fetches only those fixed pages, using bounded response size/time and standard certificate validation.
+- It parses the visible public anchor labels for RSSB Question Papers and Answer Key services.
+- It never follows service-page links, never requests an RSSB PDF and never creates paper candidates or source registry entries.
+- A same-host URL may be inspected in a later, separate step only if the public service page is allowed; an external target hostname is reported but not followed.
+
+If the service points to the blocked RSSB host, do not proxy or circumvent the access restriction. If it links to a directly hosted public government PDF, verify the exact recruitment/exam/year/notification provenance, access rules, full document bytes and SHA-256 before considering the existing protected ingestion workflow. The official-source acceptance gate remains unchanged.

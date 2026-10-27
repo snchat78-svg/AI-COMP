@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `784913ad62435658948ddaae232c1d8c6eba45d6`; PR #76 merged; Render run #14 proves two public government host TLS controls pass, official hosts still blocked; Jan Soochna route probe next)  
+**Last verified:** 2026-10-27 (main `7c7f4111c277c374302dff5c40201d99a2599d27`; PR #77 merged; Render fresh control shows Jan Soochna TLS PASS; service-page inspection now in PR)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -278,3 +278,15 @@ The deployed Render source-health run [#14](https://github.com/snchat78-svg/AI-C
 The new scoped branch `phase-2-5-jansoochna-route-probe` adds a fixed `jansoochna.rajasthan.gov.in:443` diagnostic control in the existing health report. Like the other government controls, it stays outside the official-source registry and is only DNS/TCP/certificate-validated-TLS; it does not fetch pages or PDFs, cannot produce paper candidates, and cannot make the official-source gate green. No phone call or email has been sent or initiated.
 
 **Next:** after exact-head CI and Render deploy, inspect the Jan Soochna connection result. If reachable, inspect its publicly accessible RSSB Question Papers service and whether the resulting paper URL is a directly hosted approved government document or merely redirects to the blocked RSSB hostname. Only use an exact official paper URL after provenance, access policy, robots/terms and PDF integrity gates pass. Do not treat an index listing alone as an ingested paper.
+
+
+## Jan Soochna service-index inspection — robots-gated, no paper download (27 October 2026)
+
+- PR [#77](https://github.com/snchat78-svg/AI-COMP/pull/77) merged as `7c7f4111c277c374302dff5c40201d99a2599d27`; exact-head CI [run #623](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462846318) passed pytest and API-container build.
+- The fresh post-deploy Render source-health report [workflow #15](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462990677) returned a fresh report at `2026-10-27T06:46:41Z`: Jan Soochna DNS OK, IPv4 TCP PASS, certificate-validated TLS PASS; public Rajasthan Recruitment host also passed; Land Revenue TCP passed but TLS timed out in this run. Registered RSSB current-host and RPSC connections remain TCP timeouts; legacy RSSB still fails certificate-validated TLS. The health workflow failed only at the unchanged registered-official-source acceptance gate; no paper was fetched.
+- Jan Soochna's public service listing shows separate “Question Papers of RSSB” and “Answer Key of RSSB” services, but those names alone do not reveal where the document files live.
+- PR branch `phase-2-5-jansoochna-service-path` adds `/diagnostics/jansoochna-rssb-service`, a separate read-only endpoint. It must first read `https://jansoochna.rajasthan.gov.in/robots.txt`; it fetches `/Services` or `/Scheme` only when the selected user-agent is allowed. Requests are fixed-host HTTPS, certificate-validated, byte/time bounded, same-host-redirect only. The HTML parser reports matching RSSB question-paper/answer-key links but follows none of them. A link back to `rssb.rajasthan.gov.in` is reported as an external target host but never requested.
+- The new endpoint is not listed in public OpenAPI, accepts no user-supplied URL/host, uses a 60-second read-only cache, never writes a paper candidate or source record, and cannot satisfy the official-source gate. An unavailable/disallowing robots file fails closed.
+- After CI and deploy, review the service report. If it exposes same-host service detail links, inspect only publicly permitted routes to determine whether the exact official PDF is directly hosted there. Any paper is still pending until exact issuing board/title/exam/year/notification provenance, content type, full PDF bytes, SHA-256, terms/access permissions and review gates pass. If the service links back to blocked RSSB, do not proxy it or route around access restrictions.
+
+**Status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No official paper or answer key has yet been ingested by this service-page diagnostic.
