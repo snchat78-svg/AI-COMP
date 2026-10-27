@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `2f314d2778d33614acdb04fb4751eb3b241f3790`; PRs #70–#71 merged; CI #613/#614/#616 passed; cross-runtime diagnostics match; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (base main `dc1c1f0e887af4515f7be808686191f39ce491b4`; PRs #68–#72 merged; Issue #74 tracks external source-network unblock; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -254,3 +254,14 @@ Observed from both environments:
 - `RPSC_OFFICIAL`: IPv4 TCP `TimeoutError`; IPv6 TCP `OSError`.
 
 This cross-runtime match makes a Render-only deployment/cache issue less likely, but it does not prove that a government host explicitly blocks the Render CIDRs. The workflows perform DNS/TCP/TLS probes only and do not fetch pages/papers, access the DB, mutate records, or use secrets. Next action is to obtain authorized network-side confirmation or select an approved alternate runtime/egress route after cost/security review. Keep Phase 2.2 BLOCKED and Phase 6.56 IN_PROGRESS; Phase 6.57 and 6.58 cannot advance before the verified source/content gates pass.
+
+
+## Current blocker and external unblock owner — 27 October 2026
+
+The fixed general HTTPS control `example.com` passes IPv4 TCP + validated TLS from both Render and GitHub-hosted automation; the three official-source endpoints fail with the same pattern across both runtimes. Latest evidence: GitHub-hosted comparison [run #1](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333663), Render source-health [run #13](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333727), and user's Render Outbound panel (`74.220.48.0/24`, `74.220.56.0/24`). This is not proof of an explicit CIDR block; code changes alone cannot authorize or repair a remote official network policy.
+
+External follow-up is tracked in [GitHub Issue #74](https://github.com/snchat78-svg/AI-COMP/issues/74). An authorized operator must request from the official board/network contact confirmation of filtering/rate-limits and, where applicable, an approved reachable official HTTPS hostname/API/CDN or allowlisting path. Publicly listed RSSB IT contact: `itcell.rssb@rajasthan.gov.in`; verify it on the current official contact page before sending.
+
+No email has been sent by this assistant. No proxy, paid service, dedicated IP, or region change has been made or approved. Do not use an unverified `rsmssb.in` or unofficial mirror as an official source; preserve certificate validation and do not retry the pending candidate until an approved route is demonstrated.
+
+**Next exact action after an authorized response:** probe the approved official endpoint from the deployed Render runtime, verify normal certificate-validated HTTPS + robots/allowed paths, run existing official-source discovery and require nonzero genuine candidates; only then proceed to byte/hash review, complete syllabus topic/subtopic inventory and independent mapping review, correct answer-key matching, and mobile E2E. Phase 2.2 stays BLOCKED; Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
