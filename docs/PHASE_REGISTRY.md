@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `2f314d2778d33614acdb04fb4751eb3b241f3790`; PRs #70–#71 merged; exact-head CI #613 and current-main CI #614/#616 passed 552 tests + API container; cross-runtime probe confirms official-source access remains blocked)  
+**Last verified:** 2026-10-27 (base main `dc1c1f0e887af4515f7be808686191f39ce491b4`; PRs #68–#72 merged; cross-runtime checks show official-source access still blocked; external-unblock issue #74 opened; no phase advancement)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -235,3 +235,21 @@ The next scoped code increment on branch `phase-2-5-egress-control-probe` adds a
 - These workflows only probed DNS/TCP/TLS against fixed registered hosts plus fixed `example.com:443`; they did not fetch source pages or paper documents, access the database, mutate records, or use secrets. The Render workflow remains failed by design until an official source passes the full TCP+TLS gate.
 - **Next dependency gate:** request confirmation from an authorized official/network contact on whether connections from the listed Render ranges are filtered; if that cannot be confirmed, evaluate a documented, approved reachable runtime/egress route with cost and security review before any change. Do not weaken TLS, add a proxy, pay for a dedicated IP, migrate region, or re-register/retry the pending candidate without separate evidence and approval.
 - **Phase status unchanged:** Phase 2.2 `BLOCKED`; Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED`. No real paper bytes/digest, answer-key pairing, complete syllabus inventory or automatic Old Papers update is proven.
+
+
+## External source-network unblock — operator/contact action required (27 October 2026)
+
+The existing software and both diagnostic runtimes have now been checked; further code-only retries are not a root-cause fix. The cross-runtime comparison [GitHub-hosted run #1](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333663) and fresh Render source-health [run #13](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333727) show the same failure classes:
+
+- Fixed `example.com:443` control: IPv4 TCP and certificate-validated TLS pass in both runtimes.
+- `RSSB_OFFICIAL`: DNS resolves, IPv4 TCP times out.
+- `RSSB_LEGACY_OFFICIAL`: TCP connects, but standard certificate-validated TLS fails.
+- `RPSC_OFFICIAL`: IPv4 TCP times out and IPv6 TCP fails.
+
+The Render Dashboard lists shared outbound CIDRs `74.220.48.0/24` and `74.220.56.0/24`. This is destination/path-specific behavior, **not proof** that those exact CIDRs are explicitly blocked. No source page/paper was fetched by these probes and no database records changed.
+
+Tracked follow-up: [GitHub Issue #74 — approved HTTPS route to official RSSB/RPSC sources](https://github.com/snchat78-svg/AI-COMP/issues/74). The board's publicly listed IT email is `itcell.rssb@rajasthan.gov.in`; confirm the address against the board's current official contact page before sending. Ask the authorized source/network owner whether Render/GitHub cloud egress is filtered and, if so, for a sanctioned reachable official hostname/API/CDN or approved allowlisting route that supports normal certificate-validated HTTPS.
+
+Do not use an unverified alternate domain, unofficial mirror, proxy, paid dedicated IP or region migration as a silent workaround. Any architecture/cost change needs a documented plan and explicit approval. Keep the registered CET syllabus candidate pending; no repeat fetch until route evidence exists.
+
+**Current phase gate:** Phase 2.2 remains **BLOCKED**; Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 6.58 remains **BLOCKED**. Resume the existing pipeline only after an approved official route passes DNS/TCP/TLS and real paper candidates persist; then complete exact document/hash review, full syllabus inventory and independent mapping review, answer-key matching, and real mobile E2E.
