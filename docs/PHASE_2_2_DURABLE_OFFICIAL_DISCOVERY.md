@@ -211,3 +211,20 @@ Both targets remain on `jansoochna.rajasthan.gov.in`. No PDF/answer-key bytes we
 PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) will expose only the next redirect's scheme, hostname and path from the returned `Location` header. Query and fragment are omitted; no further request is made. This narrows the route without downloading a paper or bypassing the registered official-source TLS gate. Exact-head CI and post-deploy report remain pending.
 
 The official source gate remains blocked: current registered RSSB/RPSC connections time out at TCP and legacy RSSB fails certificate-validated TLS. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+## Cookie-session hypothesis for the public service redirect loop — 27 October 2026
+
+After PR #84 deployment, live Render source-health [#40472474696, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472474696) confirms:
+- `/Services/GetMoreData` → `/Services/ClickablePDF` → `/Services`
+- `/Services` → `/Services/GetMoreData` → `/Services/ClickablePDF`
+Only the first target request is made after exact robots permission; its second `Location` header is recorded but not followed. No PDF or answer-key bytes were read.
+
+Open PR [#85](https://github.com/snchat78-svg/AI-COMP/pull/85) changes only transport state handling for this diagnostic: one in-memory CookieJar and one opener per probe run, never persisted or reported. This tests whether cookies returned by the public portal change the loop. Auto-redirect remains disabled; fixed-host HTTPS validation, exact target robots checks, bounded time/body, no-third-request and PDF/binary pre-read rejection remain in force. This is a hypothesis, not an assertion that cookies are required.
+
+After exact-head CI and deployment:
+- If the loop remains, stop this route path and do not keep probing it.
+- If the route returns an allowed text/HTML/JSON response, document-like links remain metadata only and are not fetched.
+- If it returns a PDF/binary MIME type, record only the type and do not read body bytes.
+- Do not persist candidates or change the registered official-source inventory until official document provenance and the existing protected fetch/review gates pass.
+
+Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
