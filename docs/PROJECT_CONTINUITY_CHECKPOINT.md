@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (base main `dc1c1f0e887af4515f7be808686191f39ce491b4`; PRs #68–#72 merged; Issue #74 tracks external source-network unblock; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (base main `7de329f4673544db4a54f794f62ac16515ebcd66`; public government-route probe underway; no calls/emails sent or planned without user authorization; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -265,3 +265,12 @@ External follow-up is tracked in [GitHub Issue #74](https://github.com/snchat78-
 No email has been sent by this assistant. No proxy, paid service, dedicated IP, or region change has been made or approved. Do not use an unverified `rsmssb.in` or unofficial mirror as an official source; preserve certificate validation and do not retry the pending candidate until an approved route is demonstrated.
 
 **Next exact action after an authorized response:** probe the approved official endpoint from the deployed Render runtime, verify normal certificate-validated HTTPS + robots/allowed paths, run existing official-source discovery and require nonzero genuine candidates; only then proceed to byte/hash review, complete syllabus topic/subtopic inventory and independent mapping review, correct answer-key matching, and mobile E2E. Phase 2.2 stays BLOCKED; Phase 6.56 stays IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+
+## No-contact public-route investigation — 27 October 2026
+
+The user instructed not to call or email. No contact has been sent or initiated. The previously run read-only probes found general IPv4 HTTPS working to `example.com` from Render and GitHub-hosted automation, while official RSSB/RPSC hosts failed with TCP timeouts and the legacy RSSB host failed validated TLS. This does not prove that the Render CIDRs are explicitly blocked.
+
+The next code increment probes two fixed public Rajasthan government portal hosts as connectivity-only diagnostics: `recruitment.rajasthan.gov.in` and `landrevenue.rajasthan.gov.in`. Both appear in government-origin contexts, but neither is assumed to publish question papers. The reports keep these results separate from official exam-source `results`; no generic portal can pass the official-paper acceptance gate by itself. No page or PDF bytes are downloaded by these probes, and all certificate validation stays enabled.
+
+After CI and deploy, review the actual portal host results. For any reachable portal, inspect its public navigation, robots and terms and confirm it directly hosts the exact exam paper/syllabus with official provenance before considering an ingestion path. Do not use unofficial mirrors, contact the Board, weaken TLS, add proxies or buy static egress. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.

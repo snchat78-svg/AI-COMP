@@ -121,3 +121,14 @@ GitHub-hosted comparison [run #1](https://github.com/snchat78-svg/AI-COMP/action
 The next dependency is external rather than another retry/code rewrite. See [Issue #74](https://github.com/snchat78-svg/AI-COMP/issues/74). An authorized operator should ask the official RSSB IT/network contact to confirm egress filtering and provide a supported official HTTPS endpoint or an approved access route. A public contact listed by the official board is `itcell.rssb@rajasthan.gov.in`; verify it against the board's current official contact page before use.
 
 Do not add an unverified source domain, use a proxy or unofficial mirror, weaken TLS, purchase dedicated egress or migrate regions without evidence and separate explicit approval. Keep the existing candidate pending until a validated route works. Phase 2.2 remains BLOCKED and Phase 6.56 remains IN_PROGRESS; no paper or syllabus has been verified from these diagnostics.
+
+
+## No-contact alternate official-government route search — 27 October 2026
+
+The user has instructed that no call or email be made. None has been made. Continue only with public route research and read-only connectivity measurements.
+
+The cross-runtime test already established that the general `example.com:443` control passes IPv4 TCP and standard certificate-validated TLS from Render and GitHub-hosted automation, whereas the registered RSSB/RPSC hosts fail with timeouts and the legacy RSSB host fails standard TLS. This does not prove the government servers explicitly block cloud CIDRs.
+
+The next diagnostic tests two fixed public Rajasthan government portal hosts—`recruitment.rajasthan.gov.in` and `landrevenue.rajasthan.gov.in`—because the unified recruitment portal is referenced by Board documents and a Board-signed notice is indexed on the Land Revenue government host. These are only candidate route leads, not paper-source approvals. Probes perform DNS/TCP/certificate-validated TLS only; no page/PDF bytes are fetched. The hosts are excluded from the source registry and cannot create paper candidates.
+
+If a route connects, verify robots/terms and then prove that its own public official pages publish the exact paper/syllabus bytes before using it. Preserve original source provenance and SHA-256. If no relevant public official alternate exists, retain the operational block; do not use an unofficial mirror, a proxy, unsafe TLS compatibility, or an unauthorized contact.

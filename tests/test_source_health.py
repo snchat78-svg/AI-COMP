@@ -202,3 +202,66 @@ def test_single_official_source_health_report_does_not_probe_control_host():
     assert [item["source_id"] for item in report["results"]] == ["RPSC_OFFICIAL"]
     assert "network_control" not in report
     assert observed_hosts == ["rpsc.rajasthan.gov.in"]
+
+
+
+def test_all_source_health_reports_keep_public_government_portals_separate():
+    observed_hosts = []
+
+    def resolver(host, port, *, type):
+        assert port == 443
+        assert type == socket.SOCK_STREAM
+        observed_hosts.append(host)
+        return [
+            (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", ("192.0.2.10", 443)),
+        ]
+
+    def probe(family, socktype, proto, sockaddr, hostname, timeout):
+        return {
+            "tcp_ok": True,
+            "tls_ok": True,
+            "tcp_error": None,
+            "tls_error": None,
+        }
+
+    report = source_health_report(
+        resolver=resolver,
+        address_probe=probe,
+        timeout_seconds=1.0,
+    )
+
+    official_ids = {source.source_id for source in build_initial_registry().sources()}
+    assert {item["source_id"] for item in report["results"]} == official_ids
+    assert report["network_control"]["source_id"] == "NETWORK_CONTROL"
+    portals = report["government_portal_controls"]
+    assert {item["source_id"] for item in portals} == {
+        "RAJASTHAN_RECRUITMENT_PORTAL_CONTROL",
+        "RAJASTHAN_LANDREVENUE_PORTAL_CONTROL",
+    }
+    assert {item["host"] for item in portals} == {
+        "recruitment.rajasthan.gov.in",
+        "landrevenue.rajasthan.gov.in",
+    }
+    assert all(item["ipv4_tcp"] == "PASS" and item["ipv4_tls"] == "PASS" for item in portals)
+    assert "example.com" in observed_hosts
+    assert "recruitment.rajasthan.gov.in" in observed_hosts
+    assert "landrevenue.rajasthan.gov.in" in observed_hosts
+    assert "192.0.2.10" not in repr(report)
+
+
+def test_single_official_source_health_report_does_not_probe_public_portal_controls():
+    observed_hosts = []
+
+    def resolver(host, *_args, **_kwargs):
+        observed_hosts.append(host)
+        return []
+
+    report = source_health_report(
+        "RPSC_OFFICIAL",
+        resolver=resolver,
+    )
+
+    assert [item["source_id"] for item in report["results"]] == ["RPSC_OFFICIAL"]
+    assert "network_control" not in report
+    assert "government_portal_controls" not in report
+    assert observed_hosts == ["rpsc.rajasthan.gov.in"]

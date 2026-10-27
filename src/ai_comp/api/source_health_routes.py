@@ -1,4 +1,4 @@
-"""Read-only, cached connectivity diagnostics for registered official exam sources."""
+"""Read-only connectivity diagnostics for official sources and fixed public-route controls."""
 from __future__ import annotations
 
 import json
@@ -31,7 +31,7 @@ def _response(status_code: int, payload: dict[str, Any]) -> Response:
 
 @router.get("/diagnostics/official-source-health", include_in_schema=False)
 def official_source_health(request: Request) -> Response:
-    """Probe fixed official hosts and one fixed control; no arbitrary host input or content fetch."""
+    """Probe fixed hosts only; no arbitrary host input or content fetch."""
     # ChatGPT link navigation appends this analytics-only parameter to links.
     # Permit only that exact single pair so the diagnostic is usable from chat;
     # no query parameter can select or override the registered hosts.
@@ -58,8 +58,8 @@ def official_source_health(request: Request) -> Response:
             })
 
         try:
-            # This module has a fixed source registry; callers cannot supply URLs.
-            # It opens only short-lived TCP/TLS probes and never downloads paper bytes.
+            # This module uses fixed official and diagnostic-only host lists; callers cannot supply URLs.
+            # It opens short-lived TCP/TLS probes and never downloads page or paper bytes.
             report = source_health_report(timeout_seconds=PROBE_TIMEOUT_SECONDS)
         except Exception as exc:
             # Store only exception class, never messages that may reveal runtime data.

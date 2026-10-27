@@ -36,6 +36,28 @@ _NETWORK_CONTROL_SOURCE = SourceRecord(
     notes="Diagnostic control only; not an official exam-content source.",
 )
 
+# Public Rajasthan government portals are tested only as potential approved
+# document-routing leads. They are deliberately excluded from the official
+# exam-source registry and can never satisfy the official-source acceptance gate.
+_GOVERNMENT_PORTAL_CONTROLS = (
+    SourceRecord(
+        source_id="RAJASTHAN_RECRUITMENT_PORTAL_CONTROL",
+        name="Rajasthan Government Recruitment Portal connectivity control",
+        base_url="https://recruitment.rajasthan.gov.in/",
+        source_type=SourceType.UNVERIFIED,
+        priority=SourcePriority.UNVERIFIED,
+        notes="Public government portal connectivity only; not an exam-paper source.",
+    ),
+    SourceRecord(
+        source_id="RAJASTHAN_LANDREVENUE_PORTAL_CONTROL",
+        name="Rajasthan Government Land Revenue Portal connectivity control",
+        base_url="https://landrevenue.rajasthan.gov.in/",
+        source_type=SourceType.UNVERIFIED,
+        priority=SourcePriority.UNVERIFIED,
+        notes="Public government portal connectivity only; not an exam-paper source.",
+    ),
+)
+
 
 def _validated_tls_probe(
     family: int,
@@ -214,7 +236,7 @@ def source_health_report(
     resolver: Callable[..., Any] | None = None,
     address_probe: Callable[..., dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Probe official sources and a fixed control for all-source reports."""
+    """Probe official sources plus fixed, separate route controls for full reports."""
     registry = build_initial_registry()
     sources = tuple(
         source
@@ -247,12 +269,21 @@ def source_health_report(
             resolver=resolver,
             address_probe=address_probe,
         )
+        report["government_portal_controls"] = [
+            probe_source(
+                source,
+                timeout_seconds=timeout_seconds,
+                resolver=resolver,
+                address_probe=address_probe,
+            )
+            for source in _GOVERNMENT_PORTAL_CONTROLS
+        ]
     return report
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Diagnose DNS/TCP/certificate-validated TLS for official sources and a fixed HTTPS control."
+        description="Diagnose DNS/TCP/certificate-validated TLS for official sources and fixed public-route controls."
     )
     parser.add_argument("--source", default="all")
     parser.add_argument("--timeout-seconds", type=float, default=2.0)
