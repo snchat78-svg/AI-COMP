@@ -145,3 +145,60 @@ def test_source_health_report_can_probe_registered_rssb_legacy_host():
     ]
     assert report["results"][0]["host"] == "rsmssb.rajasthan.gov.in"
     assert report["results"][0]["dns_status"] == "NO_RECORDS"
+
+
+
+def test_all_source_health_reports_keep_general_https_control_separate():
+    observed_hosts = []
+
+    def resolver(host, port, *, type):
+        assert port == 443
+        assert type == socket.SOCK_STREAM
+        observed_hosts.append(host)
+        return [
+            (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", ("192.0.2.10", 443)),
+        ]
+
+    def probe(family, socktype, proto, sockaddr, hostname, timeout):
+        return {
+            "tcp_ok": True,
+            "tls_ok": True,
+            "tcp_error": None,
+            "tls_error": None,
+        }
+
+    report = source_health_report(
+        resolver=resolver,
+        address_probe=probe,
+        timeout_seconds=1.0,
+    )
+
+    official_source_ids = {
+        source.source_id for source in build_initial_registry().sources()
+    }
+    assert {item["source_id"] for item in report["results"]} == official_source_ids
+    assert report["network_control"]["source_id"] == "NETWORK_CONTROL"
+    assert report["network_control"]["host"] == "example.com"
+    assert report["network_control"]["dns_status"] == "OK"
+    assert report["network_control"]["ipv4_tcp"] == "PASS"
+    assert report["network_control"]["ipv4_tls"] == "PASS"
+    assert "example.com" in observed_hosts
+    assert "192.0.2.10" not in repr(report)
+    assert "NETWORK_CONTROL" not in {item["source_id"] for item in report["results"]}
+
+
+def test_single_official_source_health_report_does_not_probe_control_host():
+    observed_hosts = []
+
+    def resolver(host, *_args, **_kwargs):
+        observed_hosts.append(host)
+        return []
+
+    report = source_health_report(
+        "RPSC_OFFICIAL",
+        resolver=resolver,
+    )
+
+    assert [item["source_id"] for item in report["results"]] == ["RPSC_OFFICIAL"]
+    assert "network_control" not in report
+    assert observed_hosts == ["rpsc.rajasthan.gov.in"]
