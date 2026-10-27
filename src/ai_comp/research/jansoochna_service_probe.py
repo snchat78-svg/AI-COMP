@@ -7,10 +7,11 @@ found in those pages, downloads exam documents, or writes to the database.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from html.parser import HTMLParser
 from typing import Callable
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import quote, unquote, urljoin, urlparse, urlsplit, urlunparse, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 from urllib.robotparser import RobotFileParser
 
@@ -22,6 +23,8 @@ SERVICE_PATHS = ("/Services", "/Scheme")
 USER_AGENT = "AI-COMP/phase2"
 MAX_ROBOTS_BYTES = 128 * 1024
 MAX_HTML_BYTES = 512 * 1024
+MAX_DETAIL_BYTES = 512 * 1024
+MAX_SERVICE_LINK_INSPECTIONS = 4
 DEFAULT_TIMEOUT_SECONDS = 1.5
 
 
@@ -38,22 +41,11 @@ class _BlockedRedirect(ValueError):
     pass
 
 
-class _SameHostHttpsRedirectHandler(HTTPRedirectHandler):
-    """Allow HTTPS redirects only when the destination remains on the fixed host."""
+class _NoRedirectHandler(HTTPRedirectHandler):
+    """Do not follow redirects before checking robots permissions for the target."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        from urllib.parse import urljoin
-
-        destination = urlsplit(urljoin(req.full_url, newurl))
-        if (
-            destination.scheme != "https"
-            or destination.hostname != HOST
-            or destination.port not in (None, 443)
-            or destination.username is not None
-            or destination.password is not None
-        ):
-            raise _BlockedRedirect("cross_host_or_insecure_redirect_blocked")
-        return super().redirect_request(req, fp, code, msg, headers, destination.geturl())
+        return None
 
 
 def _safe_fetch_text(
@@ -61,8 +53,9 @@ def _safe_fetch_text(
     *,
     max_bytes: int,
     timeout_seconds: float,
+    allowed_content_types: tuple[str, ...],
 ) -> FetchResult:
-    """GET a fixed same-host HTTPS URL with a strict byte limit and normal TLS."""
+    """GET a fixed same-host HTTPS URL, refusing redirects and unknown/binary bodies."""
     parsed = urlsplit(url)
     if (
         parsed.scheme != "https"
@@ -77,10 +70,10 @@ def _safe_fetch_text(
         url,
         headers={
             "User-Agent": USER_AGENT,
-            "Accept": "text/plain,text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+            "Accept": ",".join(allowed_content_types),
         },
     )
-    opener = build_opener(_SameHostHttpsRedirectHandler())
+    opener = build_opener(_NoRedirectHandler())
     try:
         with opener.open(request, timeout=timeout_seconds) as response:
             final_url = response.geturl()
@@ -93,25 +86,66 @@ def _safe_fetch_text(
                 or final.password is not None
             ):
                 return FetchResult(None, url, "", error="cross_host_or_insecure_redirect_blocked")
+            content_type = response.headers.get_content_type().lower()
+            # Reject binary content before reading any body bytes; in particular,
+            # a service link must never cause a PDF download.
+            if content_type not in allowed_content_types:
+                return FetchResult(
+                    int(response.status), final_url, content_type,
+                    error="content_type_not_allowed",
+                )
             raw = response.read(max_bytes + 1)
             if len(raw) > max_bytes:
-                return FetchResult(
-                    None, final_url, response.headers.get_content_type(),
-                    error="response_size_limit_exceeded",
-                )
-            return FetchResult(
-                int(response.status),
-                final_url,
-                response.headers.get_content_type().lower(),
-                raw.decode("utf-8", errors="replace"),
-            )
+                return FetchResult(None, final_url, content_type, error="response_size_limit_exceeded")
+            return FetchResult(int(response.status), final_url, content_type, raw.decode("utf-8", errors="replace"))
     except HTTPError as exc:
-        # Record only the HTTP status. Never include a body or server error text.
+        # Do not follow redirects or read their bodies; expose only the status.
         return FetchResult(int(exc.code), url, exc.headers.get_content_type().lower())
-    except _BlockedRedirect:
-        return FetchResult(None, url, "", error="cross_host_or_insecure_redirect_blocked")
     except (URLError, TimeoutError, OSError) as exc:
         return FetchResult(None, url, "", error=type(exc).__name__)
+
+
+def _robots_allows_url(parser: RobotFileParser, user_agent: str, url: str) -> bool:
+    """Apply the most-specific matching robots rule (Allow wins equal-length ties).
+
+    urllib.robotparser currently evaluates the first matching rule, which can
+    incorrectly allow a path when a broad Allow appears before a narrower
+    Disallow. Keep its group parsing but resolve precedence by rule specificity.
+    """
+    if parser.disallow_all:
+        return False
+    if parser.allow_all:
+        return True
+    if not parser.last_checked:
+        return False
+
+    specific_entries = [
+        entry
+        for entry in parser.entries
+        if entry.applies_to(user_agent)
+        and not any(agent.strip() == "*" for agent in entry.useragents)
+    ]
+    if specific_entries:
+        entries = specific_entries
+    elif parser.default_entry is not None:
+        entries = [parser.default_entry]
+    else:
+        return True
+
+    parsed = urlparse(unquote(url))
+    filename = urlunparse(("", "", parsed.path, parsed.params, parsed.query, parsed.fragment))
+    filename = quote(filename)
+    matching_rules = [
+        rule
+        for entry in entries
+        for rule in entry.rulelines
+        if rule.applies_to(filename)
+    ]
+    if not matching_rules:
+        return True
+    longest = max(len(rule.path) for rule in matching_rules)
+    most_specific = [rule for rule in matching_rules if len(rule.path) == longest]
+    return any(rule.allowance for rule in most_specific)
 
 
 class _AnchorParser(HTMLParser):
@@ -193,6 +227,65 @@ def _extract_rssb_links(page_url: str, body: str) -> dict[str, list[dict[str, ob
     return {"question_papers": papers[:10], "answer_keys": answer_keys[:10]}
 
 
+
+def _extract_document_links(
+    page_url: str,
+    body: str,
+    content_type: str,
+) -> list[dict[str, object]]:
+    """Report likely document links from a public service response without following them."""
+    candidates: list[tuple[str, str]] = []
+    if content_type in {"text/html", "application/xhtml+xml"}:
+        parser = _AnchorParser()
+        parser.feed(body)
+        candidates = list(parser.links)
+    elif content_type == "application/json":
+        def walk(value: object) -> list[str]:
+            if isinstance(value, str):
+                return [value]
+            if isinstance(value, list):
+                return [part for child in value for part in walk(child)]
+            if isinstance(value, dict):
+                return [part for child in value.values() for part in walk(child)]
+            return []
+
+        try:
+            payload = json.loads(body)
+        except (TypeError, ValueError):
+            return []
+        for value in walk(payload):
+            folded = value.lower()
+            if ".pdf" in folded or ".ashx" in folded or "download" in folded:
+                candidates.append((value, value.rsplit("/", 1)[-1][:160]))
+
+    output: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for href, label in candidates:
+        if not href:
+            continue
+        destination = urlsplit(urljoin(page_url, href))
+        folded_label = " ".join(label.lower().split())
+        is_pdf = destination.path.lower().endswith(".pdf")
+        relevant_label = any(
+            marker in folded_label
+            for marker in ("paper", "answer key", "rssb", "question", "cet", "graduation")
+        )
+        if not is_pdf and not relevant_label and not any(
+            marker in href.lower() for marker in (".pdf", ".ashx", "download")
+        ):
+            continue
+        item = _rssb_link_record(page_url, href, label)
+        dedupe_key = str(item.get("url") or item.get("target_host") or "")
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        item["kind"] = "PDF_CANDIDATE_LINK_NOT_FETCHED" if is_pdf or ".pdf" in href.lower() else "RELATED_PUBLIC_LINK_NOT_FETCHED"
+        output.append(item)
+        if len(output) >= 30:
+            break
+    return output
+
+
 def probe_jansoochna_rssb_service(
     *,
     fetcher: Callable[..., FetchResult] | None = None,
@@ -210,6 +303,7 @@ def probe_jansoochna_rssb_service(
         ROBOTS_URL,
         max_bytes=MAX_ROBOTS_BYTES,
         timeout_seconds=timeout_seconds,
+        allowed_content_types=("text/plain",),
     )
     base: dict[str, object] = {
         "phase": "2.5-jansoochna-public-service-probe",
@@ -263,6 +357,7 @@ def probe_jansoochna_rssb_service(
             page_url,
             max_bytes=MAX_HTML_BYTES,
             timeout_seconds=timeout_seconds,
+            allowed_content_types=("text/html", "application/xhtml+xml"),
         )
         record: dict[str, object] = {"path": path}
         if page.error:
@@ -318,4 +413,128 @@ def probe_jansoochna_rssb_service(
         status = "RSSB_SERVICE_LINKS_NOT_FOUND"
     else:
         status = "PUBLIC_SERVICE_PAGE_UNAVAILABLE"
-    return {**base, "status": status, "robots": robots_summary, "pages_fetched": pages}
+    # Inspect a bounded number of same-host service links exposed by the permitted
+    # index pages. Each exact URL is checked against robots before fetching. No
+    # redirects are followed, and document/PDF links found on detail pages stay
+    # as metadata only; this function never requests them.
+    observed_service_links: list[dict[str, object]] = []
+    seen_service_urls: set[str] = set()
+    for page in pages:
+        for field in ("question_papers", "answer_keys"):
+            links = page.get(field, [])
+            if not isinstance(links, list):
+                continue
+            for link in links:
+                if not isinstance(link, dict) or link.get("same_host") is not True:
+                    continue
+                service_url = link.get("url")
+                if not isinstance(service_url, str) or service_url in seen_service_urls:
+                    continue
+                seen_service_urls.add(service_url)
+                if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+                    break
+                parsed = urlsplit(service_url)
+                if (
+                    parsed.scheme != "https"
+                    or parsed.hostname != HOST
+                    or parsed.port not in (None, 443)
+                    or parsed.username is not None
+                    or parsed.password is not None
+                ):
+                    continue
+                observed_service_links.append({
+                    "url": service_url,
+                    "label": str(link.get("label", ""))[:160],
+                    "field": field,
+                })
+            if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+                break
+        if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+            break
+
+    service_link_inspections: list[dict[str, object]] = []
+    for link in observed_service_links:
+        service_url = str(link["url"])
+        parsed = urlsplit(service_url)
+        permission = _robots_allows_url(parser, USER_AGENT, service_url)
+        inspection: dict[str, object] = {
+            "path": parsed.path or "/",
+            "label": link["label"],
+            "field": link["field"],
+            "robots_allowed": permission,
+            "document_links": [],
+        }
+        if not permission:
+            inspection["status"] = "BLOCKED_BY_ROBOTS"
+            service_link_inspections.append(inspection)
+            continue
+
+        detail = get_text(
+            service_url,
+            max_bytes=MAX_DETAIL_BYTES,
+            timeout_seconds=timeout_seconds,
+            allowed_content_types=(
+                "text/html",
+                "application/xhtml+xml",
+                "application/json",
+                "text/plain",
+            ),
+        )
+        if detail.error == "content_type_not_allowed":
+            inspection.update({
+                "status": "CONTENT_TYPE_NOT_READ",
+                "http_status": detail.status_code,
+                "content_type": detail.content_type[:80],
+            })
+        elif detail.error:
+            inspection.update({"status": "FETCH_ERROR", "error_type": detail.error})
+        elif detail.status_code in {301, 302, 303, 307, 308}:
+            inspection.update({"status": "REDIRECT_NOT_FOLLOWED", "http_status": detail.status_code})
+        elif detail.status_code != 200:
+            inspection.update({"status": "HTTP_ERROR", "http_status": detail.status_code})
+        elif detail.content_type not in {"text/html", "application/xhtml+xml", "application/json", "text/plain"}:
+            # The live fetcher refuses to read a body whose type is not approved.
+            inspection.update({
+                "status": "CONTENT_TYPE_NOT_READ",
+                "http_status": detail.status_code,
+                "content_type": detail.content_type[:80],
+            })
+        else:
+            final = urlsplit(detail.url)
+            if (
+                final.scheme != "https"
+                or final.hostname != HOST
+                or final.port not in (None, 443)
+                or final.username is not None
+                or final.password is not None
+            ):
+                inspection["status"] = "FIXED_HOST_CHECK_FAILED"
+            else:
+                inspection.update({
+                    "status": (
+                        "READ_ONLY_PUBLIC_JSON"
+                        if detail.content_type == "application/json"
+                        else "READ_ONLY_PUBLIC_DETAIL_PAGE"
+                    ),
+                    "http_status": 200,
+                    "final_path": final.path,
+                    "document_links": _extract_document_links(
+                        detail.url,
+                        detail.body,
+                        detail.content_type,
+                    ),
+                })
+        service_link_inspections.append(inspection)
+
+    return {
+        **base,
+        "status": status,
+        "robots": robots_summary,
+        "pages_fetched": pages,
+        "service_link_inspections": service_link_inspections,
+        "service_page_bytes_fetched": any(
+            item.get("status") in {"READ_ONLY_PUBLIC_DETAIL_PAGE", "READ_ONLY_PUBLIC_JSON"}
+            for item in service_link_inspections
+        ),
+        "paper_bytes_fetched": False,
+    }

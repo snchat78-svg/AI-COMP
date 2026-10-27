@@ -162,3 +162,24 @@ If the service points to the blocked RSSB host, do not proxy or circumvent the a
 The robots-gated probe was added by PR #78, whose exact-head CI passed. The follow-up Render workflow run [#16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463899245) confirmed the updated source-health endpoint but received HTTP 404 when immediately querying the new Jan Soochna endpoint during the same Render rollout. Treat this as a deployment race: it did not reach the `robots.txt` check and produced no public service-page finding.
 
 The follow-up workflow fix retries the fixed Jan Soochna diagnostic endpoint for a bounded window until its response schema is available, without changing its content access policy. After deployment, use the robots result as the first gate; if robots unavailable/disallows the route, stop. Otherwise record the RSSB service/answer-key links, but do not follow external URLs or download paper bytes here. The original paper-source gate remains blocked until approved official PDFs are fetched and independently reviewed.
+
+
+## Public Jan Soochna service detail investigation — 27 October 2026
+
+The post-PR #79 Render diagnostic workflow [run #17](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464311120) finally completed the previously interrupted Jan Soochna check:
+- `robots.txt` was readable.
+- `/Services` and `/Scheme` were both permitted for the chosen user-agent and returned HTTP 200.
+- Both pages include a same-host RSSB question-paper service link (one uses `/Services/GetMoreData?q=...`, one uses `/Services?q=...`).
+- The probe stopped at those index links and fetched no exam document. The overall workflow failed at the still-correct official-source gate: current RSSB and RPSC time out, and the legacy RSSB endpoint fails standard certificate-validated TLS.
+
+The detail-inspection increment now checks `robots.txt` for each exact observed same-host link before requesting it. Redirects are not followed, avoiding an unexamined redirect to a robots-disallowed path or another host. Only bounded `text/html`, `application/xhtml+xml`, `application/json` or `text/plain` responses are read. A non-approved MIME type such as `application/pdf` is rejected before reading any response body bytes. Links in a public service-detail response are listed as metadata; they are not followed and no PDF is downloaded.
+
+If a candidate PDF URL appears, the next separate acceptance gate is to verify that it is directly on the government host, reachable through the already validated access policy and actual source bytes can be fetched by the established protected fetch workflow. Until then no candidate is registered, no SHA-256 is asserted, and no paper is declared official. Do not proxy, bypass TLS, or contact the Board.
+
+## robots.txt rule precedence regression and exact-head validation — 27 October 2026
+
+Initial PR #80 code head `f30b154fa8de64e09c737c9dcea8c21d87ec2ead` failed [CI run #629](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464857614): 564 passed, one failed. The failing test proved Python's standard first-match rule evaluation could incorrectly allow a service URL because broad `Allow: /Services` preceded narrower `Disallow: /Services/GetMoreData`.
+
+The implementation now resolves the most-specific matching rule before requesting each service URL, with `Allow` winning only when matching specificity ties. Updated code head `164536a1f84319a60e39b3305895108f97f03e5b` passed [CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): 565 tests passed, 14 warnings, API container build passed. That run validates the code fix; the docs follow-up adds a new commit and must receive its own exact-head CI before merge.
+
+After merge/deploy, review the new Render endpoint's per-service result. The diagnostic must continue to fetch only robots-permitted same-host text/HTML/JSON; never follow redirects; never read PDF/binary bodies; and never fetch links it reports. No official PDF, SHA-256, persisted paper candidate or verified answer key is claimed. Phase 2.2 remains BLOCKED until approved official document bytes can be fetched and reviewed through existing gates.
