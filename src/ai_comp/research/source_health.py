@@ -56,6 +56,14 @@ _GOVERNMENT_PORTAL_CONTROLS = (
         priority=SourcePriority.UNVERIFIED,
         notes="Public government portal connectivity only; not an exam-paper source.",
     ),
+    SourceRecord(
+        source_id="JANSOOCHNA_RSSB_PAPERS_CONTROL",
+        name="Rajasthan Jan Soochna RSSB papers service connectivity control",
+        base_url="https://jansoochna.rajasthan.gov.in/",
+        source_type=SourceType.UNVERIFIED,
+        priority=SourcePriority.UNVERIFIED,
+        notes="Portal lists RSSB question-paper and answer-key public services; reachability only, no paper-source approval.",
+    ),
 )
 
 
