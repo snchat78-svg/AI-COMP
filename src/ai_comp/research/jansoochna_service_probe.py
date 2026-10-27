@@ -489,6 +489,9 @@ def probe_jansoochna_rssb_service(
         "robots": robots_summary,
         "pages_fetched": pages,
         "service_link_inspections": service_link_inspections,
-        "service_page_bytes_fetched": bool(service_link_inspections),
+        "service_page_bytes_fetched": any(
+            item.get("status") in {"READ_ONLY_PUBLIC_DETAIL_PAGE", "READ_ONLY_PUBLIC_JSON"}
+            for item in service_link_inspections
+        ),
         "paper_bytes_fetched": False,
     }
