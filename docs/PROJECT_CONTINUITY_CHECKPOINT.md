@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (base main `22c59a36164831bc6b908975eb0b14bf19c10d58`; PR #68 and #69 merged; Render fixed HTTPS control IPv4 TCP/TLS PASS, registered official hosts still fail; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (main `688343ad1cb9f9347d55e0e82a9a47f2092f247f`; PR #70 merged; CI #613/#614 passed; GitHub-hosted and fresh Render diagnostics show identical official-source failures; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -237,5 +237,20 @@ Next: merge only after exact-head tests and container CI pass, then inspect the 
 - The first push-triggered health workflow [#12](https://github.com/snchat78-svg/AI-COMP/actions/runs/40449304879) accepted an older cached payload without the control field; rerunning that existing job (attempt 2, [job 122025472235](https://github.com/snchat78-svg/AI-COMP/actions/runs/40449304879/job/122025472235)) returned `network_control`. The report was marked cached, so its exact original probe timestamp is unavailable.
 - Fixed `example.com:443` result: DNS OK, IPv4 TCP PASS and certificate-validated IPv4 TLS PASS; IPv6 TCP FAIL (`OSError`), TLS not reached. In the same report, RSSB current host IPv4 TCP timed out; legacy RSSB TCP passed but validated TLS failed (`SSLError`); RPSC IPv4 TCP timed out and IPv6 TCP failed (`OSError`). The workflow remains red by design because no registered official source passed the TCP + TLS gate. No paper bytes were fetched and no database records changed.
 - Interpretation: normal IPv4 HTTPS to the fixed control worked from the Render runtime while official-host connections remained blocked. This is a destination/path-specific failure pattern, **not proof that Render's `74.220.48.0/24` or `74.220.56.0/24` ranges are explicitly blocked**.
-- PR [#70](https://github.com/snchat78-svg/AI-COMP/pull/70) adds a safe read-only comparison from a GitHub-hosted runner and strengthens the Render workflow's response-schema guard. Compare those results before requesting a network/architecture change. No proxy/static-IP purchase, region migration or TLS relaxation is authorized.
+- PR [#70](https://github.com/snchat78-svg/AI-COMP/pull/70) merged at `688343ad1cb9f9347d55e0e82a9a47f2092f247f`. CI [#613](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455193390) and current-main [#614](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333691) passed 552 tests (14 warnings) plus API container build. Cross-runtime comparison [#1](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333663) succeeded; Render health report [#13](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333727) is fresh but fails its intentional official-host acceptance gate.
+- Both the GitHub-hosted runner and Render report show the same result: fixed `example.com` IPv4 TCP/TLS pass; `RSSB_OFFICIAL` IPv4 TCP timeout; `RSSB_LEGACY_OFFICIAL` TCP pass but TLS `SSLError`; `RPSC_OFFICIAL` IPv4 TCP timeout and IPv6 TCP `OSError`. This is destination/path-specific behavior, not proof of explicit CIDR blocking. Cross-runtime check is diagnostic only; no page/paper content was downloaded and no DB was changed.
+- Next: ask an authorized official/network contact to confirm filtering of the listed outbound ranges, or evaluate an approved reachable runtime route after cost/security review. Do not buy static egress, add a proxy, migrate region, weaken TLS or retry the pending candidate just on this evidence.
 - Keep the candidate `rssb-cet-graduation-2026-candidate-20261026-01` pending and do not retry until a reachable approved official HTTPS route is demonstrated. Full PDF identity/digest review, complete syllabus inventory and mapping review, and real mobile E2E remain gates. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## Cross-runtime probe result — 27 October 2026
+
+The merged PR #70 adds a read-only connectivity comparison against the same fixed host set from GitHub Actions and the deployed Render runtime. Exact-head CI #613 and post-merge/main CI #614 both passed 552 tests (14 warnings) and the API container build. The GitHub-hosted comparison [run #1](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333663) completed successfully. Render source-health [run #13](https://github.com/snchat78-svg/AI-COMP/actions/runs/40455333727) returned a fresh report and correctly failed its operational gate because no official source passed both TCP and certificate-validated TLS.
+
+Observed from both environments:
+- Fixed control `example.com`: DNS OK, IPv4 TCP PASS, validated IPv4 TLS PASS; IPv6 TCP fails with `OSError`.
+- `RSSB_OFFICIAL`: DNS OK; IPv4 TCP `TimeoutError`; TLS not reached.
+- `RSSB_LEGACY_OFFICIAL`: TCP PASS; validated TLS `SSLError`.
+- `RPSC_OFFICIAL`: IPv4 TCP `TimeoutError`; IPv6 TCP `OSError`.
+
+This cross-runtime match makes a Render-only deployment/cache issue less likely, but it does not prove that a government host explicitly blocks the Render CIDRs. The workflows perform DNS/TCP/TLS probes only and do not fetch pages/papers, access the DB, mutate records, or use secrets. Next action is to obtain authorized network-side confirmation or select an approved alternate runtime/egress route after cost/security review. Keep Phase 2.2 BLOCKED and Phase 6.56 IN_PROGRESS; Phase 6.57 and 6.58 cannot advance before the verified source/content gates pass.
