@@ -132,3 +132,12 @@ The cross-runtime test already established that the general `example.com:443` co
 The next diagnostic tests two fixed public Rajasthan government portal hosts—`recruitment.rajasthan.gov.in` and `landrevenue.rajasthan.gov.in`—because the unified recruitment portal is referenced by Board documents and a Board-signed notice is indexed on the Land Revenue government host. These are only candidate route leads, not paper-source approvals. Probes perform DNS/TCP/certificate-validated TLS only; no page/PDF bytes are fetched. The hosts are excluded from the source registry and cannot create paper candidates.
 
 If a route connects, verify robots/terms and then prove that its own public official pages publish the exact paper/syllabus bytes before using it. Preserve original source provenance and SHA-256. If no relevant public official alternate exists, retain the operational block; do not use an unofficial mirror, a proxy, unsafe TLS compatibility, or an unauthorized contact.
+
+
+## Jan Soochna public RSSB Question Papers service route — 27 October 2026
+
+The Render-side probe in [run #14](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462219593) showed general IPv4 HTTPS control PASS and the Rajasthan Recruitment and Land Revenue portal controls PASS, while all currently registered RSSB/RPSC hosts remain blocked at TCP or standard TLS. This does not prove a firewall policy but indicates that some Rajasthan government hosts are reachable from the same service.
+
+Public Jan Soochna listings include a named `Question Papers of RSSB` service and a separate `Answer Key of RSSB` service ([services listing](https://jansoochna.rajasthan.gov.in/Services), [scheme listing](https://jansoochna.rajasthan.gov.in/Scheme)). This is a promising public lead, not an approved source or evidence that PDFs are directly hosted there.
+
+A fixed Jan Soochna connectivity control is now included in the read-only route probe. If it passes, examine only public service navigation and inspect the resolved URLs. If URLs lead back to the inaccessible RSSB host, do not attempt to proxy or route around that restriction; record that the public portal does not provide an independent accessible content path. If a PDF is directly hosted on the government portal, verify title, issuing board, notification/exam identity, source access policy, SHA-256 and complete file before adding a candidate.
