@@ -22,6 +22,8 @@ SERVICE_PATHS = ("/Services", "/Scheme")
 USER_AGENT = "AI-COMP/phase2"
 MAX_ROBOTS_BYTES = 128 * 1024
 MAX_HTML_BYTES = 512 * 1024
+MAX_DETAIL_BYTES = 512 * 1024
+MAX_SERVICE_LINK_INSPECTIONS = 4
 DEFAULT_TIMEOUT_SECONDS = 1.5
 
 
@@ -38,22 +40,11 @@ class _BlockedRedirect(ValueError):
     pass
 
 
-class _SameHostHttpsRedirectHandler(HTTPRedirectHandler):
-    """Allow HTTPS redirects only when the destination remains on the fixed host."""
+class _NoRedirectHandler(HTTPRedirectHandler):
+    """Do not follow redirects before checking robots permissions for the target."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        from urllib.parse import urljoin
-
-        destination = urlsplit(urljoin(req.full_url, newurl))
-        if (
-            destination.scheme != "https"
-            or destination.hostname != HOST
-            or destination.port not in (None, 443)
-            or destination.username is not None
-            or destination.password is not None
-        ):
-            raise _BlockedRedirect("cross_host_or_insecure_redirect_blocked")
-        return super().redirect_request(req, fp, code, msg, headers, destination.geturl())
+        return None
 
 
 def _safe_fetch_text(
@@ -61,8 +52,9 @@ def _safe_fetch_text(
     *,
     max_bytes: int,
     timeout_seconds: float,
+    allowed_content_types: tuple[str, ...],
 ) -> FetchResult:
-    """GET a fixed same-host HTTPS URL with a strict byte limit and normal TLS."""
+    """GET a fixed same-host HTTPS URL, refusing redirects and unknown/binary bodies."""
     parsed = urlsplit(url)
     if (
         parsed.scheme != "https"
@@ -77,10 +69,10 @@ def _safe_fetch_text(
         url,
         headers={
             "User-Agent": USER_AGENT,
-            "Accept": "text/plain,text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+            "Accept": ",".join(allowed_content_types),
         },
     )
-    opener = build_opener(_SameHostHttpsRedirectHandler())
+    opener = build_opener(_NoRedirectHandler())
     try:
         with opener.open(request, timeout=timeout_seconds) as response:
             final_url = response.geturl()
@@ -93,23 +85,21 @@ def _safe_fetch_text(
                 or final.password is not None
             ):
                 return FetchResult(None, url, "", error="cross_host_or_insecure_redirect_blocked")
+            content_type = response.headers.get_content_type().lower()
+            # Reject binary content before reading any body bytes; in particular,
+            # a service link must never cause a PDF download.
+            if content_type not in allowed_content_types:
+                return FetchResult(
+                    int(response.status), final_url, content_type,
+                    error="content_type_not_allowed",
+                )
             raw = response.read(max_bytes + 1)
             if len(raw) > max_bytes:
-                return FetchResult(
-                    None, final_url, response.headers.get_content_type(),
-                    error="response_size_limit_exceeded",
-                )
-            return FetchResult(
-                int(response.status),
-                final_url,
-                response.headers.get_content_type().lower(),
-                raw.decode("utf-8", errors="replace"),
-            )
+                return FetchResult(None, final_url, content_type, error="response_size_limit_exceeded")
+            return FetchResult(int(response.status), final_url, content_type, raw.decode("utf-8", errors="replace"))
     except HTTPError as exc:
-        # Record only the HTTP status. Never include a body or server error text.
+        # Do not follow redirects or read their bodies; expose only the status.
         return FetchResult(int(exc.code), url, exc.headers.get_content_type().lower())
-    except _BlockedRedirect:
-        return FetchResult(None, url, "", error="cross_host_or_insecure_redirect_blocked")
     except (URLError, TimeoutError, OSError) as exc:
         return FetchResult(None, url, "", error=type(exc).__name__)
 
@@ -210,6 +200,7 @@ def probe_jansoochna_rssb_service(
         ROBOTS_URL,
         max_bytes=MAX_ROBOTS_BYTES,
         timeout_seconds=timeout_seconds,
+        allowed_content_types=("text/plain",),
     )
     base: dict[str, object] = {
         "phase": "2.5-jansoochna-public-service-probe",
@@ -263,6 +254,7 @@ def probe_jansoochna_rssb_service(
             page_url,
             max_bytes=MAX_HTML_BYTES,
             timeout_seconds=timeout_seconds,
+            allowed_content_types=("text/html", "application/xhtml+xml"),
         )
         record: dict[str, object] = {"path": path}
         if page.error:
