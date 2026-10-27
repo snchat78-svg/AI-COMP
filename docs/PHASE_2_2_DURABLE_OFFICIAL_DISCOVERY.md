@@ -200,3 +200,14 @@ Open PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) adds one bounded 
 Do not register candidate papers, fetch PDF bodies, claim SHA-256, or change the official source registry in this diagnostic. Any later document-ingestion step must use the existing protected fetch/review workflow and establish issuing-board provenance.
 
 Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+## Second Location header is observed but not followed — 27 October 2026
+
+After PR #83 deployed, Render source-health [run #40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) reported:
+- `/Services/GetMoreData` → `/Services/ClickablePDF`; the robots-permitted target request returns another HTTP 302.
+- `/Services` → `/Services/GetMoreData`; the robots-permitted target request returns another HTTP 302.
+Both targets remain on `jansoochna.rajasthan.gov.in`. No PDF/answer-key bytes were read; the diagnostic stopped before following a second redirect.
+
+PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) will expose only the next redirect's scheme, hostname and path from the returned `Location` header. Query and fragment are omitted; no further request is made. This narrows the route without downloading a paper or bypassing the registered official-source TLS gate. Exact-head CI and post-deploy report remain pending.
+
+The official source gate remains blocked: current registered RSSB/RPSC connections time out at TCP and legacy RSSB fails certificate-validated TLS. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.

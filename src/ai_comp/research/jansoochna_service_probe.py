@@ -551,6 +551,15 @@ def probe_jansoochna_rssb_service(
                             "redirect_target_status": "REDIRECT_NOT_FOLLOWED",
                             "redirect_target_http_status": redirected.status_code,
                         })
+                        if redirected.redirect_location:
+                            # Report the second Location header only. The chain is
+                            # intentionally capped here; never issue a third request.
+                            next_target = urlsplit(urljoin(redirect_url, redirected.redirect_location))
+                            inspection.update({
+                                "redirect_chain_target_scheme": next_target.scheme.lower(),
+                                "redirect_chain_target_host": (next_target.hostname or "").lower(),
+                                "redirect_chain_target_path": next_target.path or "/",
+                            })
                     elif redirected.status_code != 200:
                         inspection.update({
                             "redirect_target_status": "HTTP_ERROR",

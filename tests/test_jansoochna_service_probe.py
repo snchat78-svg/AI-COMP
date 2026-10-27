@@ -332,3 +332,44 @@ def test_probe_inspects_robots_permitted_redirect_target_without_fetching_docume
     assert "private-value" not in str(inspection)
     assert report["service_page_bytes_fetched"] is True
     assert report["paper_bytes_fetched"] is False
+
+def test_probe_reports_second_redirect_location_without_following():
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
+    redirect_url = f"{ORIGIN}/Services/ClickablePDF?token=first-secret"
+    second_location = f"{ORIGIN}/Storage/RSSB-CET-2025.pdf?download=second-secret#hidden"
+    robots = FetchResult(
+        200, f"{ORIGIN}/robots.txt", "text/plain",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\nAllow: /Storage\n",
+    )
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": robots,
+        f"{ORIGIN}/Services": FetchResult(
+            200, f"{ORIGIN}/Services", "text/html",
+            '<a href="/Services/GetMoreData?q=opaque-public-token">Question Papers of RSSB</a>',
+        ),
+        f"{ORIGIN}/Scheme": FetchResult(200, f"{ORIGIN}/Scheme", "text/html", ""),
+        service_url: FetchResult(302, service_url, "text/html", redirect_location=redirect_url),
+        redirect_url: FetchResult(
+            302, redirect_url, "text/html", redirect_location=second_location,
+        ),
+    })
+
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    inspection = report["service_link_inspections"][0]
+    assert inspection["redirect_target_status"] == "REDIRECT_NOT_FOLLOWED"
+    assert inspection["redirect_chain_target_scheme"] == "https"
+    assert inspection["redirect_chain_target_host"] == "jansoochna.rajasthan.gov.in"
+    assert inspection["redirect_chain_target_path"] == "/Storage/RSSB-CET-2025.pdf"
+    assert "first-secret" not in str(inspection)
+    assert "second-secret" not in str(inspection)
+    assert "hidden" not in str(inspection)
+    assert second_location not in requested
+    assert requested == [
+        f"{ORIGIN}/robots.txt",
+        f"{ORIGIN}/Services",
+        f"{ORIGIN}/Scheme",
+        service_url,
+        redirect_url,
+    ]
+    assert report["paper_bytes_fetched"] is False

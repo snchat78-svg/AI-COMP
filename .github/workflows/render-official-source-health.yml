@@ -211,6 +211,14 @@ jobs:
                           content_type=inspection.get("redirect_target_content_type", "unknown"),
                       )
                   )
+              if inspection.get("redirect_chain_target_host"):
+                  lines.append(
+                      "  - Second redirect also not followed; target host={host}, scheme={scheme}, path={path}".format(
+                          host=inspection.get("redirect_chain_target_host", "unknown"),
+                          scheme=inspection.get("redirect_chain_target_scheme", "unknown"),
+                          path=inspection.get("redirect_chain_target_path", "/"),
+                      )
+                  )
               for item in inspection.get("redirect_target_document_links", []):
                   if item.get("same_host") is True:
                       lines.append(
