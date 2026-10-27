@@ -1,8 +1,8 @@
-"""Bounded DNS/TCP/TLS preflight for registered official research sources.
+"""Bounded DNS/TCP/TLS preflight for official sources and a fixed control host.
 
-This diagnostic opens only a TCP connection and a certificate-validated TLS
-handshake to registered official hosts. It does not fetch pages, follow
-redirects, bypass TLS validation, or alter robots/terms policy.
+The fixed example.com control is reported separately from registered official
+sources. It is a network diagnostic only, never an exam-content source.
+No page or paper content is fetched and certificate validation stays enabled.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import sys
 from typing import Any, Callable
 from urllib.parse import urlparse
 
-from ai_comp.domain.sources import SourceRecord
+from ai_comp.domain.sources import SourcePriority, SourceRecord, SourceType
 from ai_comp.research.seed_registry import build_initial_registry
 
 
@@ -23,6 +23,18 @@ _ADDRESS_FAMILIES = (
     (socket.AF_INET6, "ipv6"),
 )
 _MAX_ADDRESSES_PER_FAMILY = 2
+
+# Fixed, non-user-configurable control: distinguishes general outbound HTTPS
+# failures from official-host-specific failures. Never add it to the source
+# registry or treat it as an exam-content source.
+_NETWORK_CONTROL_SOURCE = SourceRecord(
+    source_id="NETWORK_CONTROL",
+    name="Fixed general HTTPS connectivity control",
+    base_url="https://example.com/",
+    source_type=SourceType.UNVERIFIED,
+    priority=SourcePriority.UNVERIFIED,
+    notes="Diagnostic control only; not an official exam-content source.",
+)
 
 
 def _validated_tls_probe(
@@ -202,7 +214,7 @@ def source_health_report(
     resolver: Callable[..., Any] | None = None,
     address_probe: Callable[..., dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Probe one or all registered official sources only."""
+    """Probe official sources and a fixed control for all-source reports."""
     registry = build_initial_registry()
     sources = tuple(
         source
@@ -213,7 +225,7 @@ def source_health_report(
         known = ", ".join(source.source_id for source in registry.sources())
         raise ValueError(f"Unknown official source; supported: {known}, all")
 
-    return {
+    report: dict[str, Any] = {
         "phase": "2.5-source-health",
         "probes_are_diagnostic_only": True,
         "results": [
@@ -226,11 +238,21 @@ def source_health_report(
             for source in sources
         ],
     }
+    # Keep the control separate from the official-source result set. Only the
+    # full report includes it, so single-source checks remain narrowly scoped.
+    if source_id == "all":
+        report["network_control"] = probe_source(
+            _NETWORK_CONTROL_SOURCE,
+            timeout_seconds=timeout_seconds,
+            resolver=resolver,
+            address_probe=address_probe,
+        )
+    return report
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Diagnose DNS, TCP and certificate-validated TLS for registered official sources."
+        description="Diagnose DNS/TCP/certificate-validated TLS for official sources and a fixed HTTPS control."
     )
     parser.add_argument("--source", default="all")
     parser.add_argument("--timeout-seconds", type=float, default=2.0)
