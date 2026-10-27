@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import Callable
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import quote, unquote, urljoin, urlparse, urlsplit, urlunparse
 from urllib.request import HTTPRedirectHandler, OpenerDirector, Request, build_opener
 from urllib.robotparser import RobotFileParser
 
@@ -168,6 +168,49 @@ def _paper_link_records(page_url: str, body: str) -> list[dict[str, object]]:
     return output
 
 
+
+def _robots_allows_url(parser: RobotFileParser, user_agent: str, url: str) -> bool:
+    """Apply the most-specific matching robots rule; Allow wins equal-length ties.
+
+    urllib.robotparser currently returns the first matching rule, which can
+    incorrectly allow a path when a broad Allow precedes a narrower Disallow.
+    Reuse its parsed groups but evaluate rule specificity explicitly.
+    """
+    if parser.disallow_all:
+        return False
+    if parser.allow_all:
+        return True
+    if not parser.last_checked:
+        return False
+
+    specific_entries = [
+        entry
+        for entry in parser.entries
+        if entry.applies_to(user_agent)
+        and not any(agent.strip() == "*" for agent in entry.useragents)
+    ]
+    if specific_entries:
+        entries = specific_entries
+    elif parser.default_entry is not None:
+        entries = [parser.default_entry]
+    else:
+        return True
+
+    parsed = urlparse(unquote(url))
+    filename = urlunparse(("", "", parsed.path, parsed.params, parsed.query, parsed.fragment))
+    filename = quote(filename)
+    matching_rules = [
+        rule
+        for entry in entries
+        for rule in entry.rulelines
+        if rule.applies_to(filename)
+    ]
+    if not matching_rules:
+        return True
+    longest = max(len(rule.path) for rule in matching_rules)
+    most_specific = [rule for rule in matching_rules if len(rule.path) == longest]
+    return any(rule.allowance for rule in most_specific)
+
 def probe_recruitment_portal_route(
     *,
     fetcher: Callable[..., FetchResult] | None = None,
@@ -218,7 +261,7 @@ def probe_recruitment_portal_route(
         "status": "READ",
         "http_status": 200,
         "allowed_index_paths": {
-            path: parser.can_fetch(USER_AGENT, f"{ORIGIN}{path}")
+            path: _robots_allows_url(parser, USER_AGENT, f"{ORIGIN}{path}")
             for path in INDEX_PATHS
         },
     }
