@@ -92,6 +92,10 @@ def test_probe_fails_closed_when_robots_is_unavailable():
     report = probe_jansoochna_rssb_service(fetcher=fetcher)
     assert report["status"] == "ROBOTS_UNAVAILABLE"
     assert requested == [f"{ORIGIN}/robots.txt"]
+    # Keep the response schema stable even when the robots gate stops discovery.
+    assert report["service_link_inspections"] == []
+    assert report["service_page_bytes_fetched"] is False
+    assert report["paper_bytes_fetched"] is False
 
 
 def test_probe_does_not_follow_or_expose_external_rssb_service_links():

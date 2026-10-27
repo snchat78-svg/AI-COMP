@@ -389,3 +389,17 @@ Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKE
 - No PDF/answer-key bytes fetched, no candidate registered, and no database/source registry writes. No email or phone call was made.
 
 **State/handoff:** Phase 2.2 **BLOCKED**; Phase 6.56 **IN_PROGRESS**; Phase 6.57 **PLANNED**; Phase 6.58 **BLOCKED**. Next, evaluate only another directly accessible, officially documented HTTPS endpoint. Validate standard TLS, robots/terms and exact official document provenance before using the existing protected ingestion workflow. No proxy, TLS bypass or guessed source host.
+
+
+## Phase 2.2 — Render vs GitHub runner comparison (27 October 2026)
+
+PR [#89](https://github.com/snchat78-svg/AI-COMP/pull/89) merged as 3b050227321bb29001c83c85f911537b4b0165d7. Exact-head tests [#40502982570](https://github.com/snchat78-svg/AI-COMP/actions/runs/40502982570) passed, and cross-runtime diagnostic [#40502982762](https://github.com/snchat78-svg/AI-COMP/actions/runs/40502982762) passed in report-only PR mode. Its GitHub-hosted runner probe and Render source-health report agree:
+
+- RSSB_OFFICIAL: DNS OK; one IPv4 address; TCP timeout from both runtimes.
+- RSSB_LEGACY_OFFICIAL: DNS OK; one IPv4 address; TCP pass but certificate-validated TLS fails from both runtimes.
+- RPSC_OFFICIAL: DNS OK; one IPv4 address; TCP timeout from both runtimes; the GitHub runner also found one IPv6 address but IPv6 TCP failed.
+- example.com:443: IPv4 TCP + TLS pass; Rajasthan recruitment and Land Revenue controls also pass connectivity. These controls are not approved paper sources.
+
+This evidence does not support a Render-only egress issue or an untested extra IPv4 record. It does not reveal the cause of the destination-specific failures, so do not guess at or override network controls. Jan Soochna remains blocked before service-link inspection because its robots fetch returns HTTP_ERROR; no PDF or paper bytes were downloaded.
+
+**Next:** pursue only another directly accessible, officially documented HTTPS paper route with normal TLS and a permitted robots/terms policy. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email/phone contact or proxy/TLS bypass.

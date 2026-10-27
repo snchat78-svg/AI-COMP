@@ -246,3 +246,12 @@ Registered hosts still fail normal access: current RSSB and RPSC hosts time out 
 The Jan Soochna service endpoint returned HTTP 200, but the report was `ROBOTS_UNAVAILABLE` and `robots.status=HTTP_ERROR`; `service_link_inspections` was absent, so the probe did not inspect service links. Stop using this route unless the robots endpoint becomes publicly readable through an ordinary, explicitly permitted path; do not retry redirects or access restricted pages. No paper/answer-key bytes, content hashes or new candidates were created.
 
 **Next action:** investigate a different directly hosted official source only when its public documentation, normal TLS, robots/terms and provenance can be verified. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No calls/email, proxies or TLS weakening.
+
+
+## Cross-runtime connectivity proof and blocked-route contract fix (27 October 2026)
+
+PR [#89](https://github.com/snchat78-svg/AI-COMP/pull/89) merged at 3b050227321bb29001c83c85f911537b4b0165d7. Both exact-head [tests run #40502982570](https://github.com/snchat78-svg/AI-COMP/actions/runs/40502982570) and [dual-runtime diagnostic run #40502982762](https://github.com/snchat78-svg/AI-COMP/actions/runs/40502982762) passed. GitHub-hosted runner and Render show the same official-host failures. DNS resolved only one IPv4 record for each registered official host; no alternate IPv4 address was available for another attempt. The legacy RSSB hostname accepts TCP but fails normal certificate-validated TLS. example.com:443 IPv4 TCP/TLS and some public government connectivity controls pass, so this is not a blanket HTTPS outage. These results do not identify whether a firewall, host configuration or upstream routing is the cause; no source-control override is justified.
+
+PR #90 keeps the Jan Soochna diagnostic response shape stable when it stops at the robots gate and lets the workflow recognize that known fail-closed status without repeating the same cached request. This is reporting/test consistency only; it does not change robots permission, follow redirects or retrieve documents.
+
+Phase 2.2 remains BLOCKED. Continue only with another directly accessible, approved official HTTPS document route. No paper/answer-key bytes or new candidates have been accepted.

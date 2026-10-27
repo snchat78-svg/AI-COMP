@@ -350,6 +350,8 @@ def probe_jansoochna_rssb_service(
         "diagnostic_only": True,
         "host": HOST,
         "pages_fetched": [],
+        "service_link_inspections": [],
+        "service_page_bytes_fetched": False,
         "source_registry_modified": False,
         "paper_bytes_fetched": False,
     }
