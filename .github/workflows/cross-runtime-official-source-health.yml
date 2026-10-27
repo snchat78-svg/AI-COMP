@@ -101,6 +101,7 @@ jobs:
           expected_portal_ids = {
               "RAJASTHAN_RECRUITMENT_PORTAL_CONTROL",
               "RAJASTHAN_LANDREVENUE_PORTAL_CONTROL",
+              "JANSOOCHNA_RSSB_PAPERS_CONTROL",
           }
           observed_portal_ids = set()
           for item in portal_controls if isinstance(portal_controls, list) else []:
