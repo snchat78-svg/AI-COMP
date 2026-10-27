@@ -390,6 +390,80 @@ jobs:
       # Pull-request runs expose a live, read-only production diagnostic summary so
       # the report can be inspected through the PR workflow. The actual official-source
       # acceptance gate remains enforced on main pushes and explicit manual runs.
+      - name: Query fixed recruitment portal route diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ai-comp-api.onrender.com/diagnostics/recruitment-portal-paper-route"
+          found=false
+          last_status="not_attempted"
+          for attempt in $(seq 1 18); do
+            last_status="$(curl --silent --max-time 10 --output recruitment-portal-route.json --write-out '%{http_code}' "$url" || true)"
+            if [ "$last_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("recruitment-portal-route.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.2-recruitment-portal-route-probe" and d.get("host") == "recruitment.rajasthan.gov.in" and isinstance(d.get("pages_inspected"), list) and isinstance(d.get("robots"), dict) and d.get("source_registry_modified") is False and d.get("paper_bytes_fetched") is False and d.get("database_written") is False and d.get("candidate_promotions") == 0 else 1)'; then
+              found=true
+              break
+            fi
+            sleep 4
+          done
+
+          if [ "$found" != "true" ]; then
+            if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+              echo "::warning::Recruitment portal diagnostic is not deployed yet; the post-merge main workflow must capture the live result."
+              exit 0
+            fi
+            echo "::error::Could not retrieve the fixed recruitment portal diagnostic response (last HTTP $last_status)."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("recruitment-portal-route.json").read_text(encoding="utf-8"))
+          lines = [
+              "# Official recruitment portal route probe (diagnostic only)",
+              "",
+              f"- Overall status: {data.get('status', 'unknown')}",
+              f"- robots.txt: {(data.get('robots') or {}).get('status', 'unknown') if isinstance(data.get('robots'), dict) else 'missing'}",
+              f"- Pages inspected: {len(data.get('pages_inspected', [])) if isinstance(data.get('pages_inspected'), list) else 0}",
+              "- Paper/answer-key bytes fetched: false",
+              "- Database/source registry changed: false",
+              "- Candidate promoted: 0",
+              "",
+              "| Fixed public index path | Outcome | Relevant links found |",
+              "|---|---|---:|",
+          ]
+          for page in data.get("pages_inspected", []):
+              if not isinstance(page, dict):
+                  continue
+              links = page.get("paper_links")
+              lines.append(
+                  "| {path} | {status} | {count} |".format(
+                      path=str(page.get("path", ""))[:120],
+                      status=str(page.get("status", "unknown"))[:80],
+                      count=len(links) if isinstance(links, list) else 0,
+                  )
+              )
+              if isinstance(links, list):
+                  for link in links[:10]:
+                      if not isinstance(link, dict):
+                          continue
+                      lines.append(
+                          "- Link metadata only: label={}; host={}; path={}; same_host={}; status={}".format(
+                              str(link.get("label", ""))[:100],
+                              str(link.get("target_host", ""))[:120],
+                              str(link.get("path", ""))[:180],
+                              str(link.get("same_host", "unknown")),
+                              str(link.get("status", "unknown"))[:80],
+                          )
+                      )
+          summary = "\n".join(lines) + "\n"
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          PY
+
       - name: Require at least one official source to complete validated TCP and TLS
         if: github.event_name != 'pull_request'
         shell: bash
