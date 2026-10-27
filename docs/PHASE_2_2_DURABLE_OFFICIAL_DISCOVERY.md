@@ -162,3 +162,16 @@ If the service points to the blocked RSSB host, do not proxy or circumvent the a
 The robots-gated probe was added by PR #78, whose exact-head CI passed. The follow-up Render workflow run [#16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463899245) confirmed the updated source-health endpoint but received HTTP 404 when immediately querying the new Jan Soochna endpoint during the same Render rollout. Treat this as a deployment race: it did not reach the `robots.txt` check and produced no public service-page finding.
 
 The follow-up workflow fix retries the fixed Jan Soochna diagnostic endpoint for a bounded window until its response schema is available, without changing its content access policy. After deployment, use the robots result as the first gate; if robots unavailable/disallows the route, stop. Otherwise record the RSSB service/answer-key links, but do not follow external URLs or download paper bytes here. The original paper-source gate remains blocked until approved official PDFs are fetched and independently reviewed.
+
+
+## Public Jan Soochna service detail investigation — 27 October 2026
+
+The post-PR #79 Render diagnostic workflow [run #17](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464311120) finally completed the previously interrupted Jan Soochna check:
+- `robots.txt` was readable.
+- `/Services` and `/Scheme` were both permitted for the chosen user-agent and returned HTTP 200.
+- Both pages include a same-host RSSB question-paper service link (one uses `/Services/GetMoreData?q=...`, one uses `/Services?q=...`).
+- The probe stopped at those index links and fetched no exam document. The overall workflow failed at the still-correct official-source gate: current RSSB and RPSC time out, and the legacy RSSB endpoint fails standard certificate-validated TLS.
+
+The detail-inspection increment now checks `robots.txt` for each exact observed same-host link before requesting it. Redirects are not followed, avoiding an unexamined redirect to a robots-disallowed path or another host. Only bounded `text/html`, `application/xhtml+xml`, `application/json` or `text/plain` responses are read. A non-approved MIME type such as `application/pdf` is rejected before reading any response body bytes. Links in a public service-detail response are listed as metadata; they are not followed and no PDF is downloaded.
+
+If a candidate PDF URL appears, the next separate acceptance gate is to verify that it is directly on the government host, reachable through the already validated access policy and actual source bytes can be fetched by the established protected fetch workflow. Until then no candidate is registered, no SHA-256 is asserted, and no paper is declared official. Do not proxy, bypass TLS, or contact the Board.
