@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; PR #82 merged. Exact-head CI [run #40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings, API container build passed. Post-deploy Render report [run #40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) shows same-host redirects to `/Services/ClickablePDF` and `/Services/GetMoreData`; no paper bytes fetched. PR #83 investigates one robots-approved same-host target hop; exact-head CI pending.)  
+**Last verified:** 2026-10-27 (main `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; PR #83 merged. Exact-head CI [run #40471579718](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471579718) passed 569 tests, 14 warnings, API container build passed. Post-deploy Render report [#40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) showed first same-host redirect targets return HTTP 302 again; no paper bytes fetched. PR #84 reports second Location host/path without following it; exact-head CI pending.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -345,6 +345,17 @@ After PR #82 deployed at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`, the post-de
 - The diagnostic did not follow either redirect, and did not read any paper/answer-key body bytes. Query and fragment values were omitted from output.
 - RSSB current host and RPSC still fail TCP; legacy RSSB still fails certificate-validated TLS. The official-source gate therefore remains blocked.
 
-PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) now adds a strict next step: re-check each exact same-host redirect URL against the already-read `robots.txt`, then issue at most one bounded request only if HTTPS/host policy and robots permission pass. No further redirect will be followed. Only text/HTML/JSON/plain-text content is accepted; PDF/binary MIME types are rejected before reading response body bytes. Any discovered document link remains a link not fetched. This reports whether the public service route reveals document metadata without pretending that a paper has been ingested.
+PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) merged at `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; exact-head CI [run #40471579718](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471579718) passed 569 tests, 14 warnings and API container build. Its post-deploy report [#40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) shows robots-allowed same-host targets `/Services/ClickablePDF` and `/Services/GetMoreData` both return another HTTP 302. No redirect was followed beyond that bounded hop and no paper bytes were fetched.
 
 **Phase status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No calls/emails, proxies, TLS bypasses, candidate registration or source registry changes.
+
+## Second Jan Soochna redirect — 27 October 2026
+
+The deployed PR #83 report [#40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) showed:
+- `/Services/GetMoreData` redirects to `/Services/ClickablePDF`; checking that target (robots allowed) returned HTTP 302.
+- `/Services` redirects to `/Services/GetMoreData`; checking that target (robots allowed) returned HTTP 302.
+- The diagnostic stopped at that target response and did not issue a third request. No PDF or answer-key body bytes were fetched.
+
+Open PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) adds only the second response's `Location` destination scheme, host and path, stripping query/fragment. It never requests this second destination. This completes enough metadata discovery to decide whether the chain points to a static document path without downloading or bypassing controls. The official-source gate remains failed: current RSSB/RPSC TCP errors and legacy RSSB validated-TLS failure.
+
+**Phase status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
