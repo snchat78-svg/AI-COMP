@@ -201,7 +201,7 @@ def test_probe_records_redirect_host_and_path_without_following():
     detail_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
     robots = FetchResult(
         200, f"{ORIGIN}/robots.txt", "text/plain",
-        "User-agent: *\\nAllow: /Services\\nAllow: /Scheme\\n",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\n",
     )
     services = FetchResult(
         200, f"{ORIGIN}/Services", "text/html",
