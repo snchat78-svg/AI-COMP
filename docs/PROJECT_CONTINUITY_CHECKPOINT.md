@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; PR #82 merged, exact-head CI passed 567 tests, 14 warnings, API build passed; follow-up PR #83 checks the two robots-gated same-host redirects.)  
+**Last updated:** 2026-10-27 (main `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; PR #83 merged, exact-head CI passed 569 tests, 14 warnings, API build passed; PR #84 reports second redirect Location metadata only.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -332,7 +332,7 @@ Post-deploy source-health [run #40470532495](https://github.com/snchat78-svg/AI-
 
 PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) is merged at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`. Exact-head CI [run #40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings and API container build. Post-deploy Render report [#40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) recorded both service links redirect to paths on the same Jan Soochna host: `/Services/GetMoreData` → `/Services/ClickablePDF`, and `/Services` → `/Services/GetMoreData`. No redirect was followed; no paper or answer-key bytes were fetched.
 
-PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) checks the exact redirect URL against robots permission and permits at most one bounded fetch of same-host HTTPS text/HTML/JSON/plain text. It never follows a second redirect and rejects PDF/binary content before body read. Its latest code/docs head awaits exact-head CI.
+PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) merged at `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; exact-head CI [#40471579718](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471579718) passed 569 tests, 14 warnings and API container build. Its post-deploy report [#40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) showed both one-hop target requests return HTTP 302 as well, while remaining on the fixed host.
 
 **Next:** verify PR #83 exact-head CI; merge only if green. Review the post-deploy target status, robots decision and any document links as metadata only. Do not register candidates or start protected PDF ingestion until a direct, authorized official document route and source provenance are confirmed. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or call was made.
 
@@ -348,3 +348,10 @@ Expected gates after deploy:
 5. Text/HTML/JSON/plain text → parse links as metadata only; keep all linked files unfetched.
 
 Phase 2.2 stays BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED and Phase 6.58 BLOCKED.
+
+## PR #84 second redirect metadata — 27 October 2026
+
+PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) adds the second `Location` host/path to the report without following it. The prior live report establishes the first target URLs:
+- `/Services/GetMoreData` → `/Services/ClickablePDF` (target responds 302).
+- `/Services` → `/Services/GetMoreData` (target responds 302).
+The new code inspects only response header metadata and strips query/fragment; it makes no third request. Exact-head CI and post-deploy report are pending. Do not interpret a redirect chain as a verified official paper. No candidate/source-registry/database write occurred.
