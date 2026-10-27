@@ -378,3 +378,14 @@ Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKE
 - No official document bytes, content hash, newly persisted candidate, or verified answer key is established. Phase 2.2 remains **BLOCKED**; Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 6.58 remains **BLOCKED**. No email/call has been made.
 
 **Next action:** inspect the latest `render-official-source-health` workflow summary for the post-PR #85 `service_link_inspections`. If the 302 loop persists, stop this Jan Soochna route and continue only with a directly accessible, approved official HTTPS source. Never weaken TLS, proxy around access controls, or register a guessed source.
+
+
+## Phase 2.2 diagnostic report is now visible — Jan Soochna route stopped at robots gate (27 October 2026)
+
+- Current main: `69d5e9eb98ae0fd42de9d9d4864153be38875f37`, PR [#87](https://github.com/snchat78-svg/AI-COMP/pull/87) merged.
+- Exact-head backend/CI workflow [#40501903542](https://github.com/snchat78-svg/AI-COMP/actions/runs/40501903542) passed. Report-only live diagnostic workflow [#40501903388](https://github.com/snchat78-svg/AI-COMP/actions/runs/40501903388) completed. In PR events only, the registered-official-source acceptance step is skipped so the workflow can publish the diagnostic summary; main push and manual runs still enforce the gate.
+- Fresh source-health table: fixed general HTTPS control `example.com` IPv4 TCP/TLS PASS; `RSSB_OFFICIAL` TCP timeout; `RSSB_LEGACY_OFFICIAL` TCP PASS but certificate-validated TLS error; `RPSC_OFFICIAL` TCP timeout. The Rajasthan recruitment, Land Revenue and Jan Soochna controls pass IPv4 connectivity only; they are not considered paper sources.
+- Jan Soochna service endpoint returned HTTP 200 but safe metadata showed `status=ROBOTS_UNAVAILABLE`, `robots.status=HTTP_ERROR`, and no `service_link_inspections` array. Thus the robots check could not be completed and no service-detail URLs were inspected. Treat this route as unavailable and stop probing it; do not infer a PDF or paper was fetched.
+- No PDF/answer-key bytes fetched, no candidate registered, and no database/source registry writes. No email or phone call was made.
+
+**State/handoff:** Phase 2.2 **BLOCKED**; Phase 6.56 **IN_PROGRESS**; Phase 6.57 **PLANNED**; Phase 6.58 **BLOCKED**. Next, evaluate only another directly accessible, officially documented HTTPS endpoint. Validate standard TLS, robots/terms and exact official document provenance before using the existing protected ingestion workflow. No proxy, TLS bypass or guessed source host.
