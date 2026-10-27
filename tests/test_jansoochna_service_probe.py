@@ -373,3 +373,46 @@ def test_probe_reports_second_redirect_location_without_following():
         redirect_url,
     ]
     assert report["paper_bytes_fetched"] is False
+
+def test_probe_session_fetcher_reuses_cookie_jar_without_redirect_handler(monkeypatch):
+    from http.cookiejar import CookieJar
+    from urllib.request import HTTPCookieProcessor
+    from ai_comp.research import jansoochna_service_probe as probe_module
+
+    created_handlers = []
+    observed_openers = []
+
+    class StubOpener:
+        pass
+
+    def fake_build_opener(*handlers):
+        created_handlers.append(handlers)
+        return StubOpener()
+
+    def fake_safe_fetch_text(url, **kwargs):
+        observed_openers.append(kwargs["opener"])
+        return FetchResult(200, url, "text/plain", "ok")
+
+    monkeypatch.setattr(probe_module, "build_opener", fake_build_opener)
+    monkeypatch.setattr(probe_module, "_safe_fetch_text", fake_safe_fetch_text)
+
+    session_fetcher = probe_module._build_session_fetcher()
+    first = session_fetcher(
+        f"{ORIGIN}/robots.txt",
+        max_bytes=100,
+        timeout_seconds=1.0,
+        allowed_content_types=("text/plain",),
+    )
+    second = session_fetcher(
+        f"{ORIGIN}/Services",
+        max_bytes=100,
+        timeout_seconds=1.0,
+        allowed_content_types=("text/html",),
+    )
+
+    assert first.status_code == second.status_code == 200
+    assert len(created_handlers) == 1
+    assert observed_openers[0] is observed_openers[1]
+    assert isinstance(created_handlers[0][0], HTTPCookieProcessor)
+    assert isinstance(created_handlers[0][0].cookiejar, CookieJar)
+    assert type(created_handlers[0][1]).__name__ == "_NoRedirectHandler"

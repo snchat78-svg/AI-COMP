@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; PR #83 merged. Exact-head CI [run #40471579718](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471579718) passed 569 tests, 14 warnings, API container build passed. Post-deploy Render report [#40471826496, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471826496) showed first same-host redirect targets return HTTP 302 again; no paper bytes fetched. PR #84 reports second Location host/path without following it; exact-head CI pending.)  
+**Last verified:** 2026-10-27 (main `96839e53ab0c94a4c72891f4528b84040608f481`; PR #84 merged. Exact-head CI [#40472275370](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472275370) passed 570 tests, 14 warnings, API build passed. Live report [#40472474696, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472474696) confirms same-host loop between `/Services/ClickablePDF` and `/Services/GetMoreData`; no PDF bytes fetched. PR #85 tests an ephemeral per-run cookie session; exact-head CI pending.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -359,3 +359,15 @@ The deployed PR #83 report [#40471826496, attempt 2](https://github.com/snchat78
 Open PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) adds only the second response's `Location` destination scheme, host and path, stripping query/fragment. It never requests this second destination. This completes enough metadata discovery to decide whether the chain points to a static document path without downloading or bypassing controls. The official-source gate remains failed: current RSSB/RPSC TCP errors and legacy RSSB validated-TLS failure.
 
 **Phase status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+## PR #85 ephemeral cookie-session experiment — 27 October 2026
+
+PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) merged as `96839e53ab0c94a4c72891f4528b84040608f481`; exact-head CI [run #40472275370](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472275370) passed **570 tests, 14 warnings, API container build**. Fresh post-deploy Render source-health [run #40472474696, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472474696) confirms a same-host redirect loop:
+- `/Services/GetMoreData` → `/Services/ClickablePDF` → `/Services`
+- `/Services` → `/Services/GetMoreData` → `/Services/ClickablePDF`
+
+The diagnostic stops after one robots-approved target request. No third request was made; no PDF or answer-key bytes were read. Registered current RSSB/RPSC source connections still fail TCP; legacy RSSB fails standard certificate-validated TLS. General IPv4 HTTPS works, so this is destination/path-specific evidence, not proof of the network control cause.
+
+Open PR [#85](https://github.com/snchat78-svg/AI-COMP/pull/85) tests the unproven hypothesis that the portal's public redirect behavior expects cookies across requests. It uses one ephemeral in-memory CookieJar and one opener only within a diagnostic run, with auto-redirects disabled. Fixed-host HTTPS validation, exact robots permission, bounded timeout/response size and PDF/binary pre-read rejection remain enabled. Cookie values are neither persisted nor reported. Exact-head CI and post-deploy result remain pending.
+
+**Phase status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No candidate/source registry/database writes, no proxy/TLS bypass, no calls or emails.
