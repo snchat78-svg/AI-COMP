@@ -255,3 +255,12 @@ PR [#89](https://github.com/snchat78-svg/AI-COMP/pull/89) merged at 3b050227321b
 PR #90 keeps the Jan Soochna diagnostic response shape stable when it stops at the robots gate and lets the workflow recognize that known fail-closed status without repeating the same cached request. This is reporting/test consistency only; it does not change robots permission, follow redirects or retrieve documents.
 
 Phase 2.2 remains BLOCKED. Continue only with another directly accessible, approved official HTTPS document route. No paper/answer-key bytes or new candidates have been accepted.
+
+
+## Accessible official recruitment portal route check — 27 October 2026
+
+The current RSSB/RPSC route remains blocked in both GitHub-hosted and Render probes. Search-indexed official results identify the Rajasthan Recruitment Portal at `recruitment.rajasthan.gov.in` as the state recruitment portal and it has public recruitment index pages; this is a route lead, not proof that it is an official exam-paper archive. A new diagnostic-only probe checks that portal's `robots.txt` first and inspects only three fixed public index paths if the robots rules explicitly allow them. It lists only metadata for links labelled as question papers or answer keys. It never follows document links, downloads PDFs, changes the source registry, writes to PostgreSQL or promotes a candidate.
+
+Acceptance for this investigation is a live Render report showing whether robots permits the public indexes and whether the indexes expose direct, official paper/answer-key document links. Even if a link is found, the target must be verified against the responsible body's official provenance and then fetched through the existing protected, certificate-validated workflow before registering a paper candidate. A generic recruitment advertisement or portal-wide document is not a past paper. Phase 2.2 remains BLOCKED until a compliant route yields nonzero real candidates.
+
+No proxy, manual DNS override, robots bypass, TLS weakening, emails or phone calls.
