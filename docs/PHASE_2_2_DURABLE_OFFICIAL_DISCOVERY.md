@@ -188,11 +188,15 @@ After merge/deploy, review the new Render endpoint's per-service result. The dia
 
 The strict-schema Render workflow run [#40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) captured the service detail inspection instead of accepting the prior index-only schema. Both same-host links surfaced on the robots-permitted public index returned `REDIRECT_NOT_FOLLOWED`: `/Services/GetMoreData` and `/Services`. No PDF or answer-key bytes were fetched. The same diagnostic confirms that current registered RSSB/RPSC connections still fail TCP, while legacy RSSB fails standard certificate-validated TLS.
 
-Open PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) adds only sanitized redirect `Location` metadata (scheme, hostname and path; no query/fragment). The client continues not to follow the redirect. Regression tests prove the destination is not requested and potentially tokenized query/fragment values are omitted from the report. Await exact-head CI and post-deploy results.
+PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) is merged at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; exact-head CI [#40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings and API container build.
 
-Next decision after deployment:
-- If the redirect host is `rssb.rajasthan.gov.in`, the reachable Jan Soochna index is not an independent route around the registered RSSB host failure. Stop; do not follow, proxy or retry the protected PDF fetch.
-- If the redirect remains on Jan Soochna, check that exact destination path against the published robots rules before considering another separate bounded read-only request; keep redirects disabled.
-- Do not register candidate papers, download file bodies, calculate/claim PDF hashes, or change the official source registry in this diagnostic. Any later document-ingestion step must use the existing protected fetch/review gates and establish issuing-board provenance.
+Post-deploy Render run [#40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) reports same-host targets:
+- `/Services/GetMoreData` → `/Services/ClickablePDF`.
+- `/Services` → `/Services/GetMoreData`.
+Neither redirect was followed; no paper/answer-key bytes were fetched. Current RSSB and RPSC TCP connections still time out, and legacy RSSB fails standard certificate-validated TLS.
+
+Open PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) adds one bounded target inspection after re-checking robots for the exact target URL. It requires the target to remain HTTPS on `jansoochna.rajasthan.gov.in`; it does not follow a further redirect. It reads only bounded text/HTML/JSON/plain-text responses, rejects PDF/binary before body read, and emits document-like links as metadata only. Exact-head CI and post-deploy target results are pending.
+
+Do not register candidate papers, fetch PDF bodies, claim SHA-256, or change the official source registry in this diagnostic. Any later document-ingestion step must use the existing protected fetch/review workflow and establish issuing-board provenance.
 
 Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
