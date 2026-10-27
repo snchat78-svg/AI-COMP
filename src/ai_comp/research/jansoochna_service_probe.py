@@ -498,14 +498,97 @@ def probe_jansoochna_rssb_service(
         elif detail.status_code in {301, 302, 303, 307, 308}:
             inspection.update({"status": "REDIRECT_NOT_FOLLOWED", "http_status": detail.status_code})
             if detail.redirect_location:
-                # Report sanitized destination metadata only. Never follow it and
-                # never include query/fragment values from potentially tokenized URLs.
-                redirect = urlsplit(urljoin(service_url, detail.redirect_location))
+                # Keep query data transiently for a same-host request only after a
+                # robots check. Never include query/fragment values in the report.
+                redirect_url = urljoin(service_url, detail.redirect_location)
+                redirect = urlsplit(redirect_url)
                 inspection.update({
                     "redirect_target_scheme": redirect.scheme.lower(),
                     "redirect_target_host": (redirect.hostname or "").lower(),
                     "redirect_target_path": redirect.path or "/",
                 })
+                same_host_https = (
+                    redirect.scheme == "https"
+                    and redirect.hostname == HOST
+                    and redirect.port in (None, 443)
+                    and redirect.username is None
+                    and redirect.password is None
+                )
+                if not same_host_https:
+                    inspection["redirect_target_status"] = "NOT_SAME_HOST_HTTPS"
+                elif not _robots_allows_url(parser, USER_AGENT, redirect_url):
+                    inspection["redirect_target_robots_allowed"] = False
+                    inspection["redirect_target_status"] = "BLOCKED_BY_ROBOTS"
+                else:
+                    inspection["redirect_target_robots_allowed"] = True
+                    # Inspect at most this one robots-approved redirect target.
+                    # Redirects from the target are still never followed, and
+                    # binary MIME types are rejected before reading body bytes.
+                    redirected = get_text(
+                        redirect_url,
+                        max_bytes=MAX_DETAIL_BYTES,
+                        timeout_seconds=timeout_seconds,
+                        allowed_content_types=(
+                            "text/html",
+                            "application/xhtml+xml",
+                            "application/json",
+                            "text/plain",
+                        ),
+                    )
+                    if redirected.error == "content_type_not_allowed":
+                        inspection.update({
+                            "redirect_target_status": "CONTENT_TYPE_NOT_READ",
+                            "redirect_target_http_status": redirected.status_code,
+                            "redirect_target_content_type": redirected.content_type[:80],
+                        })
+                    elif redirected.error:
+                        inspection.update({
+                            "redirect_target_status": "FETCH_ERROR",
+                            "redirect_target_error_type": redirected.error,
+                        })
+                    elif redirected.status_code in {301, 302, 303, 307, 308}:
+                        inspection.update({
+                            "redirect_target_status": "REDIRECT_NOT_FOLLOWED",
+                            "redirect_target_http_status": redirected.status_code,
+                        })
+                    elif redirected.status_code != 200:
+                        inspection.update({
+                            "redirect_target_status": "HTTP_ERROR",
+                            "redirect_target_http_status": redirected.status_code,
+                        })
+                    elif redirected.content_type not in {
+                        "text/html", "application/xhtml+xml", "application/json", "text/plain"
+                    }:
+                        inspection.update({
+                            "redirect_target_status": "CONTENT_TYPE_NOT_READ",
+                            "redirect_target_http_status": redirected.status_code,
+                            "redirect_target_content_type": redirected.content_type[:80],
+                        })
+                    else:
+                        final_target = urlsplit(redirected.url)
+                        if (
+                            final_target.scheme != "https"
+                            or final_target.hostname != HOST
+                            or final_target.port not in (None, 443)
+                            or final_target.username is not None
+                            or final_target.password is not None
+                        ):
+                            inspection["redirect_target_status"] = "FIXED_HOST_CHECK_FAILED"
+                        else:
+                            target_status = (
+                                "READ_ONLY_PUBLIC_JSON"
+                                if redirected.content_type == "application/json"
+                                else "READ_ONLY_PUBLIC_DETAIL_PAGE"
+                            )
+                            inspection.update({
+                                "redirect_target_status": target_status,
+                                "redirect_target_http_status": 200,
+                                "redirect_target_document_links": _extract_document_links(
+                                    redirected.url,
+                                    redirected.body,
+                                    redirected.content_type,
+                                ),
+                            })
         elif detail.status_code != 200:
             inspection.update({"status": "HTTP_ERROR", "http_status": detail.status_code})
         elif detail.content_type not in {"text/html", "application/xhtml+xml", "application/json", "text/plain"}:
@@ -550,6 +633,7 @@ def probe_jansoochna_rssb_service(
         "service_link_inspections": service_link_inspections,
         "service_page_bytes_fetched": any(
             item.get("status") in {"READ_ONLY_PUBLIC_DETAIL_PAGE", "READ_ONLY_PUBLIC_JSON"}
+        or item.get("redirect_target_status") in {"READ_ONLY_PUBLIC_DETAIL_PAGE", "READ_ONLY_PUBLIC_JSON"}
             for item in service_link_inspections
         ),
         "paper_bytes_fetched": False,
