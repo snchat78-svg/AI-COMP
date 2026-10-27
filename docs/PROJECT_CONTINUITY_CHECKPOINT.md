@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `7c7f4111c277c374302dff5c40201d99a2599d27`; PR #77 merged; Jan Soochna IPv4 TCP/validated TLS pass; robots-gated service-page inspection underway in PR)  
+**Last updated:** 2026-10-27 (main `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; PR #82 merged, exact-head CI passed 567 tests, 14 warnings, API build passed; follow-up PR #83 checks the two robots-gated same-host redirects.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -330,6 +330,21 @@ After PR #80's exact-head CI passed (565 tests, 14 warnings, API image build), t
 
 Post-deploy source-health [run #40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) now includes real detail-inspection rows. Both Jan Soochna service URLs (/Services/GetMoreData and /Services) are robots-allowed but return `REDIRECT_NOT_FOLLOWED`. The diagnostic did not follow them; no PDF bytes were read. The same run still fails the official-source acceptance check because current RSSB/RPSC connections time out and the legacy RSSB host fails validated TLS.
 
-PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82), head `7d84275365d60352d84d34c4a4c677e353280c0e` before docs follow-up, adds sanitized redirect destination metadata only: scheme, hostname, path, no query/fragment; it never follows the redirect. Unit tests ensure the destination is not requested and opaque query/fragment values are not exposed. Exact-head CI is pending.
+PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) is merged at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`. Exact-head CI [run #40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings and API container build. Post-deploy Render report [#40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) recorded both service links redirect to paths on the same Jan Soochna host: `/Services/GetMoreData` → `/Services/ClickablePDF`, and `/Services` → `/Services/GetMoreData`. No redirect was followed; no paper or answer-key bytes were fetched.
 
-**Next:** verify PR #82 exact-head tests/container; merge only if green. Then read the new post-deploy redirect host/path. If it targets the blocked RSSB host, do not follow it or proxy the request. If it remains on Jan Soochna, verify the redirected target path's robots permission before any separate read-only request. No paper candidate or source registry was changed; Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or call was made.
+PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) checks the exact redirect URL against robots permission and permits at most one bounded fetch of same-host HTTPS text/HTML/JSON/plain text. It never follows a second redirect and rejects PDF/binary content before body read. Its latest code/docs head awaits exact-head CI.
+
+**Next:** verify PR #83 exact-head CI; merge only if green. Review the post-deploy target status, robots decision and any document links as metadata only. Do not register candidates or start protected PDF ingestion until a direct, authorized official document route and source provenance are confirmed. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or call was made.
+
+## PR #83 bounded robots-gated redirect inspection — 27 October 2026
+
+The latest live report shows the service links redirect within `jansoochna.rajasthan.gov.in`, not to the registered RSSB host. This proves only the Location header's host/path; it does not prove that an official paper is available. PR #83 inspects one exact same-host redirect destination only after re-evaluating the full target URL against the already-read robots rules, and only for bounded text-compatible content. It still refuses to follow redirects, refuses PDF/binary body reads, and never registers candidates or changes source records.
+
+Expected gates after deploy:
+1. Robots disallowed, invalid, or unavailable → no redirect-target request.
+2. External/insecure target → no request.
+3. Robots-permitted same-host target → at most one bounded request; if target redirects again, report and stop.
+4. PDF/binary MIME → report content type only, do not read body bytes.
+5. Text/HTML/JSON/plain text → parse links as metadata only; keep all linked files unfetched.
+
+Phase 2.2 stays BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED and Phase 6.58 BLOCKED.

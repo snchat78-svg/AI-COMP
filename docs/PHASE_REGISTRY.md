@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `75b85316bd5ee567722ef51fa90a44cfa2be2c36`; PR #81 merged. Main source-health run [#40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) reached Jan Soochna detail inspection and reported two `REDIRECT_NOT_FOLLOWED` links; no PDF bytes fetched. PR #82 adds sanitized redirect destination metadata; exact-head CI pending.)  
+**Last verified:** 2026-10-27 (main `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; PR #82 merged. Exact-head CI [run #40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings, API container build passed. Post-deploy Render report [run #40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) shows same-host redirects to `/Services/ClickablePDF` and `/Services/GetMoreData`; no paper bytes fetched. PR #83 investigates one robots-approved same-host target hop; exact-head CI pending.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -333,6 +333,18 @@ The fresh Render diagnostic [run #40470532495](https://github.com/snchat78-svg/A
 - No redirect destination was included in that response, and no paper or answer-key bytes were fetched.
 - Registered RSSB/RPSC sources still fail the official gate: current RSSB and RPSC TCP timeouts; legacy RSSB certificate-validated TLS failure. The fixed general IPv4 HTTPS control passes.
 
-Open PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82), current branch head `7d84275365d60352d84d34c4a4c677e353280c0e`, adds sanitized redirect metadata from the HTTP `Location` header: scheme, hostname, and path only; query and fragment are omitted and the redirect is never followed. Tests assert that the destination URL is not requested and token-like query/fragment values do not leak. Exact-head CI and the post-deploy report remain pending.
+PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) merged at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`; exact-head CI [#40470902066](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470902066) passed 567 tests, 14 warnings and API container build. Post-deploy source-health [run #40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) reports both redirects remain on Jan Soochna: `/Services/GetMoreData` redirects to `/Services/ClickablePDF`, and `/Services` redirects to `/Services/GetMoreData`. These destinations were only reported as scheme/host/path; no redirect was followed.
 
 **Phase statuses stay unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not treat a redirected service index as an accessible official paper route.
+
+## Jan Soochna same-host redirect targets — 27 October 2026
+
+After PR #82 deployed at `ee305969d43bcddd95a0a35074ccb56a7dbb3d84`, the post-deploy workflow [#40471070621, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40471070621) recorded:
+- Public index service link `/Services/GetMoreData` redirected to same-host `https://jansoochna.rajasthan.gov.in/Services/ClickablePDF`.
+- Public index service link `/Services` redirected to same-host `https://jansoochna.rajasthan.gov.in/Services/GetMoreData`.
+- The diagnostic did not follow either redirect, and did not read any paper/answer-key body bytes. Query and fragment values were omitted from output.
+- RSSB current host and RPSC still fail TCP; legacy RSSB still fails certificate-validated TLS. The official-source gate therefore remains blocked.
+
+PR [#83](https://github.com/snchat78-svg/AI-COMP/pull/83) now adds a strict next step: re-check each exact same-host redirect URL against the already-read `robots.txt`, then issue at most one bounded request only if HTTPS/host policy and robots permission pass. No further redirect will be followed. Only text/HTML/JSON/plain-text content is accepted; PDF/binary MIME types are rejected before reading response body bytes. Any discovered document link remains a link not fetched. This reports whether the public service route reveals document metadata without pretending that a paper has been ingested.
+
+**Phase status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No calls/emails, proxies, TLS bypasses, candidate registration or source registry changes.
