@@ -136,7 +136,7 @@ jobs:
           # route and its expected response schema are present.
           for service_attempt in $(seq 1 18); do
             service_status="$(curl --silent --max-time 10 --output jansoochna-service-probe.json --write-out '%{http_code}' "$service_url" || true)"
-            if [ "$service_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("jansoochna-service-probe.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-jansoochna-public-service-probe" and d.get("host") == "jansoochna.rajasthan.gov.in" and isinstance(d.get("pages_fetched"), list) and isinstance(d.get("robots"), dict) else 1)'; then
+            if [ "$service_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("jansoochna-service-probe.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-jansoochna-public-service-probe" and d.get("host") == "jansoochna.rajasthan.gov.in" and isinstance(d.get("pages_fetched"), list) and isinstance(d.get("robots"), dict) and isinstance(d.get("service_link_inspections"), list) else 1)'; then
               echo "Jan Soochna diagnostic endpoint responded with the expected fixed-host contract (attempt $service_attempt)."
               service_found=true
               break
