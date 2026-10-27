@@ -10,9 +10,10 @@ ORIGIN = "https://jansoochna.rajasthan.gov.in"
 def _fetcher_with_pages(pages):
     requested = []
 
-    def fetcher(url, *, max_bytes, timeout_seconds):
+    def fetcher(url, *, max_bytes, timeout_seconds, allowed_content_types):
         requested.append(url)
         assert max_bytes > 0
+        assert allowed_content_types
         assert 0.5 <= timeout_seconds <= 3.0
         return pages.get(url, FetchResult(404, url, "text/html"))
 
