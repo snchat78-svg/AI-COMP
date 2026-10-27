@@ -58,7 +58,8 @@ def test_probe_inspects_only_robots_allowed_indexes_and_never_follows_document_l
     assert report["pages_inspected"][0]["paper_links"][0]["path"] == "/downloadservlet"
     assert report["pages_inspected"][0]["paper_links"][0]["query_present"] is True
     assert report["pages_inspected"][0]["paper_links"][0]["same_host"] is True
-    assert report["pages_inspected"][1]["status"] == "BLOCKED_BY_ROBOTS"
+    assert report["pages_inspected"][1]["status"] == "READ_ONLY_PUBLIC_HTML"
+    assert report["pages_inspected"][2]["status"] == "BLOCKED_BY_ROBOTS"
     assert requested == [
         f"{ORIGIN}/robots.txt",
         f"{ORIGIN}/",
