@@ -11,6 +11,8 @@ on:
       - "src/ai_comp/research/source_health.py"
       - "src/ai_comp/research/jansoochna_service_probe.py"
       - "src/ai_comp/research/seed_registry.py"
+      - "src/ai_comp/domain/exams.py"
+      - "src/ai_comp/domain/sources.py"
   pull_request:
     branches:
       - main
@@ -35,6 +37,62 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Checkout repository for fixed-host runner diagnostic
+        uses: actions/checkout@v4
+
+      - name: Probe fixed official hosts from GitHub-hosted runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python -m ai_comp.research.source_health --source all > github-runner-source-health.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("github-runner-source-health.json").read_text(encoding="utf-8"))
+          if data.get("phase") != "2.5-source-health" or not isinstance(data.get("results"), list):
+              raise SystemExit("GitHub-runner source-health report did not match its fixed diagnostic contract.")
+          rows = list(data["results"])
+          control = data.get("network_control")
+          if isinstance(control, dict):
+              rows.append(control)
+          portal_controls = data.get("government_portal_controls")
+          if isinstance(portal_controls, list):
+              rows.extend(item for item in portal_controls if isinstance(item, dict))
+          lines = [
+              "# Fixed-host connectivity from GitHub-hosted runner",
+              "",
+              "- Diagnostic only: standard DNS, TCP and certificate-validated TLS. No page/paper bytes fetched.",
+              "- Raw IP addresses, cookies and URL query values are not printed.",
+              "",
+              "| Fixed source/control | DNS | IPv4 addresses | IPv4 TCP | IPv4 TLS | IPv6 addresses | IPv6 TCP | IPv6 TLS |",
+              "|---|---|---:|---|---|---:|---|---|",
+          ]
+          for item in rows:
+              lines.append(
+                  "| {name} ({host}) | {dns} | {v4n} | {v4tcp} | {v4tls} | {v6n} | {v6tcp} | {v6tls} |".format(
+                      name=item.get("source_id", "unknown"),
+                      host=item.get("host", "unknown"),
+                      dns=item.get("dns_status", "unknown"),
+                      v4n=item.get("ipv4_records", "unknown"),
+                      v4tcp=item.get("ipv4_tcp", "unknown"),
+                      v4tls=item.get("ipv4_tls", "unknown"),
+                      v6n=item.get("ipv6_records", "unknown"),
+                      v6tcp=item.get("ipv6_tcp", "unknown"),
+                      v6tls=item.get("ipv6_tls", "unknown"),
+                  )
+              )
+              for key in ("ipv4_tcp_errors", "ipv4_tls_errors", "ipv6_tcp_errors", "ipv6_tls_errors"):
+                  errors = item.get(key, [])
+                  if errors:
+                      lines.append(f"- {item.get('source_id', 'unknown')} {key}: {', '.join(str(e) for e in errors)}")
+          summary = "\n".join(lines) + "\n"
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          PY
+
       - name: Query deployed Render source-health endpoint
         shell: bash
         run: |
