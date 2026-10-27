@@ -297,3 +297,12 @@ The next implementation adds a separate hidden diagnostic endpoint that:
 5. Returns only same-host HTTPS link URLs for further public inspection, or a target hostname for external links without following them.
 
 The route has no URL/host parameters, is absent from OpenAPI, bounded by time/size limits, verifies ordinary TLS and is read-only. After exact-head CI and Render deploy, inspect its result. If the service routes back to RSSB, maintain the block; don't use a proxy or bypass. Any directly hosted PDF must pass source identity, access policy, full-byte SHA-256 and independent review before ingestion.
+
+
+## Jan Soochna diagnostic 404 during Render rollout — 27 October 2026
+
+PR #78 is merged, exact-head CI [run #625](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463742466) passed, and Render began deploying `e72807fa93183ff386622e3b74d010c6521e4291`. Post-merge source-health workflow [run #16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463899245) succeeded in reading the updated main source-health report, which again showed Jan Soochna TLS PASS; official RSSB/RPSC hosts remain blocked. The next endpoint request got HTTP 404 during rollout, before the new diagnostic route was consistently served. This run therefore has **no robots.txt / service-link finding**.
+
+A follow-up fix branch adds a bounded retry loop to the GitHub workflow for the fixed `/diagnostics/jansoochna-rssb-service` endpoint. It waits for a response with the exact expected phase, hostname, robots object and pages list before continuing. It does not relax robots policy or inspect/download exam files. Do not interpret the previous HTTP 404 as a Jan Soochna policy block.
+
+Current main after PR #78 is `e72807fa93183ff386622e3b74d010c6521e4291`; next task is validate and merge the deployment-retry-only PR, then review the actual robots-gated service-page result. No phone call or email has been sent or initiated.

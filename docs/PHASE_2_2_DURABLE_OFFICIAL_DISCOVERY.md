@@ -155,3 +155,10 @@ The next increment adds a read-only probe of Jan Soochna's public RSSB service l
 - A same-host URL may be inspected in a later, separate step only if the public service page is allowed; an external target hostname is reported but not followed.
 
 If the service points to the blocked RSSB host, do not proxy or circumvent the access restriction. If it links to a directly hosted public government PDF, verify the exact recruitment/exam/year/notification provenance, access rules, full document bytes and SHA-256 before considering the existing protected ingestion workflow. The official-source acceptance gate remains unchanged.
+
+
+## Jan Soochna route endpoint rollout retry — 27 October 2026
+
+The robots-gated probe was added by PR #78, whose exact-head CI passed. The follow-up Render workflow run [#16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463899245) confirmed the updated source-health endpoint but received HTTP 404 when immediately querying the new Jan Soochna endpoint during the same Render rollout. Treat this as a deployment race: it did not reach the `robots.txt` check and produced no public service-page finding.
+
+The follow-up workflow fix retries the fixed Jan Soochna diagnostic endpoint for a bounded window until its response schema is available, without changing its content access policy. After deployment, use the robots result as the first gate; if robots unavailable/disallows the route, stop. Otherwise record the RSSB service/answer-key links, but do not follow external URLs or download paper bytes here. The original paper-source gate remains blocked until approved official PDFs are fetched and independently reviewed.

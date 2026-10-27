@@ -290,3 +290,14 @@ The new scoped branch `phase-2-5-jansoochna-route-probe` adds a fixed `jansoochn
 - After CI and deploy, review the service report. If it exposes same-host service detail links, inspect only publicly permitted routes to determine whether the exact official PDF is directly hosted there. Any paper is still pending until exact issuing board/title/exam/year/notification provenance, content type, full PDF bytes, SHA-256, terms/access permissions and review gates pass. If the service links back to blocked RSSB, do not proxy it or route around access restrictions.
 
 **Status unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No official paper or answer key has yet been ingested by this service-page diagnostic.
+
+
+## Jan Soochna route diagnostic rollout-race — 27 October 2026
+
+After PR [#78](https://github.com/snchat78-svg/AI-COMP/pull/78) merged as `e72807fa93183ff386622e3b74d010c6521e4291`, its exact-head CI [run #625](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463742466) passed pytest and the API container build. Render deployment began around `2026-10-27T06:54:33Z`.
+
+Render diagnostic workflow [run #16](https://github.com/snchat78-svg/AI-COMP/actions/runs/40463899245) retrieved the updated source-health schema, including a fresh report with Jan Soochna IPv4 TCP/TLS PASS. Its next request to `/diagnostics/jansoochna-rssb-service` returned HTTP 404 because it was made during the live deployment before the new route was consistently available. Therefore, **the Jan Soochna robots/service-page probe itself did not yield a result in run #16**; this is not evidence that robots disallows access or that the service page is unavailable.
+
+The fix branch `fix/jansoochna-diagnostic-deploy-retry` updates only the Render workflow to retry the fixed endpoint up to 18 times, with bounded request timeouts and pauses, until the expected phase/host/robots/pages response schema appears. The final official-source TCP/TLS gate remains unchanged. No calls or emails were made; no paper bytes were downloaded and no phase status was advanced.
+
+**Next:** exact-head tests and container build; deploy; inspect the Jan Soochna endpoint's robots outcome and link report. If robots.txt cannot be read or disallows the pages, stop. If permitted, inspect only public listing links; do not follow external links or fetch the exam PDFs in this diagnostic.

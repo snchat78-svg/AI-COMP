@@ -128,9 +128,25 @@ jobs:
           # official-source acceptance gate. This diagnostic follows robots.txt
           # and never fetches any paper/answer-key documents.
           service_url="https://ai-comp-api.onrender.com/diagnostics/jansoochna-rssb-service"
-          service_status="$(curl --silent --max-time 10 --output jansoochna-service-probe.json --write-out '%{http_code}' "$service_url" || true)"
-          if [ "$service_status" != "200" ]; then
-            echo "::error::Could not retrieve the fixed Jan Soochna public-service diagnostic response (HTTP $service_status)."
+          service_found=false
+          service_status="not_attempted"
+
+          # Render can roll the API process behind the source-health endpoint
+          # during a deploy. Retry the fixed diagnostic route briefly until the
+          # route and its expected response schema are present.
+          for service_attempt in $(seq 1 18); do
+            service_status="$(curl --silent --max-time 10 --output jansoochna-service-probe.json --write-out '%{http_code}' "$service_url" || true)"
+            if [ "$service_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("jansoochna-service-probe.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.5-jansoochna-public-service-probe" and d.get("host") == "jansoochna.rajasthan.gov.in" and isinstance(d.get("pages_fetched"), list) and isinstance(d.get("robots"), dict) else 1)'; then
+              echo "Jan Soochna diagnostic endpoint responded with the expected fixed-host contract (attempt $service_attempt)."
+              service_found=true
+              break
+            fi
+            rm -f jansoochna-service-probe.json
+            sleep 4
+          done
+
+          if [ "$service_found" != "true" ]; then
+            echo "::error::Could not retrieve the fixed Jan Soochna public-service diagnostic response after bounded retries (last HTTP $service_status)."
             exit 1
           fi
 
