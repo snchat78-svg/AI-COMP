@@ -85,3 +85,12 @@ The Render Dashboard identifies its shared outbound ranges as `74.220.48.0/24` a
 A controlled incremental diagnostic is being added to the existing source-health function/workflow: probe fixed `example.com:443` connectivity as a separate control result, then compare it with the official sources from the same Render runtime. The control is not part of the official source registry, is never used for paper discovery, and cannot satisfy the official-source gate. It performs only DNS/TCP/certificate-validated TLS; it does not retrieve control-page or paper content. Its URL is fixed in code, not a request parameter.
 
 After exact-head CI passes and the automatic post-deploy report is available, use the comparison only to classify general egress versus official-host-specific failure. Even if general egress passes, request authorized confirmation before concluding the official CIDRs are filtered. Phase 2.2 remains BLOCKED and no paper-processing or answer-key phase should be treated as complete until nonzero real official candidates and downstream evidence exist.
+
+
+## Fixed HTTPS control after deployment — 27 October 2026
+
+PR [#68](https://github.com/snchat78-svg/AI-COMP/pull/68) is merged at `7564cf4b2dcf251098da6e6662fbe159b5993932`; [exact-head CI run #609](https://github.com/snchat78-svg/AI-COMP/actions/runs/40449133149) passed 552 tests (14 warnings) and the API container build. Render deploy `dep-dbg2dlg473hc73fac31g` is LIVE, and its app log records the source-health endpoint returning `200 OK` at `2026-10-27T04:22:16Z`.
+
+**Live-control result is not yet captured:** available logs do not include the response body, and the tool environment could not resolve the deployed host directly. Do not infer that `example.com` passed from HTTP 200. Read the JSON at [the deployed source-health endpoint](https://ai-comp-api.onrender.com/diagnostics/official-source-health) and inspect the separate `network_control` object as well as all official host rows. The control uses only DNS/TCP/certificate-validated TLS; it fetches no page content and is never considered a source candidate. The required official-source gate still checks only the official `results` collection.
+
+A successful general control with continuing official-host failures would narrow the diagnostic but not prove explicit CIDR filtering; ask an authorized official/network contact to verify the observed Render ranges. Keep Phase 2.2 blocked and Phase 6.56 in progress until an official TLS route is reachable and real candidate/document acceptance proceeds.
