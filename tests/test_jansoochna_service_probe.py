@@ -68,6 +68,7 @@ def test_probe_reads_services_only_when_robots_permits_and_keeps_same_host_links
     assert paper_links[0]["same_host"] is True
     assert report["service_link_inspections"][1]["document_links"][0]["target_host"] == "rssb.rajasthan.gov.in"
     assert not any("RSSB-CET-2025.pdf" in url or "/storage/key.pdf" in url for url in requested)
+    assert report["service_page_bytes_fetched"] is True
     assert report["paper_bytes_fetched"] is False
     assert report["source_registry_modified"] is False
 
@@ -146,6 +147,7 @@ def test_probe_checks_exact_service_link_against_robots_before_fetch():
     assert report["service_link_inspections"][0]["robots_allowed"] is False
     assert service_url not in requested
     assert requested == [f"{ORIGIN}/robots.txt", f"{ORIGIN}/Services", f"{ORIGIN}/Scheme"]
+    assert report["service_page_bytes_fetched"] is False
     assert report["paper_bytes_fetched"] is False
 
 
