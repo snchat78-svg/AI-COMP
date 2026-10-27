@@ -7,6 +7,7 @@ found in those pages, downloads exam documents, or writes to the database.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from html.parser import HTMLParser
 from typing import Callable
 from urllib.error import HTTPError, URLError
@@ -183,6 +184,65 @@ def _extract_rssb_links(page_url: str, body: str) -> dict[str, list[dict[str, ob
     return {"question_papers": papers[:10], "answer_keys": answer_keys[:10]}
 
 
+
+def _extract_document_links(
+    page_url: str,
+    body: str,
+    content_type: str,
+) -> list[dict[str, object]]:
+    """Report likely document links from a public service response without following them."""
+    candidates: list[tuple[str, str]] = []
+    if content_type in {"text/html", "application/xhtml+xml"}:
+        parser = _AnchorParser()
+        parser.feed(body)
+        candidates = list(parser.links)
+    elif content_type == "application/json":
+        def walk(value: object) -> list[str]:
+            if isinstance(value, str):
+                return [value]
+            if isinstance(value, list):
+                return [part for child in value for part in walk(child)]
+            if isinstance(value, dict):
+                return [part for child in value.values() for part in walk(child)]
+            return []
+
+        try:
+            payload = json.loads(body)
+        except (TypeError, ValueError):
+            return []
+        for value in walk(payload):
+            folded = value.lower()
+            if ".pdf" in folded or ".ashx" in folded or "download" in folded:
+                candidates.append((value, value.rsplit("/", 1)[-1][:160]))
+
+    output: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for href, label in candidates:
+        if not href:
+            continue
+        destination = urlsplit(urljoin(page_url, href))
+        folded_label = " ".join(label.lower().split())
+        is_pdf = destination.path.lower().endswith(".pdf")
+        relevant_label = any(
+            marker in folded_label
+            for marker in ("paper", "answer key", "rssb", "question", "cet", "graduation")
+        )
+        if not is_pdf and not relevant_label and not any(
+            marker in href.lower() for marker in (".pdf", ".ashx", "download")
+        ):
+            continue
+        item = _rssb_link_record(page_url, href, label)
+        dedupe_key = str(item.get("url") or item.get("target_host") or "")
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        item["kind"] = "PDF_CANDIDATE_LINK_NOT_FETCHED" if is_pdf or ".pdf" in href.lower() else "RELATED_PUBLIC_LINK_NOT_FETCHED"
+        output.append(item)
+        if len(output) >= 30:
+            break
+    return output
+
+
 def probe_jansoochna_rssb_service(
     *,
     fetcher: Callable[..., FetchResult] | None = None,
@@ -310,4 +370,125 @@ def probe_jansoochna_rssb_service(
         status = "RSSB_SERVICE_LINKS_NOT_FOUND"
     else:
         status = "PUBLIC_SERVICE_PAGE_UNAVAILABLE"
-    return {**base, "status": status, "robots": robots_summary, "pages_fetched": pages}
+    # Inspect a bounded number of same-host service links exposed by the permitted
+    # index pages. Each exact URL is checked against robots before fetching. No
+    # redirects are followed, and document/PDF links found on detail pages stay
+    # as metadata only; this function never requests them.
+    observed_service_links: list[dict[str, object]] = []
+    seen_service_urls: set[str] = set()
+    for page in pages:
+        for field in ("question_papers", "answer_keys"):
+            links = page.get(field, [])
+            if not isinstance(links, list):
+                continue
+            for link in links:
+                if not isinstance(link, dict) or link.get("same_host") is not True:
+                    continue
+                service_url = link.get("url")
+                if not isinstance(service_url, str) or service_url in seen_service_urls:
+                    continue
+                seen_service_urls.add(service_url)
+                if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+                    break
+                parsed = urlsplit(service_url)
+                if (
+                    parsed.scheme != "https"
+                    or parsed.hostname != HOST
+                    or parsed.port not in (None, 443)
+                    or parsed.username is not None
+                    or parsed.password is not None
+                ):
+                    continue
+                observed_service_links.append({
+                    "url": service_url,
+                    "label": str(link.get("label", ""))[:160],
+                    "field": field,
+                })
+            if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+                break
+        if len(observed_service_links) >= MAX_SERVICE_LINK_INSPECTIONS:
+            break
+
+    service_link_inspections: list[dict[str, object]] = []
+    for link in observed_service_links:
+        service_url = str(link["url"])
+        parsed = urlsplit(service_url)
+        permission = parser.can_fetch(USER_AGENT, service_url)
+        inspection: dict[str, object] = {
+            "path": parsed.path or "/",
+            "label": link["label"],
+            "field": link["field"],
+            "robots_allowed": permission,
+            "document_links": [],
+        }
+        if not permission:
+            inspection["status"] = "BLOCKED_BY_ROBOTS"
+            service_link_inspections.append(inspection)
+            continue
+
+        detail = get_text(
+            service_url,
+            max_bytes=MAX_DETAIL_BYTES,
+            timeout_seconds=timeout_seconds,
+            allowed_content_types=(
+                "text/html",
+                "application/xhtml+xml",
+                "application/json",
+                "text/plain",
+            ),
+        )
+        if detail.error == "content_type_not_allowed":
+            inspection.update({
+                "status": "CONTENT_TYPE_NOT_READ",
+                "http_status": detail.status_code,
+                "content_type": detail.content_type[:80],
+            })
+        elif detail.error:
+            inspection.update({"status": "FETCH_ERROR", "error_type": detail.error})
+        elif detail.status_code in {301, 302, 303, 307, 308}:
+            inspection.update({"status": "REDIRECT_NOT_FOLLOWED", "http_status": detail.status_code})
+        elif detail.status_code != 200:
+            inspection.update({"status": "HTTP_ERROR", "http_status": detail.status_code})
+        elif detail.content_type not in {"text/html", "application/xhtml+xml", "application/json", "text/plain"}:
+            # The live fetcher refuses to read a body whose type is not approved.
+            inspection.update({
+                "status": "CONTENT_TYPE_NOT_READ",
+                "http_status": detail.status_code,
+                "content_type": detail.content_type[:80],
+            })
+        else:
+            final = urlsplit(detail.url)
+            if (
+                final.scheme != "https"
+                or final.hostname != HOST
+                or final.port not in (None, 443)
+                or final.username is not None
+                or final.password is not None
+            ):
+                inspection["status"] = "FIXED_HOST_CHECK_FAILED"
+            else:
+                inspection.update({
+                    "status": (
+                        "READ_ONLY_PUBLIC_JSON"
+                        if detail.content_type == "application/json"
+                        else "READ_ONLY_PUBLIC_DETAIL_PAGE"
+                    ),
+                    "http_status": 200,
+                    "final_path": final.path,
+                    "document_links": _extract_document_links(
+                        detail.url,
+                        detail.body,
+                        detail.content_type,
+                    ),
+                })
+        service_link_inspections.append(inspection)
+
+    return {
+        **base,
+        "status": status,
+        "robots": robots_summary,
+        "pages_fetched": pages,
+        "service_link_inspections": service_link_inspections,
+        "service_page_bytes_fetched": bool(service_link_inspections),
+        "paper_bytes_fetched": False,
+    }
