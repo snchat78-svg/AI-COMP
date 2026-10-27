@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (base main `7de329f4673544db4a54f794f62ac16515ebcd66`; official-source network gate still blocked; user requested no calls/emails; public-route probe underway; no phase advancement)  
+**Last verified:** 2026-10-27 (main `784913ad62435658948ddaae232c1d8c6eba45d6`; PR #76 merged; Render run #14 proves two public government host TLS controls pass, official hosts still blocked; Jan Soochna route probe next)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -264,3 +264,17 @@ Public research found two additional Rajasthan government portal hosts worth che
 The scoped diagnostic increment on branch `phase-2-5-government-route-probe` probes these fixed hosts, reports them separately from the official-source list, and surfaces results in both Render and GitHub-hosted workflow summaries. It performs only DNS/TCP/certificate-validated TLS; it does not fetch page or paper bytes. Caller-supplied hosts remain rejected. Normal TLS, robots, terms, exact-document provenance and answer-key gates remain unchanged. The final operational gate still requires a registered official exam host to pass TCP plus certificate-validated TLS.
 
 **Next decision:** if either government portal passes, inspect its public navigation/robots/access rules and determine whether it actually publishes the specific official paper or syllabus before adding any ingestion source. If both fail or contain no relevant official documents, keep the gate blocked and continue researching officially published public endpoints without contacting the Board, using proxies, or weakening TLS. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## Jan Soochna RSSB-papers service route probe — 27 October 2026
+
+The deployed Render source-health run [#14](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462219593) completed its diagnostic stage with a fresh report. It showed:
+- `example.com`: IPv4 TCP and certificate-validated TLS PASS.
+- `RAJASTHAN_RECRUITMENT_PORTAL_CONTROL`: DNS OK, IPv4 TCP/TLS PASS.
+- `RAJASTHAN_LANDREVENUE_PORTAL_CONTROL`: DNS OK, IPv4 TCP/TLS PASS.
+- Registered `RSSB_OFFICIAL` and `RPSC_OFFICIAL` remain IPv4 TCP timeouts; `RSSB_LEGACY_OFFICIAL` still fails certificate-validated TLS. The workflow correctly failed its official-source gate; none of the diagnostic controls can satisfy it.
+- Public Jan Soochna service listings include **Question Papers of RSSB** and **Answer Key of RSSB** ([Jan Soochna services listing](https://jansoochna.rajasthan.gov.in/Services), [scheme/service listing](https://jansoochna.rajasthan.gov.in/Scheme)). The indexed listing establishes that the service exists, but not that a paper PDF is hosted there or that its data endpoint avoids redirecting to the blocked RSSB host.
+
+The new scoped branch `phase-2-5-jansoochna-route-probe` adds a fixed `jansoochna.rajasthan.gov.in:443` diagnostic control in the existing health report. Like the other government controls, it stays outside the official-source registry and is only DNS/TCP/certificate-validated-TLS; it does not fetch pages or PDFs, cannot produce paper candidates, and cannot make the official-source gate green. No phone call or email has been sent or initiated.
+
+**Next:** after exact-head CI and Render deploy, inspect the Jan Soochna connection result. If reachable, inspect its publicly accessible RSSB Question Papers service and whether the resulting paper URL is a directly hosted approved government document or merely redirects to the blocked RSSB hostname. Only use an exact official paper URL after provenance, access policy, robots/terms and PDF integrity gates pass. Do not treat an index listing alone as an ingested paper.
