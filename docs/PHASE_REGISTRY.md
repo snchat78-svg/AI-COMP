@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`; PR #79 merged; PR #80 service-detail inspection open. Code fix `164536a1f84319a60e39b3305895108f97f03e5b` passed [exact-head CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): 565 tests passed, 14 warnings, API container build passed. Follow-up docs CI and post-deploy service-detail report remain pending.)  
+**Last verified:** 2026-10-27 (main `75b85316bd5ee567722ef51fa90a44cfa2be2c36`; PR #81 merged. Main source-health run [#40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) reached Jan Soochna detail inspection and reported two `REDIRECT_NOT_FOLLOWED` links; no PDF bytes fetched. PR #82 adds sanitized redirect destination metadata; exact-head CI pending.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -322,3 +322,17 @@ The initial PR #80 head `f30b154fa8de64e09c737c9dcea8c21d87ec2ead` failed [CI ru
 The fix uses the parsed robots rules but resolves the most-specific matching path first; an `Allow` wins only when specificity ties. Updated code head `164536a1f84319a60e39b3305895108f97f03e5b` passed [CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): **565 tests passed, 14 warnings; API container build passed**. Documentation follow-up commit(s) require their own exact-head CI before merge.
 
 **Live gate remains open:** PR #80 must pass final exact-head CI, deploy to Render, and produce a real report showing the service-detail result. No PDF bytes or paper candidates have been fetched. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+## Jan Soochna redirect result and destination metadata — 27 October 2026
+
+PR [#80](https://github.com/snchat78-svg/AI-COMP/pull/80) is merged at `e5963a5737d98c79e5cdf08194e55292d4da86d1`; its exact-head run [#40469895261](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469895261) passed 565 tests, 14 warnings and the API container build. Follow-up PR [#81](https://github.com/snchat78-svg/AI-COMP/pull/81) is merged at `75b85316bd5ee567722ef51fa90a44cfa2be2c36`; its exact-head run [#40470380920](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470380920) also passed 565 tests, 14 warnings and API container build. The Render workflow now requires the `service_link_inspections` field, so a stale index-only response is not accepted.
+
+The fresh Render diagnostic [run #40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) reached the deployed detail inspection and reported:
+- `/Services/GetMoreData`: `REDIRECT_NOT_FOLLOWED`, robots allowed.
+- `/Services`: `REDIRECT_NOT_FOLLOWED`, robots allowed.
+- No redirect destination was included in that response, and no paper or answer-key bytes were fetched.
+- Registered RSSB/RPSC sources still fail the official gate: current RSSB and RPSC TCP timeouts; legacy RSSB certificate-validated TLS failure. The fixed general IPv4 HTTPS control passes.
+
+Open PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82), current branch head `7d84275365d60352d84d34c4a4c677e353280c0e`, adds sanitized redirect metadata from the HTTP `Location` header: scheme, hostname, and path only; query and fragment are omitted and the redirect is never followed. Tests assert that the destination URL is not requested and token-like query/fragment values do not leak. Exact-head CI and the post-deploy report remain pending.
+
+**Phase statuses stay unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not treat a redirected service index as an accessible official paper route.
