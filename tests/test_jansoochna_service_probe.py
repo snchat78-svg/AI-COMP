@@ -263,3 +263,72 @@ def test_safe_fetch_preserves_only_redirect_location_metadata(monkeypatch):
     assert result.status_code == 302
     assert result.redirect_location == "https://rssb.rajasthan.gov.in/papers/2025.pdf?token=secret-value"
     assert result.body == ""
+
+def test_probe_blocks_redirect_target_when_exact_path_is_robots_disallowed():
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
+    redirect_url = f"{ORIGIN}/Services/ClickablePDF?token=private-value"
+    robots = FetchResult(
+        200, f"{ORIGIN}/robots.txt", "text/plain",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\nDisallow: /Services/ClickablePDF\n",
+    )
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": robots,
+        f"{ORIGIN}/Services": FetchResult(
+            200, f"{ORIGIN}/Services", "text/html",
+            '<a href="/Services/GetMoreData?q=opaque-public-token">Question Papers of RSSB</a>',
+        ),
+        f"{ORIGIN}/Scheme": FetchResult(200, f"{ORIGIN}/Scheme", "text/html", ""),
+        service_url: FetchResult(
+            302, service_url, "text/html", redirect_location=redirect_url,
+        ),
+    })
+
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    inspection = report["service_link_inspections"][0]
+    assert inspection["status"] == "REDIRECT_NOT_FOLLOWED"
+    assert inspection["redirect_target_status"] == "BLOCKED_BY_ROBOTS"
+    assert inspection["redirect_target_robots_allowed"] is False
+    assert inspection["redirect_target_path"] == "/Services/ClickablePDF"
+    assert redirect_url not in requested
+    assert "private-value" not in str(inspection)
+    assert report["paper_bytes_fetched"] is False
+
+
+def test_probe_inspects_robots_permitted_redirect_target_without_fetching_documents():
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=opaque-public-token"
+    redirect_url = f"{ORIGIN}/Services/ClickablePDF?token=private-value"
+    robots = FetchResult(
+        200, f"{ORIGIN}/robots.txt", "text/plain",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\n",
+    )
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": robots,
+        f"{ORIGIN}/Services": FetchResult(
+            200, f"{ORIGIN}/Services", "text/html",
+            '<a href="/Services/GetMoreData?q=opaque-public-token">Question Papers of RSSB</a>',
+        ),
+        f"{ORIGIN}/Scheme": FetchResult(200, f"{ORIGIN}/Scheme", "text/html", ""),
+        service_url: FetchResult(
+            302, service_url, "text/html", redirect_location=redirect_url,
+        ),
+        redirect_url: FetchResult(
+            200, redirect_url, "text/html",
+            '<a href="/Files/RSSB-CET-2025.pdf">RSSB CET Graduation Question Paper</a>',
+        ),
+    })
+
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    inspection = report["service_link_inspections"][0]
+    assert inspection["status"] == "REDIRECT_NOT_FOLLOWED"
+    assert inspection["redirect_target_robots_allowed"] is True
+    assert inspection["redirect_target_status"] == "READ_ONLY_PUBLIC_DETAIL_PAGE"
+    document_link = inspection["redirect_target_document_links"][0]
+    assert document_link["kind"] == "PDF_CANDIDATE_LINK_NOT_FETCHED"
+    assert document_link["url"] == f"{ORIGIN}/Files/RSSB-CET-2025.pdf"
+    assert redirect_url in requested
+    assert not any(url.endswith("/Files/RSSB-CET-2025.pdf") for url in requested)
+    assert "private-value" not in str(inspection)
+    assert report["service_page_bytes_fetched"] is True
+    assert report["paper_bytes_fetched"] is False
