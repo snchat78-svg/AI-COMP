@@ -31,10 +31,20 @@ def test_probe_reads_services_only_when_robots_permits_and_keeps_same_host_links
         '<a href="/Services/RSSB?serviceId=124">Answer Key of RSSB</a>',
     )
     scheme = FetchResult(200, f"{ORIGIN}/Scheme", "text/html", "<html></html>")
+    paper_detail_url = f"{ORIGIN}/Services/RSSB?serviceId=123"
+    answer_detail_url = f"{ORIGIN}/Services/RSSB?serviceId=124"
     fetcher, requested = _fetcher_with_pages({
         f"{ORIGIN}/robots.txt": robots,
         f"{ORIGIN}/Services": services,
         f"{ORIGIN}/Scheme": scheme,
+        paper_detail_url: FetchResult(
+            200, paper_detail_url, "text/html",
+            '<a href="/Storage/RSSB-CET-2025.pdf">CET Graduation 2025 Question Paper</a>',
+        ),
+        answer_detail_url: FetchResult(
+            200, answer_detail_url, "text/html",
+            '<a href="https://rssb.rajasthan.gov.in/storage/key.pdf">RSSB Answer Key</a>',
+        ),
     })
 
     report = probe_jansoochna_rssb_service(fetcher=fetcher)
@@ -44,7 +54,20 @@ def test_probe_reads_services_only_when_robots_permits_and_keeps_same_host_links
     service_page = report["pages_fetched"][0]
     assert service_page["question_papers"][0]["url"] == f"{ORIGIN}/Services/RSSB?serviceId=123"
     assert service_page["answer_keys"][0]["url"] == f"{ORIGIN}/Services/RSSB?serviceId=124"
-    assert requested == [f"{ORIGIN}/robots.txt", f"{ORIGIN}/Services", f"{ORIGIN}/Scheme"]
+    assert requested == [
+        f"{ORIGIN}/robots.txt",
+        f"{ORIGIN}/Services",
+        f"{ORIGIN}/Scheme",
+        paper_detail_url,
+        answer_detail_url,
+    ]
+    assert report["service_link_inspections"][0]["status"] == "READ_ONLY_PUBLIC_DETAIL_PAGE"
+    paper_links = report["service_link_inspections"][0]["document_links"]
+    assert paper_links[0]["kind"] == "PDF_CANDIDATE_LINK_NOT_FETCHED"
+    assert paper_links[0]["url"] == f"{ORIGIN}/Storage/RSSB-CET-2025.pdf"
+    assert paper_links[0]["same_host"] is True
+    assert report["service_link_inspections"][1]["document_links"][0]["target_host"] == "rssb.rajasthan.gov.in"
+    assert not any("RSSB-CET-2025.pdf" in url or "/storage/key.pdf" in url for url in requested)
     assert report["paper_bytes_fetched"] is False
     assert report["source_registry_modified"] is False
 
@@ -99,3 +122,75 @@ def test_probe_rejects_unbounded_timeouts():
     import pytest
     with pytest.raises(ValueError, match="between 0.5 and 3.0"):
         probe_jansoochna_rssb_service(timeout_seconds=10)
+
+
+
+def test_probe_checks_exact_service_link_against_robots_before_fetch():
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=public-token"
+    robots = FetchResult(
+        200, f"{ORIGIN}/robots.txt", "text/plain",
+        "User-agent: *\nAllow: /Services\nAllow: /Scheme\nDisallow: /Services/GetMoreData\n",
+    )
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": robots,
+        f"{ORIGIN}/Services": FetchResult(
+            200, f"{ORIGIN}/Services", "text/html",
+            '<a href="/Services/GetMoreData?q=public-token">Question Papers of RSSB</a>',
+        ),
+        f"{ORIGIN}/Scheme": FetchResult(200, f"{ORIGIN}/Scheme", "text/html", ""),
+    })
+
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    assert report["service_link_inspections"][0]["status"] == "BLOCKED_BY_ROBOTS"
+    assert report["service_link_inspections"][0]["robots_allowed"] is False
+    assert service_url not in requested
+    assert requested == [f"{ORIGIN}/robots.txt", f"{ORIGIN}/Services", f"{ORIGIN}/Scheme"]
+    assert report["paper_bytes_fetched"] is False
+
+
+def test_safe_fetch_refuses_pdf_content_before_reading_body(monkeypatch):
+    import pytest
+    from ai_comp.research import jansoochna_service_probe as probe_module
+
+    service_url = f"{ORIGIN}/Services/GetMoreData?q=public-token"
+
+    class Headers:
+        def get_content_type(self):
+            return "application/pdf"
+
+    class Response:
+        status = 200
+        headers = Headers()
+
+        def geturl(self):
+            return service_url
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, *_args, **_kwargs):
+            pytest.fail("binary PDF body must never be read by the service-index probe")
+
+    class Opener:
+        def open(self, request, *, timeout):
+            assert request.full_url == service_url
+            assert timeout == 1.0
+            return Response()
+
+    monkeypatch.setattr(probe_module, "build_opener", lambda *_args: Opener())
+
+    result = probe_module._safe_fetch_text(
+        service_url,
+        max_bytes=1024,
+        timeout_seconds=1.0,
+        allowed_content_types=("text/html", "application/json"),
+    )
+
+    assert result.status_code == 200
+    assert result.content_type == "application/pdf"
+    assert result.error == "content_type_not_allowed"
+    assert result.body == ""
