@@ -306,3 +306,12 @@ PR #78 is merged, exact-head CI [run #625](https://github.com/snchat78-svg/AI-CO
 A follow-up fix branch adds a bounded retry loop to the GitHub workflow for the fixed `/diagnostics/jansoochna-rssb-service` endpoint. It waits for a response with the exact expected phase, hostname, robots object and pages list before continuing. It does not relax robots policy or inspect/download exam files. Do not interpret the previous HTTP 404 as a Jan Soochna policy block.
 
 Current main after PR #78 is `e72807fa93183ff386622e3b74d010c6521e4291`; next task is validate and merge the deployment-retry-only PR, then review the actual robots-gated service-page result. No phone call or email has been sent or initiated.
+
+
+## Jan Soochna public index result — first robots gate passed (27 October 2026)
+
+Post-PR #79 Render diagnostic workflow [run #17](https://github.com/snchat78-svg/AI-COMP/actions/runs/40464311120) showed that the Jan Soochna public route is reachable and its `robots.txt` permits the `/Services` and `/Scheme` pages. Both returned HTTP 200 and exposed same-host RSSB question-paper service URLs. The workflow intentionally did not follow those links or fetch any paper bytes at that point. The official RSSB/RPSC endpoints remain inaccessible from the Render runtime under normal TLS.
+
+The current implementation extension inspects only the same-host service URLs surfaced by those public index pages, after evaluating robots permission for each exact URL. It does not follow redirects, only reads text/HTML/JSON content, and rejects a PDF/binary MIME type before reading body bytes. It reports PDF-like links from a service detail response but never requests those links. This will decide whether Jan Soochna itself hosts a public PDF link or redirects/references another host.
+
+Current main at this checkpoint is `78ec74b4aa13c5b8992d8e826621cc70d03d73e0`; the detail-inspection changes are in PR preparation on branch `phase-2-5-jansoochna-detail-inspection`. Wait for exact-head CI and post-deploy diagnostic before deciding whether a direct government-hosted document path exists. The question-paper candidate remains unverified. No phone call or email was made.
