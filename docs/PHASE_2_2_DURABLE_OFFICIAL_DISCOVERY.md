@@ -183,3 +183,16 @@ Initial PR #80 code head `f30b154fa8de64e09c737c9dcea8c21d87ec2ead` failed [CI r
 The implementation now resolves the most-specific matching rule before requesting each service URL, with `Allow` winning only when matching specificity ties. Updated code head `164536a1f84319a60e39b3305895108f97f03e5b` passed [CI run #630](https://github.com/snchat78-svg/AI-COMP/actions/runs/40469616564): 565 tests passed, 14 warnings, API container build passed. That run validates the code fix; the docs follow-up adds a new commit and must receive its own exact-head CI before merge.
 
 After merge/deploy, review the new Render endpoint's per-service result. The diagnostic must continue to fetch only robots-permitted same-host text/HTML/JSON; never follow redirects; never read PDF/binary bodies; and never fetch links it reports. No official PDF, SHA-256, persisted paper candidate or verified answer key is claimed. Phase 2.2 remains BLOCKED until approved official document bytes can be fetched and reviewed through existing gates.
+
+## Jan Soochna service redirects are not followed — 27 October 2026
+
+The strict-schema Render workflow run [#40470532495](https://github.com/snchat78-svg/AI-COMP/actions/runs/40470532495) captured the service detail inspection instead of accepting the prior index-only schema. Both same-host links surfaced on the robots-permitted public index returned `REDIRECT_NOT_FOLLOWED`: `/Services/GetMoreData` and `/Services`. No PDF or answer-key bytes were fetched. The same diagnostic confirms that current registered RSSB/RPSC connections still fail TCP, while legacy RSSB fails standard certificate-validated TLS.
+
+Open PR [#82](https://github.com/snchat78-svg/AI-COMP/pull/82) adds only sanitized redirect `Location` metadata (scheme, hostname and path; no query/fragment). The client continues not to follow the redirect. Regression tests prove the destination is not requested and potentially tokenized query/fragment values are omitted from the report. Await exact-head CI and post-deploy results.
+
+Next decision after deployment:
+- If the redirect host is `rssb.rajasthan.gov.in`, the reachable Jan Soochna index is not an independent route around the registered RSSB host failure. Stop; do not follow, proxy or retry the protected PDF fetch.
+- If the redirect remains on Jan Soochna, check that exact destination path against the published robots rules before considering another separate bounded read-only request; keep redirects disabled.
+- Do not register candidate papers, download file bodies, calculate/claim PDF hashes, or change the official source registry in this diagnostic. Any later document-ingestion step must use the existing protected fetch/review gates and establish issuing-board provenance.
+
+Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
