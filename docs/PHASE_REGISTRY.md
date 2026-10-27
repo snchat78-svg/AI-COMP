@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (main `688343ad1cb9f9347d55e0e82a9a47f2092f247f`; PR #70 merged; CI #613/#614 passed 552 tests + API container; cross-runtime probe completed; official sources remain blocked)  
+**Last verified:** 2026-10-27 (main `2f314d2778d33614acdb04fb4751eb3b241f3790`; PRs #70–#71 merged; exact-head CI #613 and current-main CI #614/#616 passed 552 tests + API container; cross-runtime probe confirms official-source access remains blocked)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
