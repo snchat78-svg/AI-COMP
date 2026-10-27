@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-27 (base main `dc1c1f0e887af4515f7be808686191f39ce491b4`; PRs #68–#72 merged; cross-runtime checks show official-source access still blocked; external-unblock issue #74 opened; no phase advancement)  
+**Last verified:** 2026-10-27 (base main `7de329f4673544db4a54f794f62ac16515ebcd66`; official-source network gate still blocked; user requested no calls/emails; public-route probe underway; no phase advancement)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -253,3 +253,14 @@ Tracked follow-up: [GitHub Issue #74 — approved HTTPS route to official RSSB/R
 Do not use an unverified alternate domain, unofficial mirror, proxy, paid dedicated IP or region migration as a silent workaround. Any architecture/cost change needs a documented plan and explicit approval. Keep the registered CET syllabus candidate pending; no repeat fetch until route evidence exists.
 
 **Current phase gate:** Phase 2.2 remains **BLOCKED**; Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 6.58 remains **BLOCKED**. Resume the existing pipeline only after an approved official route passes DNS/TCP/TLS and real paper candidates persist; then complete exact document/hash review, full syllabus inventory and independent mapping review, answer-key matching, and real mobile E2E.
+
+
+## Public government-route probe — no contact / no bypass (27 October 2026)
+
+The user explicitly requested that no phone calls or emails be made. No contact has been initiated. The same-runner cross-runtime diagnostic shows `example.com:443` passes IPv4 TCP and certificate-validated TLS, while RSSB/RPSC hosts continue to fail; this does not prove an explicit block of Render's shared outbound CIDRs.
+
+Public research found two additional Rajasthan government portal hosts worth checking at the DNS/TCP/TLS level only: `recruitment.rajasthan.gov.in` (the Board's own public documents reference the unified recruitment portal) and `landrevenue.rajasthan.gov.in` (a Rajasthan government department host where a Board-signed public notice is indexed). Evidence pointers: [Rajasthan Recruitment Portal](https://recruitment.rajasthan.gov.in/) and the [Board-signed notice on Land Revenue's official government host](https://landrevenue.rajasthan.gov.in/). This does **not** establish either portal as a question-paper source; the controls remain diagnostic and outside the official source registry.
+
+The scoped diagnostic increment on branch `phase-2-5-government-route-probe` probes these fixed hosts, reports them separately from the official-source list, and surfaces results in both Render and GitHub-hosted workflow summaries. It performs only DNS/TCP/certificate-validated TLS; it does not fetch page or paper bytes. Caller-supplied hosts remain rejected. Normal TLS, robots, terms, exact-document provenance and answer-key gates remain unchanged. The final operational gate still requires a registered official exam host to pass TCP plus certificate-validated TLS.
+
+**Next decision:** if either government portal passes, inspect its public navigation/robots/access rules and determine whether it actually publishes the specific official paper or syllabus before adding any ingestion source. If both fail or contain no relevant official documents, keep the gate blocked and continue researching officially published public endpoints without contacting the Board, using proxies, or weakening TLS. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
