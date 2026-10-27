@@ -202,6 +202,30 @@ jobs:
                           path=inspection.get("redirect_target_path", "/"),
                       )
                   )
+              if inspection.get("redirect_target_status"):
+                  lines.append(
+                      "  - Target inspection: {status}; robots allowed={allowed}; HTTP={http}; content type={content_type}".format(
+                          status=inspection.get("redirect_target_status", "unknown"),
+                          allowed=inspection.get("redirect_target_robots_allowed", "unknown"),
+                          http=inspection.get("redirect_target_http_status", "unknown"),
+                          content_type=inspection.get("redirect_target_content_type", "unknown"),
+                      )
+                  )
+              for item in inspection.get("redirect_target_document_links", []):
+                  if item.get("same_host") is True:
+                      lines.append(
+                          "  - Redirect-target {kind} (not fetched): {url}".format(
+                              kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"),
+                              url=item.get("url", ""),
+                          )
+                      )
+                  else:
+                      lines.append(
+                          "  - Redirect-target {kind}: external link not followed (target host={host})".format(
+                              kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"),
+                              host=item.get("target_host", "unknown"),
+                          )
+                      )
               for item in inspection.get("document_links", []):
                   if item.get("same_host") is True:
                       lines.append("  - {kind}: {url}".format(kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"), url=item.get("url", "")))
