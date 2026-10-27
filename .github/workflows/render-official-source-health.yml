@@ -11,6 +11,16 @@ on:
       - "src/ai_comp/research/source_health.py"
       - "src/ai_comp/research/jansoochna_service_probe.py"
       - "src/ai_comp/research/seed_registry.py"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/render-official-source-health.yml"
+      - "src/ai_comp/api/source_health_routes.py"
+      - "src/ai_comp/api/app.py"
+      - "src/ai_comp/research/source_health.py"
+      - "src/ai_comp/research/jansoochna_service_probe.py"
+      - "src/ai_comp/research/seed_registry.py"
   workflow_dispatch:
 
 permissions:
@@ -248,7 +258,11 @@ jobs:
           PY
 
 
+      # Pull-request runs expose a live, read-only production diagnostic summary so
+      # the report can be inspected through the PR workflow. The actual official-source
+      # acceptance gate remains enforced on main pushes and explicit manual runs.
       - name: Require at least one official source to complete validated TCP and TLS
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           python - <<'PY'
