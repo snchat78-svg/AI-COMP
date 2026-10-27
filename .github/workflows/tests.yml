@@ -30,6 +30,72 @@ jobs:
           python-version: "3.11"
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[test,postgres,server]"
+      - name: One-time official-source TCP/TLS comparison from GitHub runner
+        if: github.event_name == 'pull_request' && github.head_ref == 'diagnostic/official-source-runner-egress-20261027'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import socket
+          import ssl
+
+          TARGETS = (
+              ("RSSB_OFFICIAL", "rssb.rajasthan.gov.in"),
+              ("RSSB_LEGACY_OFFICIAL", "rsmssb.rajasthan.gov.in"),
+              ("RPSC_OFFICIAL", "rpsc.rajasthan.gov.in"),
+          )
+          FAMILIES = ((socket.AF_INET, "ipv4"), (socket.AF_INET6, "ipv6"))
+          context = ssl.create_default_context()
+          timeout = 3.0
+
+          print("| source | host | family | DNS | TCP | certificate-validated TLS | error |")
+          print("|---|---|---|---|---|---|---|")
+          for source_id, host in TARGETS:
+              for family, family_name in FAMILIES:
+                  dns = "OK"
+                  tcp = "NOT_ATTEMPTED"
+                  tls = "NOT_ATTEMPTED"
+                  error = "NONE"
+                  try:
+                      addresses = socket.getaddrinfo(
+                          host, 443, family=family, type=socket.SOCK_STREAM
+                      )
+                  except OSError as exc:
+                      addresses = []
+                      dns = "FAIL"
+                      error = type(exc).__name__
+                  if addresses:
+                      tcp = "FAIL"
+                      tls = "NOT_REACHED"
+                      error = "TimeoutOrConnectError"
+                      for af, socktype, proto, _canonname, sockaddr in addresses[:2]:
+                          raw = socket.socket(af, socktype, proto)
+                          raw.settimeout(timeout)
+                          try:
+                              raw.connect(sockaddr)
+                              tcp = "PASS"
+                              try:
+                                  with context.wrap_socket(raw, server_hostname=host) as wrapped:
+                                      wrapped.settimeout(timeout)
+                                      wrapped.version()
+                                      tls = "PASS"
+                                      error = "NONE"
+                              except ssl.SSLError as exc:
+                                  tls = "FAIL"
+                                  error = type(exc).__name__
+                              except OSError as exc:
+                                  tls = "FAIL"
+                                  error = type(exc).__name__
+                              break
+                          except OSError as exc:
+                              error = type(exc).__name__
+                          finally:
+                              try:
+                                  raw.close()
+                              except OSError:
+                                  pass
+                  print(f"| {source_id} | {host} | {family_name} | {dns} | {tcp} | {tls} | {error} |")
+          print("Diagnostic only: no HTTP request, no redirects, no page/PDF bytes, no TLS bypass.")
+          PY
       - run: python -m pytest tests -q
       - name: Build API container image
         run: docker build --pull -t ai-comp-api-ci .
