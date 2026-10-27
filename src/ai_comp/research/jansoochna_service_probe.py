@@ -7,12 +7,13 @@ found in those pages, downloads exam documents, or writes to the database.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from http.cookiejar import CookieJar
 import json
 from html.parser import HTMLParser
 from typing import Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, unquote, urljoin, urlparse, urlsplit, urlunparse, urlunsplit
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPCookieProcessor, HTTPRedirectHandler, OpenerDirector, Request, build_opener
 from urllib.robotparser import RobotFileParser
 
 
@@ -55,6 +56,7 @@ def _safe_fetch_text(
     max_bytes: int,
     timeout_seconds: float,
     allowed_content_types: tuple[str, ...],
+    opener: OpenerDirector | None = None,
 ) -> FetchResult:
     """GET a fixed same-host HTTPS URL, refusing redirects and unknown/binary bodies."""
     parsed = urlsplit(url)
@@ -74,9 +76,9 @@ def _safe_fetch_text(
             "Accept": ",".join(allowed_content_types),
         },
     )
-    opener = build_opener(_NoRedirectHandler())
+    active_opener = opener or build_opener(_NoRedirectHandler())
     try:
-        with opener.open(request, timeout=timeout_seconds) as response:
+        with active_opener.open(request, timeout=timeout_seconds) as response:
             final_url = response.geturl()
             final = urlsplit(final_url)
             if (
@@ -110,6 +112,35 @@ def _safe_fetch_text(
         )
     except (URLError, TimeoutError, OSError) as exc:
         return FetchResult(None, url, "", error=type(exc).__name__)
+
+
+def _build_session_fetcher() -> Callable[..., FetchResult]:
+    """Create an ephemeral cookie-aware transport that never follows redirects.
+
+    Some public portals set session cookies on a redirect response. Preserve
+    those cookies only for this single probe run so the next explicitly
+    robots-approved same-host request can be evaluated in its intended session.
+    The cookie jar is never persisted or included in the diagnostic report.
+    """
+    cookie_jar = CookieJar()
+    opener = build_opener(HTTPCookieProcessor(cookie_jar), _NoRedirectHandler())
+
+    def fetch(
+        url: str,
+        *,
+        max_bytes: int,
+        timeout_seconds: float,
+        allowed_content_types: tuple[str, ...],
+    ) -> FetchResult:
+        return _safe_fetch_text(
+            url,
+            max_bytes=max_bytes,
+            timeout_seconds=timeout_seconds,
+            allowed_content_types=allowed_content_types,
+            opener=opener,
+        )
+
+    return fetch
 
 
 def _robots_allows_url(parser: RobotFileParser, user_agent: str, url: str) -> bool:
@@ -305,7 +336,9 @@ def probe_jansoochna_rssb_service(
     """
     if not 0.5 <= timeout_seconds <= 3.0:
         raise ValueError("timeout_seconds must be between 0.5 and 3.0")
-    get_text = fetcher or _safe_fetch_text
+    # Reuse an ephemeral cookie jar across this probe's bounded requests. Injected
+    # test fetchers remain isolated and do not get an implicit network session.
+    get_text = fetcher if fetcher is not None else _build_session_fetcher()
     robots_result = get_text(
         ROBOTS_URL,
         max_bytes=MAX_ROBOTS_BYTES,
