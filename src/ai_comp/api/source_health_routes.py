@@ -31,7 +31,7 @@ def _response(status_code: int, payload: dict[str, Any]) -> Response:
 
 @router.get("/diagnostics/official-source-health", include_in_schema=False)
 def official_source_health(request: Request) -> Response:
-    """Probe registered official hosts only; no arbitrary host input or content fetch."""
+    """Probe fixed official hosts and one fixed control; no arbitrary host input or content fetch."""
     # ChatGPT link navigation appends this analytics-only parameter to links.
     # Permit only that exact single pair so the diagnostic is usable from chat;
     # no query parameter can select or override the registered hosts.
