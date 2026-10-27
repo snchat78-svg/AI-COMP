@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (base main `7de329f4673544db4a54f794f62ac16515ebcd66`; public government-route probe underway; no calls/emails sent or planned without user authorization; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (main `784913ad62435658948ddaae232c1d8c6eba45d6`; PR #76 merged; Jan Soochna RSSB-papers service route is next to test; no calls/emails; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -274,3 +274,12 @@ The user instructed not to call or email. No contact has been sent or initiated.
 The next code increment probes two fixed public Rajasthan government portal hosts as connectivity-only diagnostics: `recruitment.rajasthan.gov.in` and `landrevenue.rajasthan.gov.in`. Both appear in government-origin contexts, but neither is assumed to publish question papers. The reports keep these results separate from official exam-source `results`; no generic portal can pass the official-paper acceptance gate by itself. No page or PDF bytes are downloaded by these probes, and all certificate validation stays enabled.
 
 After CI and deploy, review the actual portal host results. For any reachable portal, inspect its public navigation, robots and terms and confirm it directly hosts the exact exam paper/syllabus with official provenance before considering an ingestion path. Do not use unofficial mirrors, contact the Board, weaken TLS, add proxies or buy static egress. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## Jan Soochna RSSB-papers alternate route — next read-only probe (27 October 2026)
+
+The fresh Render report after PR #76 ([workflow #14](https://github.com/snchat78-svg/AI-COMP/actions/runs/40462219593)) confirmed that `recruitment.rajasthan.gov.in` and `landrevenue.rajasthan.gov.in` are reachable from the Render runtime using certificate-validated IPv4 TLS. The fixed general control `example.com` also passes. RSSB and RPSC official hosts remain TCP-timeout blocked; legacy RSSB still fails standard TLS. This narrows the issue to destination-specific connectivity without proving an explicit IP/CIDR block.
+
+Public Rajasthan Jan Soochna listings expose separate service names for `Question Papers of RSSB` and `Answer Key of RSSB` ([services listing](https://jansoochna.rajasthan.gov.in/Services), [scheme listing](https://jansoochna.rajasthan.gov.in/Scheme)). The pages are currently only a lead, not proof that a paper PDF is directly hosted there.
+
+A fixed Jan Soochna TLS control is being added to the existing read-only diagnostic and workflow summaries. It stays separate from official exam sources. After deploy, if reachable, inspect the public RSSB question-paper service to see whether it serves exact official files from Jan Soochna or links back to the blocked RSSB hostname. Do not guess document IDs, scrape protected endpoints, or treat a general service index as source evidence. No contact has been initiated; no proxies or TLS bypasses are planned.
