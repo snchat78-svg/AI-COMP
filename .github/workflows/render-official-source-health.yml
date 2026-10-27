@@ -194,6 +194,14 @@ jobs:
                       allowed=inspection.get("robots_allowed", "unknown"),
                   )
               )
+              if inspection.get("redirect_target_host"):
+                  lines.append(
+                      "  - Redirect not followed; target host={host}, scheme={scheme}, path={path}".format(
+                          host=inspection.get("redirect_target_host", "unknown"),
+                          scheme=inspection.get("redirect_target_scheme", "unknown"),
+                          path=inspection.get("redirect_target_path", "/"),
+                      )
+                  )
               for item in inspection.get("document_links", []):
                   if item.get("same_host") is True:
                       lines.append("  - {kind}: {url}".format(kind=item.get("kind", "PUBLIC_LINK_NOT_FETCHED"), url=item.get("url", "")))
