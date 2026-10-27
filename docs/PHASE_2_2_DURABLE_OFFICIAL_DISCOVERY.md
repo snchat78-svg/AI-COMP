@@ -264,3 +264,14 @@ The current RSSB/RPSC route remains blocked in both GitHub-hosted and Render pro
 Acceptance for this investigation is a live Render report showing whether robots permits the public indexes and whether the indexes expose direct, official paper/answer-key document links. Even if a link is found, the target must be verified against the responsible body's official provenance and then fetched through the existing protected, certificate-validated workflow before registering a paper candidate. A generic recruitment advertisement or portal-wide document is not a past paper. Phase 2.2 remains BLOCKED until a compliant route yields nonzero real candidates.
 
 No proxy, manual DNS override, robots bypass, TLS weakening, emails or phone calls.
+
+## Post-merge live result for the Recruitment Portal route — 27 October 2026
+
+PR [#91](https://github.com/snchat78-svg/AI-COMP/pull/91) merged at `0a2d5aef0daa084fbbb5e6f2a281fd38661510f9`; exact-head test and API container build passed [run #40519631423](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519631423). After deployment, main source-health [run #40519877289](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877289) reached `/diagnostics/recruitment-portal-paper-route` and reported:
+
+- `status=ROBOTS_UNAVAILABLE`; robots status `HTTP_ERROR`.
+- `pages_inspected=0`; no fixed index path was requested.
+- No paper/answer-key bytes fetched, no database/source registry changes, and `candidate_promotions=0`.
+- The existing official-source acceptance gate still failed: `RSSB_OFFICIAL` TCP timeout; `RSSB_LEGACY_OFFICIAL` TCP passes but validated TLS fails; `RPSC_OFFICIAL` TCP/network failures. Main research [run #40519877291](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877291) persisted `0` paper candidates.
+
+This public route must remain closed at the robots gate until robots.txt is accessible under normal public access; do not retry the index pages or follow possible links. This is a route lead that failed the access/robots gate, not an accepted paper source. Phase 2.2 remains BLOCKED. The next investigation must use a separately documented official paper endpoint with valid TLS and clear robots/terms permission. No TLS weakening, proxy, DNS override, emails or calls.

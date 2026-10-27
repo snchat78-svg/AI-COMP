@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `96839e53ab0c94a4c72891f4528b84040608f481`; PR #84 merged, exact-head CI passed 570 tests, 14 warnings, API build passed; live report confirms the same-host redirect loop; PR #85 tests ephemeral cookie session state.)  
+**Last updated:** 2026-10-27 (main `0a2d5aef0daa084fbbb5e6f2a281fd38661510f9`; PR #91 merged; exact-head backend tests and API container build passed [run #40519631423](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519631423). Post-deploy recruitment route returned `ROBOTS_UNAVAILABLE` / `robots.txt=HTTP_ERROR`, so no index page or paper content was inspected. Main source-health [run #40519877289](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877289) and official research [run #40519877291](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877291) both correctly preserve the Phase 2.2 blocker; 0 candidates persisted.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -415,3 +415,11 @@ This evidence does not support a Render-only egress issue or an untested extra I
 - No email/phone contact, TLS bypass, proxy, arbitrary host input, paper bytes, or database/source registry writes were used.
 
 **Handoff:** Phase 2.2 remains BLOCKED until a permitted official paper route yields real candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until Phase 6.56 acceptance; Phase 6.58 remains BLOCKED.
+
+
+## Phase 2.2 post-merge handoff — 27 October 2026
+
+- PR [#91](https://github.com/snchat78-svg/AI-COMP/pull/91) merged at `0a2d5aef0daa084fbbb5e6f2a281fd38661510f9`; exact-head [CI run #40519631423](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519631423) passed tests and API container build.
+- Render deployed that commit. Main live diagnostic [run #40519877289](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877289): the new fixed recruitment route responds, but its `robots.txt` fetch returns `HTTP_ERROR`; status `ROBOTS_UNAVAILABLE`, `pages_inspected=0`, no paper bytes, no DB/registry writes and no candidates promoted. Do not request its index pages unless `robots.txt` is ordinarily readable.
+- Main official-source research [run #40519877291](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877291): registry sync 2 conducting bodies / 12 exams / 22 paper categories / 3 sources; all registered sources failed/blocked and `paper_candidates_persisted=0`.
+- Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 PLANNED**, **Phase 6.58 BLOCKED**. Never start Phase 2.3 ingestion or Phase 6.57 acceptance work based on a green diagnostics/test run alone. Next action: evaluate only an independently documented official paper route that is reachable with normal TLS and explicit robots/terms permission; use the existing protected fetch/review workflow once actual paper provenance is established. No proxy, TLS bypass, DNS override, email or phone call.
