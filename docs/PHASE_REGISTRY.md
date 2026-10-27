@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified:** 2026-10-26 (main deployment commit `2ea757053b5eaa1cda3b037e6ddd5776333645a8`; PRs #63–#66 merged; fresh Render source-health rerun #11 at 13:02 UTC still blocked; no phase advancement)  
+**Last verified:** 2026-10-27 (base main `29d59f696b03db37c3d5f56c293fb9154726da61`; PRs #63–#67 merged; fresh Render probe at 13:02 UTC on 26 October remained blocked; Phase 6.56 stays IN_PROGRESS)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -201,3 +201,12 @@ The current official RPSC navigation uses [Question Papers](https://rpsc.rajasth
 - The measurements are materially unchanged from the preceding probe. The shared CIDRs are now recorded, but the evidence does **not** identify the actual remote-side cause or prove that RSSB/RPSC explicitly block these ranges. The DNS/TCP/TLS health endpoint is diagnostic only.
 - **Next single action:** have an authorized official-host/network contact verify whether outbound connections from `74.220.48.0/24` and `74.220.56.0/24` are filtered or rate-limited. If this cannot be verified, compare a tested approved runtime/network route before considering an architecture change. Do not buy dedicated IPs, add a proxy, migrate region or weaken TLS without separate explicit approval. No repeated candidate fetch until there is evidence of a working route.
 - **Status unchanged:** Phase 2.2 `BLOCKED`; Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED`. No official paper bytes, answer-key pairing, full syllabus inventory or live auto-update has been verified.
+
+
+## Phase 2.5 next diagnostic increment — separate general HTTPS control (27 October 2026)
+
+The user supplied Render's shared outbound CIDRs `74.220.48.0/24` and `74.220.56.0/24`. The fresh Render-side report at [source-health job #121586949254](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) remained unchanged: RSSB current-host TCP timeout, legacy RSSB TCP pass/TLS fail, and RPSC TCP timeout/network failure. Those observations do not prove that the official hosts explicitly block the CIDRs.
+
+The next scoped code increment on branch `phase-2-5-egress-control-probe` adds a fixed `example.com:443` connectivity control to all-source reports, kept outside the registered official-source `results` array and permanently marked diagnostic-only. No user-supplied URL is accepted, no HTTP page or paper bytes are fetched, no official-source acceptance gate is weakened, and certificate validation remains enabled. The Render workflow summary will report the control result independently while its gate continues to require an official source to pass TCP plus validated TLS. Single-source probes remain narrowly scoped.
+
+**Acceptance for this increment:** tests prove control/official result separation, no IP leakage and no control probe on single-source runs; exact-head CI passes; the newly deployed Render diagnostic report supplies fresh control-vs-official results. The result can distinguish general egress failure from an official-host-specific failure pattern, but it cannot by itself prove IP blocking. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 stays PLANNED; Phase 6.58 stays BLOCKED.

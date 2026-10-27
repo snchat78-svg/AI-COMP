@@ -76,3 +76,12 @@ The merge automatically triggered [official-source-research run #18](https://git
 - All three crawl results were `BLOCKED_OR_FAILED`; total persisted candidates: **0**.
 
 The RPSC route correction is therefore an implemented and CI-tested code fix, but it does not resolve the separate egress/TLS blocker. Keep Phase 2.2 **BLOCKED** and Phase 6.56 **IN_PROGRESS**. Do not weaken TLS, use an unofficial mirror as official evidence, rerun empty-queue downstream processing as if complete, or advance phases. The next acceptance gate remains successful, robots-compliant retrieval from at least one registered official HTTPS source and nonzero persisted real paper candidates, followed by existing paper processing, answer-key matching, independent review and mobile E2E.
+
+
+## Cross-runtime diagnosis: fixed HTTPS control next (27 October 2026)
+
+The Render Dashboard identifies its shared outbound ranges as `74.220.48.0/24` and `74.220.56.0/24`. The fresh Render probe from [job #121586949254](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) continued to report current RSSB/RPSC TCP timeouts and a standard-TLS failure on the legacy host. This is consistent with a path-specific problem but does not prove that those CIDRs are blocked.
+
+A controlled incremental diagnostic is being added to the existing source-health function/workflow: probe fixed `example.com:443` connectivity as a separate control result, then compare it with the official sources from the same Render runtime. The control is not part of the official source registry, is never used for paper discovery, and cannot satisfy the official-source gate. It performs only DNS/TCP/certificate-validated TLS; it does not retrieve control-page or paper content. Its URL is fixed in code, not a request parameter.
+
+After exact-head CI passes and the automatic post-deploy report is available, use the comparison only to classify general egress versus official-host-specific failure. Even if general egress passes, request authorized confirmation before concluding the official CIDRs are filtered. Phase 2.2 remains BLOCKED and no paper-processing or answer-key phase should be treated as complete until nonzero real official candidates and downstream evidence exist.

@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-26 (main `9984f3892a62740840b93db276ae13ec77ca8001`; PR #63 product contract and PR #64 RPSC route fix merged; official-source run #18 blocked with 0 candidates; Phase 6.56 remains IN_PROGRESS)  
+**Last updated:** 2026-10-27 (base main `29d59f696b03db37c3d5f56c293fb9154726da61`; PR #63–#67 merged; official-source run #18 still has 0 candidates; Phase 6.56 remains IN_PROGRESS)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -219,3 +219,12 @@ The merge automatically started [official-source-research run #18](https://githu
 - We do not have evidence that the government hosts explicitly block these CIDRs. They are a hypothesis to investigate, not a proven root cause. Do not bypass TLS, add a proxy, purchase dedicated IPs or migrate services without separate approval.
 - Next: request verification from an authorized official-host/network contact on whether traffic from the listed outbound ranges is filtered; otherwise, compare an approved reachable runtime/network route before changing architecture. Keep `rssb-cet-graduation-2026-candidate-20261026-01` pending and do not retry until there is route evidence.
 - Status is unchanged: Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED. Old Papers automatic updates and complete independently reviewed One-Liner syllabus coverage remain unproven in live data.
+
+
+## Next diagnostic increment — general HTTPS control vs official hosts (27 October 2026)
+
+Current Render egress ranges supplied by the user: `74.220.48.0/24` and `74.220.56.0/24` (shared Oregon-region ranges). The fresh Render source-health run [#121586949254](https://github.com/snchat78-svg/AI-COMP/actions/runs/40274447472) still showed current RSSB/RPSC TCP timeouts and legacy RSSB TLS failure. No evidence yet proves an explicit CIDR block.
+
+The current implementation increment adds one fixed, non-user-selectable `example.com:443` control to full source-health reports. It remains outside the official `results` collection; the operational gate still checks only registered official hosts. No page content is fetched; normal certificate validation and all existing host/robots restrictions remain unchanged. The Render source-health workflow will publish the control outcome separately from the official-source table. Single-source diagnostic calls do not probe the extra control host.
+
+Next: merge only after exact-head tests and container CI pass, then inspect the automatic post-deploy Render source-health run. A control PASS combined with official-host failures would narrow the investigation to destination/path-specific reachability; it is not proof of an IP block. A control failure would indicate a broader runtime egress/TLS issue. Keep Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED until the actual official HTTPS and paper-ingestion gates pass.

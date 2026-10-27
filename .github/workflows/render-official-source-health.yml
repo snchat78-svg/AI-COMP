@@ -78,6 +78,24 @@ jobs:
                   errors = item.get(label, [])
                   if errors:
                       lines.append(f"- {item.get('source_id', 'unknown')} {label}: {', '.join(errors)}")
+          control = data.get("network_control")
+          if isinstance(control, dict):
+              lines.extend([
+                  "",
+                  "## General HTTPS control (fixed host; diagnostic only)",
+                  "- Control hostname: example.com",
+                  f"- DNS={control.get('dns_status', 'unknown')}; "
+                  f"IPv4 TCP={control.get('ipv4_tcp', 'unknown')}; "
+                  f"IPv4 TLS={control.get('ipv4_tls', 'unknown')}; "
+                  f"IPv6 TCP={control.get('ipv6_tcp', 'unknown')}; "
+                  f"IPv6 TLS={control.get('ipv6_tls', 'unknown')}",
+              ])
+              for label in ("ipv4_tcp_errors", "ipv4_tls_errors", "ipv6_tcp_errors", "ipv6_tls_errors"):
+                  errors = control.get(label, [])
+                  if errors:
+                      lines.append(f"- Network control {label}: {', '.join(errors)}")
+          else:
+              lines.extend(["", "## General HTTPS control", "- Not present in this report."])
           Path("render-source-health-summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
           print("\n".join(lines))
           PY
