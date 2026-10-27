@@ -175,3 +175,87 @@ def test_source_health_route_rejects_other_or_duplicate_tracking_parameters():
     assert [response.status_code for response in responses] == [400, 400, 400]
     assert all(response.json()["error"]["code"] == "UNSUPPORTED_QUERY" for response in responses)
 
+
+
+
+def test_jansoochna_service_diagnostic_returns_bounded_public_probe_report(monkeypatch):
+    report = {
+        "phase": "2.5-jansoochna-public-service-probe",
+        "diagnostic_only": True,
+        "host": "jansoochna.rajasthan.gov.in",
+        "status": "SAME_HOST_RSSB_PAPER_SERVICE_LINK_FOUND",
+        "robots": {"status": "READ", "can_fetch_services": True, "can_fetch_scheme": True},
+        "pages_fetched": [{
+            "path": "/Services",
+            "status": "READ_ONLY_PUBLIC_HTML",
+            "question_papers": [{
+                "label": "Question Papers of RSSB",
+                "same_host": True,
+                "status": "PUBLIC_LINK_FOUND_NOT_FETCHED",
+                "url": "https://jansoochna.rajasthan.gov.in/Services/RSSB?id=123",
+            }],
+            "answer_keys": [],
+        }],
+        "source_registry_modified": False,
+        "paper_bytes_fetched": False,
+    }
+    calls = []
+    monkeypatch.setattr(
+        source_health_routes,
+        "probe_jansoochna_rssb_service",
+        lambda *, timeout_seconds: calls.append(timeout_seconds) or report,
+    )
+    client = TestClient(create_app())
+
+    response = client.get("/diagnostics/jansoochna-rssb-service")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "SAME_HOST_RSSB_PAPER_SERVICE_LINK_FOUND"
+    assert response.json()["pages_fetched"][0]["question_papers"][0]["same_host"] is True
+    assert response.json()["source_registry_modified"] is False
+    assert response.json()["paper_bytes_fetched"] is False
+    assert response.json()["cache"] == {"cached": False, "ttl_seconds": 60}
+    assert calls == [1.0]
+
+
+def test_jansoochna_service_diagnostic_caches_the_read_only_report(monkeypatch):
+    calls = []
+
+    def fake_probe(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.5-jansoochna-public-service-probe",
+            "diagnostic_only": True,
+            "status": "ROBOTS_UNAVAILABLE",
+            "pages_fetched": [],
+            "source_registry_modified": False,
+            "paper_bytes_fetched": False,
+        }
+
+    monkeypatch.setattr(source_health_routes, "probe_jansoochna_rssb_service", fake_probe)
+    client = TestClient(create_app())
+
+    first = client.get("/diagnostics/jansoochna-rssb-service")
+    second = client.get("/diagnostics/jansoochna-rssb-service")
+
+    assert first.status_code == second.status_code == 200
+    assert first.json()["cache"]["cached"] is False
+    assert second.json()["cache"]["cached"] is True
+    assert calls == [1.0]
+
+
+def test_jansoochna_service_diagnostic_rejects_caller_supplied_hosts():
+    client = TestClient(create_app())
+    response = client.get(
+        "/diagnostics/jansoochna-rssb-service?url=https://example.org/"
+    )
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "UNSUPPORTED_QUERY"
+    assert "example.org" not in response.text
+
+
+def test_jansoochna_service_diagnostic_is_not_exposed_in_public_openapi():
+    client = TestClient(create_app())
+    response = client.get("/openapi.json")
+    assert response.status_code == 200
+    assert "/diagnostics/jansoochna-rssb-service" not in response.json()["paths"]
