@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `9844ff2a21f8f6a34aab410d00bd0f4dbd7c3859`; PR #83 merged, exact-head CI passed 569 tests, 14 warnings, API build passed; PR #84 reports second redirect Location metadata only.)  
+**Last updated:** 2026-10-27 (main `96839e53ab0c94a4c72891f4528b84040608f481`; PR #84 merged, exact-head CI passed 570 tests, 14 warnings, API build passed; live report confirms the same-host redirect loop; PR #85 tests ephemeral cookie session state.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -355,3 +355,15 @@ PR [#84](https://github.com/snchat78-svg/AI-COMP/pull/84) adds the second `Locat
 - `/Services/GetMoreData` → `/Services/ClickablePDF` (target responds 302).
 - `/Services` → `/Services/GetMoreData` (target responds 302).
 The new code inspects only response header metadata and strips query/fragment; it makes no third request. Exact-head CI and post-deploy report are pending. Do not interpret a redirect chain as a verified official paper. No candidate/source-registry/database write occurred.
+
+## PR #85 — ephemeral cookie-session experiment
+
+Main commit `96839e53ab0c94a4c72891f4528b84040608f481` passed exact-head CI [#40472275370](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472275370): 570 tests, 14 warnings and API container build. Live source-health [#40472474696, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/40472474696) identified a loop:
+- `/Services/GetMoreData` → `/Services/ClickablePDF` → `/Services`
+- `/Services` → `/Services/GetMoreData` → `/Services/ClickablePDF`
+
+No third request was made and no paper bytes were fetched. Current RSSB/RPSC TCP access fails and legacy RSSB TLS validation fails.
+
+Open PR [#85](https://github.com/snchat78-svg/AI-COMP/pull/85) changes the diagnostic transport to reuse a single in-memory CookieJar within one bounded probe. This tests a hypothesis only; it does not bypass cookies/authentication or follow redirects. Keep fixed HTTPS host constraints, exact robots checks and existing byte/time bounds. If the deployed report still loops, stop this public portal route investigation and continue to treat Phase 2.2 as blocked pending an approved direct official source.
+
+Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No call/email, proxy, TLS bypass, paper candidate registration or source-registry/database mutation.
