@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-28 (main `e733241a2be558108d12ebe3b8b80e90c421cffa` is deployed live on Render. The robots.txt Accept/status diagnostic is deployed, but its newest live route result is not yet independently confirmed. Preserve the last verified blocked gate; do not start a dependent phase until the route, source bytes and review gates pass.)  
+**Last updated:** 2026-10-28 (main `e733241a2be558108d12ebe3b8b80e90c421cffa` is deployed live on Render. Post-deploy health rerun [#40688511772](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511772) still fails the official-source gate; general HTTPS works but official RSSB/RPSC route TCP/TLS failures remain. PR #95 adds a bounded public-index diagnostic for Recruitment Portal robots HTTP 404 only, based on RFC 9309's unavailable-4xx rule; all other denial/network/TLS statuses remain fail-closed. PR tests and live route confirmation remain pending. No paper bytes/nonzero candidate count proven; Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -414,7 +414,7 @@ This evidence does not support a Render-only egress issue or an untested extra I
 - External-source acceptance remains OPEN: this route is a candidate investigation only. Must not promote a recruitment notice or generic document as a question paper; require official paper provenance, normal TLS/robots permission, actual bytes and SHA-256 through the existing protected fetch path. Current RSSB/RPSC evidence remains unchanged.
 - No email/phone contact, TLS bypass, proxy, arbitrary host input, paper bytes, or database/source registry writes were used.
 
-**Handoff:** Phase 2.2 remains BLOCKED until a permitted official paper route yields real candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until Phase 6.56 acceptance; Phase 6.58 remains BLOCKED.
+**Handoff:** Continue PR #95 as a Phase 2.2 blocker investigation (branch `checkpoint-2026-10-28-phase-2-2-live-diagnostic`). Narrow code path allows only fixed public Recruitment Portal HTML indexes when robots.txt is explicitly HTTP 404; no document links are followed. Exact-head CI must pass, then post-merge live diagnostic must show the index results. Phase 2.2 remains BLOCKED until actual official paper bytes/provenance/hash persist as nonzero candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until 6.56 acceptance; Phase 6.58 remains BLOCKED. No phone/email, proxy, DNS override or TLS weakening.
 
 
 ## Phase 2.2 post-merge handoff — 27 October 2026
