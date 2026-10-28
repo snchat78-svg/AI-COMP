@@ -299,3 +299,14 @@ The fixed Jan Soochna and recruitment-portal route diagnostics previously summar
 Decision rule: inspect the exact response before any further route action. A 5xx or network/TLS failure remains unreachable and stays blocked. A 4xx is an RFC 9309 “unavailable” robots response, for which the standard says a crawler *may* access resources ([RFC 9309 §2.3.1.3–2.3.1.4](https://www.rfc-editor.org/rfc/rfc9309.html#section-2.3.1.3)); it does not automatically authorize this application to change its stricter fail-closed policy or override an HTTP access-denial response. Any policy revision must be separately reviewed and explicitly documented before index pages are inspected. No redirects/proxies/TLS weakening, DNS override, calls or email.
 
 Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 PLANNED**, **Phase 6.58 BLOCKED** until actual paper bytes and provenance pass existing acceptance gates.
+
+
+## Narrow handling for an explicitly absent Recruitment Portal robots.txt — 28 October 2026
+
+After the exact-status diagnostic, the latest confirmed pre-change response for https://recruitment.rajasthan.gov.in/robots.txt was HTTP 404. RFC 9309 §2.3.1.3 defines a 4xx robots response as “unavailable” and permits a crawler to access resources; this project uses only the narrowest practical case: HTTP 404 only, indicating no robots file is published. This is a policy change to the diagnostic—not a network/TLS/access-denial bypass.
+
+PR #95 adds a bounded probe of only the three existing fixed public HTML index paths (/ , /recruitmentservlet, /departmentrecservlet) when and only when that robots endpoint returns 404. Any network/TLS error, redirect, non-404 non-200 response (including 403, 406, 429, or 5xx), or invalid MIME on a 200 robots response remains fail-closed. The probe does not authenticate, follow redirects, follow paper/document links, read PDF bytes, edit the source registry, write to the database or promote candidates. Found links are metadata only and still require provenance checks plus the existing protected fetch/review workflow.
+
+The Jan Soochna endpoint still reports ROBOTS_UNAVAILABLE after the Accept-negotiation change in the first post-deploy rerun; that rerun's old workflow summary did not emit the exact HTTP status, so the hypothesis is not yet proven. Keep that route closed until its exact response is captured. The official-source health gate still fails and 0 candidates are proven. This PR must pass exact-head tests and the post-merge live diagnostic before any claim of progress beyond this investigation.
+
+Status: Phase 2.2 BLOCKED pending a permitted route that yields real source-backed paper candidates; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or phone call, proxy, DNS override, unsafe TLS or unofficial mirror.

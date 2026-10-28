@@ -248,29 +248,43 @@ def probe_recruitment_portal_route(
             "status": "ROBOTS_UNAVAILABLE",
             "robots": {"status": "FETCH_ERROR", "error_type": robots_result.error},
         }
-    if robots_result.status_code != 200:
+    # RFC 9309 treats a 4xx robots.txt response as "unavailable": a crawler
+    # MAY access resources. Keep the exception narrow: only an explicit 404
+    # (file not published) enables the fixed public index paths below. Other
+    # non-200 statuses, including 403/406/429 and 5xx, remain fail-closed.
+    robots_missing_404 = robots_result.status_code == 404
+    if robots_result.status_code != 200 and not robots_missing_404:
         return {
             **base,
             "status": "ROBOTS_UNAVAILABLE",
             "robots": {"status": "HTTP_ERROR", "http_status": robots_result.status_code},
         }
-    if robots_result.content_type != "text/plain":
-        return {
-            **base,
-            "status": "ROBOTS_CONTENT_TYPE_INVALID",
-            "robots": {"status": "CONTENT_TYPE_INVALID", "content_type": robots_result.content_type[:80]},
-        }
 
-    parser = RobotFileParser(ROBOTS_URL)
-    parser.parse(robots_result.body.splitlines())
-    robots: dict[str, object] = {
-        "status": "READ",
-        "http_status": 200,
-        "allowed_index_paths": {
-            path: _robots_allows_url(parser, USER_AGENT, f"{ORIGIN}{path}")
-            for path in INDEX_PATHS
-        },
-    }
+    if robots_missing_404:
+        robots: dict[str, object] = {
+            "status": "NOT_PUBLISHED_HTTP_404",
+            "http_status": 404,
+            "policy": "RFC9309_4XX_UNAVAILABLE_FIXED_PUBLIC_PATHS_ONLY",
+            "allowed_index_paths": {path: True for path in INDEX_PATHS},
+        }
+    else:
+        if robots_result.content_type != "text/plain":
+            return {
+                **base,
+                "status": "ROBOTS_CONTENT_TYPE_INVALID",
+                "robots": {"status": "CONTENT_TYPE_INVALID", "content_type": robots_result.content_type[:80]},
+            }
+
+        parser = RobotFileParser(ROBOTS_URL)
+        parser.parse(robots_result.body.splitlines())
+        robots = {
+            "status": "READ",
+            "http_status": 200,
+            "allowed_index_paths": {
+                path: _robots_allows_url(parser, USER_AGENT, f"{ORIGIN}{path}")
+                for path in INDEX_PATHS
+            },
+        }
     base["robots"] = robots
     pages: list[dict[str, object]] = []
     for path in INDEX_PATHS:

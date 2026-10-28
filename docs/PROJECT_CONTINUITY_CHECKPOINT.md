@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-27 (main `0a2d5aef0daa084fbbb5e6f2a281fd38661510f9`; PR #91 merged; exact-head backend tests and API container build passed [run #40519631423](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519631423). Post-deploy recruitment route returned `ROBOTS_UNAVAILABLE` / `robots.txt=HTTP_ERROR`, so no index page or paper content was inspected. Main source-health [run #40519877289](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877289) and official research [run #40519877291](https://github.com/snchat78-svg/AI-COMP/actions/runs/40519877291) both correctly preserve the Phase 2.2 blocker; 0 candidates persisted.)  
+**Last updated:** 2026-10-28 (main `e733241a2be558108d12ebe3b8b80e90c421cffa` is deployed live on Render. Post-deploy health rerun [#40688511772](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511772) still fails the official-source gate; general HTTPS works but official RSSB/RPSC route TCP/TLS failures remain. PR #95 adds a bounded public-index diagnostic for Recruitment Portal robots HTTP 404 only, based on RFC 9309's unavailable-4xx rule; all other denial/network/TLS statuses remain fail-closed. PR tests and live route confirmation remain pending. No paper bytes/nonzero candidate count proven; Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -414,7 +414,7 @@ This evidence does not support a Render-only egress issue or an untested extra I
 - External-source acceptance remains OPEN: this route is a candidate investigation only. Must not promote a recruitment notice or generic document as a question paper; require official paper provenance, normal TLS/robots permission, actual bytes and SHA-256 through the existing protected fetch path. Current RSSB/RPSC evidence remains unchanged.
 - No email/phone contact, TLS bypass, proxy, arbitrary host input, paper bytes, or database/source registry writes were used.
 
-**Handoff:** Phase 2.2 remains BLOCKED until a permitted official paper route yields real candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until Phase 6.56 acceptance; Phase 6.58 remains BLOCKED.
+**Handoff:** Continue PR #95 as a Phase 2.2 blocker investigation (branch `checkpoint-2026-10-28-phase-2-2-live-diagnostic`). Narrow code path allows only fixed public Recruitment Portal HTML indexes when robots.txt is explicitly HTTP 404; no document links are followed. Exact-head CI must pass, then post-merge live diagnostic must show the index results. Phase 2.2 remains BLOCKED until actual official paper bytes/provenance/hash persist as nonzero candidates; Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until 6.56 acceptance; Phase 6.58 remains BLOCKED. No phone/email, proxy, DNS override or TLS weakening.
 
 
 ## Phase 2.2 post-merge handoff — 27 October 2026
@@ -447,3 +447,12 @@ The fixed Jan Soochna and recruitment-portal route diagnostics previously summar
 Decision rule: inspect the exact response before any further route action. A 5xx or network/TLS failure remains unreachable and stays blocked. A 4xx is an RFC 9309 “unavailable” robots response, for which the standard says a crawler *may* access resources ([RFC 9309 §2.3.1.3–2.3.1.4](https://www.rfc-editor.org/rfc/rfc9309.html#section-2.3.1.3)); it does not automatically authorize this application to change its stricter fail-closed policy or override an HTTP access-denial response. Any policy revision must be separately reviewed and explicitly documented before index pages are inspected. No redirects/proxies/TLS weakening, DNS override, calls or email.
 
 Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 PLANNED**, **Phase 6.58 BLOCKED** until actual paper bytes and provenance pass existing acceptance gates.
+
+
+## Latest Phase 2.2 diagnostic checkpoint — 28 October 2026
+
+- Current main at inspection: `e733241a2be558108d12ebe3b8b80e90c421cffa`. Render deployment `dep-dbguqh942hec739cknv0` is confirmed `live`.
+- The latest diagnostic change requests robots.txt using ordinary content negotiation (`Accept: text/plain, */*;q=0.8`) but still requires `Content-Type: text/plain` before parsing. It also reports the exact HTTP status, so a response-format issue can be distinguished from a network/server failure. This is a diagnostic hypothesis test, not evidence that the access blocker is solved.
+- Latest confirmed official-source research before this change: [run #40688511742](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511742) persisted 0 paper candidates. Current RSSB and RPSC endpoints failed normal TCP checks; registered legacy RSSB failed certificate-validated TLS; the documented legacy `www` host did not resolve. The new post-deploy route result is not yet independently verified.
+- Continue in Phase 2.2 only: retrieve the new fixed-host diagnostic output, record the exact robots HTTP status/content type, then make the documented route decision. Do not fetch index pages when robots is unavailable under the current fail-closed policy. Do not retry candidate ingestion, promote candidates, or start Phase 6.57/6.58 until an approved official HTTPS route returns actual official document bytes and those bytes are independently reviewed.
+- No call or email has been made. No proxy, DNS override, unsafe TLS, or unofficial mirror is permitted. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.

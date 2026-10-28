@@ -20,16 +20,59 @@ def _fake_fetcher(pages):
     return fetcher, requested
 
 
-def test_probe_fails_closed_when_robots_is_unavailable():
-    fetcher, requested = _fake_fetcher({})
+def test_probe_fails_closed_when_robots_returns_server_error():
+    fetcher, requested = _fake_fetcher({
+        f"{ORIGIN}/robots.txt": FetchResult(503, f"{ORIGIN}/robots.txt", "text/html"),
+    })
     report = probe_recruitment_portal_route(fetcher=fetcher)
 
     assert report["status"] == "ROBOTS_UNAVAILABLE"
+    assert report["robots"] == {"status": "HTTP_ERROR", "http_status": 503}
     assert requested == [f"{ORIGIN}/robots.txt"]
     assert report["pages_inspected"] == []
     assert report["source_registry_modified"] is False
     assert report["paper_bytes_fetched"] is False
     assert report["database_written"] is False
+    assert report["candidate_promotions"] == 0
+
+
+def test_probe_allows_fixed_public_indexes_only_when_robots_is_explicitly_missing_404():
+    home = FetchResult(
+        200, f"{ORIGIN}/", "text/html",
+        '<a href="/downloadservlet?docId=123">RSSB Question Paper PDF</a>',
+    )
+    fetcher, requested = _fake_fetcher({
+        f"{ORIGIN}/robots.txt": FetchResult(404, f"{ORIGIN}/robots.txt", "text/html"),
+        f"{ORIGIN}/": home,
+        f"{ORIGIN}/recruitmentservlet": FetchResult(
+            200, f"{ORIGIN}/recruitmentservlet", "text/html", "<html>Recruitment index</html>"
+        ),
+        f"{ORIGIN}/departmentrecservlet": FetchResult(
+            200, f"{ORIGIN}/departmentrecservlet", "text/html", "<html>Department index</html>"
+        ),
+    })
+
+    report = probe_recruitment_portal_route(fetcher=fetcher)
+
+    assert report["status"] == "SAME_HOST_PAPER_OR_KEY_LINK_FOUND_NOT_FETCHED"
+    assert report["robots"]["status"] == "NOT_PUBLISHED_HTTP_404"
+    assert report["robots"]["http_status"] == 404
+    assert report["robots"]["allowed_index_paths"] == {
+        "/": True,
+        "/recruitmentservlet": True,
+        "/departmentrecservlet": True,
+    }
+    assert len(report["pages_inspected"]) == 3
+    assert requested == [
+        f"{ORIGIN}/robots.txt",
+        f"{ORIGIN}/",
+        f"{ORIGIN}/recruitmentservlet",
+        f"{ORIGIN}/departmentrecservlet",
+    ]
+    assert not any("downloadservlet" in url for url in requested)
+    assert report["paper_bytes_fetched"] is False
+    assert report["database_written"] is False
+    assert report["source_registry_modified"] is False
     assert report["candidate_promotions"] == 0
 
 
