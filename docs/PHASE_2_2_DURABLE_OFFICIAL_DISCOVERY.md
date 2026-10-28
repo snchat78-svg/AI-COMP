@@ -323,6 +323,21 @@ Post-deployment source-health rerun [#40688511772](https://github.com/snchat78-s
 - Relevant question-paper/answer-key links found: **0**.
 - Paper/answer-key bytes fetched: **false**; source registry/database modified: **false**; candidate promotions: **0**.
 
-This route probe is now exhausted for this fixed path set; do not repeat it without a specific new official evidence lead. It did not resolve Phase 2.2. In the same live report, Jan Soochna returned `ROBOTS_UNAVAILABLE` / `FETCH_ERROR`. PR #96’s live workflow summary exposed `error_type=content_type_not_allowed`, which means the robots response’s content type was outside the probe’s allowed text/plain type. The deployed endpoint did not expose the HTTP status or actual content type, so PR #96 now preserves those fields in the response and prints them in the workflow. It still fails closed and does not parse or inspect `/Services` or `/Scheme`.
+This route probe is now exhausted for this fixed path set; do not repeat it without a specific new official evidence lead. It did not resolve Phase 2.2. In the post-deploy rerun of PR workflow [#40695933968](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933968), after PR #96 had reached Render, Jan Soochna `/robots.txt` returned HTTP **200** with Content-Type **`text/html`**. The strict probe reports `ROBOTS_UNAVAILABLE` / `FETCH_ERROR` / `content_type_not_allowed` and does not inspect `/Services` or `/Scheme`. The result is now precise: the endpoint is returning an HTML document, not a plain-text robots file. Do not parse the HTML as robots.txt or weaken the MIME gate.
 
 The registered RSSB/RPSC official hosts remain TCP/TLS blocked while the general HTTPS control works. No official paper bytes/provenance/hash were obtained and the persisted candidate count remains 0. Continue to keep Phase 2.2 **BLOCKED**, Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No contact attempts, proxies, DNS overrides, unsafe TLS or unofficial mirrors.
+
+
+## Current source-route findings after PR #96 deployment — 28 October 2026
+
+PR [#96](https://github.com/snchat78-svg/AI-COMP/pull/96) merged as `9284de26048a1299b68273c1d97112cbbef40ada`; Render deployment `dep-dbgvf9qvcj2c73dtra60` is live. Exact-head pytest and API container build succeeded in [run #40695933838](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933838). The post-deploy live diagnostic rerun is [#40695933968](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933968).
+
+Current fixed-host outcomes:
+- `RSSB_OFFICIAL` (`rssb.rajasthan.gov.in`): DNS OK, IPv4 TCP timeout; TLS was not reached.
+- `RSSB_LEGACY_OFFICIAL` (`rsmssb.rajasthan.gov.in`): DNS OK, TCP passes, certificate-validated TLS fails with `SSLError`; no TLS weakening is allowed.
+- `RPSC_OFFICIAL` (`rpsc.rajasthan.gov.in`): IPv4 TCP timeout and IPv6 TCP failure; TLS was not reached.
+- Fixed general control `example.com`: IPv4 TCP and certificate-validated TLS pass, showing the runner's general HTTPS path is working; this is not proof of why the official hosts fail.
+
+An online metadata search surfaced official-domain paper leads such as RSSB Question Booklet PDFs under `https://rssb.rajasthan.gov.in/storage/questionpaper_item/1755761309.pdf` and `https://rssb.rajasthan.gov.in/storage/questionpaper_item/1730895562.pdf`, RPSC static question-paper PDFs under `https://rpsc.rajasthan.gov.in/Static/PreviousQuestionPaper/`, and the legacy RSSB public archive page `https://rsmssb.rajasthan.gov.in/show_archived?menuName=Xj4lCb9vGxpQnfLs%2FxlZ2g%3D%3D`. These are **source leads only** from public search indexing: the application has not fetched, hashed, provenance-checked or registered them. The RSSB/RPSC host-level TCP/TLS failures above currently prevent using those URLs in the existing ingestion pipeline.
+
+Current conclusion: Recruitment Portal public indexes are readable but expose 0 question-paper/answer-key links; Jan Soochna robots path returns HTML not plain text; direct RSSB/RPSC paths fail normal validated connectivity. Phase 2.2 remains **BLOCKED** with 0 persisted official paper candidates. Next task is to identify a directly linked, official alternative host/endpoint with normal TLS and reachable bytes, not to ingest search snippets, bypass robots, use an unofficial mirror or override DNS/TLS. No email or phone call has been made.
