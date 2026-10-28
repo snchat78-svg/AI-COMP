@@ -363,10 +363,18 @@ def probe_jansoochna_rssb_service(
         "paper_bytes_fetched": False,
     }
     if robots_result.error:
+        robots_error: dict[str, object] = {
+            "status": "FETCH_ERROR",
+            "error_type": robots_result.error,
+        }
+        if robots_result.status_code is not None:
+            robots_error["http_status"] = robots_result.status_code
+        if robots_result.content_type:
+            robots_error["content_type"] = robots_result.content_type[:80]
         return {
             **base,
             "status": "ROBOTS_UNAVAILABLE",
-            "robots": {"status": "FETCH_ERROR", "error_type": robots_result.error},
+            "robots": robots_error,
         }
     if robots_result.status_code != 200:
         return {

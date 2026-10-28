@@ -310,3 +310,19 @@ PR #95 adds a bounded probe of only the three existing fixed public HTML index p
 The Jan Soochna endpoint still reports ROBOTS_UNAVAILABLE after the Accept-negotiation change in the first post-deploy rerun; that rerun's old workflow summary did not emit the exact HTTP status, so the hypothesis is not yet proven. Keep that route closed until its exact response is captured. The official-source health gate still fails and 0 candidates are proven. This PR must pass exact-head tests and the post-merge live diagnostic before any claim of progress beyond this investigation.
 
 Status: Phase 2.2 BLOCKED pending a permitted route that yields real source-backed paper candidates; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or phone call, proxy, DNS override, unsafe TLS or unofficial mirror.
+
+
+## Post-merge results for the narrow Recruitment Portal robots-404 route — 28 October 2026
+
+PR [#95](https://github.com/snchat78-svg/AI-COMP/pull/95) merged at `da19f524f71594c969ba5eced28bc5f4e8968660`. Exact-head tests and API container build passed in [run #40694558174](https://github.com/snchat78-svg/AI-COMP/actions/runs/40694558174). Render deployed the merge as `dep-dbgvb2ijnfac739pguu0` (build and deployment succeeded).
+
+Post-deployment source-health rerun [#40688511772](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511772) tested the fixed Recruitment Portal route with the new code and reported:
+
+- `robots.txt`: `NOT_PUBLISHED_HTTP_404`, using the explicitly scoped RFC 9309 4xx-unavailable behavior.
+- Pages inspected: **3** (`/`, `/recruitmentservlet`, `/departmentrecservlet`); all were `READ_ONLY_PUBLIC_HTML`.
+- Relevant question-paper/answer-key links found: **0**.
+- Paper/answer-key bytes fetched: **false**; source registry/database modified: **false**; candidate promotions: **0**.
+
+This route probe is now exhausted for this fixed path set; do not repeat it without a specific new official evidence lead. It did not resolve Phase 2.2. In the same live report, Jan Soochna returned `ROBOTS_UNAVAILABLE` / `FETCH_ERROR`. PR #96’s live workflow summary exposed `error_type=content_type_not_allowed`, which means the robots response’s content type was outside the probe’s allowed text/plain type. The deployed endpoint did not expose the HTTP status or actual content type, so PR #96 now preserves those fields in the response and prints them in the workflow. It still fails closed and does not parse or inspect `/Services` or `/Scheme`.
+
+The registered RSSB/RPSC official hosts remain TCP/TLS blocked while the general HTTPS control works. No official paper bytes/provenance/hash were obtained and the persisted candidate count remains 0. Continue to keep Phase 2.2 **BLOCKED**, Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No contact attempts, proxies, DNS overrides, unsafe TLS or unofficial mirrors.
