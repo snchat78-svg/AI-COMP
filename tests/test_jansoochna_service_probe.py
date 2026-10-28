@@ -98,6 +98,28 @@ def test_probe_fails_closed_when_robots_is_unavailable():
     assert report["paper_bytes_fetched"] is False
 
 
+def test_probe_preserves_http_metadata_when_robots_content_type_is_rejected():
+    fetcher, requested = _fetcher_with_pages({
+        f"{ORIGIN}/robots.txt": FetchResult(
+            200, f"{ORIGIN}/robots.txt", "text/html",
+            error="content_type_not_allowed",
+        ),
+    })
+    report = probe_jansoochna_rssb_service(fetcher=fetcher)
+
+    assert report["status"] == "ROBOTS_UNAVAILABLE"
+    assert report["robots"] == {
+        "status": "FETCH_ERROR",
+        "error_type": "content_type_not_allowed",
+        "http_status": 200,
+        "content_type": "text/html",
+    }
+    assert requested == [f"{ORIGIN}/robots.txt"]
+    assert report["pages_fetched"] == []
+    assert report["paper_bytes_fetched"] is False
+    assert report["source_registry_modified"] is False
+
+
 def test_probe_does_not_follow_or_expose_external_rssb_service_links():
     robots = FetchResult(
         200, f"{ORIGIN}/robots.txt", "text/plain",
