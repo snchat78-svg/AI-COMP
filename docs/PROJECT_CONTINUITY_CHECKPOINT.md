@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-28 (main `da19f524f71594c969ba5eced28bc5f4e8968660`; PR #95 merged and deployed to Render successfully. Post-deploy source-health rerun [#40688511772](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511772) read the three fixed Recruitment Portal public HTML indexes after robots HTTP 404 but found no question-paper/answer-key links. No paper bytes or candidate records were created. Jan Soochna still returns `FETCH_ERROR`; PR #96 adds error-class reporting for the next health run. Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED.)  
+**Last updated:** 2026-10-28 (main `da19f524f71594c969ba5eced28bc5f4e8968660`; PR #95 deployed. Recruitment Portal route is exhausted for now: robots HTTP 404, three fixed public HTML index pages read, 0 paper/answer-key links. Jan Soochna’s live error is `content_type_not_allowed`; PR #96 adds missing HTTP status and actual content-type fields to the diagnostic. Tests and fresh post-merge evidence remain pending. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -414,7 +414,7 @@ This evidence does not support a Render-only egress issue or an untested extra I
 - External-source acceptance remains OPEN: this route is a candidate investigation only. Must not promote a recruitment notice or generic document as a question paper; require official paper provenance, normal TLS/robots permission, actual bytes and SHA-256 through the existing protected fetch path. Current RSSB/RPSC evidence remains unchanged.
 - No email/phone contact, TLS bypass, proxy, arbitrary host input, paper bytes, or database/source registry writes were used.
 
-**Handoff:** Phase 2.2 remains BLOCKED: do not repeat the now-exhausted Recruitment Portal fixed index probe without new official evidence; 0 paper links and 0 candidates. Check the next main source-health result after PR #96 for Jan Soochna's error class, then investigate a distinct publicly documented official paper endpoint. Do not use proxies, DNS overrides, unsafe TLS, mirrors, or contact anyone. Phase 6.56 stays IN_PROGRESS; Phase 6.57 must not start until 6.56 acceptance; Phase 6.58 remains BLOCKED.
+**Handoff:** Continue PR #96. It surfaces the observed Jan Soochna error (`content_type_not_allowed`) and adds the robots response HTTP status/media type to the API report without relaxing fail-closed behavior. Run exact-head tests and the automatic post-merge source-health workflow. The last Recruitment Portal probe found no paper links and should not be repeated without new official evidence. After error status/type are confirmed, choose a distinct, properly documented official source route. Phase 2.2 remains BLOCKED until official document bytes, provenance/hash and nonzero candidate persistence pass; Phase 6.56 stays IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No proxies/DNS overrides/TLS weakening or contact attempts.
 
 
 ## Phase 2.2 post-merge handoff — 27 October 2026
