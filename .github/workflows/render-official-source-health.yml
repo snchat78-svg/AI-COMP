@@ -10,6 +10,7 @@ on:
       - "src/ai_comp/api/app.py"
       - "src/ai_comp/research/source_health.py"
       - "src/ai_comp/research/jansoochna_service_probe.py"
+      - "src/ai_comp/research/recruitment_portal_probe.py"
       - "src/ai_comp/research/seed_registry.py"
       - "src/ai_comp/domain/exams.py"
       - "src/ai_comp/domain/sources.py"
