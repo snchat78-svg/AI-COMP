@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified (phase state):** 2026-10-28 (main `9284de26048a1299b68273c1d97112cbbef40ada`; PR #96 deployed live as `dep-dbgvf9qvcj2c73dtra60`. Post-deploy route run [#40695933968](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933968) confirms Jan Soochna robots returns HTTP 200 `text/html` and is rejected, while Recruitment Portal 404 fallback reads 3 fixed indexes with 0 paper links. RSSB current host TCP times out; legacy RSSB validated TLS fails; RPSC TCP fails; general HTTPS control passes. Official PDF URLs found in search are unverified leads only, not candidates. Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED.)  
+**Last verified (phase state):** 2026-10-28 (main `6c819bacb7e8c9132f32124ade8435bd8b08fcad`; Render deploy `dep-dbgvhjeq1p3s73beuvh0` is live. Post-deploy route run [#40695933968](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933968): Jan Soochna robots returned HTTP 200 `text/html` and remains rejected; Recruitment Portal robots returned HTTP 404 and its three fixed public HTML indexes contained 0 paper/answer-key links. RSSB current host TCP times out; legacy RSSB validated TLS fails; RPSC TCP fails; general HTTPS control passes. No paper bytes fetched and 0 candidates persisted. Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED.)
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -404,3 +404,14 @@ Decision rule: inspect the exact response before any further route action. A 5xx
 Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 PLANNED**, **Phase 6.58 BLOCKED** until actual paper bytes and provenance pass existing acceptance gates.
 
 | 2026-10-28 | 2.2 | Deployed the bounded robots.txt content-negotiation/status diagnostic; did not alter the official-source gate. Live response still requires confirmation. | main `e733241a2be558108d12ebe3b8b80e90c421cffa`; Render deploy `dep-dbguqh942hec739cknv0` live; prior official-source research run [#40688511742](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511742) persisted 0 candidates. |
+
+
+## Post-deploy fixed-route decision — 28 October 2026
+
+- Confirmed GitHub Actions run [#40695933968](https://github.com/snchat78-svg/AI-COMP/actions/runs/40695933968) successfully queried the live Render diagnostics after deployment.
+- Jan Soochna `robots.txt`: HTTP 200, `Content-Type: text/html`; diagnostic rejects it as `content_type_not_allowed`. The endpoint is not valid robots text, so `/Services` and `/Scheme` remain uninspected.
+- Recruitment Portal `robots.txt`: HTTP 404 (`NOT_PUBLISHED_HTTP_404`). The bounded probe inspected only `/`, `/recruitmentservlet`, and `/departmentrecservlet`; each was readable public HTML and yielded 0 paper/answer-key links.
+- Official-source health in the same run: RSSB current host DNS OK but IPv4 TCP timeout; RSSB legacy host TCP passes but certificate-validated TLS fails; RPSC TCP timeout and IPv6 failure. `example.com:443` passes TCP/TLS, proving this is not a blanket HTTPS outage.
+- No paper or answer-key bytes were fetched, no database/registry changed, and no candidates were promoted. Do not retry the exhausted fixed indexes or loosen robots/TLS rules. Next: continue Phase 2.2 by identifying only a distinct, officially documented HTTPS paper endpoint and validate it with normal TLS and explicit public-access policy before any fetch.
+
+**Phase state unchanged:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email or phone contact, proxy, DNS override, TLS bypass, or unofficial mirror.
