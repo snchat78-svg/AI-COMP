@@ -69,11 +69,18 @@ def _safe_fetch_text(
     ):
         return FetchResult(None, url, "", error="fixed_host_url_rejected")
 
+    accept_header = ",".join(allowed_content_types)
+    if parsed.path == "/robots.txt":
+        # Keep the expected plain-text media type preferred, while allowing
+        # ordinary HTTP content negotiation rather than forcing only one type.
+        # The response is still required to be text/plain before parsing.
+        accept_header = "text/plain, */*;q=0.8"
+
     request = Request(
         url,
         headers={
             "User-Agent": USER_AGENT,
-            "Accept": ",".join(allowed_content_types),
+            "Accept": accept_header,
         },
     )
     active_opener = opener or build_opener(_NoRedirectHandler())

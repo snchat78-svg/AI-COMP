@@ -420,3 +420,53 @@ def test_probe_session_fetcher_reuses_cookie_jar_without_redirect_handler(monkey
     assert isinstance(created_handlers[0][0], HTTPCookieProcessor)
     assert isinstance(created_handlers[0][0].cookiejar, CookieJar)
     assert type(created_handlers[0][1]).__name__ == "_NoRedirectHandler"
+
+
+def test_robots_request_allows_normal_accept_negotiation_and_requires_plain_text(monkeypatch):
+    from email.message import Message
+    from ai_comp.research import jansoochna_service_probe as probe_module
+
+    url = f"{ORIGIN}/robots.txt"
+    headers = Message()
+    headers["Content-Type"] = "text/plain"
+
+    class Response:
+        status = 200
+
+        def __init__(self):
+            self.headers = headers
+
+        def geturl(self):
+            return url
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, limit):
+            assert limit > 0
+            return b"User-agent: *\\nDisallow: /private\\n"
+
+    class Opener:
+        def open(self, request, *, timeout):
+            assert request.full_url == url
+            assert request.get_header("Accept") == "text/plain, */*;q=0.8"
+            assert request.get_header("User-agent") == probe_module.USER_AGENT
+            assert timeout == 1.0
+            return Response()
+
+    monkeypatch.setattr(probe_module, "build_opener", lambda *_args: Opener())
+
+    result = probe_module._safe_fetch_text(
+        url,
+        max_bytes=1024,
+        timeout_seconds=1.0,
+        allowed_content_types=("text/plain",),
+    )
+
+    assert result.status_code == 200
+    assert result.content_type == "text/plain"
+    assert result.error is None
+    assert "Disallow: /private" in result.body
