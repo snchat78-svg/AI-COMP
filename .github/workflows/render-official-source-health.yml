@@ -305,6 +305,7 @@ jobs:
               "- No paper or answer-key bytes fetched; no database records or source registry changed.",
               f"- Overall route status: {data.get('status', 'unknown')}",
               f"- robots.txt status: {data.get('robots', {}).get('status', 'unknown')}",
+              f"- robots.txt HTTP status: {data.get('robots', {}).get('http_status', 'not returned')}",
           ]
           robots = data.get("robots", {})
           if isinstance(robots, dict):
@@ -426,6 +427,7 @@ jobs:
               "",
               f"- Overall status: {data.get('status', 'unknown')}",
               f"- robots.txt: {(data.get('robots') or {}).get('status', 'unknown') if isinstance(data.get('robots'), dict) else 'missing'}",
+              f"- robots.txt HTTP status: {(data.get('robots') or {}).get('http_status', 'not returned') if isinstance(data.get('robots'), dict) else 'missing'}",
               f"- Pages inspected: {len(data.get('pages_inspected', [])) if isinstance(data.get('pages_inspected'), list) else 0}",
               "- Paper/answer-key bytes fetched: false",
               "- Database/source registry changed: false",
