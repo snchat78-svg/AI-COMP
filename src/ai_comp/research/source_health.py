@@ -64,6 +64,14 @@ _GOVERNMENT_PORTAL_CONTROLS = (
         priority=SourcePriority.UNVERIFIED,
         notes="Portal lists RSSB question-paper and answer-key public services; reachability only, no paper-source approval.",
     ),
+    SourceRecord(
+        source_id="RSSB_LEGACY_WWW_HOST_CONTROL",
+        name="RSSB legacy www-hostname connectivity control",
+        base_url="https://www.rsmssb.rajasthan.gov.in/",
+        source_type=SourceType.UNVERIFIED,
+        priority=SourcePriority.UNVERIFIED,
+        notes="The www hostname is listed in an official Rajasthan government tender PDF; connectivity only, not an approved paper source.",
+    ),
 )
 
 

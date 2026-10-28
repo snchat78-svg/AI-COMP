@@ -238,17 +238,20 @@ def test_all_source_health_reports_keep_public_government_portals_separate():
         "RAJASTHAN_RECRUITMENT_PORTAL_CONTROL",
         "RAJASTHAN_LANDREVENUE_PORTAL_CONTROL",
         "JANSOOCHNA_RSSB_PAPERS_CONTROL",
+        "RSSB_LEGACY_WWW_HOST_CONTROL",
     }
     assert {item["host"] for item in portals} == {
         "recruitment.rajasthan.gov.in",
         "landrevenue.rajasthan.gov.in",
         "jansoochna.rajasthan.gov.in",
+        "www.rsmssb.rajasthan.gov.in",
     }
     assert all(item["ipv4_tcp"] == "PASS" and item["ipv4_tls"] == "PASS" for item in portals)
     assert "example.com" in observed_hosts
     assert "recruitment.rajasthan.gov.in" in observed_hosts
     assert "landrevenue.rajasthan.gov.in" in observed_hosts
     assert "jansoochna.rajasthan.gov.in" in observed_hosts
+    assert "www.rsmssb.rajasthan.gov.in" in observed_hosts
     assert "192.0.2.10" not in repr(report)
 
 
