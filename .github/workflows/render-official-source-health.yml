@@ -311,6 +311,7 @@ jobs:
           robots = data.get("robots", {})
           if isinstance(robots, dict):
               lines.append(f"- Robots permission: /Services={robots.get('can_fetch_services', 'unknown')}; /Scheme={robots.get('can_fetch_scheme', 'unknown')}")
+              lines.append(f"- robots.txt fetch error type: {robots.get('error_type', 'none')}")
 
           for page in data.get("pages_fetched", []):
               lines.append("")
