@@ -6,6 +6,11 @@ from typing import Protocol
 from urllib.parse import urlsplit
 from uuid import uuid4
 
+from ai_comp.domain.topic_question_bank import (
+    OneLinerVerificationStatus,
+    TopicOneLinerQA,
+)
+
 MAX_ONE_LINER_TEXT_CHARACTERS = 240
 
 
@@ -15,7 +20,7 @@ def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
     answer = answer_text.strip()
     if not question or not answer:
         return False
-    if any(char in question or char in answer for char in ("\\n", "\\r")):
+    if any(char in question or char in answer for char in ("\n", "\r")):
         return False
     if len(question) > MAX_ONE_LINER_TEXT_CHARACTERS:
         return False
@@ -29,12 +34,6 @@ def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
     normalized_question = " ".join(question.casefold().split())
     normalized_answer = " ".join(answer.casefold().split())
     return normalized_question != normalized_answer
-
-
-from ai_comp.domain.topic_question_bank import (
-    OneLinerVerificationStatus,
-    TopicOneLinerQA,
-)
 
 
 @dataclass(frozen=True)
