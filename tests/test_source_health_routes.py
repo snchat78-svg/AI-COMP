@@ -339,3 +339,128 @@ def test_recruitment_portal_route_diagnostic_is_not_in_openapi():
 
     assert response.status_code == 200
     assert "/diagnostics/recruitment-portal-paper-route" not in response.json()["paths"]
+
+
+
+def test_rbse_archive_route_returns_bounded_read_only_probe_report(monkeypatch):
+    report = {
+        "phase": "2.2-rbse-archive-route-probe",
+        "diagnostic_only": True,
+        "host": "rajeduboard.rajasthan.gov.in",
+        "board_id": "RBSE",
+        "status": "SAME_HOST_PAPER_LINKS_FOUND_NOT_FETCHED",
+        "robots": {"status": "READ", "allowed_index_path": True},
+        "pages_inspected": [{
+            "path": "/books/PAPERS-2025/index.htm",
+            "status": "READ_ONLY_PUBLIC_HTML",
+            "pdf_links": [{
+                "label": "Senior Secondary Geography",
+                "target_host": "rajeduboard.rajasthan.gov.in",
+                "path": "/books/PAPERS-2025/SRS/SS-14.pdf",
+                "same_host": True,
+                "query_present": False,
+                "status": "PUBLIC_PDF_LINK_FOUND_NOT_FETCHED",
+            }],
+        }],
+        "source_registry_modified": False,
+        "paper_bytes_fetched": False,
+        "database_written": False,
+        "candidate_promotions": 0,
+    }
+    calls = []
+    monkeypatch.setattr(
+        source_health_routes,
+        "probe_rbse_archive_route",
+        lambda *, timeout_seconds: calls.append(timeout_seconds) or report,
+    )
+    client = TestClient(create_app())
+
+    response = client.get("/diagnostics/rbse-archive-paper-route")
+
+    assert response.status_code == 200
+    assert response.json()["phase"] == "2.2-rbse-archive-route-probe"
+    assert response.json()["board_id"] == "RBSE"
+    assert response.json()["paper_bytes_fetched"] is False
+    assert response.json()["database_written"] is False
+    assert response.json()["candidate_promotions"] == 0
+    assert response.json()["cache"] == {"cached": False, "ttl_seconds": 60}
+    assert calls == [1.0]
+
+
+def test_rbse_archive_route_caches_report(monkeypatch):
+    calls = []
+
+    def fake_probe(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.2-rbse-archive-route-probe",
+            "diagnostic_only": True,
+            "host": "rajeduboard.rajasthan.gov.in",
+            "board_id": "RBSE",
+            "status": "ROBOTS_UNAVAILABLE",
+            "pages_inspected": [],
+            "source_registry_modified": False,
+            "paper_bytes_fetched": False,
+            "database_written": False,
+            "candidate_promotions": 0,
+        }
+
+    monkeypatch.setattr(source_health_routes, "probe_rbse_archive_route", fake_probe)
+    client = TestClient(create_app())
+
+    first = client.get("/diagnostics/rbse-archive-paper-route")
+    second = client.get("/diagnostics/rbse-archive-paper-route")
+
+    assert first.status_code == second.status_code == 200
+    assert first.json()["cache"]["cached"] is False
+    assert second.json()["cache"]["cached"] is True
+    assert calls == [1.0]
+
+
+def test_rbse_archive_route_rejects_arbitrary_hosts_and_urls():
+    client = TestClient(create_app())
+    response = client.get(
+        "/diagnostics/rbse-archive-paper-route?url=https://example.org/"
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "UNSUPPORTED_QUERY"
+    assert "example.org" not in response.text
+
+
+def test_rbse_archive_route_is_not_listed_in_public_openapi_schema():
+    client = TestClient(create_app())
+    response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+    assert "/diagnostics/rbse-archive-paper-route" not in response.json()["paths"]
+
+
+def test_rbse_archive_route_allows_only_exact_chat_tracking_parameter(monkeypatch):
+    calls = []
+
+    def fake_probe(*, timeout_seconds):
+        calls.append(timeout_seconds)
+        return {
+            "phase": "2.2-rbse-archive-route-probe",
+            "diagnostic_only": True,
+            "host": "rajeduboard.rajasthan.gov.in",
+            "board_id": "RBSE",
+            "status": "ROBOTS_UNAVAILABLE",
+            "pages_inspected": [],
+            "source_registry_modified": False,
+            "paper_bytes_fetched": False,
+            "database_written": False,
+            "candidate_promotions": 0,
+        }
+
+    monkeypatch.setattr(source_health_routes, "probe_rbse_archive_route", fake_probe)
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/diagnostics/rbse-archive-paper-route?utm_source=chatgpt.com"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["board_id"] == "RBSE"
+    assert calls == [1.0]

@@ -467,3 +467,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - **Code increment:** add `RAJASTHAN_BOARD_QUESTION_PAPERS_CONTROL` as a fixed DNS/TCP/certificate-validated TLS check in `government_portal_controls`. It must remain outside the registered official `results` collection, cannot satisfy the official-source gate, and must not download pages/papers or write the database.
 - **Acceptance sequence:** exact-head backend tests/container build; PR diagnostic from GitHub runner; merge only after CI passes; Render deploy and report must contain the new control; then inspect the probe result. Only if normal TLS succeeds may a later small increment inspect the fixed index and robots policy. RBSE must remain a distinct school-board exam body, never be relabelled RSSB/RPSC.
 - **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No calls/email, proxy, DNS override, unsafe TLS, or unofficial mirror.
+
+
+## 2026-10-30 RBSE connectivity and next route probe
+
+- **Main:** `d6a26219aad6462c87ff01ecf2a06bee2f1c8195`; PR #100 merged, Render deployment `dep-dbi3k5ivcj2c73c4ieg0` is live.
+- **Connectivity evidence:** RBSE host `rajeduboard.rajasthan.gov.in` DNS OK / IPv4 TCP PASS / validated TLS PASS from GitHub-hosted runner and Render (runs `41014716960`, `41014717223`). Do not infer robots permission from this.
+- **Next branch:** `phase-2-2-rbse-robots-index-probe`. It reads only the robots file first; if allowed (or exact HTTP 404), reads one fixed HTML index, and reports metadata for PDF links. It must not follow redirects or download PDFs.
+- **No ingestion yet:** no paper bytes, SHA-256, provenance/reuse approval, database candidates, or source admission. RBSE remains distinct from RSSB/RPSC.
+- **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
