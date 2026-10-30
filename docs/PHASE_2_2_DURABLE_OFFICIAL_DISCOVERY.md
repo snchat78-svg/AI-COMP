@@ -391,3 +391,20 @@ This increment adds per-PDF robots evaluation to the route probe:
 - External/out-of-scope links remain un-followed. No PDF request is made under any outcome.
 
 Next gate: inspect the actual final per-PDF robots decisions from the live Render report, then determine whether a paper-specific reuse licence or compatible public reproduction policy exists. If reuse permission remains unverified, do not download/republish papers; continue with permitted metadata and separately authored one-liner content. Phase 2.2 remains **BLOCKED** because no approved paper bytes/provenance/hash and no persisted official candidates exist. RBSE remains a school-board content track distinct from RSSB/RPSC competitive-exam history. Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, Phase 6.58 **BLOCKED**.
+
+
+## Per-PDF robots results confirmed on the new Render deployment — 30 October 2026
+
+PR [#102](https://github.com/snchat78-svg/AI-COMP/pull/102) is merged as `bf7586f907861796f796744bc5a3ef5a365773a9`. Exact-head PR test run [#41016548039](https://github.com/snchat78-svg/AI-COMP/actions/runs/41016548039) passed the full backend suite (597 tests) and API container build. The Render deployment `dep-dbi3tj2vcj2c73c4r3fg` is live.
+
+The post-deploy source-health workflow [#41016698624, attempt 2](https://github.com/snchat78-svg/AI-COMP/actions/runs/41016698624) re-ran after Render became live. Its RBSE route step succeeded and the final report showed:
+- robots HTTP 200 / `text/plain`, parsed; fixed index path allowed;
+- one fixed HTML index, HTTP 200;
+- the first 20 PDF-link records printed in the workflow summary each have `robots_allowed=True` and `PDF_ROBOTS_ALLOWED_NOT_FETCHED`. The API report remains capped at 200 link records; the GitHub workflow summary deliberately prints the first 20 only. Do not infer that the entire catalogue has been audited from those 20 lines.
+- no PDF bytes fetched, no database/source-registry change, zero candidate promotions.
+
+The overall source-health workflow is still red at its independent existing gate requiring at least one *registered competitive-exam source* to complete TCP+validated TLS. RBSE passing its own route check does not satisfy that RSSB/RPSC gate. The official source-research workflow [#41016698619](https://github.com/snchat78-svg/AI-COMP/actions/runs/41016698619) still fails closed with 0 persisted candidates because RSSB/RPSC source retrieval remains unavailable.
+
+**Next decision:** robots permission is now known for the first 20 same-host PDF links, but a paper-specific reuse licence/permission is still not verified. The official Board main page's informational Legal Disclaimer does not grant reproduction rights. Keep all PDF bytes un-fetched and unpublished. The product may retain attributable official links/metadata as an external-reference lane only after the app's external-link policy is defined; do not treat links as stored/verified paper candidates or question-history evidence.
+
+Phase 2.2 remains **BLOCKED**; Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. RBSE remains a distinct school-board source, never RSSB/RPSC competitive-exam history.
