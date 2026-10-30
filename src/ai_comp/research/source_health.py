@@ -72,6 +72,18 @@ _GOVERNMENT_PORTAL_CONTROLS = (
         priority=SourcePriority.UNVERIFIED,
         notes="The www hostname is listed in an official Rajasthan government tender PDF; connectivity only, not an approved paper source.",
     ),
+    SourceRecord(
+        source_id="RAJASTHAN_BOARD_QUESTION_PAPERS_CONTROL",
+        name="Rajasthan Board of Secondary Education 2025 paper archive connectivity control",
+        base_url="https://rajeduboard.rajasthan.gov.in/books/PAPERS-2025/index.htm",
+        source_type=SourceType.UNVERIFIED,
+        priority=SourcePriority.UNVERIFIED,
+        notes=(
+            "Publicly indexed 2025 school-board examination-paper index; connectivity only. "
+            "Not an RSSB/RPSC competitive-exam source and not admitted to the source registry. "
+            "No page or paper content is fetched by this control."
+        ),
+    ),
 )
 
 
