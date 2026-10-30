@@ -1798,8 +1798,18 @@ def generate_topic_one_liner_candidates(
         response_payload = {
             "concept_id": payload.concept_id,
             "saved_count": result.saved_count,
+            "generated_count": result.generated_count,
             "duplicate_count": result.duplicate_count,
             "rejected_count": result.rejected_count,
+            "pending_review_count": result.pending_review_count,
+            "verified_count": result.verified_count,
+            "batch_audit": {
+                "generated_count": result.generated_count,
+                "rejected_count": result.rejected_count,
+                "duplicate_count": result.duplicate_count,
+                "pending_review_count": result.pending_review_count,
+                "verified_count": result.verified_count,
+            },
             "verification_status": "NEEDS_REVIEW",
             "items": [
                 {
