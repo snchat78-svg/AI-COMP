@@ -111,24 +111,30 @@ class OneLinerCandidateGenerationService:
                 requested_count=requested_count,
             )
         )
+        valid_drafts: list[OneLinerDraft] = []
+        invalid_draft_count = 0
+        for draft in drafts:
+            if isinstance(draft, OneLinerDraft):
+                valid_drafts.append(draft)
+            else:
+                invalid_draft_count += 1
+
         ordered = sorted(
-            drafts,
+            valid_drafts,
             key=lambda item: (-item.importance_score, item.question_text.casefold()),
         )
 
         saved: list[TopicOneLinerQA] = []
         duplicate_count = 0
-        rejected_count = 0
+        rejected_count = invalid_draft_count
         warnings: list[str] = []
+        if invalid_draft_count:
+            warnings.append("One or more provider items had an invalid structured shape.")
         seen_hashes: set[str] = set()
 
         for draft in ordered:
             if len(saved) >= requested_count:
                 break
-            if not isinstance(draft, OneLinerDraft):
-                rejected_count += 1
-                warnings.append("A provider item had an invalid structured shape.")
-                continue
             if draft.importance_score < self.minimum_importance_score:
                 rejected_count += 1
                 continue
