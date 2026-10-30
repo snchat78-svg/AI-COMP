@@ -544,7 +544,7 @@ jobs:
                               str(item.get("status", "unknown"))[:80],
                           )
                       )
-          summary = "\\n".join(lines) + "\\n"
+          summary = "\n".join(lines) + "\n"
           print(summary)
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
               handle.write(summary)
