@@ -515,3 +515,16 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Exact-head commit `e7957a81573093f77a6d7f97b82d3b3e98239971`; GitHub Actions [run #721](https://github.com/snchat78-svg/AI-COMP/actions/runs/41025914983) passed **620 tests, 14 warnings**, and the API container build. This was a backend-only change; it did not prove a mobile E2E run or live content generation.
 - Next within Phase 6.56: add examinable-point coverage dimensions, topic-level near-duplicate checks and reviewer batch audit counts. Do not use question count alone as a completeness signal.
 - Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. Official source bytes/reuse rights, complete reviewed syllabus mapping, live migrations/secrets and real-data mobile E2E are still outstanding. No email/calls, proxy, DNS override, TLS/robots bypass or unlicensed PDF use.
+
+
+## 2026-10-30 Phase 6.56 continuation — coverage-dimension tags
+
+PR #105 is already merged and its exact tested head passed 620 backend tests plus API-container build. The next quality increment is being implemented on branch `phase-6-56-coverage-dimension-tags`.
+
+- Each AI-authored One-Liner now has a constrained primary examinable-point category (definition, identity, date/time, place, list/classification, comparison, cause/effect, formula/method, rule/exception, data/statistic, map/diagram/table, common confusion, or factual detail).
+- The tag is carried in the existing source-evidence text, so this slice requires no schema migration and old records remain UNCLASSIFIED.
+- The protected admin generation report adds each saved candidate's tag and a count breakdown for successfully saved items only.
+- The tag is reviewer metadata, not proof of factual accuracy, applicability, or full topic completion; all AI candidates remain NEEDS_REVIEW.
+- Regression tests cover allowed/unsupported tags, persistence/read-back, batch counts and Gemini schema parsing.
+
+Await the exact-head backend CI and API container build on the branch before merging. Phase 6.56 remains IN_PROGRESS; Phase 6.57 stays PLANNED; Phase 2.2 remains BLOCKED. Official syllabus bytes/reuse rights, complete inventory/mappings, independent reviews and real mobile E2E are still not proven. No email or phone call is involved.
