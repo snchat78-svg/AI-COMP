@@ -456,3 +456,14 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Latest confirmed official-source research before this change: [run #40688511742](https://github.com/snchat78-svg/AI-COMP/actions/runs/40688511742) persisted 0 paper candidates. Current RSSB and RPSC endpoints failed normal TCP checks; registered legacy RSSB failed certificate-validated TLS; the documented legacy `www` host did not resolve. The new post-deploy route result is not yet independently verified.
 - Continue in Phase 2.2 only: retrieve the new fixed-host diagnostic output, record the exact robots HTTP status/content type, then make the documented route decision. Do not fetch index pages when robots is unavailable under the current fail-closed policy. Do not retry candidate ingestion, promote candidates, or start Phase 6.57/6.58 until an approved official HTTPS route returns actual official document bytes and those bytes are independently reviewed.
 - No call or email has been made. No proxy, DNS override, unsafe TLS, or unofficial mirror is permitted. Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+
+## 2026-10-30 Phase 2.2 route continuation
+
+- **Base main:** `6c819bacb7e8c9132f32124ade8435bd8b08fcad` (Render deploy `dep-dbgvhjeq1p3s73beuvh0` is live).
+- **Current branch:** `phase-2-2-rbse-paper-archive-control`.
+- **New official route lead:** [RBSE 2025 Examination Papers](https://rajeduboard.rajasthan.gov.in/books/PAPERS-2025/index.htm), which indexes Secondary and Senior Secondary papers, including Geography, Physics, Chemistry and Biology.
+- **Evidence boundary:** the linked Senior Secondary Geography PDF URL timed out in the available online retrieval environment; `robots.txt` could not be retrieved. No raw PDF, headers, digest, reuse terms or provenance are available. Do not register or ingest this lead yet.
+- **Code increment:** add `RAJASTHAN_BOARD_QUESTION_PAPERS_CONTROL` as a fixed DNS/TCP/certificate-validated TLS check in `government_portal_controls`. It must remain outside the registered official `results` collection, cannot satisfy the official-source gate, and must not download pages/papers or write the database.
+- **Acceptance sequence:** exact-head backend tests/container build; PR diagnostic from GitHub runner; merge only after CI passes; Render deploy and report must contain the new control; then inspect the probe result. Only if normal TLS succeeds may a later small increment inspect the fixed index and robots policy. RBSE must remain a distinct school-board exam body, never be relabelled RSSB/RPSC.
+- **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No calls/email, proxy, DNS override, unsafe TLS, or unofficial mirror.
