@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `b68043fbc6b18616bbe75a31abd3b63977addc5a`; PR #105 merged after exact-head CI passed 620 tests and API container build. Phase 6.56 continues; no next phase has been skipped.)  
+**Last updated:** 2026-10-30 (main `a1065a780c2817f9ad02c114cd6f91c5858fb86e`; PR #105 remains the latest merged Phase 6.56 code slice. PR #107 is open on `phase-6-56-topic-batch-audit`; backend CI passed and Flutter release APK CI is still running. Phase 6.56 continues; no next phase has been skipped.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -515,3 +515,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Exact-head commit `e7957a81573093f77a6d7f97b82d3b3e98239971`; GitHub Actions [run #721](https://github.com/snchat78-svg/AI-COMP/actions/runs/41025914983) passed **620 tests, 14 warnings**, and the API container build. This was a backend-only change; it did not prove a mobile E2E run or live content generation.
 - Next within Phase 6.56: add examinable-point coverage dimensions, topic-level near-duplicate checks and reviewer batch audit counts. Do not use question count alone as a completeness signal.
 - Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. Official source bytes/reuse rights, complete reviewed syllabus mapping, live migrations/secrets and real-data mobile E2E are still outstanding. No email/calls, proxy, DNS override, TLS/robots bypass or unlicensed PDF use.
+
+
+## 2026-10-30 — Current in-progress Phase 6.56 increment (PR #107)
+
+- PR: [#107 — topic-level One-Liner near-duplicate guard and batch audit](https://github.com/snchat78-svg/AI-COMP/pull/107), branch `phase-6-56-topic-batch-audit`.
+- Adds bounded duplicate scan of existing Q&A for the same concept/language across review states, deterministic Unicode-aware near-duplicate triage, same-batch duplicate checks, and separate generated/rejected/duplicate/pending-review/verified audit counts.
+- Database exact-hash uniqueness remains in place. Incomplete scan or >5,000 existing items fails closed. Candidate generator cannot self-verify; all generated items remain `NEEDS_REVIEW`.
+- Backend Actions run [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) passed full pytest and API container build on initial PR head. Flutter run [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507): analyze and mobile tests passed; release APK build/artifact validation were still running at this checkpoint. Recheck the latest head and both workflows before merge.
+- Next within Phase 6.56 after this increment: reviewer-facing examinable-point coverage checklist/gap report. Full parent-phase acceptance still needs the official exam profile/document bytes and SHA-256, complete independently reviewed syllabus inventory and mappings, controlled live migrations/secrets, and authentic-data mobile E2E.
+- Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access bypass, no unlicensed paper reuse, no contact attempts.
