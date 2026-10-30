@@ -11,6 +11,7 @@ on:
       - "src/ai_comp/research/source_health.py"
       - "src/ai_comp/research/jansoochna_service_probe.py"
       - "src/ai_comp/research/recruitment_portal_probe.py"
+      - "src/ai_comp/research/rbse_archive_probe.py"
       - "src/ai_comp/research/seed_registry.py"
       - "src/ai_comp/domain/exams.py"
       - "src/ai_comp/domain/sources.py"
@@ -23,6 +24,8 @@ on:
       - "src/ai_comp/api/app.py"
       - "src/ai_comp/research/source_health.py"
       - "src/ai_comp/research/jansoochna_service_probe.py"
+      - "src/ai_comp/research/recruitment_portal_probe.py"
+      - "src/ai_comp/research/rbse_archive_probe.py"
       - "src/ai_comp/research/seed_registry.py"
   workflow_dispatch:
 
@@ -465,6 +468,83 @@ jobs:
                           )
                       )
           summary = "\n".join(lines) + "\n"
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+              handle.write(summary)
+          PY
+
+      - name: Query fixed RBSE 2025 paper archive route diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ai-comp-api.onrender.com/diagnostics/rbse-archive-paper-route"
+          found=false
+          last_status="not_attempted"
+          for attempt in $(seq 1 18); do
+            last_status="$(curl --silent --max-time 10 --output rbse-archive-route.json --write-out '%{http_code}' "$url" || true)"
+            if [ "$last_status" = "200" ] && python -c 'import json, pathlib, sys; d=json.loads(pathlib.Path("rbse-archive-route.json").read_text(encoding="utf-8")); sys.exit(0 if d.get("phase") == "2.2-rbse-archive-route-probe" and d.get("host") == "rajeduboard.rajasthan.gov.in" and d.get("board_id") == "RBSE" and isinstance(d.get("robots"), dict) and isinstance(d.get("pages_inspected"), list) and d.get("source_registry_modified") is False and d.get("paper_bytes_fetched") is False and d.get("database_written") is False and d.get("candidate_promotions") == 0 else 1)'; then
+              found=true
+              break
+            fi
+            sleep 4
+          done
+
+          if [ "$found" != "true" ]; then
+            if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+              echo "::warning::RBSE route diagnostic is not deployed yet; the post-merge main workflow must capture the live result."
+              exit 0
+            fi
+            echo "::error::Could not retrieve the fixed RBSE archive route diagnostic (last HTTP $last_status)."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          data = json.loads(Path("rbse-archive-route.json").read_text(encoding="utf-8"))
+          lines = [
+              "# RBSE 2025 paper archive route inspection (read-only)",
+              "",
+              f"- Overall route status: {data.get('status', 'unknown')}",
+              f"- Board identity: {data.get('board_id', 'unknown')} (separate from RSSB/RPSC)",
+              f"- robots.txt status: {(data.get('robots') or {}).get('status', 'unknown') if isinstance(data.get('robots'), dict) else 'missing'}",
+              f"- robots.txt HTTP status: {(data.get('robots') or {}).get('http_status', 'not returned') if isinstance(data.get('robots'), dict) else 'missing'}",
+              f"- robots permission for the fixed index: {(data.get('robots') or {}).get('allowed_index_path', 'unknown') if isinstance(data.get('robots'), dict) else 'missing'}",
+              f"- Fixed pages inspected: {len(data.get('pages_inspected', [])) if isinstance(data.get('pages_inspected'), list) else 0}",
+              "- Paper PDF bytes fetched: false",
+              "- Source registry/database changed: false",
+              "- Candidate promotions: 0",
+              "",
+              "| Fixed page path | Outcome | PDF links found |",
+              "|---|---|---:|",
+          ]
+          for page in data.get("pages_inspected", []):
+              if not isinstance(page, dict):
+                  continue
+              links = page.get("pdf_links")
+              lines.append(
+                  "| {path} | {status} | {count} |".format(
+                      path=str(page.get("path", ""))[:160],
+                      status=str(page.get("status", "unknown"))[:80],
+                      count=len(links) if isinstance(links, list) else 0,
+                  )
+              )
+              if isinstance(links, list):
+                  for item in links[:20]:
+                      if not isinstance(item, dict):
+                          continue
+                      lines.append(
+                          "- PDF link metadata only: label={}; host={}; path={}; same_host={}; status={}".format(
+                              str(item.get("label", ""))[:120],
+                              str(item.get("target_host", ""))[:120],
+                              str(item.get("path", ""))[:200],
+                              str(item.get("same_host", "unknown")),
+                              str(item.get("status", "unknown"))[:80],
+                          )
+                      )
+          summary = "\\n".join(lines) + "\\n"
           print(summary)
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
               handle.write(summary)
