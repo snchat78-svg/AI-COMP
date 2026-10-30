@@ -357,3 +357,19 @@ Decision gate:
 - Even after a successful RBSE document fetch, keep its exam body/profile distinct from RSSB and RPSC. It can contribute to an explicitly supported school-board content track only after product-scope and syllabus mapping review.
 
 Phase 2.2 remains **BLOCKED**; this is an online route investigation, not source ingestion or phase completion. Phase 6.56 remains **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No call, email, proxy, DNS override, unsafe TLS, or unofficial mirror is used.
+
+
+## RBSE host connectivity confirmed; robots-first public-index probe — 30 October 2026
+
+PR [#100](https://github.com/snchat78-svg/AI-COMP/pull/100) merged as `d6a26219aad6462c87ff01ecf2a06bee2f1c8195`; Render deployment `dep-dbi3k5ivcj2c73c4ieg0` is live. Exact-head backend tests and API container build passed in [PR run #41014567464](https://github.com/snchat78-svg/AI-COMP/actions/runs/41014567464). The PR source-health diagnostic [#41014567529](https://github.com/snchat78-svg/AI-COMP/actions/runs/41014567529) passed.
+
+The new fixed control `RAJASTHAN_BOARD_QUESTION_PAPERS_CONTROL` reports DNS OK, IPv4 TCP PASS and certificate-validated TLS PASS from the GitHub-hosted runner and the deployed Render runtime (main cross-runtime run [#41014716960](https://github.com/snchat78-svg/AI-COMP/actions/runs/41014716960); post-deploy Render source-health run [#41014717223](https://github.com/snchat78-svg/AI-COMP/actions/runs/41014717223)). This confirms connectivity only. It does not yet show robots permission or an application-fetched page/PDF. The browser's direct `/robots.txt` request was inaccessible in the available web reader, so no assumption is made about its HTTP status or rules.
+
+The next small increment adds `probe_rbse_archive_route` and a fixed read-only API diagnostic:
+- Request only `https://rajeduboard.rajasthan.gov.in/robots.txt` first, using standard certificate-validated HTTPS and a bounded response size.
+- Accept a 200 robots response only as `text/plain`; parse and honor the most-specific matching AI-COMP rule. A network/TLS error, malformed media type, 403/429/5xx, or any other non-200/non-404 response remains fail-closed.
+- Only an explicit robots HTTP 404 (file not published) permits inspection of the single fixed path `/books/PAPERS-2025/index.htm`, under the narrowly scoped RFC 9309 unavailable policy. No other index paths are requested.
+- Never follow redirects or any PDF links. For the fixed HTML page, report only bounded link metadata (label, host, path, same-host flag, query-present flag); query values and document bytes are not exposed.
+- Keep RBSE separate from RSSB/RPSC; do not change the official source registry, DB, or candidate counts.
+
+Even if the index yields links, a later controlled step must fetch the actual paper through the existing protected workflow, calculate SHA-256, verify source provenance and reuse conditions, and keep the RBSE board identity distinct. Phase 2.2 remains **BLOCKED** until approved bytes and provenance produce real persisted candidates. Phase 6.56 remains **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No calls/emails, proxy, DNS override, unsafe TLS, or mirror.
