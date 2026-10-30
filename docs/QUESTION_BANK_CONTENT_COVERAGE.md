@@ -129,3 +129,10 @@ PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) merged the concept-b
 ## One-Liner format gate — 30 October 2026
 
 AI-generated candidates must be short direct Q&A, not essay snippets: one question ending in exactly one `?` or `？`, no line breaks, at most 240 characters for each field, and a concise non-question answer. The application enforces these structural rules before persistence; malformed items are rejected. This is not a factual verification or completeness signal. Keep all candidates NEEDS_REVIEW until an independent reviewer verifies source authority, exact evidence, answer correctness, date-sensitivity and fit to the selected exam's reviewed syllabus. A per-topic count is not proof that all examinable points are covered.
+
+
+## 2026-10-30 reviewer coverage-dimension aid
+
+The Phase 6.56 continuation in [PHASE_6_56_COVERAGE_DIMENSION_TAGS.md](PHASE_6_56_COVERAGE_DIMENSION_TAGS.md) adds a single primary examinable-point tag to each AI-generated Q&A candidate and a saved-batch count breakdown. Supported tags cover definitions, identities, dates, places, classifications, comparisons, causes/effects, formulas/methods, rules/exceptions, statistics, diagrams/maps/tables, common confusions and other factual details.
+
+These tags make omissions easier to review; they do **not** prove that a tag's knowledge points are exhausted or that a topic is complete. Only actually saved candidates contribute to the batch counts; duplicates and rejected drafts do not. Untagged legacy/manual records remain UNCLASSIFIED. All generated items stay NEEDS_REVIEW until independent human verification. The full topic checklist, official-syllabus applicability, evidence and independent review requirements above remain authoritative.
