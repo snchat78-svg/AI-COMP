@@ -341,3 +341,19 @@ Current fixed-host outcomes:
 An online metadata search surfaced official-domain paper leads such as RSSB Question Booklet PDFs under `https://rssb.rajasthan.gov.in/storage/questionpaper_item/1755761309.pdf` and `https://rssb.rajasthan.gov.in/storage/questionpaper_item/1730895562.pdf`, RPSC static question-paper PDFs under `https://rpsc.rajasthan.gov.in/Static/PreviousQuestionPaper/`, and the legacy RSSB public archive page `https://rsmssb.rajasthan.gov.in/show_archived?menuName=Xj4lCb9vGxpQnfLs%2FxlZ2g%3D%3D`. These are **source leads only** from public search indexing: the application has not fetched, hashed, provenance-checked or registered them. The RSSB/RPSC host-level TCP/TLS failures above currently prevent using those URLs in the existing ingestion pipeline.
 
 Current conclusion: Recruitment Portal public indexes are readable but expose 0 question-paper/answer-key links; Jan Soochna robots path returns HTML not plain text; direct RSSB/RPSC paths fail normal validated connectivity. Phase 2.2 remains **BLOCKED** with 0 persisted official paper candidates. Next task is to identify a directly linked, official alternative host/endpoint with normal TLS and reachable bytes, not to ingest search snippets, bypass robots, use an unofficial mirror or override DNS/TLS. No email or phone call has been made.
+
+
+## Official RBSE examination-paper archive lead — 30 October 2026
+
+A public search surfaced the Rajasthan Board examination-paper index at [RBSE Examination Papers 2025](https://rajeduboard.rajasthan.gov.in/books/PAPERS-2025/index.htm). Its indexed page lists 2025 Secondary and Senior Secondary papers, including Senior Secondary Geography, Physics, Chemistry and Biology. This is a **school-board paper/content lead**, not an RSSB/RPSC recruitment-exam source; do not mix its exam identity or question appearances into the RSSB/RPSC history.
+
+The Senior Secondary Geography link resolves in the index to `https://rajeduboard.rajasthan.gov.in/books/PAPERS-2025/SRS/SS-14.pdf`, but an attempted online fetch timed out. The same inspection could not retrieve `robots.txt`. Therefore no paper bytes, response headers, PDF metadata, SHA-256, reuse terms or source provenance were verified; no candidate was registered or promoted.
+
+This increment adds only the fixed `RAJASTHAN_BOARD_QUESTION_PAPERS_CONTROL` to the separate `government_portal_controls` diagnostics lane. It probes DNS, TCP and certificate-validated TLS for the RBSE host from the GitHub runner and, after deployment, Render. It does not fetch the index, request `robots.txt`, download a paper, write the database, modify the official source registry, or satisfy the official-source gate.
+
+Decision gate:
+- If standard DNS/TCP/validated TLS fails, stop this route; do not retry by changing DNS, proxying, or weakening TLS.
+- If connectivity passes, the next increment must inspect the fixed index and `robots.txt` under the published access rules, then verify source identity, terms/reuse conditions, the complete PDF bytes and digest before any registration.
+- Even after a successful RBSE document fetch, keep its exam body/profile distinct from RSSB and RPSC. It can contribute to an explicitly supported school-board content track only after product-scope and syllabus mapping review.
+
+Phase 2.2 remains **BLOCKED**; this is an online route investigation, not source ingestion or phase completion. Phase 6.56 remains **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No call, email, proxy, DNS override, unsafe TLS, or unofficial mirror is used.
