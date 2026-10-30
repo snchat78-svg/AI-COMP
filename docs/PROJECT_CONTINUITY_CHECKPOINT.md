@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `a1065a780c2817f9ad02c114cd6f91c5858fb86e`; PR #105 remains the latest merged Phase 6.56 code slice. PR #107 is open on `phase-6-56-topic-batch-audit`; backend CI passed and Flutter release APK CI is still running. Phase 6.56 continues; no next phase has been skipped.)  
+**Last updated:** 2026-10-30 (main `0f8da54ca22ec5e76857587e92df2a9913b92521`; PR #107 merged after backend and Flutter/APK CI passed. Phase 6.56 continues; Phase 6.57 has not been skipped or started.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -517,11 +517,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. Official source bytes/reuse rights, complete reviewed syllabus mapping, live migrations/secrets and real-data mobile E2E are still outstanding. No email/calls, proxy, DNS override, TLS/robots bypass or unlicensed PDF use.
 
 
-## 2026-10-30 — Current in-progress Phase 6.56 increment (PR #107)
+## 2026-10-30 — Phase 6.56 topic-level duplicate guard and batch audit merged (PR #107)
 
-- PR: [#107 — topic-level One-Liner near-duplicate guard and batch audit](https://github.com/snchat78-svg/AI-COMP/pull/107), branch `phase-6-56-topic-batch-audit`.
-- Adds bounded duplicate scan of existing Q&A for the same concept/language across review states, deterministic Unicode-aware near-duplicate triage, same-batch duplicate checks, and separate generated/rejected/duplicate/pending-review/verified audit counts.
-- Database exact-hash uniqueness remains in place. Incomplete scan or >5,000 existing items fails closed. Candidate generator cannot self-verify; all generated items remain `NEEDS_REVIEW`.
-- Backend Actions run [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) passed full pytest and API container build on initial PR head. Flutter run [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507): analyze and mobile tests passed; release APK build/artifact validation were still running at this checkpoint. Recheck the latest head and both workflows before merge.
-- Next within Phase 6.56 after this increment: reviewer-facing examinable-point coverage checklist/gap report. Full parent-phase acceptance still needs the official exam profile/document bytes and SHA-256, complete independently reviewed syllabus inventory and mappings, controlled live migrations/secrets, and authentic-data mobile E2E.
-- Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access bypass, no unlicensed paper reuse, no contact attempts.
+- PR [#107](https://github.com/snchat78-svg/AI-COMP/pull/107) was squash-merged as `0f8da54ca22ec5e76857587e92df2a9913b92521`; branch `phase-6-56-topic-batch-audit`.
+- Implementation/test head `49feab1ce05ec712415b208c141d74fdab0d3b7d`: backend workflow [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) passed full pytest and API container build; Flutter workflow [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507) passed analyze, mobile tests, release APK build, APK verification and artifact upload. APK artifact [12980571357](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507/artifacts/12980571357), SHA-256 `acf231349a7735a485748463bf5eb571a4587cb2a470a58449a644959cb042a8`.
+- Same-topic/language near-duplicate scan, same-batch checks and separate generated/rejected/duplicate/pending-review/verified batch counts are now in main. Exact PostgreSQL content hash remains the final concurrent-duplicate guard. Scan failure or more than 5,000 existing topic records fails closed. Generated output remains `NEEDS_REVIEW`, never self-VERIFIED.
+- Next within Phase 6.56: build the reviewer-facing examinable-point coverage checklist/gap report. Do not use generated question count as proof of full topic coverage.
+- Parent-phase gates still open: official exam-profile/document identity and actual bytes/SHA-256, complete independently reviewed unit/topic/subtopic inventory, all concept mappings, controlled migrations/author-review secrets, and authentic-data mobile E2E. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access or copyright bypass, no email/calls.
+
