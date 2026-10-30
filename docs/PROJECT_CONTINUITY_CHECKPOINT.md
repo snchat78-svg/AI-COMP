@@ -486,3 +486,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - **Current branch:** `phase-2-2-rbse-pdf-robots-rights-gate`. It checks robots permission for each same-host PDF path independently; an exact robots 404 exception applies to the fixed index only and does not authorize PDFs.
 - **Next gates:** tests/container build; merge; Render deploy; inspect per-PDF robots outcomes; keep PDFs un-fetched absent explicit reuse rights. Keep RBSE separate from RSSB/RPSC.
 - **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## 2026-10-30 live verification after PR #102
+
+- **Main:** `bf7586f907861796f796744bc5a3ef5a365773a9`; PR #102 merged; Render deploy `dep-dbi3tj2vcj2c73c4r3fg` live.
+- **CI:** PR run #713 / `41016548039`: 597 backend tests passed and API container build passed. Main push tests #714 / `41016698609` passed.
+- **RBSE live route:** Render health run #63 attempt 2 / `41016698624`. robots 200 `text/plain`; fixed index allowed; HTML index 200. First 20 same-host PDF links printed in summary are each `robots_allowed=True`, `PDF_ROBOTS_ALLOWED_NOT_FETCHED`. The report supports up to 200 link records but the summary prints only the first 20. No PDF bytes, DB/source registry changes, or candidate promotions.
+- **Competitive sources remain blocked:** official source research run #39 / `41016698619` fails closed; RSSB/RPSC persisted 0 candidates. The separate source-health gate also fails because no registered official competitive source passes TCP + validated TLS. RBSE does not satisfy this gate.
+- **Reuse rights:** no applicable paper-specific licence/permission established from the official RBSE site reviewed; its main-page legal disclaimer is informational only. Keep papers un-fetched/unpublished. External link metadata is not a verified paper candidate or question-history evidence.
+- **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
