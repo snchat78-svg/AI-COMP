@@ -243,6 +243,40 @@ class SaveTopicOneLinerPayload(BaseModel):
         return self
 
 
+class GenerateTopicOneLinerCandidatesPayload(BaseModel):
+    """Bounded source excerpt submitted by an authorized content editor."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    concept_id: str = Field(min_length=1, max_length=128)
+    source_url: str = Field(min_length=12, max_length=2000)
+    source_locator: str = Field(min_length=1, max_length=500)
+    source_text: str = Field(min_length=50, max_length=120000)
+    language_code: str = Field(default="hi", min_length=2, max_length=20)
+    requested_count: int = Field(default=20, ge=1, le=50)
+
+    @field_validator("concept_id", "source_locator", "language_code", "source_text")
+    @classmethod
+    def required_text_must_be_trimmed(cls, value: str) -> str:
+        if not value.strip() or value != value.strip():
+            raise ValueError("required text fields must be non-empty and trimmed")
+        return value
+
+    @field_validator("source_url")
+    @classmethod
+    def source_must_be_https(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if (
+            value != value.strip()
+            or parsed.scheme.lower() != "https"
+            or not parsed.hostname
+            or parsed.username is not None
+            or parsed.password is not None
+        ):
+            raise ValueError("source_url must be an absolute HTTPS URL without embedded credentials")
+        return value
+
+
 class ReviewTopicOneLinerPayload(BaseModel):
     """Decision recorded by a reviewer using credentials separate from authoring."""
 
@@ -1666,6 +1700,141 @@ def create_topic_one_liner(payload: SaveTopicOneLinerPayload, request: Request) 
             "error": {
                 "code": "QUESTION_BANK_ONE_LINER_SAVE_FAILED",
                 "message": "The one-liner could not be saved. Verify the concept exists and check server-side database diagnostics.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@content_admin_router.post(
+    "/one-liners/generate-candidates",
+    status_code=201,
+    name="generate_topic_one_liner_candidates",
+)
+def generate_topic_one_liner_candidates(
+    payload: GenerateTopicOneLinerCandidatesPayload,
+    request: Request,
+) -> Response:
+    """Generate source-grounded Q&A drafts; independent human review is mandatory."""
+    configured_token = os.environ.get("AI_COMP_CONTENT_ADMIN_TOKEN", "").strip()
+    if not configured_token:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_CONTENT_AUTHORING_NOT_CONFIGURED",
+                "message": "Content authoring is not configured on this server.",
+            }
+        })
+    supplied_token = request.headers.get("X-AI-COMP-Content-Admin-Token", "")
+    if not supplied_token or not hmac.compare_digest(supplied_token, configured_token):
+        return _json_response(HTTPStatus.UNAUTHORIZED, {
+            "error": {
+                "code": "CONTENT_ADMIN_AUTHENTICATION_REQUIRED",
+                "message": "Authorized content-editor credentials are required.",
+            }
+        })
+
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "ONE_LINER_GENERATION_NOT_CONFIGURED",
+                "message": "Server-side AI question generation is not configured.",
+            }
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+
+    connection = None
+    try:
+        from ai_comp.application.one_liner_candidate_generation import (
+            OneLinerCandidateGenerationService,
+        )
+        from ai_comp.database.postgres_topic_question_bank import (
+            PostgresTopicQuestionBankRepository,
+        )
+        from ai_comp.material.gemini_one_liner_generation import (
+            GeminiOneLinerGenerationProvider,
+        )
+
+        connection = connection_factory()
+        concept = connection.execute(
+            """
+            SELECT concept_id, label
+            FROM concepts
+            WHERE concept_id = %s
+            """,
+            (payload.concept_id,),
+        ).fetchone()
+        if concept is None:
+            return _json_response(HTTPStatus.NOT_FOUND, {
+                "error": {
+                    "code": "QUESTION_BANK_CONCEPT_NOT_FOUND",
+                    "message": "The selected subject/topic concept does not exist.",
+                }
+            })
+
+        service = OneLinerCandidateGenerationService(
+            provider=GeminiOneLinerGenerationProvider(api_key=api_key),
+            repository=PostgresTopicQuestionBankRepository(connection),
+        )
+        result = service.generate(
+            concept_id=str(concept[0]),
+            concept_label=str(concept[1]),
+            source_url=payload.source_url,
+            source_locator=payload.source_locator,
+            source_text=payload.source_text,
+            language_code=payload.language_code,
+            requested_count=payload.requested_count,
+        )
+        response_payload = {
+            "concept_id": payload.concept_id,
+            "saved_count": result.saved_count,
+            "duplicate_count": result.duplicate_count,
+            "rejected_count": result.rejected_count,
+            "verification_status": "NEEDS_REVIEW",
+            "items": [
+                {
+                    "one_liner_id": item.one_liner_id,
+                    "concept_id": item.concept_id,
+                    "question_text": item.question_text,
+                    "answer_text": item.answer_text,
+                    "language_code": item.language_code,
+                    "importance_score": item.importance_score,
+                    "verification_status": item.verification_status.value,
+                }
+                for item in result.saved_items
+            ],
+            "warnings": list(result.warnings),
+            "message": (
+                "Candidates were saved as NEEDS_REVIEW. They are not visible in "
+                "the learner question bank until an independent reviewer verifies them."
+            ),
+        }
+        return _json_response(HTTPStatus.CREATED, response_payload)
+    except ValueError:
+        return _json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {
+            "error": {
+                "code": "INVALID_ONE_LINER_GENERATION_INPUT",
+                "message": "The source excerpt or generation request is invalid.",
+            }
+        })
+    except Exception as exc:
+        logging.getLogger(__name__).warning(
+            "One-liner candidate generation failed (exception_type=%s)",
+            type(exc).__name__,
+        )
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "ONE_LINER_CANDIDATE_GENERATION_FAILED",
+                "message": "Source-grounded one-liner candidates could not be generated or saved.",
             }
         })
     finally:
