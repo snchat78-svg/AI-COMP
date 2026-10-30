@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-28 (main `9284de26048a1299b68273c1d97112cbbef40ada`; PR #96 live deployment confirmed. Jan Soochna robots returned HTTP 200 `text/html`; probe fails closed and does not read service pages. Recruitment Portal robots returned 404, after which the bounded probe read 3 public HTML index paths but found 0 paper/key links. RSSB current TCP times out, legacy RSSB validated TLS fails, RPSC TCP fails; general HTTPS control passes. Official PDF URLs discovered in search are leads only, not fetched/verified candidates. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED, Phase 6.58 BLOCKED.)  
+**Last updated:** 2026-10-30 (main `c00916e27e4dca973e63500aa0269552c1d3a229`; PR #103 merged to record exact RBSE per-PDF robots result. PR #104 open for Phase 6.56 One-Liner generation; exact-head CI pending.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
