@@ -37,9 +37,22 @@ class _Provider:
 
 
 class _Repository:
-    def __init__(self, duplicate=False):
+    def __init__(self, duplicate=False, existing_items=None):
         self.items = []
         self.duplicate = duplicate
+        self.existing_items = list(existing_items or [])
+        self.list_calls = []
+
+    def list_one_liners(
+        self, concept_id, *, limit=100, offset=0, verified_only=True, language_code=None
+    ):
+        self.list_calls.append((concept_id, limit, offset, verified_only, language_code))
+        selected = [
+            item for item in self.existing_items
+            if item.concept_id == concept_id
+            and (language_code is None or item.language_code == language_code)
+        ]
+        return tuple(selected[offset:offset + limit])
 
     def save_one_liner(self, item):
         if self.duplicate:
@@ -319,3 +332,113 @@ def test_gemini_provider_wraps_provider_failures_without_exposing_secrets():
             requested_count=5,
         )
     assert "private provider detail" not in str(error.value)
+
+
+def _existing_item(
+    *,
+    question="Which river system is the largest in the Thar Desert region?",
+    answer="The Luni River system.",
+    concept_id="catalog.rajasthan_geography_rivers_and_drainage_luni_river",
+    language_code="hi",
+):
+    return TopicOneLinerQA(
+        one_liner_id="existing-one-liner",
+        concept_id=concept_id,
+        question_text=question,
+        answer_text=answer,
+        language_code=language_code,
+        source_url=SOURCE_URL,
+        source_evidence=LOCATOR,
+        verification_status=OneLinerVerificationStatus.NEEDS_REVIEW,
+        importance_score=0.9,
+    )
+
+
+def test_near_duplicate_against_existing_topic_item_is_not_saved():
+    repository = _Repository(existing_items=[_existing_item()])
+    near_duplicate = _draft(
+        question="Which is the largest river system in the Thar Desert region?",
+        answer="The Luni River system.",
+    )
+
+    result = _generate(_service(_Provider([near_duplicate]), repository))
+
+    assert result.saved_count == 0
+    assert result.duplicate_count == 1
+    assert repository.items == []
+    assert repository.list_calls == [
+        (
+            "catalog.rajasthan_geography_rivers_and_drainage_luni_river",
+            500,
+            0,
+            False,
+            "hi",
+        )
+    ]
+
+
+def test_near_duplicate_comparison_is_scoped_to_same_concept_and_language():
+    repository = _Repository(
+        existing_items=[
+            _existing_item(concept_id="another-concept"),
+            _existing_item(language_code="en"),
+        ]
+    )
+
+    result = _generate(_service(_Provider([_draft()]), repository))
+
+    assert result.saved_count == 1
+    assert result.duplicate_count == 0
+
+
+def test_same_batch_near_duplicates_are_removed_even_when_wording_varies():
+    first = _draft(
+        question="Which river system is largest in the Thar Desert region?",
+        answer="The Luni River system.",
+    )
+    second = _draft(
+        question="Which is the largest river system in the Thar Desert region?",
+        answer="The Luni River system.",
+    )
+    repository = _Repository()
+
+    result = _generate(_service(_Provider([first, second]), repository))
+
+    assert result.saved_count == 1
+    assert result.duplicate_count == 1
+    assert len(repository.items) == 1
+
+
+def test_batch_audit_separates_generated_rejected_duplicate_pending_and_verified():
+    duplicate = _draft(
+        question="Which is the largest river system in the Thar Desert region?",
+        answer="The Luni River system.",
+    )
+    malformed = _draft(
+        question="Which river is largest? Where does it drain?",
+        answer="The Luni River system.",
+    )
+    repository = _Repository()
+    result = _generate(_service(_Provider([_draft(), duplicate, malformed]), repository))
+
+    assert result.generated_count == 3
+    assert result.saved_count == 1
+    assert result.rejected_count == 1
+    assert result.duplicate_count == 1
+    assert result.pending_review_count == 1
+    assert result.verified_count == 0
+    assert all(
+        item.verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+        for item in result.saved_items
+    )
+
+
+def test_duplicate_scan_failure_fails_closed_before_any_candidate_is_saved():
+    class BrokenRepository(_Repository):
+        def list_one_liners(self, *args, **kwargs):
+            raise RuntimeError("database detail must not be exposed")
+
+    repository = BrokenRepository()
+    with pytest.raises(RuntimeError):
+        _generate(_service(_Provider([_draft()]), repository))
+    assert repository.items == []
