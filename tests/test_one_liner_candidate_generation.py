@@ -54,6 +54,7 @@ def _draft(
     evidence=SOURCE,
     answer_evidence="The Luni River is the largest river system in the Thar Desert region.",
     importance=0.95,
+    coverage_dimension="FACTUAL_DETAIL",
 ):
     return OneLinerDraft(
         question_text=question,
@@ -61,6 +62,7 @@ def _draft(
         evidence_quote=evidence,
         answer_evidence_quote=answer_evidence,
         importance_score=importance,
+        coverage_dimension=coverage_dimension,
     )
 
 
@@ -93,6 +95,7 @@ def test_candidates_are_saved_as_needs_review_and_never_verified():
     assert item.reviewed_at is None
     assert item.source_url == SOURCE_URL
     assert LOCATOR in item.source_evidence
+    assert "coverage_dimension=FACTUAL_DETAIL" in item.source_evidence
     assert _draft().evidence_quote in item.source_evidence
     assert item.importance_score == 0.95
     assert provider.calls[0]["concept_label"] == "Luni River"
@@ -143,6 +146,22 @@ def test_answer_evidence_must_be_contained_in_full_evidence_quote():
     assert result.saved_count == 0
     assert result.rejected_count == 1
     assert repository.items == []
+
+
+def test_candidate_coverage_dimension_is_preserved_for_reviewer():
+    draft = _draft(coverage_dimension="PLACE_LOCATION")
+    repository = _Repository()
+
+    result = _generate(_service(_Provider([draft]), repository))
+
+    assert result.saved_count == 1
+    assert "coverage_dimension=PLACE_LOCATION" in repository.items[0].source_evidence
+    assert repository.items[0].verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+
+
+def test_unsupported_coverage_dimension_is_rejected():
+    with pytest.raises(ValueError, match="coverage_dimension"):
+        _draft(coverage_dimension="TOPIC_COMPLETE")
 
 
 def test_duplicate_drafts_in_same_batch_are_removed_by_normalized_hash():
@@ -282,6 +301,7 @@ def test_gemini_provider_returns_strict_structured_source_quotes():
                 "evidence_quote": SOURCE,
                 "answer_evidence_quote": "The Luni River is the largest river system in the Thar Desert region.",
                 "importance_score": 0.95,
+                "coverage_dimension": "PLACE_LOCATION",
             }
         ]
     }
@@ -301,6 +321,7 @@ def test_gemini_provider_returns_strict_structured_source_quotes():
     assert len(result) == 1
     assert result[0].question_text.startswith("लूणी नदी")
     assert result[0].answer_evidence_quote in result[0].evidence_quote
+    assert result[0].coverage_dimension == "PLACE_LOCATION"
     assert models.calls[0]["model"] == "test-model"
     assert "Return only structured JSON" in models.calls[0]["config"]["system_instruction"]
 
