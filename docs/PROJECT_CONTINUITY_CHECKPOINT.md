@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `c00916e27e4dca973e63500aa0269552c1d3a229`; PR #103 merged to record exact RBSE per-PDF robots result. PR #104 open for Phase 6.56 One-Liner generation; exact-head CI pending.)  
+**Last updated:** 2026-10-30 (main `43e5209f70e729e7f68af9e4931e9ed529d08e0f`; PR #104 merged, adding source-grounded One-Liner candidate generation. Continuing Phase 6.56 with deterministic question-format quality gates.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -506,3 +506,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - One-Liners remain separate from Old Papers. Papers must be authentic official artifacts; paper questions are not automatically One-Liners. AI output cannot self-verify or count as covered until independent review passes.
 - Phase 2.2 remains BLOCKED: the deployed RBSE index and first 20 listed same-host PDF paths passed robots checks, but no PDF bytes or reuse licence has been verified. RSSB/RPSC remain unreachable/failed validated TLS, and official-source research run #40 persisted zero candidates. No email/phone contact, proxy, TLS bypass or robots bypass.
 - Next: exact-head backend tests + API container, then merge only if current-main PR checks pass; configure no secrets in Git; do not mark Phase 6.56 complete until official exam profile, syllabus inventory/mappings, live DB state and authentic mobile E2E are proven.
+
+
+## 2026-10-30 continuation — topic-wise One-Liner quality gate
+
+- Main includes PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104), merge SHA `43e5209f70e729e7f68af9e4931e9ed529d08e0f`. It adds an author-only, bounded-source-excerpt generator for one canonical concept at a time. It stores candidates as `NEEDS_REVIEW`; it does not fetch official sources or bulk-complete the topic catalogue.
+- Current implementation branch: `phase-6-56-one-liner-quality-guard`. The active increment adds deterministic structural quality rules: exactly one question mark at the end, no line breaks, at most 240 characters for both question and answer, and no question mark in the answer. Hindi and English use the same question-mark rule.
+- Tests added for multi-question, multiline and oversized candidates plus a valid Hindi example. Tests have not yet been run on the branch; wait for exact-head GitHub Actions before considering this increment accepted.
+- Quality gate is structural only. Reviewers must still verify fact accuracy, source authority, topic/syllabus fit, currency, evidence and full examinable-point coverage. Only VERIFIED items are learner-visible.
+- Phase 2.2 remains BLOCKED (RSSB/RPSC retrieval and RBSE PDF reuse rights are unresolved); Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email/calls, proxy, DNS override, TLS bypass, robots bypass or unlicensed PDF reuse.
