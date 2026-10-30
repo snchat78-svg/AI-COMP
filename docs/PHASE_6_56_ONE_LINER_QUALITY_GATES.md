@@ -48,6 +48,11 @@ A Hindi Q&A example confirms that the format gate accepts an ordinary single-que
 
 This increment does not complete Phase 6.56. The official exam profile and official syllabus bytes/version/hash are still unverified; the complete unit/topic/subtopic inventory and every applicability mapping still need independent review; live migrations/admin-review secrets and real-data mobile E2E remain unproven. Phase 6.57 remains PLANNED and must not start before all parent-phase gates pass.
 
+
+## Current next increment — topic duplicate guard and generation batch audit
+
+The scoped Phase 6.56 work is on branch `phase-6-56-topic-batch-audit`. It adds a bounded scan of the existing concept/language Q&A before generation, Unicode-aware Q+A similarity triage, in-batch similarity checks, and explicit generated/rejected/duplicate/pending-review/verified counts. The final exact content-hash uniqueness rule remains in PostgreSQL. Any scan failure or more than 5,000 existing topic records blocks generation rather than silently skipping duplicate checks. Await exact-head CI and review; do not describe this as merged or live until those gates pass.
+
 ## Next quality increment
 
 Next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
