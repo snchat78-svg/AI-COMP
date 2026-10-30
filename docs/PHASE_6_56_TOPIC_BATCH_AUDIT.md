@@ -1,6 +1,6 @@
 # Phase 6.56 continuation — topic duplicate guard and generation batch audit
 
-**Status:** implementation started on branch `phase-6-56-topic-batch-audit`; this is a scoped increment inside Phase 6.56, not a new numbered phase.
+**Status:** MERGED in PR [#107](https://github.com/snchat78-svg/AI-COMP/pull/107) as `0f8da54ca22ec5e76857587e92df2a9913b92521`; this is a scoped increment inside Phase 6.56, not a new numbered phase.
 **Base:** current `main` at branch creation (30 October 2026).
 **Previous accepted increment:** PR [#105](https://github.com/snchat78-svg/AI-COMP/pull/105), exact-head CI [run #721](https://github.com/snchat78-svg/AI-COMP/actions/runs/41025914983), 620 tests passed and API container build passed.
 **Canonical status:** [Phase Registry](PHASE_REGISTRY.md)
@@ -30,6 +30,8 @@
 - A failed existing-topic scan prevents persistence.
 - Exact-hash/database deduplication and NEEDS_REVIEW-only behavior remain covered.
 
-## Acceptance and remaining gates
+## Acceptance evidence and remaining gates
 
-Await exact-head backend tests and API container build. Do not claim deployment/live-database acceptance from CI. Phase 6.56 remains IN_PROGRESS until official exam-profile/document identity and SHA-256, complete independently reviewed syllabus inventory, all concept mappings, controlled live migrations/secrets and authentic-data mobile E2E pass. Phase 6.57 remains PLANNED; Phase 2.2 remains BLOCKED. No TLS/robots/DNS/access-control bypass, proxy, unofficial mirror or unlicensed paper reuse.
+Implementation/test head `49feab1ce05ec712415b208c141d74fdab0d3b7d` passed backend workflow [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522): pytest and API container build. Flutter workflow [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507) passed analysis, mobile tests, release APK build, APK verification and artifact upload. Artifact [12980571357](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507/artifacts/12980571357), SHA-256 `acf231349a7735a485748463bf5eb571a4587cb2a470a58449a644959cb042a8`.
+
+Do not claim live-database or learner-visible acceptance from CI. Phase 6.56 remains IN_PROGRESS until official exam-profile/document identity and SHA-256, complete independently reviewed syllabus inventory, all concept mappings, controlled live migrations/secrets and authentic-data mobile E2E pass. Phase 6.57 remains PLANNED; Phase 2.2 remains BLOCKED. No TLS/robots/DNS/access-control bypass, proxy, unofficial mirror or unlicensed paper reuse.
