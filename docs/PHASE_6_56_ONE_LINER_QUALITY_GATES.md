@@ -50,4 +50,4 @@ This increment does not complete Phase 6.56. The official exam profile and offic
 
 ## Next quality increment
 
-Next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
+The next bounded implementation is recorded in [PHASE_6_56_COVERAGE_DIMENSION_TAGS.md](PHASE_6_56_COVERAGE_DIMENSION_TAGS.md). It adds reviewer-facing examinable-point dimensions and per-batch saved counts without treating a category count as topic completion. Exact-head CI and all human/source gates remain required. Safe near-duplicate handling and a broader audit report remain later work; do not bulk-generate from unreviewed or unofficial source text.
