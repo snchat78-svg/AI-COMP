@@ -412,3 +412,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 | 2026-10-30 | 2.2 | RBSE fixed index robots permission confirmed; no PDF retrieved. Started exact per-PDF robots decisions and rights review gate. | Main Render source-health run #60 / `41015710994`: robots 200 `text/plain`, index allowed and HTTP 200, 200 PDF link records capped at 200, zero PDF bytes/candidates. Official RBSE main page disclaimer is informational, not reuse permission. Branch `phase-2-2-rbse-pdf-robots-rights-gate`; Phase 2.2 remains BLOCKED. |
 
 | 2026-10-30 | 2.2 | Deployed per-PDF robots decision logic; live Render report shows the first 20 same-host links allowed by robots, but PDF retrieval remains held pending applicable reuse rights. | PR #102 merge `bf7586f907861796f796744bc5a3ef5a365773a9`; CI run #713 exact-head 597 tests + container; Render deploy `dep-dbi3tj2vcj2c73c4r3fg`; health run #63 attempt 2 `41016698624`; official research run #39 `41016698619` remains 0 candidates. Phase remains BLOCKED. |
+
+
+## Phase 6.56 continuation — source-grounded One-Liner generation
+
+- Reapplied the existing PR #99 implementation onto current main in branch `phase-6-56-one-liner-candidates-mainline` after the original PR hit a GitHub merge conflict; no force-merge and no old registry/checkpoint rollback.
+- Scope: generate draft Q&A for one existing canonical concept from an authorized, bounded source excerpt; exact supporting quotes are checked; canonical deduplication is reused; every saved item remains `NEEDS_REVIEW`; reviewer workflow remains independent.
+- This implementation does **not** fetch sources, verify that a URL is authoritative, bulk-generate the whole syllabus, or prove full topic coverage. It is only an authoring building block. All applicable topics/subtopics still require official exam-syllabus mapping, source evidence and independently reviewed Q&A; the 340 starter concepts remain scaffolding.
+- Phase 2.2 remains BLOCKED: RBSE per-PDF robots checks passed for the first 20 displayed links, but no PDF bytes or applicable reuse licence have been verified; RSSB/RPSC research still persists zero candidates. Do not bypass robots, validated TLS or copyright/reuse permissions.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
