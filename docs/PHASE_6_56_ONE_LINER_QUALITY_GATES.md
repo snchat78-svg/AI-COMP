@@ -49,9 +49,11 @@ A Hindi Q&A example confirms that the format gate accepts an ordinary single-que
 This increment does not complete Phase 6.56. The official exam profile and official syllabus bytes/version/hash are still unverified; the complete unit/topic/subtopic inventory and every applicability mapping still need independent review; live migrations/admin-review secrets and real-data mobile E2E remain unproven. Phase 6.57 remains PLANNED and must not start before all parent-phase gates pass.
 
 
-## Current next increment — topic duplicate guard and generation batch audit
+## Merged increment — topic duplicate guard and batch audit (PR #107)
 
-The scoped Phase 6.56 work is on branch `phase-6-56-topic-batch-audit`. It adds a bounded scan of the existing concept/language Q&A before generation, Unicode-aware Q+A similarity triage, in-batch similarity checks, and explicit generated/rejected/duplicate/pending-review/verified counts. The final exact content-hash uniqueness rule remains in PostgreSQL. Any scan failure or more than 5,000 existing topic records blocks generation rather than silently skipping duplicate checks. Await exact-head CI and review; do not describe this as merged or live until those gates pass.
+PR [#107](https://github.com/snchat78-svg/AI-COMP/pull/107) merged as `0f8da54ca22ec5e76857587e92df2a9913b92521`. Tested implementation head `49feab1ce05ec712415b208c141d74fdab0d3b7d`; backend [run #730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) passed full pytest and API container build; Flutter [run #144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507) passed analysis, mobile tests, release APK build, verification and upload (artifact `12980571357`, SHA-256 `acf231349a7735a485748463bf5eb571a4587cb2a470a58449a644959cb042a8`).
+
+The service now scans prior same-concept/language Q&A across review states, uses deterministic Unicode-aware question/answer similarity triage and same-batch filtering, and returns separate generated/rejected/duplicate/pending-review/verified batch counts. Database exact-hash uniqueness remains the final race-safe duplicate guard. Scan failures or more than 5,000 existing topic records fail closed. Generated items remain `NEEDS_REVIEW`; generated `verified_count` is zero. This is not semantic truth validation or full examinable-point coverage.
 
 ## Next quality increment
 
