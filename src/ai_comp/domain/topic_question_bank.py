@@ -66,6 +66,19 @@ class TopicOneLinerQA:
                 raise ValueError(f"{name} must be timezone-aware when supplied")
 
     @property
+    def coverage_dimension(self) -> str:
+        """Return the optional reviewer tag stored in source evidence.
+
+        Older/manual records have no tag and remain explicitly unclassified.
+        """
+        prefix = "coverage_dimension="
+        first_part = self.source_evidence.split("|", 1)[0].strip()
+        if first_part.startswith(prefix):
+            value = first_part[len(prefix):].strip()
+            return value or "UNCLASSIFIED"
+        return "UNCLASSIFIED"
+
+    @property
     def content_hash(self) -> str:
         normalized_question = " ".join(self.question_text.casefold().split())
         normalized_answer = " ".join(self.answer_text.casefold().split())
