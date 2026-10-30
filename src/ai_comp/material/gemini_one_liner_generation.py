@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -21,6 +21,21 @@ class _GeminiOneLinerDraft(BaseModel):
     evidence_quote: str = Field(min_length=1, max_length=3000)
     answer_evidence_quote: str = Field(min_length=1, max_length=1500)
     importance_score: float = Field(ge=0.0, le=1.0)
+    coverage_dimension: Literal[
+        "DEFINITION",
+        "IDENTITY",
+        "DATE_TIME",
+        "PLACE_LOCATION",
+        "CLASSIFICATION_LIST",
+        "COMPARISON_RELATIONSHIP",
+        "CAUSE_EFFECT_SEQUENCE",
+        "FORMULA_UNIT_METHOD",
+        "RULE_EXCEPTION",
+        "DATA_STATISTIC",
+        "MAP_DIAGRAM_TABLE",
+        "COMMON_CONFUSION",
+        "FACTUAL_DETAIL",
+    ]
 
 
 class _GeminiOneLinerBatch(BaseModel):
@@ -51,6 +66,12 @@ For each candidate:
 - Prefer syllabus-useful definitions, identity, dates, places, classifications,
   lists, comparisons, causes/effects, formulas, rules, exceptions and key data
   when the excerpt actually contains them.
+- coverage_dimension must be exactly one of: DEFINITION, IDENTITY, DATE_TIME,
+  PLACE_LOCATION, CLASSIFICATION_LIST, COMPARISON_RELATIONSHIP,
+  CAUSE_EFFECT_SEQUENCE, FORMULA_UNIT_METHOD, RULE_EXCEPTION, DATA_STATISTIC,
+  MAP_DIAGRAM_TABLE, COMMON_CONFUSION, FACTUAL_DETAIL. Choose the single best
+  fit for the fact asked; never use the category as a claim that a whole lens
+  or topic is complete.
 - importance_score is a study-priority estimate based on source emphasis and
   examinable usefulness only. It is NOT a past-paper frequency claim and NOT
   proof of correctness or syllabus applicability.
@@ -149,6 +170,7 @@ class GeminiOneLinerGenerationProvider:
                 evidence_quote=item.evidence_quote,
                 answer_evidence_quote=item.answer_evidence_quote,
                 importance_score=item.importance_score,
+                coverage_dimension=item.coverage_dimension,
             )
             for item in batch.items[:requested_count]
         )
