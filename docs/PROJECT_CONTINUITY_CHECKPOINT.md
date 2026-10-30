@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `43e5209f70e729e7f68af9e4931e9ed529d08e0f`; PR #104 merged, adding source-grounded One-Liner candidate generation. Continuing Phase 6.56 with deterministic question-format quality gates.)  
+**Last updated:** 2026-10-30 (main `b68043fbc6b18616bbe75a31abd3b63977addc5a`; PR #105 merged after exact-head CI passed 620 tests and API container build. Phase 6.56 continues; no next phase has been skipped.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -508,10 +508,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Next: exact-head backend tests + API container, then merge only if current-main PR checks pass; configure no secrets in Git; do not mark Phase 6.56 complete until official exam profile, syllabus inventory/mappings, live DB state and authentic mobile E2E are proven.
 
 
-## 2026-10-30 continuation — topic-wise One-Liner quality gate
+## 2026-10-30 continuation — topic-wise One-Liner quality gate merged
 
-- Main includes PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104), merge SHA `43e5209f70e729e7f68af9e4931e9ed529d08e0f`. It adds an author-only, bounded-source-excerpt generator for one canonical concept at a time. It stores candidates as `NEEDS_REVIEW`; it does not fetch official sources or bulk-complete the topic catalogue.
-- Current implementation branch: `phase-6-56-one-liner-quality-guard`. The active increment adds deterministic structural quality rules: exactly one question mark at the end, no line breaks, at most 240 characters for both question and answer, and no question mark in the answer. Hindi and English use the same question-mark rule.
-- Tests added for multi-question, multiline and oversized candidates plus a valid Hindi example. Tests have not yet been run on the branch; wait for exact-head GitHub Actions before considering this increment accepted.
-- Quality gate is structural only. Reviewers must still verify fact accuracy, source authority, topic/syllabus fit, currency, evidence and full examinable-point coverage. Only VERIFIED items are learner-visible.
-- Phase 2.2 remains BLOCKED (RSSB/RPSC retrieval and RBSE PDF reuse rights are unresolved); Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No email/calls, proxy, DNS override, TLS bypass, robots bypass or unlicensed PDF reuse.
+- Main includes PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) at `43e5209f70e729e7f68af9e4931e9ed529d08e0f`: bounded source-grounded Gemini candidate generation for one canonical concept at a time. All generated items remain `NEEDS_REVIEW`.
+- Main includes PR [#105](https://github.com/snchat78-svg/AI-COMP/pull/105) at `b68043fbc6b18616bbe75a31abd3b63977addc5a`: deterministic Q&A format gate (one terminal `?` or `？`, no line breaks, <=240 characters in each field, and no question mark in the answer), stronger Gemini instruction and Hindi/English regression cases.
+- Exact-head commit `e7957a81573093f77a6d7f97b82d3b3e98239971`; GitHub Actions [run #721](https://github.com/snchat78-svg/AI-COMP/actions/runs/41025914983) passed **620 tests, 14 warnings**, and the API container build. This was a backend-only change; it did not prove a mobile E2E run or live content generation.
+- Next within Phase 6.56: add examinable-point coverage dimensions, topic-level near-duplicate checks and reviewer batch audit counts. Do not use question count alone as a completeness signal.
+- Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. Official source bytes/reuse rights, complete reviewed syllabus mapping, live migrations/secrets and real-data mobile E2E are still outstanding. No email/calls, proxy, DNS override, TLS/robots bypass or unlicensed PDF use.
