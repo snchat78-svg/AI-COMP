@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from typing import Protocol
 from urllib.parse import urlsplit
 from uuid import uuid4
@@ -34,6 +35,49 @@ def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
     normalized_question = " ".join(question.casefold().split())
     normalized_answer = " ".join(answer.casefold().split())
     return normalized_question != normalized_answer
+
+MAX_EXISTING_TOPIC_DUPLICATE_SCAN = 5000
+NEAR_DUPLICATE_QUESTION_THRESHOLD = 0.90
+NEAR_DUPLICATE_ANSWER_THRESHOLD = 0.90
+NEAR_DUPLICATE_PAIR_THRESHOLD = 0.94
+
+
+def _normalize_for_similarity(value: str) -> str:
+    """Normalize punctuation/spacing while retaining Unicode letters and digits."""
+    normalized = "".join(char.casefold() if char.isalnum() else " " for char in value)
+    return " ".join(normalized.split())
+
+
+def _similarity(left: str, right: str) -> float:
+    if not left or not right:
+        return 0.0
+    return SequenceMatcher(None, left, right, autojunk=False).ratio()
+
+
+def _is_near_duplicate(
+    candidate: TopicOneLinerQA,
+    existing: TopicOneLinerQA,
+) -> bool:
+    """Compare Q+A pairs only within the same canonical concept and language."""
+    if candidate.concept_id != existing.concept_id:
+        return False
+    if candidate.language_code != existing.language_code:
+        return False
+    candidate_question = _normalize_for_similarity(candidate.question_text)
+    existing_question = _normalize_for_similarity(existing.question_text)
+    candidate_answer = _normalize_for_similarity(candidate.answer_text)
+    existing_answer = _normalize_for_similarity(existing.answer_text)
+    question_similarity = _similarity(candidate_question, existing_question)
+    answer_similarity = _similarity(candidate_answer, existing_answer)
+    pair_similarity = _similarity(
+        f"{candidate_question} | {candidate_answer}",
+        f"{existing_question} | {existing_answer}",
+    )
+    return (
+        question_similarity >= NEAR_DUPLICATE_QUESTION_THRESHOLD
+        and answer_similarity >= NEAR_DUPLICATE_ANSWER_THRESHOLD
+    ) or pair_similarity >= NEAR_DUPLICATE_PAIR_THRESHOLD
+
 
 
 @dataclass(frozen=True)
@@ -72,19 +116,49 @@ class OneLinerCandidateProvider(Protocol):
 
 
 class OneLinerCandidateRepository(Protocol):
+    def list_one_liners(
+        self,
+        concept_id: str,
+        *,
+        limit: int = 100,
+        offset: int = 0,
+        verified_only: bool = True,
+        language_code: str | None = None,
+    ) -> tuple[TopicOneLinerQA, ...]: ...
+
     def save_one_liner(self, item: TopicOneLinerQA) -> TopicOneLinerQA: ...
 
 
 @dataclass(frozen=True)
 class OneLinerCandidateGenerationResult:
     saved_items: tuple[TopicOneLinerQA, ...]
+    provider_returned_count: int
     duplicate_count: int
     rejected_count: int
     warnings: tuple[str, ...]
 
     @property
+    def generated_count(self) -> int:
+        return self.provider_returned_count
+
+    @property
     def saved_count(self) -> int:
         return len(self.saved_items)
+
+    @property
+    def pending_review_count(self) -> int:
+        return sum(
+            item.verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+            for item in self.saved_items
+        )
+
+    @property
+    def verified_count(self) -> int:
+        # Generation is never allowed to verify its own output.
+        return sum(
+            item.verification_status is OneLinerVerificationStatus.VERIFIED
+            for item in self.saved_items
+        )
 
 
 class OneLinerCandidateGenerationService:
@@ -106,6 +180,27 @@ class OneLinerCandidateGenerationService:
         self.repository = repository
         self.minimum_importance_score = minimum_importance_score
         self.maximum_source_characters = maximum_source_characters
+
+    def _load_existing_topic_items(
+        self, *, concept_id: str, language_code: str
+    ) -> tuple[TopicOneLinerQA, ...]:
+        """Load bounded existing Q&A so near-duplicate checks include prior batches."""
+        existing_items: list[TopicOneLinerQA] = []
+        page_size = 500
+        for offset in range(0, MAX_EXISTING_TOPIC_DUPLICATE_SCAN, page_size):
+            page = self.repository.list_one_liners(
+                concept_id,
+                limit=page_size,
+                offset=offset,
+                verified_only=False,
+                language_code=language_code,
+            )
+            existing_items.extend(page)
+            if len(page) < page_size:
+                return tuple(existing_items)
+        raise ValueError(
+            "topic has more than the safe duplicate-scan limit; split or review the topic before generation"
+        )
 
     def generate(
         self,
@@ -135,6 +230,9 @@ class OneLinerCandidateGenerationService:
                 requested_count=requested_count,
             )
         )
+        existing_topic_items = self._load_existing_topic_items(
+            concept_id=concept_id, language_code=language_code
+        )
         valid_drafts: list[OneLinerDraft] = []
         invalid_draft_count = 0
         for draft in drafts:
@@ -155,6 +253,7 @@ class OneLinerCandidateGenerationService:
         if invalid_draft_count:
             warnings.append("One or more provider items had an invalid structured shape.")
         seen_hashes: set[str] = set()
+        seen_items: list[TopicOneLinerQA] = list(existing_topic_items)
 
         for draft in ordered:
             if len(saved) >= requested_count:
@@ -191,20 +290,25 @@ class OneLinerCandidateGenerationService:
                 verification_status=OneLinerVerificationStatus.NEEDS_REVIEW,
                 importance_score=draft.importance_score,
             )
-            if item.content_hash in seen_hashes:
+            if item.content_hash in seen_hashes or any(
+                _is_near_duplicate(item, existing) for existing in seen_items
+            ):
                 duplicate_count += 1
                 continue
             seen_hashes.add(item.content_hash)
             persisted = self.repository.save_one_liner(item)
             if persisted.one_liner_id != item.one_liner_id:
                 duplicate_count += 1
+                seen_items.append(persisted)
                 continue
             saved.append(persisted)
+            seen_items.append(persisted)
 
         if not saved and rejected_count == 0 and duplicate_count == 0:
             warnings.append("The provider returned no usable candidates.")
         return OneLinerCandidateGenerationResult(
             saved_items=tuple(saved),
+            provider_returned_count=len(drafts),
             duplicate_count=duplicate_count,
             rejected_count=rejected_count,
             warnings=tuple(warnings),
