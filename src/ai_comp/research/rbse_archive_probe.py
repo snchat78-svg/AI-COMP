@@ -142,7 +142,12 @@ def _safe_fetch_text(
         return FetchResult(None, url, "", error=type(exc).__name__)
 
 
-def _pdf_link_records(page_url: str, body: str) -> list[dict[str, object]]:
+def _pdf_link_records(
+    page_url: str,
+    body: str,
+    *,
+    robots_parser: RobotFileParser | None,
+) -> list[dict[str, object]]:
     parser = _PdfAnchorParser()
     parser.feed(body)
     output: list[dict[str, object]] = []
@@ -165,16 +170,29 @@ def _pdf_link_records(page_url: str, body: str) -> list[dict[str, object]]:
             and target.password is None
             and target.path.startswith("/books/PAPERS-2025/")
         )
+        robots_allowed: bool | None = None
+        if same_host and robots_parser is not None:
+            robots_allowed = _robots_allows_url(
+                robots_parser, USER_AGENT, target.geturl()
+            )
+        if not same_host:
+            status = "EXTERNAL_OR_OUT_OF_SCOPE_PDF_NOT_FOLLOWED"
+        elif robots_allowed is None:
+            # The exact-404 exception authorizes reading only the fixed HTML
+            # index; it does not silently authorize linked PDF paths.
+            status = "PDF_ROBOTS_NOT_EVALUATED"
+        elif robots_allowed:
+            status = "PDF_ROBOTS_ALLOWED_NOT_FETCHED"
+        else:
+            status = "PDF_BLOCKED_BY_ROBOTS"
         row: dict[str, object] = {
             "label": label[:160],
             "target_host": (target.hostname or "")[:120],
             "path": target.path[:240],
             "same_host": same_host,
             "query_present": bool(target.query),
-            "status": (
-                "PUBLIC_PDF_LINK_FOUND_NOT_FETCHED"
-                if same_host else "EXTERNAL_OR_OUT_OF_SCOPE_PDF_NOT_FOLLOWED"
-            ),
+            "robots_allowed": robots_allowed,
+            "status": status,
         }
         output.append(row)
         if len(output) >= MAX_PDF_LINKS:
@@ -231,6 +249,7 @@ def probe_rbse_archive_route(
             },
         }
 
+    robots_parser: RobotFileParser | None = None
     if robots_missing_404:
         robots: dict[str, object] = {
             "status": "NOT_PUBLISHED_HTTP_404",
@@ -248,9 +267,9 @@ def probe_rbse_archive_route(
                     "content_type": robots_result.content_type[:80],
                 },
             }
-        parser = RobotFileParser(ROBOTS_URL)
-        parser.parse(robots_result.body.splitlines())
-        allowed = _robots_allows_url(parser, USER_AGENT, INDEX_URL)
+        robots_parser = RobotFileParser(ROBOTS_URL)
+        robots_parser.parse(robots_result.body.splitlines())
+        allowed = _robots_allows_url(robots_parser, USER_AGENT, INDEX_URL)
         robots = {
             "status": "READ",
             "http_status": 200,
@@ -296,7 +315,9 @@ def probe_rbse_archive_route(
         ):
             row["status"] = "REDIRECT_BLOCKED"
         else:
-            links = _pdf_link_records(page.url, page.body)
+            links = _pdf_link_records(
+                page.url, page.body, robots_parser=robots_parser
+            )
             row.update({
                 "status": "READ_ONLY_PUBLIC_HTML",
                 "pdf_links": links,
@@ -305,7 +326,14 @@ def probe_rbse_archive_route(
 
     if row["status"] == "READ_ONLY_PUBLIC_HTML":
         links = row["pdf_links"]
-        if any(link["status"] == "PUBLIC_PDF_LINK_FOUND_NOT_FETCHED" for link in links):
+        if any(
+            link["status"] in {
+                "PDF_ROBOTS_ALLOWED_NOT_FETCHED",
+                "PDF_BLOCKED_BY_ROBOTS",
+                "PDF_ROBOTS_NOT_EVALUATED",
+            }
+            for link in links
+        ):
             base["status"] = "SAME_HOST_PAPER_LINKS_FOUND_NOT_FETCHED"
         elif links:
             base["status"] = "PDF_LINKS_OUT_OF_SCOPE_NOT_FOLLOWED"

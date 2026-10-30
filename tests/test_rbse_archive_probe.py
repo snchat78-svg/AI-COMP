@@ -93,7 +93,8 @@ def test_probe_inspects_only_fixed_index_when_robots_explicitly_returns_404():
     links = report["pages_inspected"][0]["pdf_links"]
     assert links[0]["same_host"] is True
     assert links[0]["path"] == "/books/PAPERS-2025/SRS/SS-14.pdf"
-    assert links[0]["status"] == "PUBLIC_PDF_LINK_FOUND_NOT_FETCHED"
+    assert links[0]["robots_allowed"] is None
+    assert links[0]["status"] == "PDF_ROBOTS_NOT_EVALUATED"
     assert links[1]["same_host"] is False
     assert links[1]["status"] == "EXTERNAL_OR_OUT_OF_SCOPE_PDF_NOT_FOLLOWED"
     assert requested == [f"{ORIGIN}/robots.txt", INDEX]
@@ -109,7 +110,7 @@ def test_probe_reads_index_only_when_robot_rules_allow_the_exact_path():
         200,
         f"{ORIGIN}/robots.txt",
         "text/plain",
-        "User-agent: *\nAllow: /books/PAPERS-2025/index.htm\nDisallow: /books/PAPERS-2025/\n",
+        "User-agent: *\nDisallow: /books/PAPERS-2025/\nAllow: /books/PAPERS-2025/index.htm\nAllow: /books/PAPERS-2025/SRS/SS-14.pdf\n",
     )
     page = FetchResult(
         200, INDEX, "text/html",
@@ -125,6 +126,9 @@ def test_probe_reads_index_only_when_robot_rules_allow_the_exact_path():
     assert report["robots"]["status"] == "READ"
     assert report["robots"]["allowed_index_path"] is True
     assert report["status"] == "SAME_HOST_PAPER_LINKS_FOUND_NOT_FETCHED"
+    link = report["pages_inspected"][0]["pdf_links"][0]
+    assert link["robots_allowed"] is True
+    assert link["status"] == "PDF_ROBOTS_ALLOWED_NOT_FETCHED"
     assert requested == [f"{ORIGIN}/robots.txt", INDEX]
 
 
@@ -143,6 +147,37 @@ def test_probe_does_not_read_index_when_robot_rules_disallow_it():
     assert report["robots"]["allowed_index_path"] is False
     assert report["pages_inspected"] == []
     assert requested == [f"{ORIGIN}/robots.txt"]
+
+
+def test_probe_blocks_pdf_when_robots_allows_index_but_disallows_pdf_path():
+    robots = FetchResult(
+        200,
+        f"{ORIGIN}/robots.txt",
+        "text/plain",
+        "User-agent: *\nAllow: /books/PAPERS-2025/index.htm\nDisallow: /books/PAPERS-2025/SRS/SS-14.pdf\n",
+    )
+    page = FetchResult(
+        200,
+        INDEX,
+        "text/html",
+        '<a href="/books/PAPERS-2025/SRS/SS-14.pdf">Senior Secondary Geography</a>',
+    )
+    fetcher, requested = _fake_fetcher({
+        f"{ORIGIN}/robots.txt": robots,
+        INDEX: page,
+    })
+
+    report = probe_rbse_archive_route(fetcher=fetcher)
+
+    link = report["pages_inspected"][0]["pdf_links"][0]
+    assert report["robots"]["allowed_index_path"] is True
+    assert link["robots_allowed"] is False
+    assert link["status"] == "PDF_BLOCKED_BY_ROBOTS"
+    assert requested == [f"{ORIGIN}/robots.txt", INDEX]
+    assert not any(url.lower().endswith(".pdf") for url in requested)
+    assert report["paper_bytes_fetched"] is False
+    assert report["database_written"] is False
+    assert report["candidate_promotions"] == 0
 
 
 def test_probe_does_not_follow_pdf_links_or_expose_query_values():
