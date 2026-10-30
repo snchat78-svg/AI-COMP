@@ -1,6 +1,7 @@
 # Phase 6.56 continuation — deterministic One-Liner format gate
 
-**Status:** implementation started on `phase-6-56-one-liner-quality-guard`; this is a scoped increment inside Phase 6.56, not a new numbered phase.
+**Status:** MERGED in PR [#105](https://github.com/snchat78-svg/AI-COMP/pull/105) at `b68043fbc6b18616bbe75a31abd3b63977addc5a`; this is a scoped increment inside Phase 6.56, not a new numbered phase.
+**Tested head:** `e7957a81573093f77a6d7f97b82d3b3e98239971`. **CI:** [run #721](https://github.com/snchat78-svg/AI-COMP/actions/runs/41025914983) — 620 passed, 14 warnings; API container build passed.
 **Base main:** `43e5209f70e729e7f68af9e4931e9ed529d08e0f` (PR #104 merge).
 **Canonical status:** [Phase Registry](PHASE_REGISTRY.md)
 **Generation foundation:** [AI-assisted One-Liner candidate generation](PHASE_6_56_ONE_LINER_AI_CANDIDATE_GENERATION.md)
@@ -49,4 +50,4 @@ This increment does not complete Phase 6.56. The official exam profile and offic
 
 ## Next quality increment
 
-After exact-head CI passes, the next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
+Next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
