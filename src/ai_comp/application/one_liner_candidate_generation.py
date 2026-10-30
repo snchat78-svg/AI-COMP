@@ -37,7 +37,7 @@ def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
     return normalized_question != normalized_answer
 
 MAX_EXISTING_TOPIC_DUPLICATE_SCAN = 5000
-NEAR_DUPLICATE_QUESTION_THRESHOLD = 0.90
+NEAR_DUPLICATE_QUESTION_THRESHOLD = 0.78
 NEAR_DUPLICATE_ANSWER_THRESHOLD = 0.90
 NEAR_DUPLICATE_PAIR_THRESHOLD = 0.94
 
@@ -54,6 +54,14 @@ def _similarity(left: str, right: str) -> float:
     return SequenceMatcher(None, left, right, autojunk=False).ratio()
 
 
+def _token_similarity(left: str, right: str) -> float:
+    left_tokens = set(left.split())
+    right_tokens = set(right.split())
+    if not left_tokens or not right_tokens:
+        return 0.0
+    return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+
+
 def _is_near_duplicate(
     candidate: TopicOneLinerQA,
     existing: TopicOneLinerQA,
@@ -67,16 +75,20 @@ def _is_near_duplicate(
     existing_question = _normalize_for_similarity(existing.question_text)
     candidate_answer = _normalize_for_similarity(candidate.answer_text)
     existing_answer = _normalize_for_similarity(existing.answer_text)
-    question_similarity = _similarity(candidate_question, existing_question)
+    question_similarity = _token_similarity(candidate_question, existing_question)
+    if question_similarity < 0.55:
+        return False
     answer_similarity = _similarity(candidate_answer, existing_answer)
+    if (
+        question_similarity >= NEAR_DUPLICATE_QUESTION_THRESHOLD
+        and answer_similarity >= NEAR_DUPLICATE_ANSWER_THRESHOLD
+    ):
+        return True
     pair_similarity = _similarity(
         f"{candidate_question} | {candidate_answer}",
         f"{existing_question} | {existing_answer}",
     )
-    return (
-        question_similarity >= NEAR_DUPLICATE_QUESTION_THRESHOLD
-        and answer_similarity >= NEAR_DUPLICATE_ANSWER_THRESHOLD
-    ) or pair_similarity >= NEAR_DUPLICATE_PAIR_THRESHOLD
+    return pair_similarity >= NEAR_DUPLICATE_PAIR_THRESHOLD
 
 
 
@@ -198,9 +210,18 @@ class OneLinerCandidateGenerationService:
             existing_items.extend(page)
             if len(page) < page_size:
                 return tuple(existing_items)
-        raise ValueError(
-            "topic has more than the safe duplicate-scan limit; split or review the topic before generation"
+        overflow = self.repository.list_one_liners(
+            concept_id,
+            limit=1,
+            offset=MAX_EXISTING_TOPIC_DUPLICATE_SCAN,
+            verified_only=False,
+            language_code=language_code,
         )
+        if overflow:
+            raise ValueError(
+                "topic has more than the safe duplicate-scan limit; split or review the topic before generation"
+            )
+        return tuple(existing_items)
 
     def generate(
         self,
