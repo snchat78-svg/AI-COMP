@@ -536,11 +536,12 @@ jobs:
                       if not isinstance(item, dict):
                           continue
                       lines.append(
-                          "- PDF link metadata only: label={}; host={}; path={}; same_host={}; status={}".format(
+                          "- PDF link metadata only: label={}; host={}; path={}; same_host={}; robots_allowed={}; status={}".format(
                               str(item.get("label", ""))[:120],
                               str(item.get("target_host", ""))[:120],
                               str(item.get("path", ""))[:200],
                               str(item.get("same_host", "unknown")),
+                              str(item.get("robots_allowed", "not_evaluated")),
                               str(item.get("status", "unknown"))[:80],
                           )
                       )
