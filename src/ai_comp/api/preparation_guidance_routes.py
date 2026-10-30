@@ -1800,6 +1800,7 @@ def generate_topic_one_liner_candidates(
             "saved_count": result.saved_count,
             "duplicate_count": result.duplicate_count,
             "rejected_count": result.rejected_count,
+            "coverage_dimension_counts": result.coverage_dimension_counts,
             "verification_status": "NEEDS_REVIEW",
             "items": [
                 {
@@ -1809,6 +1810,7 @@ def generate_topic_one_liner_candidates(
                     "answer_text": item.answer_text,
                     "language_code": item.language_code,
                     "importance_score": item.importance_score,
+                    "coverage_dimension": item.coverage_dimension,
                     "verification_status": item.verification_status.value,
                 }
                 for item in result.saved_items
