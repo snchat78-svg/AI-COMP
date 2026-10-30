@@ -3,7 +3,7 @@
 **Canonical phase/status source:** [Phase Registry](PHASE_REGISTRY.md)  
 **Machine-readable topic ledger:** [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Roadmap:** [Topic-wise Question Bank roadmap](PHASE_6_53_TOPICWISE_QUESTION_BANK_ROADMAP.md)  
-**Last checkpoint:** 2026-10-22
+**Last checkpoint:** 2026-10-30
 
 ## Non-negotiable product goal
 
@@ -119,3 +119,8 @@ See the full [Question Bank Product Contract](QUESTION_BANK_PRODUCT_CONTRACT.md)
 - **Previous Year Papers / Old Papers:** actual historical and newly published paper artifacts from official sources, with paper identity, year, source provenance, original document and verified matching answer-key information where available.
 - Existing official-source discovery/processing should poll registered sources on schedule and automatically surface newly published papers only after integrity and review gates pass. A paper appearing here does not automatically promote its questions into the approved One-Liner bank.
 - Record blocked/failed connectivity honestly. As of 2026-10-26, the official-source network/TLS gate remains blocked; no successful live auto-update has been demonstrated. Do not claim otherwise or weaken TLS.
+
+
+## 2026-10-30 generation workflow checkpoint
+
+The mainline candidate-generation implementation is being added within Phase 6.56. It is concept-by-concept and requires an authorized operator to provide a bounded excerpt and locator from a checked source. It is not automatic source discovery and does not generate or certify the full 340-concept catalogue in one run. Continue to treat every catalogue row as a coverage obligation to reconcile against each chosen official exam syllabus; do not count a draft, AI importance score, question count, or Git seed as VERIFIED_COMPLETE.
