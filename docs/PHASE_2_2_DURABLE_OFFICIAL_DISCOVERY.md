@@ -373,3 +373,21 @@ The next small increment adds `probe_rbse_archive_route` and a fixed read-only A
 - Keep RBSE separate from RSSB/RPSC; do not change the official source registry, DB, or candidate counts.
 
 Even if the index yields links, a later controlled step must fetch the actual paper through the existing protected workflow, calculate SHA-256, verify source provenance and reuse conditions, and keep the RBSE board identity distinct. Phase 2.2 remains **BLOCKED** until approved bytes and provenance produce real persisted candidates. Phase 6.56 remains **IN_PROGRESS**, Phase 6.57 **PLANNED**, and Phase 6.58 **BLOCKED**. No calls/emails, proxy, DNS override, unsafe TLS, or mirror.
+
+
+## RBSE robots decision for each linked PDF and reuse-rights hold — 30 October 2026
+
+The post-deploy Render run [#41015710994](https://github.com/snchat78-svg/AI-COMP/actions/runs/41015710994), step “Query fixed RBSE 2025 paper archive route diagnostic”, returned the final successful report:
+- robots: HTTP 200, `text/plain`, status `READ`;
+- exact fixed index `/books/PAPERS-2025/index.htm`: robots allowed, HTTP 200 and `READ_ONLY_PUBLIC_HTML`;
+- the parser found 200 PDF link records within its configured maximum of 200;
+- no PDF bytes fetched, no source registry or database change, and zero candidate promotions.
+
+This proves permission to inspect the index only. It is not blanket permission to fetch its PDF children. The official RBSE website main page currently exposes a “Legal Disclaimer” saying the site information is provided for informational purposes and is not binding on the Board; this is not a reproduction or redistribution licence. The index itself did not surface a paper-specific reuse licence. No verified RBSE copyright/reuse permission for republishing examination-paper PDFs in AI-COMP has been established. Therefore **do not fetch, store, display, mirror, extract or redistribute PDF contents in the app yet**. Continue to retain only the official link metadata and source attribution pending a clear applicable licence/permission. Do not contact the Board; the user has explicitly ruled out calls and email.
+
+This increment adds per-PDF robots evaluation to the route probe:
+- With a valid HTTP 200 `text/plain` robots file, evaluate every discovered same-host PDF URL using the same most-specific Allow/Disallow logic. Report `PDF_ROBOTS_ALLOWED_NOT_FETCHED` only when that exact PDF path is allowed; report `PDF_BLOCKED_BY_ROBOTS` when disallowed.
+- If robots is absent with exact HTTP 404, the documented exception still permits only the single fixed HTML index. Each PDF link is `PDF_ROBOTS_NOT_EVALUATED`; no PDF access is authorized by this exception.
+- External/out-of-scope links remain un-followed. No PDF request is made under any outcome.
+
+Next gate: inspect the actual final per-PDF robots decisions from the live Render report, then determine whether a paper-specific reuse licence or compatible public reproduction policy exists. If reuse permission remains unverified, do not download/republish papers; continue with permitted metadata and separately authored one-liner content. Phase 2.2 remains **BLOCKED** because no approved paper bytes/provenance/hash and no persisted official candidates exist. RBSE remains a school-board content track distinct from RSSB/RPSC competitive-exam history. Phase 6.56 **IN_PROGRESS**, Phase 6.57 **PLANNED**, Phase 6.58 **BLOCKED**.
