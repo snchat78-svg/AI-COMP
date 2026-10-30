@@ -147,7 +147,7 @@ def test_answer_evidence_must_be_contained_in_full_evidence_quote():
 
 def test_duplicate_drafts_in_same_batch_are_removed_by_normalized_hash():
     first = _draft(question="Which river system is largest?", answer="Luni River.")
-    second = _draft(question="  Which river system is largest?  ", answer="Luni River.")
+    second = _draft(question="Which river   system is largest?", answer="Luni River.")
     repository = _Repository()
 
     result = _generate(_service(_Provider([first, second]), repository))
