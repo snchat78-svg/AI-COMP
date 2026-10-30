@@ -476,3 +476,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - **Next branch:** `phase-2-2-rbse-robots-index-probe`. It reads only the robots file first; if allowed (or exact HTTP 404), reads one fixed HTML index, and reports metadata for PDF links. It must not follow redirects or download PDFs.
 - **No ingestion yet:** no paper bytes, SHA-256, provenance/reuse approval, database candidates, or source admission. RBSE remains distinct from RSSB/RPSC.
 - **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## 2026-10-30 RBSE PDF-level robots and reuse-rights gate
+
+- **Current main:** `9222d2f97f896861a149dc2eb243d99c29eb8a26`; PR #100 and #101 merged; Render deployment `dep-dbi3otss728c73a175tg` live.
+- **Live RBSE index result:** source-health run [#41015710994](https://github.com/snchat78-svg/AI-COMP/actions/runs/41015710994) finally returned robots 200 `text/plain`, fixed index allowed, index HTTP 200, and 200 PDF link metadata records (probe cap 200). No PDF bytes downloaded, no database or source registry change, no candidates.
+- **Rights review:** official RBSE main page `/main.asp` shows an informational Legal Disclaimer, not a reuse licence. No paper-specific permission/licence has been verified. Do not fetch/store/republish PDF contents until an applicable permission is identified. No calls/emails are to be made.
+- **Current branch:** `phase-2-2-rbse-pdf-robots-rights-gate`. It checks robots permission for each same-host PDF path independently; an exact robots 404 exception applies to the fixed index only and does not authorize PDFs.
+- **Next gates:** tests/container build; merge; Render deploy; inspect per-PDF robots outcomes; keep PDFs un-fetched absent explicit reuse rights. Keep RBSE separate from RSSB/RPSC.
+- **Phase state:** Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
