@@ -11,6 +11,30 @@ from ai_comp.domain.topic_question_bank import (
     TopicOneLinerQA,
 )
 
+MAX_ONE_LINER_TEXT_CHARACTERS = 240
+
+
+def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
+    """Accept one short direct question and one short, single-line answer."""
+    question = question_text.strip()
+    answer = answer_text.strip()
+    if not question or not answer:
+        return False
+    if any(char in question or char in answer for char in ("\n", "\r")):
+        return False
+    if len(question) > MAX_ONE_LINER_TEXT_CHARACTERS:
+        return False
+    if len(answer) > MAX_ONE_LINER_TEXT_CHARACTERS:
+        return False
+    question_marks = question.count("?") + question.count("？")
+    if question_marks != 1 or not question.endswith(("?", "？")):
+        return False
+    if "?" in answer or "？" in answer:
+        return False
+    normalized_question = " ".join(question.casefold().split())
+    normalized_answer = " ".join(answer.casefold().split())
+    return normalized_question != normalized_answer
+
 
 @dataclass(frozen=True)
 class OneLinerDraft:
@@ -135,6 +159,12 @@ class OneLinerCandidateGenerationService:
         for draft in ordered:
             if len(saved) >= requested_count:
                 break
+            if not _is_concise_direct_pair(draft.question_text, draft.answer_text):
+                rejected_count += 1
+                warnings.append(
+                    "A candidate did not meet the single-question, concise one-line Q&A format."
+                )
+                continue
             if draft.importance_score < self.minimum_importance_score:
                 rejected_count += 1
                 continue

@@ -216,6 +216,39 @@ def test_source_excerpt_size_and_requested_count_are_bounded():
         )
 
 
+@pytest.mark.parametrize(
+    "question,answer",
+    [
+        ("Which river is largest in the Thar Desert? Where does it drain?", "Luni River."),
+        ("Which river is largest in the Thar Desert?", "Luni River.\nIt flows southwest."),
+        ("Which river is largest in the Thar Desert?", "A" * 241),
+        ("Which river is largest in the Thar Desert?\nName its basin?", "Luni River."),
+    ],
+)
+def test_candidates_must_be_one_concise_question_and_one_line_answer(question, answer):
+    repository = _Repository()
+    result = _generate(_service(_Provider([_draft(question=question, answer=answer)]), repository))
+
+    assert result.saved_count == 0
+    assert result.rejected_count == 1
+    assert repository.items == []
+    assert any("single-question, concise" in warning for warning in result.warnings)
+
+
+def test_hindi_one_liner_question_and_concise_answer_are_accepted():
+    draft = _draft(
+        question="लूणी नदी किस क्षेत्र की सबसे बड़ी नदी प्रणाली है?",
+        answer="थार मरुस्थल क्षेत्र की।",
+    )
+    repository = _Repository()
+    result = _generate(_service(_Provider([draft]), repository))
+
+    assert result.saved_count == 1
+    assert repository.items[0].question_text == draft.question_text
+    assert repository.items[0].answer_text == draft.answer_text
+    assert repository.items[0].verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+
+
 class _FakeModels:
     def __init__(self, response=None, error=None):
         self.response = response

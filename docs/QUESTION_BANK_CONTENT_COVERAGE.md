@@ -124,3 +124,8 @@ See the full [Question Bank Product Contract](QUESTION_BANK_PRODUCT_CONTRACT.md)
 ## 2026-10-30 generation workflow checkpoint
 
 The mainline candidate-generation implementation is being added within Phase 6.56. It is concept-by-concept and requires an authorized operator to provide a bounded excerpt and locator from a checked source. It is not automatic source discovery and does not generate or certify the full 340-concept catalogue in one run. Continue to treat every catalogue row as a coverage obligation to reconcile against each chosen official exam syllabus; do not count a draft, AI importance score, question count, or Git seed as VERIFIED_COMPLETE.
+
+
+## One-Liner format gate — 30 October 2026
+
+AI-generated candidates must be short direct Q&A, not essay snippets: one question ending in a single question mark, no line breaks, at most 240 characters for each field, and a concise non-question answer. The application enforces these structural rules before persistence; malformed items are rejected. This is not a factual verification or completeness signal. Keep all candidates NEEDS_REVIEW until an independent reviewer verifies source authority, exact evidence, answer correctness, date-sensitivity and fit to the selected exam's reviewed syllabus. A per-topic count is not proof that all examinable points are covered.

@@ -1,6 +1,6 @@
 # Phase 6.56 — AI-assisted, source-grounded One-Liner candidates
 
-**Status:** implementation slice reapplied onto current main in branch `phase-6-56-one-liner-candidates-mainline`; exact-head CI and PR review are pending.  
+**Status:** merged in PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) at `43e5209f70e729e7f68af9e4931e9ed529d08e0f`; this is the source-grounded candidate-generation foundation.  
 **Parent phase:** Phase 6.56 remains **IN_PROGRESS**. This does not start Phase 6.57.  
 **Canonical state:** [PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Content coverage policy:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -58,8 +58,8 @@ The generator does not fetch arbitrary URLs. This avoids turning the authoring e
 
 ## Acceptance evidence
 
-Pending exact-head GitHub Actions and PR checks for this branch. The new deterministic tests cover source-quote grounding, answer-quote containment, importance ordering/threshold, malformed provider output, local/database deduplication, HTTPS validation, excerpt/count bounds, Gemini response parsing and admin endpoint access/configuration failures.
+PR #104 is merged on main. It adds deterministic tests for source-quote grounding, answer-quote containment, importance ordering/threshold, malformed provider output, local/database deduplication, HTTPS validation, excerpt/count bounds, Gemini response parsing and admin endpoint access/configuration failures. This checkpoint records the merge, not a claim that live Gemini credentials, database migrations or learner-visible verified data were exercised.
 
 ## Next action
 
-After exact-head CI passes, merge this implementation slice and record its merge SHA. Then connect the verified official-source/content-authoring pipeline to topic-by-topic batches only after Phase 2.2 is unblocked. Keep Phase 6.56 IN_PROGRESS until the real exam profile, complete source-backed syllabus inventory, all concept applicability reviews, live migration/secrets and genuine mobile E2E acceptance are complete.
+Continue with the deterministic format gate in [PHASE_6_56_ONE_LINER_QUALITY_GATES.md](PHASE_6_56_ONE_LINER_QUALITY_GATES.md). After that, implement coverage-aware topic batches and reviewer-facing gap reporting. Connect official-source content only after the existing source/provenance gates permit it. Keep Phase 6.56 IN_PROGRESS until the real exam profile, complete source-backed syllabus inventory, all concept applicability reviews, live migration/secrets and genuine mobile E2E acceptance are complete.
