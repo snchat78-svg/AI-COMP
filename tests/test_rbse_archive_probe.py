@@ -110,7 +110,7 @@ def test_probe_reads_index_only_when_robot_rules_allow_the_exact_path():
         200,
         f"{ORIGIN}/robots.txt",
         "text/plain",
-        "User-agent: *\nAllow: /books/PAPERS-2025/index.htm\nDisallow: /books/PAPERS-2025/\n",
+        "User-agent: *\nDisallow: /books/PAPERS-2025/\nAllow: /books/PAPERS-2025/index.htm\nAllow: /books/PAPERS-2025/SRS/SS-14.pdf\n",
     )
     page = FetchResult(
         200, INDEX, "text/html",
@@ -154,7 +154,7 @@ def test_probe_blocks_pdf_when_robots_allows_index_but_disallows_pdf_path():
         200,
         f"{ORIGIN}/robots.txt",
         "text/plain",
-        "User-agent: *\\nAllow: /books/PAPERS-2025/index.htm\\nDisallow: /books/PAPERS-2025/SRS/SS-14.pdf\\n",
+        "User-agent: *\nAllow: /books/PAPERS-2025/index.htm\nDisallow: /books/PAPERS-2025/SRS/SS-14.pdf\n",
     )
     page = FetchResult(
         200,
