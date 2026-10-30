@@ -107,6 +107,14 @@ class OneLinerCandidateGenerationResult:
     def saved_count(self) -> int:
         return len(self.saved_items)
 
+    @property
+    def coverage_dimension_counts(self) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for item in self.saved_items:
+            dimension = item.coverage_dimension
+            counts[dimension] = counts.get(dimension, 0) + 1
+        return dict(sorted(counts.items()))
+
 
 class OneLinerCandidateGenerationService:
     """Create source-grounded Q&A candidates; never self-certify model output."""
