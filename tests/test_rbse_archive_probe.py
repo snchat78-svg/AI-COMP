@@ -133,7 +133,7 @@ def test_probe_does_not_read_index_when_robot_rules_disallow_it():
         200,
         f"{ORIGIN}/robots.txt",
         "text/plain",
-        "User-agent: *\nDisallow: /books/PAPERS-2025/\nAllow: /books/PAPERS-2025/index.htm\n",
+        "User-agent: *\nAllow: /\nDisallow: /books/PAPERS-2025/index.htm\n",
     )
     fetcher, requested = _fake_fetcher({f"{ORIGIN}/robots.txt": robots})
 
