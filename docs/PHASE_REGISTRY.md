@@ -426,6 +426,6 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 ## 2026-10-30 — Phase 6.56 One-Liner quality-gate continuation
 
 - PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) merged as `43e5209f70e729e7f68af9e4931e9ed529d08e0f`; the bounded source-grounded Gemini generator now creates per-concept Q&A drafts using exact excerpt evidence and duplicate checks. New candidates remain `NEEDS_REVIEW`.
-- Started the next increment on `phase-6-56-one-liner-quality-guard`: deterministic format rules require exactly one question ending in `?` or `؟`, question/answer each at most 240 characters, no line breaks, and a direct non-question answer. Provider prompt and regression tests are being updated in the same slice.
+- Started the next increment on `phase-6-56-one-liner-quality-guard`: deterministic format rules require exactly one question ending in `?` or `？`, question/answer each at most 240 characters, no line breaks, and a direct non-question answer. Provider prompt and regression tests are being updated in the same slice.
 - This format gate does not prove answer truth, source authority, syllabus applicability or complete coverage. Independent reviewer and official-source gates remain mandatory.
 - Phase 2.2 remains BLOCKED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. No TLS/robots/security or reuse-rights bypass.
