@@ -98,6 +98,7 @@ def test_candidates_are_saved_as_needs_review_and_never_verified():
     assert "coverage_dimension=FACTUAL_DETAIL" in item.source_evidence
     assert _draft().evidence_quote in item.source_evidence
     assert item.importance_score == 0.95
+    assert item.coverage_dimension == "FACTUAL_DETAIL"
     assert provider.calls[0]["concept_label"] == "Luni River"
 
 
@@ -156,6 +157,8 @@ def test_candidate_coverage_dimension_is_preserved_for_reviewer():
 
     assert result.saved_count == 1
     assert "coverage_dimension=PLACE_LOCATION" in repository.items[0].source_evidence
+    assert result.coverage_dimension_counts == {"PLACE_LOCATION": 1}
+    assert repository.items[0].coverage_dimension == "PLACE_LOCATION"
     assert repository.items[0].verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
 
 
