@@ -220,9 +220,9 @@ def test_source_excerpt_size_and_requested_count_are_bounded():
     "question,answer",
     [
         ("Which river is largest in the Thar Desert? Where does it drain?", "Luni River."),
-        ("Which river is largest in the Thar Desert?", "Luni River.\\nIt flows southwest."),
+        ("Which river is largest in the Thar Desert?", "Luni River.\nIt flows southwest."),
         ("Which river is largest in the Thar Desert?", "A" * 241),
-        ("Which river is largest in the Thar Desert?\\nName its basin?", "Luni River."),
+        ("Which river is largest in the Thar Desert?\nName its basin?", "Luni River."),
     ],
 )
 def test_candidates_must_be_one_concise_question_and_one_line_answer(question, answer):
