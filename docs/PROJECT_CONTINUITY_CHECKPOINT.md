@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `a1065a780c2817f9ad02c114cd6f91c5858fb86e`; PR #105 remains the latest merged Phase 6.56 code slice. PR #107 is open on `phase-6-56-topic-batch-audit`; backend CI passed and Flutter release APK CI is still running. Phase 6.56 continues; no next phase has been skipped.)  
+**Last updated:** 2026-10-31 (main `0f8da54ca22ec5e76857587e92df2a9913b92521`; PR #107 is merged. Current continuation: branch `phase-6-56-full-topic-coverage-worklist` / PR #108, exact-head CI pending. Phase 6.56 continues; Phase 6.57 has not started.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -525,3 +525,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Backend Actions run [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) passed full pytest and API container build on initial PR head. Flutter run [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507): analyze and mobile tests passed; release APK build/artifact validation were still running at this checkpoint. Recheck the latest head and both workflows before merge.
 - Next within Phase 6.56 after this increment: reviewer-facing examinable-point coverage checklist/gap report. Full parent-phase acceptance still needs the official exam profile/document bytes and SHA-256, complete independently reviewed syllabus inventory and mappings, controlled live migrations/secrets, and authentic-data mobile E2E.
 - Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access bypass, no unlicensed paper reuse, no contact attempts.
+
+
+## 2026-10-31 restart — full-topic One-Liner coverage worklist
+
+- Latest main was checked first: PR #107 is merged; Phase 6.56 remains IN_PROGRESS, Phase 6.57 remains PLANNED, Phase 2.2 remains BLOCKED and Phase 6.58 remains BLOCKED.
+- PR #106's backend and Flutter CI passed on its own head, but its base was before PR #107. Its dimension-tag code is being reapplied on current main in PR #108; do not merge the stale PR #106 branch.
+- The new `QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv` represents all 340 Git catalogue concepts against 13 examinable-point lenses: 4,420 review rows. All rows start `NOT_ASSESSED`; the matrix is not a question count and not a live database result.
+- Generator tags are reviewer aids only. The authoring response returns tags for saved candidates; each candidate stays `NEEDS_REVIEW` until independent human approval. Learner reads remain VERIFIED-only.
+- The authoring path remains one concept at a time and requires checked source text/evidence. It does not fetch arbitrary URLs or generate unsupported factual answers from model memory. Catalogue topics must be reconciled against a selected exam's exact official syllabus before exam-specific completeness can be asserted.
+- Next: run exact-head PR #108 backend pytest/API-container and Flutter/APK workflows. Then author content in bounded, evidence-backed batches beginning with applicable high-gap concepts; update each matrix row with evidence and accepted Q&A IDs. Keep Old Papers separate.
