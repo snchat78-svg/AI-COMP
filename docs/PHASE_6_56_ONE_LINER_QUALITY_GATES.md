@@ -53,6 +53,15 @@ This increment does not complete Phase 6.56. The official exam profile and offic
 
 The scoped Phase 6.56 work is on branch `phase-6-56-topic-batch-audit`. It adds a bounded scan of the existing concept/language Q&A before generation, Unicode-aware Q+A similarity triage, in-batch similarity checks, and explicit generated/rejected/duplicate/pending-review/verified counts. The final exact content-hash uniqueness rule remains in PostgreSQL. Any scan failure or more than 5,000 existing topic records blocks generation rather than silently skipping duplicate checks. Await exact-head CI and review; do not describe this as merged or live until those gates pass.
 
-## Next quality increment
+## Current quality controls — 2026-10-31
 
-Next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
+- PR #107 is merged and already provides topic/language-scoped near-duplicate checks plus separate generation/review batch audit counts.
+- PR #108 carries forward the reviewer-facing 13-dimension tags onto current main and adds the full 340-concept × 13-dimension worklist (4,420 assessment rows).
+- Every matrix row begins `NOT_ASSESSED`. A reviewer must explicitly record `APPLICABLE_COVERED`, `APPLICABLE_GAP`, or `NOT_APPLICABLE_WITH_REASON`, with source/syllabus evidence.
+- A tag count or matrix row is not proof of fact accuracy, syllabus applicability, or full topic completeness.
+- The authoring endpoint remains concept-by-concept and requires a checked, bounded source excerpt. It does not fetch arbitrary URLs or create source-free factual content.
+- Every generated candidate remains `NEEDS_REVIEW`; existing independent review and VERIFIED-only learner read gates remain unchanged.
+
+## Next content-authoring sequence
+
+Reconcile the full catalogue to the exact official syllabus for a selected exam. Then process applicable topic/dimension gaps in bounded batches from checked authoritative sources, attach exact page/heading/section locators, deduplicate, submit as `NEEDS_REVIEW`, and complete independent review. Never replace inaccessible evidence with model memory or declare a topic complete based on a fixed question count.
