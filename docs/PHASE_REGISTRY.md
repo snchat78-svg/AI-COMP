@@ -2,7 +2,7 @@
 
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified (phase state):** 2026-10-30 (main `0f8da54ca22ec5e76857587e92df2a9913b92521`; PR #100–#107 merged, including source-grounded One-Liner generation, deterministic Q&A format validation, topic-level near-duplicate checks and generation batch audit. Render deployment `dep-dbi9khqa6svs738okt7g` for main commit `ee1a0d6f5ff8c9c778c0b01adba74a9045b564bf` (which includes the PR #107 merge) completed with status `live` at 2026-10-30 13:24:26Z. Render deploy `dep-dbi3tj2vcj2c73c4r3fg` remains live. RBSE first 20 displayed same-host PDF paths report `robots_allowed=True`, but no PDF bytes or reuse permission verified; RSSB/RPSC source research persists 0 candidates. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.)  
+**Last verified (phase state):** 2026-10-31 (main `83841e01ef1a6a60d1d5a2a72daa53c70def9579`; PR #100–#107 merged, including source-grounded One-Liner generation, deterministic Q&A format validation, topic-level near-duplicate checks and generation batch audit. PR #109 is the active Phase 6.56 full-topic coverage increment; exact-head CI pending. Render deployment `dep-dbi9khqa6svs738okt7g` for main commit `ee1a0d6f5ff8c9c778c0b01adba74a9045b564bf` (which includes the PR #107 merge) completed with status `live` at 2026-10-30 13:24:26Z. Render deploy `dep-dbi3tj2vcj2c73c4r3fg` remains live. RBSE first 20 displayed same-host PDF paths report `robots_allowed=True`, but no PDF bytes or reuse permission verified; RSSB/RPSC source research persists 0 candidates. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.)  
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -441,3 +441,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Render deployment `dep-dbi9jojm8hqs73auufa0` was observed in `build_in_progress` immediately after merge; verify its final deployment state separately before claiming rollout.
 - Phase 2.2 remains **BLOCKED**; Phase 6.56 **IN_PROGRESS**; Phase 6.57 **PLANNED**; Phase 6.58 **BLOCKED**. Official paper bytes/reuse permissions, full syllabus inventory/mapping acceptance, live migration/secrets and authentic data mobile E2E are still open. No email/call, proxy, DNS, robots, TLS or copyright bypass.
 
+
+
+## 2026-10-31 — Phase 6.56 full-topic coverage increment (PR #109)
+
+- PR #109 uses current main `83841e01ef1a6a60d1d5a2a72daa53c70def9579`; it reapplies the open PR #106 dimension-tag idea after PR #107, preserving all seven newer mainline documentation commits. PR #108 was superseded because main advanced after its base.
+- Adds a 13-dimension, 340-concept matrix: **4,420 assessment rows**, all initially `NOT_ASSESSED`. These are review slots, not question records or a live DB count.
+- Gemini output is constrained to one allowed dimension; the application validates it; the authoring API returns candidate tags and saved-batch dimension counts. Legacy/manual rows without a tag read as `UNCLASSIFIED`.
+- All generated Q&A stays `NEEDS_REVIEW`; independent review and VERIFIED-only learner reads remain. Old Papers stays separate.
+- Exact-head CI is pending; no merge or deployment is claimed. Phase 6.56 remains **IN_PROGRESS**; Phase 6.57 remains **PLANNED**; Phase 2.2 and Phase 6.58 remain **BLOCKED**. Full official syllabus inventory/mappings, official source bytes/reuse rights, live migrations/secrets and real mobile E2E still gate Phase 6.56 acceptance.
