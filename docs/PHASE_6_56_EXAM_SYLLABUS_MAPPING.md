@@ -207,3 +207,8 @@ After the diagnostic URL fix deployed, [Render official-source-health run #11](h
 This is the first useful deployed-source network measurement after fixing the ChatGPT-added `utm_source` query guard. It does not yet identify why Render cannot complete a TCP connection to the current RSSB/RPSC hosts; it does establish that simply retrying the fetch and changing candidate metadata is not a fix. Preserve certificate validation—especially for the legacy host—and do not use secondary transcriptions as official evidence.
 
 Candidate `rssb-cet-graduation-2026-candidate-20261026-01` stays `REVIEW_PENDING`; no official bytes or SHA-256 are verified. Phase 6.56 remains IN_PROGRESS until an allowed official HTTPS source becomes reachable, the actual PDF is fetched and independently reviewed, the full syllabus inventory/mappings are reviewed, and live mobile E2E passes.
+
+
+## 31 October 2026 — examinable-point coverage continuation
+
+The next scoped increment is defined in [PHASE_6_56_EXAMINABLE_POINT_COVERAGE.md](PHASE_6_56_EXAMINABLE_POINT_COVERAGE.md). It defines atomic syllabus examinable points, applicable coverage dimensions, reviewer checklist, fail-closed gap-report semantics and implementation sequence. This is a design/acceptance contract only: no new database migration, API, real exam data, or coverage percentage is claimed by this documentation change. Reuse PR #107 topic deduplication and batch counters. Keep Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED.

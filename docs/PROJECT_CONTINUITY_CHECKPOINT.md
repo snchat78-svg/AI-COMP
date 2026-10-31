@@ -526,3 +526,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Next within Phase 6.56: build the reviewer-facing examinable-point coverage checklist/gap report. Do not use generated question count as proof of full topic coverage.
 - Parent-phase gates still open: official exam-profile/document identity and actual bytes/SHA-256, complete independently reviewed unit/topic/subtopic inventory, all concept mappings, controlled migrations/author-review secrets, and authentic-data mobile E2E. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access or copyright bypass, no email/calls.
 
+
+
+
+## 2026-10-31 — Phase 6.56 examinable-point coverage continuation
+
+- Base main at branch start: `83841e01ef1a6a60d1d5a2a72daa53c70def9579`; latest confirmed Render service deploy before this documentation-only branch: `dep-dbi9lq2f2vlc73e1l940`, status `live`, commit `83841e01ef1a6a60d1d5a2a72daa53c70def9579`.
+- Started branch `phase-6-56-examinable-point-coverage`; added `docs/PHASE_6_56_EXAMINABLE_POINT_COVERAGE.md` and linked it from the Phase 6.56 mapping doc. Contract defines point-level coverage dimensions, raw counters, reviewer gates, incomplete-inventory output and fail-closed semantics.
+- This increment is documentation only. It does not create a new API/schema, does not certify any syllabus, and does not alter Render. Next implementation task: inspect existing inventory and One-Liner review tables; design additive examinable-point/dimension storage and read-only gap report; add synthetic-fixture tests for missing mappings/dimensions, draft-only/duplicate/rejected items, incomplete inventory and empty denominator.
+- Current phase state unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not skip to Phase 6.57. No email/phone, TLS/robots bypass, proxy or unlicensed document use.
