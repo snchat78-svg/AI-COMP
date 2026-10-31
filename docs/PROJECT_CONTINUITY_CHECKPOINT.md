@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `0f8da54ca22ec5e76857587e92df2a9913b92521`; PR #107 merged after backend and Flutter/APK CI passed. Phase 6.56 continues; Phase 6.57 has not been skipped or started.)  
+**Last updated:** 2026-10-31 (main `83841e01ef1a6a60d1d5a2a72daa53c70def9579`; PR #107 merged. Active Phase 6.56 continuation: PR #109 on `phase-6-56-full-topic-coverage-mainline`; exact-head CI pending. Phase 6.57 remains PLANNED.)  
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -526,3 +526,14 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Next within Phase 6.56: build the reviewer-facing examinable-point coverage checklist/gap report. Do not use generated question count as proof of full topic coverage.
 - Parent-phase gates still open: official exam-profile/document identity and actual bytes/SHA-256, complete independently reviewed unit/topic/subtopic inventory, all concept mappings, controlled migrations/author-review secrets, and authentic-data mobile E2E. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-access or copyright bypass, no email/calls.
 
+
+
+## 2026-10-31 restart — full-topic One-Liner coverage matrix
+
+- Current main at branch creation: `83841e01ef1a6a60d1d5a2a72daa53c70def9579`. Main had advanced seven documentation-only commits after PR #107; PR #108 was superseded rather than merged, and PR #109 is based on current main.
+- PR #107 is merged. PR #106 is closed as superseded; its 13-dimension feature was ported to current main.
+- `QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv` covers all 340 Git catalogue concepts against 13 examinable-point lenses: 4,420 review rows. Every row starts `NOT_ASSESSED`; this is not a Q&A count and not a live DB result.
+- Each generated candidate receives one validated coverage dimension. Dimension counts report saved candidates only. Every AI-created Q&A remains `NEEDS_REVIEW` until independent human verification; learner reads remain VERIFIED-only.
+- The existing generation path remains one concept at a time and requires a checked source excerpt and exact evidence. It does not fetch arbitrary URLs or invent facts from model memory. Reconcile topics with the selected exam's official syllabus before claiming exam-specific completeness.
+- Next: validate the exact PR #109 head with backend pytest/API container and Flutter/APK workflows; then populate the matrix in evidence-backed topic batches and update each row with exact source locators and accepted One-Liner IDs.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 2.2 BLOCKED; Phase 6.58 BLOCKED. No contact, source-access bypass, TLS/robots bypass or unofficial-paper reuse.
