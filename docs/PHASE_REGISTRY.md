@@ -440,3 +440,17 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - All generated candidates remain `NEEDS_REVIEW`; generated `verified_count=0`. Learner content remains VERIFIED-only. No migration, secrets or official-source retrieval behavior is changed by this increment.
 - Exact PR head at initial CI dispatch: `49feab1ce05ec712415b208c141d74fdab0d3b7d`. Backend run [#730](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934522) has completed successfully, including full pytest and API container build. Flutter run [#144](https://github.com/snchat78-svg/AI-COMP/actions/runs/41061934507) is still building/verifying the release APK; its analyze and mobile tests have passed. Recheck exact current head after all branch updates before merge.
 - Phase 2.2 remains **BLOCKED**; Phase 6.56 **IN_PROGRESS**; Phase 6.57 **PLANNED**; Phase 6.58 **BLOCKED**. No paper bytes/reuse permission, full syllabus inventory/mapping acceptance, live migration/secrets or authentic mobile E2E are proven. No email/call, proxy, DNS, robots, TLS or copyright bypass.
+
+
+## 2026-10-31 — Phase 6.56 full-topic One-Liner coverage continuation
+
+**Current branch:** `phase-6-56-full-topic-coverage-worklist` (PR #108; exact-head CI pending).  
+**Base main:** `0f8da54ca22ec5e76857587e92df2a9913b92521`.  
+**Prior merged increment:** PR #107 added topic-level near-duplicate protection and generation batch audit.  
+**Superseded branch:** PR #106 had passing backend and Flutter CI on head `5bc3ff2fe98f6cb731e2c8804f3c2e4db0206613`, but it was based before PR #107 merged. The same dimension-tag functionality is being reapplied cleanly on current main; do not merge its stale branch.
+
+**New worklist:** `QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv` has 4,420 rows derived from all 340 Git catalogue concepts × 13 examinable-point dimensions. Every row starts `NOT_ASSESSED`; no question, review or live verified count is fabricated.
+
+**Code:** Gemini structured output is restricted to one allowed dimension; application validation repeats the allowlist check; the tag is stored beside the existing source evidence; the authoring API returns per-item tags and counts for successfully saved candidates. Legacy/manual items without tags report `UNCLASSIFIED`.
+
+**Safety:** no schema migration, arbitrary URL fetch, TLS/robots bypass or change to reviewer gates. New candidates remain `NEEDS_REVIEW`. Phase 6.56 stays IN_PROGRESS; Phase 6.57 stays PLANNED; Phase 2.2 and Phase 6.58 remain blocked pending their existing live/source acceptance gates.
