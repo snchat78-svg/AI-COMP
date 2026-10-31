@@ -14,6 +14,24 @@ from ai_comp.domain.topic_question_bank import (
 
 MAX_ONE_LINER_TEXT_CHARACTERS = 240
 
+ONE_LINER_COVERAGE_DIMENSIONS = frozenset(
+    {
+        "DEFINITION",
+        "IDENTITY",
+        "DATE_TIME",
+        "PLACE_LOCATION",
+        "CLASSIFICATION_LIST",
+        "COMPARISON_RELATIONSHIP",
+        "CAUSE_EFFECT_SEQUENCE",
+        "FORMULA_UNIT_METHOD",
+        "RULE_EXCEPTION",
+        "DATA_STATISTIC",
+        "MAP_DIAGRAM_TABLE",
+        "COMMON_CONFUSION",
+        "FACTUAL_DETAIL",
+    }
+)
+
 
 def _is_concise_direct_pair(question_text: str, answer_text: str) -> bool:
     """Accept one short direct question and one short, single-line answer."""
@@ -101,6 +119,7 @@ class OneLinerDraft:
     evidence_quote: str
     answer_evidence_quote: str
     importance_score: float
+    coverage_dimension: str = "FACTUAL_DETAIL"
 
     def __post_init__(self) -> None:
         for name in (
@@ -114,6 +133,8 @@ class OneLinerDraft:
                 raise ValueError(f"{name} must be non-empty trimmed text")
         if not 0.0 <= self.importance_score <= 1.0:
             raise ValueError("importance_score must be between 0 and 1")
+        if self.coverage_dimension not in ONE_LINER_COVERAGE_DIMENSIONS:
+            raise ValueError("coverage_dimension is not a supported examinable-point category")
 
 
 class OneLinerCandidateProvider(Protocol):
@@ -156,6 +177,14 @@ class OneLinerCandidateGenerationResult:
     @property
     def saved_count(self) -> int:
         return len(self.saved_items)
+
+    @property
+    def coverage_dimension_counts(self) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for item in self.saved_items:
+            dimension = item.coverage_dimension
+            counts[dimension] = counts.get(dimension, 0) + 1
+        return dict(sorted(counts.items()))
 
     @property
     def pending_review_count(self) -> int:
@@ -305,7 +334,8 @@ class OneLinerCandidateGenerationService:
                 language_code=language_code,
                 source_url=source_url,
                 source_evidence=(
-                    f"{source_locator} | supporting passage: {draft.evidence_quote} "
+                    f"coverage_dimension={draft.coverage_dimension} | {source_locator} "
+                    f"| supporting passage: {draft.evidence_quote} "
                     f"| answer evidence: {draft.answer_evidence_quote}"
                 ),
                 verification_status=OneLinerVerificationStatus.NEEDS_REVIEW,
