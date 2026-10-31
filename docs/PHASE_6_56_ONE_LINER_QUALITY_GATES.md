@@ -55,6 +55,15 @@ PR [#107](https://github.com/snchat78-svg/AI-COMP/pull/107) merged as `0f8da54ca
 
 The service now scans prior same-concept/language Q&A across review states, uses deterministic Unicode-aware question/answer similarity triage and same-batch filtering, and returns separate generated/rejected/duplicate/pending-review/verified batch counts. Database exact-hash uniqueness remains the final race-safe duplicate guard. Scan failures or more than 5,000 existing topic records fail closed. Generated items remain `NEEDS_REVIEW`; generated `verified_count` is zero. This is not semantic truth validation or full examinable-point coverage.
 
-## Next quality increment
+## Current quality controls — 31 October 2026
 
-Next bounded work should add reviewer-facing coverage dimensions (distinct examinable points, not just question counts), safe duplicate/near-duplicate handling across a topic, and a batch audit report that shows generated, rejected, duplicate, pending-review and verified counts separately. Do not bulk-generate from unreviewed or unofficial source text.
+- PR #107 is merged and provides topic/language-scoped near-duplicate checks plus separate generation/review batch audit counts.
+- PR #109 carries forward the reviewer-facing 13-dimension tags onto current main and adds the full 340-concept × 13-dimension review worklist (4,420 rows).
+- Every matrix row starts `NOT_ASSESSED`. Reviewers must explicitly record `APPLICABLE_COVERED`, `APPLICABLE_GAP`, or `NOT_APPLICABLE_WITH_REASON`, with evidence.
+- Tags and matrix rows are omission controls, not proof of answer accuracy, official-syllabus applicability, or full coverage.
+- Generation remains concept-by-concept using a checked, bounded source excerpt. It does not fetch arbitrary URLs or create source-free factual content.
+- Every new candidate remains `NEEDS_REVIEW`; independent review and VERIFIED-only learner reads are unchanged.
+
+## Next content-authoring sequence
+
+Reconcile the catalogue to the exact official syllabus for the selected exam. Work through each applicable topic/dimension gap in bounded batches from authoritative checked sources, attach exact section/page/heading locators, deduplicate and submit as `NEEDS_REVIEW`. Complete independent human review before publishing. Do not use model memory as a substitute for missing source evidence or declare completion from a fixed question count.
