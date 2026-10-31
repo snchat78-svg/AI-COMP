@@ -129,3 +129,19 @@ PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) merged the concept-b
 ## One-Liner format gate — 30 October 2026
 
 AI-generated candidates must be short direct Q&A, not essay snippets: one question ending in exactly one `?` or `？`, no line breaks, at most 240 characters for each field, and a concise non-question answer. The application enforces these structural rules before persistence; malformed items are rejected. This is not a factual verification or completeness signal. Keep all candidates NEEDS_REVIEW until an independent reviewer verifies source authority, exact evidence, answer correctness, date-sensitivity and fit to the selected exam's reviewed syllabus. A per-topic count is not proof that all examinable points are covered.
+
+
+## 2026-10-31 — complete-catalogue examinable-point worklist
+
+The repository now includes [QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv](QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv). It is generated from all 340 concepts in the Git coverage ledger and creates 13 first-pass review slots for each concept: DEFINITION, IDENTITY, DATE_TIME, PLACE_LOCATION, CLASSIFICATION_LIST, COMPARISON_RELATIONSHIP, CAUSE_EFFECT_SEQUENCE, FORMULA_UNIT_METHOD, RULE_EXCEPTION, DATA_STATISTIC, MAP_DIAGRAM_TABLE, COMMON_CONFUSION and FACTUAL_DETAIL.
+
+**Matrix size:** 4,420 assessment rows (plus header). **Completed rows:** 0 at creation. **Live verified Q&A count:** NOT_QUERIED_LIVE_DB. All assessment rows start as `NOT_ASSESSED`.
+
+Each row must be explicitly assessed:
+- `APPLICABLE_COVERED`: add the authoritative source locator and accepted One-Liner IDs that cover the examinable point.
+- `APPLICABLE_GAP`: record the applicable knowledge point still needing a question/answer.
+- `NOT_APPLICABLE_WITH_REASON`: record an explicit reviewer rationale and supporting syllabus/source evidence.
+
+The 13 dimensions are review lenses; they are not a rule that every lens applies to every topic. No empty or unreviewed row is implicitly complete. The matrix is an omission-control worklist, not a Q&A dataset. It does not assert that questions were authored or verified.
+
+PR #108 carries forward reviewer-facing dimension tags in the generation API. Every AI-generated Q&A remains `NEEDS_REVIEW`; only independently reviewed VERIFIED records may appear in learner reads. The Old Papers section remains separate.
