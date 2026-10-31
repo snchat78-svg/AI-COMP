@@ -48,6 +48,19 @@ class TopicOneLinerQA:
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
+    @property
+    def coverage_dimension(self) -> str:
+        """Return the optional reviewer tag stored in source evidence.
+
+        Older/manual records have no tag and remain explicitly unclassified.
+        """
+        prefix = "coverage_dimension="
+        first_part = self.source_evidence.split("|", 1)[0].strip()
+        if first_part.startswith(prefix):
+            value = first_part[len(prefix):].strip()
+            return value or "UNCLASSIFIED"
+        return "UNCLASSIFIED"
+
     def __post_init__(self) -> None:
         for name in ("one_liner_id", "concept_id", "question_text", "answer_text", "language_code"):
             value = getattr(self, name)
