@@ -129,3 +129,17 @@ PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) merged the concept-b
 ## One-Liner format gate — 30 October 2026
 
 AI-generated candidates must be short direct Q&A, not essay snippets: one question ending in exactly one `?` or `？`, no line breaks, at most 240 characters for each field, and a concise non-question answer. The application enforces these structural rules before persistence; malformed items are rejected. This is not a factual verification or completeness signal. Keep all candidates NEEDS_REVIEW until an independent reviewer verifies source authority, exact evidence, answer correctness, date-sensitivity and fit to the selected exam's reviewed syllabus. A per-topic count is not proof that all examinable points are covered.
+
+
+## 2026-10-31 — full-catalogue examinable-point matrix
+
+[QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv](QUESTION_BANK_EXAMINABLE_POINT_MATRIX.csv) contains all 340 concepts in the Git coverage ledger × 13 review dimensions = **4,420 assessment rows**. Every row starts `NOT_ASSESSED`. The live database was not queried; this matrix is not a count of generated, pending or verified questions.
+
+Each row requires one explicit outcome:
+- `APPLICABLE_COVERED`: record authoritative source locator and accepted One-Liner IDs proving the examinable point is covered.
+- `APPLICABLE_GAP`: record the applicable knowledge point that still requires a Q&A.
+- `NOT_APPLICABLE_WITH_REASON`: record why that lens does not apply, with reviewer rationale and source/syllabus evidence.
+
+The 13 dimensions are reviewer lenses, not a requirement that every dimension applies to every topic. An unreviewed row never counts as complete. The worklist is an omission-control matrix, not a Q&A dataset. It does not add questions or certify factual correctness.
+
+PR #109 adds the dimension tag to the protected generation response. Every AI-authored candidate remains `NEEDS_REVIEW`; only separately reviewed VERIFIED items may appear in learner reads. Old Papers remains a distinct product lane.
