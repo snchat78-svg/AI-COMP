@@ -1,6 +1,6 @@
 # Phase 6.56 — full-catalogue One-Liner coverage worklist
 
-**Status:** implementation on current-main branch `phase-6-56-full-topic-coverage-worklist`; PR #108 exact-head CI pending.  
+**Status:** implementation on current-main branch `phase-6-56-full-topic-coverage-mainline`; PR #109 exact-head CI pending.  
 **Parent phase:** Phase 6.56 remains IN_PROGRESS. Phase 6.57 is not started.  
 **Canonical status:** [PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent coverage rule:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)
