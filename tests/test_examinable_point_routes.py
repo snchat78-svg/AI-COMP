@@ -124,14 +124,19 @@ def test_point_author_creates_only_needs_review_candidate(monkeypatch):
 
 
 def test_point_reviewer_cannot_review_own_authored_point(monkeypatch):
-    _tokens(monkeypatch, author_id="author-1", reviewer_id="author-1")
-    response = _client().post(
+    _tokens(monkeypatch, author_id="author-1", reviewer_id="reviewer-1")
+    connection = _Connection([
+        ("SELECT source_status, syllabus_inventory_complete", ("VERIFIED", True, False)),
+        ("SELECT created_by, mapping_gap_reason", ("reviewer-1", "", "NEEDS_REVIEW")),
+    ])
+    response = _client(connection).post(
         "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points/point-01/review",
         headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
         json={"decision": "VERIFIED", "review_note": "attempt", "dimensions": _dimensions()},
     )
-    assert response.status_code == 503
-    assert response.json()["error"]["code"] == "SYLLABUS_ACTOR_ID_REUSE"
+    assert response.status_code == 403
+    assert response.json()["error"]["code"] == "INDEPENDENT_REVIEW_REQUIRED"
+    assert connection.closed
 
 
 def test_point_review_requires_all_nine_distinct_dimensions():
