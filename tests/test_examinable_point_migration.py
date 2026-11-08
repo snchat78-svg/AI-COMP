@@ -19,7 +19,7 @@ def test_examinable_point_migration_separates_points_dimensions_mappings_and_lea
     assert "MAPPING_GAP" in migration
     assert "BEFORE INSERT OR UPDATE OF examinable_points_inventory_complete" in migration
     assert "examinable-point inventory cannot be complete" in migration
-    assert "one_liner.verification_status = 'VERIFIED'" in migration
+    assert "ol.verification_status = 'VERIFIED'" in migration
     assert "examinable-point review evidence is append-only" in migration
 
 
