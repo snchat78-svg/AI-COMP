@@ -257,4 +257,34 @@ DROP TRIGGER IF EXISTS trg_exam_syllabus_point_audit_no_update ON exam_syllabus_
 -- The audit table already has append-only UPDATE/DELETE/TRUNCATE guards from 0024.
 -- This additional function documents the point-review event policy without replacing those guards.
 
+
+CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_child_inventory_lock()
+RETURNS TRIGGER LANGUAGE plpgsql AS $
+DECLARE
+    target_syllabus_id TEXT;
+BEGIN
+    IF TG_OP = 'DELETE' THEN target_syllabus_id := OLD.syllabus_id;
+    ELSE target_syllabus_id := NEW.syllabus_id; END IF;
+    IF EXISTS (
+        SELECT 1 FROM exam_syllabus_documents
+        WHERE syllabus_id = target_syllabus_id
+          AND examinable_points_inventory_complete = TRUE
+    ) THEN
+        RAISE EXCEPTION 'examinable-point mappings and dimensions are locked while attested complete';
+    END IF;
+    IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
+    RETURN NEW;
+END;
+$;
+
+DROP TRIGGER IF EXISTS trg_exam_syllabus_point_concepts_inventory_lock ON exam_syllabus_point_concepts;
+CREATE TRIGGER trg_exam_syllabus_point_concepts_inventory_lock
+BEFORE INSERT OR UPDATE OR DELETE ON exam_syllabus_point_concepts
+FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_child_inventory_lock();
+
+DROP TRIGGER IF EXISTS trg_exam_syllabus_point_dimensions_inventory_lock ON exam_syllabus_point_dimensions;
+CREATE TRIGGER trg_exam_syllabus_point_dimensions_inventory_lock
+BEFORE INSERT OR UPDATE OR DELETE ON exam_syllabus_point_dimensions
+FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_child_inventory_lock();
+
 COMMIT;
