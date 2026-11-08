@@ -367,6 +367,15 @@ def create_point_one_liner_link(
         return error
     try:
         with connection.transaction():
+            source = connection.execute(
+                """SELECT source_status, syllabus_inventory_complete
+                   FROM exam_syllabus_documents WHERE syllabus_id = %s FOR SHARE""",
+                (syllabus_id,),
+            ).fetchone()
+            if source is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(source[0]) != "VERIFIED" or source[1] is not True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_NOT_READY", "message": "Verified official source and complete unit inventory are required before linking learning items."}})
             point = connection.execute(
                 """SELECT mapping_status, review_status
                    FROM exam_syllabus_examinable_points
