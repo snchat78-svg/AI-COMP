@@ -7,7 +7,7 @@ from ai_comp.api.app import create_app
 
 
 class _Cursor:
-    def __init__(self, rows):
+    def __init__(self, rows=()):
         self.rows = list(rows)
 
     def fetchone(self):
@@ -18,20 +18,21 @@ class _Cursor:
 
 
 class _Connection:
-    def __init__(self, source=None):
-        self.source = source
+    def __init__(self, replies=()):
+        self.replies = list(replies)
         self.calls = []
         self.closed = False
 
+    @contextmanager
+    def transaction(self):
+        yield self
+
     def execute(self, query, params=()):
         self.calls.append((query, params))
-        if "FROM exam_syllabus_documents" in query:
-            return _Cursor([] if self.source is None else [self.source])
-        if "AS total_points" in query:
-            return _Cursor([(1, 1, 0, 1, 1, 1, 0, 0, 0, 0)])
-        if "SELECT point_id, unit_id" in query:
-            return _Cursor([])
-        raise AssertionError(f"unexpected SQL: {query}")
+        for fragment, response in self.replies:
+            if fragment in query:
+                return _Cursor(response)
+        return _Cursor()
 
     def close(self):
         self.closed = True
@@ -43,13 +44,135 @@ def _client(connection=None):
     return TestClient(app)
 
 
-def _tokens(monkeypatch):
+def _tokens(monkeypatch, *, author_id="author-1", reviewer_id="reviewer-1"):
     monkeypatch.setenv("AI_COMP_SYLLABUS_ADMIN_TOKEN", "author-secret")
     monkeypatch.setenv("AI_COMP_SYLLABUS_REVIEW_TOKEN", "reviewer-secret")
-    monkeypatch.setenv("AI_COMP_SYLLABUS_AUTHOR_ID", "author-1")
-    monkeypatch.setenv("AI_COMP_SYLLABUS_REVIEWER_ID", "reviewer-1")
+    monkeypatch.setenv("AI_COMP_SYLLABUS_AUTHOR_ID", author_id)
+    monkeypatch.setenv("AI_COMP_SYLLABUS_REVIEWER_ID", reviewer_id)
     monkeypatch.delenv("AI_COMP_CONTENT_ADMIN_TOKEN", raising=False)
     monkeypatch.delenv("AI_COMP_CONTENT_REVIEW_TOKEN", raising=False)
+
+
+def _point_payload(**overrides):
+    return {
+        "point_id": "point-01",
+        "unit_id": "unit-01",
+        "point_type": "FACT",
+        "point_statement": "Synthetic point statement",
+        "page_number": 4,
+        "source_locator": "p. 4, heading 2",
+        "source_evidence": "Synthetic fixture excerpt only",
+        "concept_ids": ["concept-1"],
+        "author_note": "Submitted for independent review",
+        **overrides,
+    }
+
+
+def _dimensions(*, gap=False):
+    rows = [
+        {"dimension_key": "PRESENCE", "assessment": "APPLICABLE"},
+        {"dimension_key": "CORRECTNESS", "assessment": "APPLICABLE"},
+        {"dimension_key": "ATOMICITY", "assessment": "APPLICABLE"},
+        {"dimension_key": "RECALL_DEPTH", "assessment": "APPLICABLE"},
+        {"dimension_key": "APPLICATION", "assessment": "NOT_APPLICABLE", "assessment_reason": "No application is required by this synthetic point."},
+        {"dimension_key": "DISCRIMINATION", "assessment": "NOT_APPLICABLE", "assessment_reason": "No contrast is required by this synthetic point."},
+        {"dimension_key": "LANGUAGE", "assessment": "APPLICABLE"},
+        {"dimension_key": "PROVENANCE", "assessment": "APPLICABLE"},
+        {"dimension_key": "DUPLICATION", "assessment": "GAP" if gap else "APPLICABLE",
+         **({"assessment_reason": "A possible duplicate remains to be checked."} if gap else {})},
+    ]
+    return rows
+
+
+def test_point_author_endpoint_requires_separate_syllabus_credentials(monkeypatch):
+    monkeypatch.delenv("AI_COMP_SYLLABUS_ADMIN_TOKEN", raising=False)
+    monkeypatch.delenv("AI_COMP_SYLLABUS_REVIEW_TOKEN", raising=False)
+    response = _client().post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points",
+        json=_point_payload(),
+    )
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "SYLLABUS_REVIEW_NOT_CONFIGURED"
+
+
+def test_point_candidate_requires_concept_mapping_or_explicit_mapping_gap():
+    response = _client().post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points",
+        json=_point_payload(concept_ids=[], mapping_gap_reason=""),
+    )
+    assert response.status_code == 422
+
+
+def test_point_author_creates_only_needs_review_candidate(monkeypatch):
+    _tokens(monkeypatch)
+    connection = _Connection([
+        ("SELECT source_status, syllabus_inventory_complete", ("VERIFIED", True, False)),
+        ("SELECT unit_kind, review_status", ("UNIT", "VERIFIED")),
+        ("SELECT review_status FROM exam_syllabus_examinable_points", ()),
+    ])
+    response = _client(connection).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points",
+        headers={"X-AI-COMP-Syllabus-Admin-Token": "author-secret"},
+        json=_point_payload(),
+    )
+    assert response.status_code == 201, response.text
+    assert response.json()["review_status"] == "NEEDS_REVIEW"
+    assert any("INSERT INTO exam_syllabus_examinable_points" in query for query, _ in connection.calls)
+    assert any("INSERT INTO exam_syllabus_point_concepts" in query for query, _ in connection.calls)
+    assert any("'EXAMINABLE_POINT'" in query for query, _ in connection.calls)
+    assert connection.closed
+
+
+def test_point_reviewer_cannot_review_own_authored_point(monkeypatch):
+    _tokens(monkeypatch, author_id="author-1", reviewer_id="author-1")
+    response = _client().post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points/point-01/review",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
+        json={"decision": "VERIFIED", "review_note": "attempt", "dimensions": _dimensions()},
+    )
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "SYLLABUS_ACTOR_ID_REUSE"
+
+
+def test_point_review_requires_all_nine_distinct_dimensions():
+    response = _client().post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points/point-01/review",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
+        json={"decision": "VERIFIED", "review_note": "review", "dimensions": _dimensions()[:-1]},
+    )
+    assert response.status_code == 422
+
+
+def test_independent_point_review_records_dimensions_and_mapping(monkeypatch):
+    _tokens(monkeypatch)
+    connection = _Connection([
+        ("SELECT source_status, syllabus_inventory_complete", ("VERIFIED", True, False)),
+        ("SELECT created_by, mapping_gap_reason", ("author-1", "", "NEEDS_REVIEW")),
+        ("SELECT concept_id FROM exam_syllabus_point_concepts", [("concept-1",)]),
+    ])
+    response = _client(connection).post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points/point-01/review",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
+        json={"decision": "VERIFIED", "review_note": "Independently checked against synthetic fixture.",
+              "dimensions": _dimensions()},
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["mapping_status"] == "MAPPED"
+    assert response.json()["review_status"] == "VERIFIED"
+    assert sum("INSERT INTO exam_syllabus_point_dimensions" in query for query, _ in connection.calls) == 9
+    assert any("UPDATE exam_syllabus_point_concepts" in query for query, _ in connection.calls)
+    assert any("UPDATE exam_syllabus_examinable_points" in query for query, _ in connection.calls)
+    assert connection.closed
+
+
+def test_point_with_open_dimension_gap_cannot_be_verified():
+    response = _client().post(
+        "/api/v1/admin/exam-syllabi/test-syllabus/examinable-points/point-01/review",
+        headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
+        json={"decision": "VERIFIED", "review_note": "review",
+              "dimensions": _dimensions(gap=True)},
+    )
+    assert response.status_code == 422
 
 
 def test_gap_report_requires_independent_reviewer_auth(monkeypatch):
@@ -63,9 +186,11 @@ def test_gap_report_requires_independent_reviewer_auth(monkeypatch):
 
 def test_gap_report_returns_unknown_until_both_inventories_are_complete(monkeypatch):
     _tokens(monkeypatch)
-    connection = _Connection(
-        ("TEST_EXAM", "REVIEW_PENDING", False, False, None, None, "")
-    )
+    connection = _Connection([
+        ("FROM exam_syllabus_documents", ("TEST_EXAM", "REVIEW_PENDING", False, False, None, None, "")),
+        ("AS total_points", (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)),
+        ("SELECT point_id, unit_id", []),
+    ])
     response = _client(connection).get(
         "/api/v1/admin/exam-syllabi/test-syllabus/examinable-point-gap-report",
         headers={"X-AI-COMP-Syllabus-Review-Token": "reviewer-secret"},
