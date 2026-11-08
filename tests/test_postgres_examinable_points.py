@@ -64,6 +64,7 @@ def test_incomplete_inventory_never_emits_coverage_percentage():
     report_sql = connection.calls[1][0]
     assert "link.review_status = 'VERIFIED'" in report_sql
     assert "one_liner.verification_status = 'VERIFIED'" in report_sql
+    assert "COUNT(DISTINCT one_liner.content_hash)" in report_sql
     assert "mapping_status <> 'MAPPED'" in report_sql
     assert connection.calls[0][1] == ("test-syllabus",)
 
