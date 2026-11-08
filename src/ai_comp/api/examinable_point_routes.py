@@ -179,6 +179,20 @@ def _valid_syllabus_for_point_authoring(connection, syllabus_id: str):
     return source, None
 
 
+
+class PointInventoryAttestation(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    review_note: str = Field(min_length=1, max_length=2000)
+
+    @field_validator("review_note")
+    @classmethod
+    def note_trimmed(cls, value: str) -> str:
+        if not value or value != value.strip():
+            raise ValueError("review_note must be trimmed and non-empty")
+        return value
+
+
 @router.post("/{syllabus_id}/examinable-points", status_code=201, name="create_examinable_point_draft")
 def create_examinable_point_draft(
     syllabus_id: str, payload: ExaminablePointDraft, request: Request
@@ -457,6 +471,130 @@ def review_point_one_liner_link(
                                          "reviewed_by": actor})
     except Exception:
         return _response(HTTPStatus.CONFLICT, {"error": {"code": "POINT_LEARNING_LINK_REVIEW_FAILED", "message": "The point-to-One-Liner link review was not saved."}})
+    finally:
+        connection.close()
+
+
+
+@router.post("/{syllabus_id}/examinable-points/attest-complete", name="attest_examinable_point_inventory")
+def attest_examinable_point_inventory(
+    syllabus_id: str, payload: PointInventoryAttestation, request: Request
+) -> Response:
+    """Attest only after all points, concept mappings and dimensions are independently reviewed."""
+    actor, error = _authorized(request, reviewer=True)
+    if error is not None:
+        return error
+    connection, error = _connection_or_error(request)
+    if error is not None:
+        return error
+    try:
+        with connection.transaction():
+            source = connection.execute(
+                "SELECT source_status, syllabus_inventory_complete, examinable_points_inventory_complete FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if source is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if str(source[0]) != "VERIFIED" or source[1] is not True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "SYLLABUS_SOURCE_NOT_READY", "message": "Verify the official source and UNIT/TOPIC/SUBTOPIC inventory first."}})
+            if source[2] is True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "EXAMINABLE_POINT_INVENTORY_ALREADY_COMPLETE", "message": "Point inventory is already attested complete."}})
+            total = connection.execute(
+                "SELECT COUNT(*) FROM exam_syllabus_examinable_points WHERE syllabus_id = %s",
+                (syllabus_id,),
+            ).fetchone()
+            blockers = connection.execute(
+                """SELECT COUNT(*) FROM exam_syllabus_examinable_points AS p
+                   WHERE p.syllabus_id = %s AND (
+                     p.review_status <> 'VERIFIED' OR p.mapping_status <> 'MAPPED'
+                     OR NOT EXISTS (
+                       SELECT 1 FROM exam_syllabus_point_concepts AS pc
+                       WHERE pc.syllabus_id = p.syllabus_id AND pc.point_id = p.point_id
+                         AND pc.review_status = 'VERIFIED'
+                     )
+                     OR (SELECT COUNT(*) FROM exam_syllabus_point_dimensions AS d
+                         WHERE d.syllabus_id = p.syllabus_id AND d.point_id = p.point_id) <> 9
+                     OR EXISTS (
+                       SELECT 1 FROM exam_syllabus_point_dimensions AS d
+                       WHERE d.syllabus_id = p.syllabus_id AND d.point_id = p.point_id
+                         AND d.assessment = 'GAP'
+                     )
+                   )""",
+                (syllabus_id,),
+            ).fetchone()
+            if total is None or int(total[0] or 0) == 0 or blockers is None or int(blockers[0] or 0) != 0:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "EXAMINABLE_POINT_INVENTORY_INCOMPLETE", "message": "All points, mappings and nine coverage dimensions must pass independent review."}})
+            self_authored = connection.execute(
+                "SELECT 1 FROM exam_syllabus_examinable_points WHERE syllabus_id = %s AND created_by = %s LIMIT 1",
+                (syllabus_id, actor),
+            ).fetchone()
+            if self_authored is not None:
+                return _response(HTTPStatus.FORBIDDEN, {"error": {"code": "INDEPENDENT_REVIEW_REQUIRED", "message": "A point author cannot attest the full point inventory."}})
+            connection.execute(
+                """UPDATE exam_syllabus_documents
+                   SET examinable_points_inventory_complete = TRUE,
+                       examinable_points_reviewed_at = NOW(),
+                       examinable_points_reviewed_by = %s,
+                       examinable_points_review_note = %s
+                   WHERE syllabus_id = %s""",
+                (actor, payload.review_note, syllabus_id),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'EXAMINABLE_POINT', 'INVENTORY', 'REVIEWER', %s, 'VERIFIED', %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, actor, payload.review_note,
+                 json.dumps({"point_count": int(total[0]), "inventory_complete": True})),
+            )
+        return _response(HTTPStatus.OK, {"syllabus_id": syllabus_id, "point_count": int(total[0]),
+                                         "examinable_points_inventory_complete": True, "reviewed_by": actor})
+    except Exception:
+        return _response(HTTPStatus.CONFLICT, {"error": {"code": "EXAMINABLE_POINT_ATTESTATION_FAILED", "message": "Point inventory attestation failed database integrity checks."}})
+    finally:
+        connection.close()
+
+
+@router.post("/{syllabus_id}/examinable-points/reopen", name="reopen_examinable_point_inventory")
+def reopen_examinable_point_inventory(
+    syllabus_id: str, payload: PointInventoryAttestation, request: Request
+) -> Response:
+    """Reopen a previously attested point inventory with an append-only audit note."""
+    actor, error = _authorized(request, reviewer=True)
+    if error is not None:
+        return error
+    connection, error = _connection_or_error(request)
+    if error is not None:
+        return error
+    try:
+        with connection.transaction():
+            row = connection.execute(
+                "SELECT examinable_points_inventory_complete FROM exam_syllabus_documents WHERE syllabus_id = %s FOR UPDATE",
+                (syllabus_id,),
+            ).fetchone()
+            if row is None:
+                return _response(HTTPStatus.NOT_FOUND, {"error": {"code": "SYLLABUS_NOT_FOUND", "message": "Syllabus candidate was not found."}})
+            if row[0] is not True:
+                return _response(HTTPStatus.CONFLICT, {"error": {"code": "EXAMINABLE_POINT_INVENTORY_NOT_LOCKED", "message": "Point inventory is not attested complete."}})
+            connection.execute(
+                """UPDATE exam_syllabus_documents
+                   SET examinable_points_inventory_complete = FALSE,
+                       examinable_points_reviewed_at = NULL,
+                       examinable_points_reviewed_by = NULL,
+                       examinable_points_review_note = ''
+                   WHERE syllabus_id = %s""",
+                (syllabus_id,),
+            )
+            connection.execute(
+                """INSERT INTO exam_syllabus_review_audit
+                   (audit_id, syllabus_id, entity_type, entity_id, actor_role, actor_id, decision, review_note, evidence)
+                   VALUES (%s, %s, 'EXAMINABLE_POINT', 'INVENTORY', 'REVIEWER', %s, 'REOPENED', %s, %s::jsonb)""",
+                (uuid4().hex, syllabus_id, actor, payload.review_note,
+                 json.dumps({"inventory_complete": False, "reopened_by": actor})),
+            )
+        return _response(HTTPStatus.OK, {"syllabus_id": syllabus_id,
+                                         "examinable_points_inventory_complete": False, "reopened_by": actor})
+    except Exception:
+        return _response(HTTPStatus.CONFLICT, {"error": {"code": "EXAMINABLE_POINT_REOPEN_FAILED", "message": "Point inventory was not reopened."}})
     finally:
         connection.close()
 
