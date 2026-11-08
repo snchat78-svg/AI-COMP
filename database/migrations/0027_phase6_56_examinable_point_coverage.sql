@@ -124,7 +124,7 @@ CREATE INDEX IF NOT EXISTS idx_exam_syllabus_point_one_liners_review
     ON exam_syllabus_point_one_liner_links (syllabus_id, point_id, review_status);
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_examinable_point_inventory()
-RETURNS TRIGGER LANGUAGE plpgsql AS $$
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$$
 DECLARE
     target_syllabus_id TEXT;
 BEGIN
@@ -153,7 +153,7 @@ BEFORE INSERT OR UPDATE OR DELETE ON exam_syllabus_examinable_points
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_examinable_point_inventory();
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_inventory_attestation()
-RETURNS TRIGGER LANGUAGE plpgsql AS $$
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$$
 DECLARE
     point_total BIGINT;
     unresolved_points BIGINT;
@@ -228,7 +228,7 @@ FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_inventory_attestation(
 
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_review_separation()
-RETURNS TRIGGER LANGUAGE plpgsql AS $
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$
 BEGIN
     IF NEW.review_status = 'VERIFIED'
        AND (NEW.reviewed_by IS NULL OR NEW.reviewed_by = NEW.created_by) THEN
@@ -236,7 +236,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$;
+$point_fn$;
 
 DROP TRIGGER IF EXISTS trg_exam_syllabus_point_review_separation ON exam_syllabus_examinable_points;
 CREATE TRIGGER trg_exam_syllabus_point_review_separation
@@ -244,7 +244,7 @@ BEFORE INSERT OR UPDATE OF review_status, reviewed_by ON exam_syllabus_examinabl
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_review_separation();
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_concept_review_separation()
-RETURNS TRIGGER LANGUAGE plpgsql AS $
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$
 DECLARE
     point_author TEXT;
 BEGIN
@@ -259,7 +259,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$;
+$point_fn$;
 
 DROP TRIGGER IF EXISTS trg_exam_syllabus_point_concept_review_separation ON exam_syllabus_point_concepts;
 CREATE TRIGGER trg_exam_syllabus_point_concept_review_separation
@@ -267,7 +267,7 @@ BEFORE INSERT OR UPDATE OF review_status, reviewed_by ON exam_syllabus_point_con
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_concept_review_separation();
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_dimension_review_separation()
-RETURNS TRIGGER LANGUAGE plpgsql AS $
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$
 DECLARE
     point_author TEXT;
 BEGIN
@@ -279,7 +279,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$;
+$point_fn$;
 
 DROP TRIGGER IF EXISTS trg_exam_syllabus_point_dimension_review_separation ON exam_syllabus_point_dimensions;
 CREATE TRIGGER trg_exam_syllabus_point_dimension_review_separation
@@ -287,7 +287,7 @@ BEFORE INSERT OR UPDATE OF assessed_by ON exam_syllabus_point_dimensions
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_dimension_review_separation();
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_one_liner_verification()
-RETURNS TRIGGER LANGUAGE plpgsql AS $$
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$$
 BEGIN
     IF NEW.review_status = 'VERIFIED' THEN
         IF NEW.reviewed_by IS NULL OR NEW.reviewed_by = NEW.created_by THEN
@@ -317,7 +317,7 @@ BEFORE INSERT OR UPDATE OF review_status ON exam_syllabus_point_one_liner_links
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_one_liner_verification();
 
 CREATE OR REPLACE FUNCTION prevent_exam_syllabus_point_review_audit_mutation()
-RETURNS TRIGGER LANGUAGE plpgsql AS $$
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$$
 BEGIN
     RAISE EXCEPTION 'examinable-point review evidence is append-only';
 END;
@@ -329,7 +329,7 @@ DROP TRIGGER IF EXISTS trg_exam_syllabus_point_audit_no_update ON exam_syllabus_
 
 
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_child_inventory_lock()
-RETURNS TRIGGER LANGUAGE plpgsql AS $
+RETURNS TRIGGER LANGUAGE plpgsql AS $point_fn$
 DECLARE
     target_syllabus_id TEXT;
 BEGIN
@@ -345,7 +345,7 @@ BEGIN
     IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
     RETURN NEW;
 END;
-$;
+$point_fn$;
 
 DROP TRIGGER IF EXISTS trg_exam_syllabus_point_concepts_inventory_lock ON exam_syllabus_point_concepts;
 CREATE TRIGGER trg_exam_syllabus_point_concepts_inventory_lock
