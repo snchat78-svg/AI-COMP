@@ -179,6 +179,13 @@ BEGIN
         WHERE p.syllabus_id = NEW.syllabus_id
           AND pc.review_status <> 'VERIFIED';
 
+        IF EXISTS (
+            SELECT 1 FROM exam_syllabus_examinable_points
+            WHERE syllabus_id = NEW.syllabus_id AND created_by = NEW.examinable_points_reviewed_by
+        ) THEN
+            RAISE EXCEPTION 'point author cannot attest the examinable-point inventory';
+        END IF;
+
         SELECT COUNT(*)
           INTO incomplete_dimensions
         FROM exam_syllabus_examinable_points AS p
@@ -219,10 +226,73 @@ CREATE TRIGGER trg_exam_syllabus_point_inventory_attestation
 BEFORE INSERT OR UPDATE OF examinable_points_inventory_complete ON exam_syllabus_documents
 FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_inventory_attestation();
 
+
+CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_review_separation()
+RETURNS TRIGGER LANGUAGE plpgsql AS $
+BEGIN
+    IF NEW.review_status = 'VERIFIED'
+       AND (NEW.reviewed_by IS NULL OR NEW.reviewed_by = NEW.created_by) THEN
+        RAISE EXCEPTION 'examinable point author cannot independently verify the point';
+    END IF;
+    RETURN NEW;
+END;
+$;
+
+DROP TRIGGER IF EXISTS trg_exam_syllabus_point_review_separation ON exam_syllabus_examinable_points;
+CREATE TRIGGER trg_exam_syllabus_point_review_separation
+BEFORE INSERT OR UPDATE OF review_status, reviewed_by ON exam_syllabus_examinable_points
+FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_review_separation();
+
+CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_concept_review_separation()
+RETURNS TRIGGER LANGUAGE plpgsql AS $
+DECLARE
+    point_author TEXT;
+BEGIN
+    IF NEW.review_status = 'VERIFIED' THEN
+        SELECT created_by INTO point_author
+        FROM exam_syllabus_examinable_points
+        WHERE syllabus_id = NEW.syllabus_id AND point_id = NEW.point_id;
+        IF point_author IS NULL OR NEW.reviewed_by IS NULL
+           OR NEW.reviewed_by = NEW.created_by OR NEW.reviewed_by = point_author THEN
+            RAISE EXCEPTION 'point and mapping authors cannot independently verify a concept mapping';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$;
+
+DROP TRIGGER IF EXISTS trg_exam_syllabus_point_concept_review_separation ON exam_syllabus_point_concepts;
+CREATE TRIGGER trg_exam_syllabus_point_concept_review_separation
+BEFORE INSERT OR UPDATE OF review_status, reviewed_by ON exam_syllabus_point_concepts
+FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_concept_review_separation();
+
+CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_dimension_review_separation()
+RETURNS TRIGGER LANGUAGE plpgsql AS $
+DECLARE
+    point_author TEXT;
+BEGIN
+    SELECT created_by INTO point_author
+    FROM exam_syllabus_examinable_points
+    WHERE syllabus_id = NEW.syllabus_id AND point_id = NEW.point_id;
+    IF point_author IS NULL OR NEW.assessed_by = point_author THEN
+        RAISE EXCEPTION 'point author cannot independently assess coverage dimensions';
+    END IF;
+    RETURN NEW;
+END;
+$;
+
+DROP TRIGGER IF EXISTS trg_exam_syllabus_point_dimension_review_separation ON exam_syllabus_point_dimensions;
+CREATE TRIGGER trg_exam_syllabus_point_dimension_review_separation
+BEFORE INSERT OR UPDATE OF assessed_by ON exam_syllabus_point_dimensions
+FOR EACH ROW EXECUTE FUNCTION enforce_exam_syllabus_point_dimension_review_separation();
+
 CREATE OR REPLACE FUNCTION enforce_exam_syllabus_point_one_liner_verification()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
     IF NEW.review_status = 'VERIFIED' THEN
+        IF NEW.reviewed_by IS NULL OR NEW.reviewed_by = NEW.created_by THEN
+            RAISE EXCEPTION 'learning-item link author cannot independently verify the link';
+        END IF;
         IF NOT EXISTS (
             SELECT 1
             FROM question_bank_one_liners AS ol
