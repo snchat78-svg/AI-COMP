@@ -535,3 +535,25 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Started branch `phase-6-56-examinable-point-coverage`; added `docs/PHASE_6_56_EXAMINABLE_POINT_COVERAGE.md` and linked it from the Phase 6.56 mapping doc. Contract defines point-level coverage dimensions, raw counters, reviewer gates, incomplete-inventory output and fail-closed semantics.
 - This increment is documentation only. It does not create a new API/schema, does not certify any syllabus, and does not alter Render. Next implementation task: inspect existing inventory and One-Liner review tables; design additive examinable-point/dimension storage and read-only gap report; add synthetic-fixture tests for missing mappings/dimensions, draft-only/duplicate/rejected items, incomplete inventory and empty denominator.
 - Current phase state unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not skip to Phase 6.57. No email/phone, TLS/robots bypass, proxy or unlicensed document use.
+
+
+## 2026-11-08 continuation — Phase 6.56 examinable-point implementation started
+
+- **Verified main:** `0f4c9607e8c2a29ac028131c8df580623fa13dde`. Branch `phase-6-56-examinable-point-gap-report` started from this exact main head.
+- **Official-source blocker:** [research run 42349804271](https://github.com/snchat78-svg/AI-COMP/actions/runs/42349804271) failed closed on 2026-11-07; RSSB requests timed out, RPSC was network-unreachable, and 0 paper candidates persisted. No access control, robots or TLS bypass used; no calls/emails.
+- **Phase 6.56 implementation proposal:** migration 0027 adds point, multi-concept mapping, nine dimensions and point-to-verified-One-Liner link tables; API routes provide protected author/reviewer workflows, inventory attestation/reopen and paginated gap reporting. Only exact point-linked, independently verified One-Liners count. Historical question linking is explicitly not implemented in this increment and remains a separate pool.
+- **Data policy:** tests use synthetic fixtures only. No real profile or official syllabus is seeded, no old-paper/one-liner pool is merged, and no completion percentage is shown while source/inventory gates are incomplete.
+- **Status:** implementation branch and synthetic tests prepared; exact-head CI, SQL migration execution, deployment, Flutter/mobile parity and official data verification are still pending. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED; Phase 2.2 BLOCKED.
+- **Next action:** PR review and exact-head CI; repair any failing tests/schema before merge. Then run migration through the existing database workflow only after CI is green; do not advance Phase 6.57 until all Phase 6.56 parent gates are met.
+
+
+
+## 2026-11-08 — latest connectivity and Phase 6.56 verification (PR #111)
+
+- PR [#111](https://github.com/snchat78-svg/AI-COMP/pull/111), branch `phase-6-56-examinable-point-gap-report`, exact head `d43ef8d33380b29a52c97a2dece93de0e65d471c`, remains OPEN / NOT MERGED.
+- Backend exact-head [run #746 / 42450211828](https://github.com/snchat78-svg/AI-COMP/actions/runs/42450211828): **645 passed, 14 warnings**; API container build PASS. The migration integration test ran through the repository migration runner against the ephemeral CI PostgreSQL service; all four new tables and selected trigger invariants passed. No production database migration was run.
+- Exact-head source diagnostics [run #72 / 42450211838](https://github.com/snchat78-svg/AI-COMP/actions/runs/42450211838) completed: Render-side RSSB current + legacy IPv4 TCP timed out; RPSC IPv4 TCP timed out and IPv6 unreachable. The fixed `example.com` control passed validated IPv4 TLS and the general recruitment portal control had a passing IPv4 TCP/TLS address, but this did not open the registered RSSB/RPSC sources.
+- The fixed recruitment public-index inspection read three HTML paths and found no paper or answer-key links; robots.txt was not published (HTTP 404), which is not itself permission to fetch or reuse documents. Jan Soochna RSSB service route returned `ROBOTS_UNAVAILABLE`; RBSE archive route returned `ROBOTS_UNAVAILABLE` on this run. No PDF bytes fetched; no source registry/database changes; 0 candidates promoted.
+- Conclusion: general HTTPS egress works to a control host, while the registered RSSB/RPSC endpoints remain destination/path-specific blocked from the deployed runtime. Do not use proxy, DNS override, unsafe TLS, robots bypass, or mirrors. Phase 2.2 stays BLOCKED.
+- PR #111 implements point-level records, reviewer-separated authoring, nine assessment dimensions, exact point-linked VERIFIED One-Liner coverage with content-hash de-duplication, inventory attestation/reopen and read-only gap report. Coverage stays UNKNOWN when source/inventory gates are incomplete. Old Papers remain separate; historical-paper point linking and Flutter/mobile report UI remain future slices.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. PR review/merge, production migration, production deploy, mobile parity and authentic official-data validation remain open.
