@@ -31,7 +31,13 @@ class _Connection:
         self.calls.append((query, params))
         for fragment, response in self.replies:
             if fragment in query:
-                return _Cursor(response)
+                if isinstance(response, list):
+                    rows = response
+                elif response is None or response == ():
+                    rows = []
+                else:
+                    rows = [response]
+                return _Cursor(rows)
         return _Cursor()
 
     def close(self):
