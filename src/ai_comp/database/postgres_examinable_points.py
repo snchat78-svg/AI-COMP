@@ -45,7 +45,7 @@ class PostgresExaminablePointRepository:
             ) AS dimensions ON TRUE
             LEFT JOIN LATERAL (
                 SELECT
-                    COUNT(DISTINCT link.one_liner_id) FILTER (
+                    COUNT(DISTINCT one_liner.content_hash) FILTER (
                         WHERE link.review_status = 'VERIFIED'
                           AND one_liner.verification_status = 'VERIFIED'
                     ) AS verified_one_liner_count,
