@@ -215,6 +215,10 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 | KAL-176 | Vishnu-Mittre और R. Savithri ने Kalibangan में पहले बताए गए rice remains की पहचान पर क्या आपत्ति उठाई? | उन्होंने कहा कि cakes और pai में rice epidermis तथा rice का विशिष्ट chess-board pattern नहीं मिला; इसलिए पहले की rice पहचान soundly based नहीं थी। | S11 — printed p. 79; authors cite *Palaeobotanist* 22(2), 1975, pp. 124–126 |
 | KAL-177 | Kalibangan के rice evidence पर notes में विरोधाभास क्यों दर्ज किया गया है? | ASI Jodhpur Circle museum page rice का उल्लेख करता है, जबकि ASI की 1974–75 review में Vishnu-Mittre और Savithri ने उन्हीं terracotta cakes/pai के कथित rice remains को barley और कुछ wheat बताया; इसे unresolved source disagreement के रूप में रखा गया है। | S7 — “The Early Harappan Period”; S11 — printed p. 79 |
 
+## Additional faunal chronology note
+
+| KAL-178 | ZSI की faunal study कालीबंगा के पशु-अवशेषों को किन सांस्कृतिक चरणों से जोड़ती है? | दोनों—पूर्व-हड़प्पा (pre-Harappan) और हड़प्पा (Harappan) चरणों से। | S10 — Annual Report 2021–22, printed p. 35 |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -359,4 +363,4 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 177 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 178 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
