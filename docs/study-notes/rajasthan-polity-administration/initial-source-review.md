@@ -17,7 +17,7 @@
 
 ## 2. संवैधानिक एवं वैधानिक निकाय — राजस्थान लोक सेवा आयोग
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RPO-005 | राजस्थान लोक सेवा आयोग का संवैधानिक गठन किस अनुच्छेद के अंतर्गत है? | अनुच्छेद 315। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc` | S2 — सूचना पुस्तिका, मुद्रित पृ. 4 |
 | RPO-006 | राजस्थान लोक सेवा आयोग के कर्तव्य एवं कार्य किस अनुच्छेद में निर्धारित हैं? | अनुच्छेद 320 में। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc` | S2 — मुद्रित पृ. 4–5 |
@@ -27,14 +27,14 @@
 
 ## 3. राजस्थान उच्च न्यायालय
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RPO-010 | राजस्थान उच्च न्यायालय का उद्घाटन कब और कहाँ हुआ? | 29 अगस्त 1949 को जोधपुर में। | `catalog.rajasthan_polity_and_administration_state_government_rajasthan_high_court` | S3 — e-Committee, Supreme Court of India, “Rajasthan High Court” |
 | RPO-011 | राजस्थान उच्च न्यायालय की स्थायी पीठ जयपुर में कब से कार्यरत हुई? | 30 जनवरी 1977 से। | `catalog.rajasthan_polity_and_administration_state_government_rajasthan_high_court` | S3 — “Rajasthan High Court”, अनुच्छेद 3 |
 
 ## 4. स्थानीय स्वशासन — पंचायती राज
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RPO-012 | राजस्थान की पंचायती राज व्यवस्था के तीन स्तर कौन-से हैं? | ग्राम पंचायत, पंचायत समिति और जिला परिषद। | `catalog.rajasthan_polity_and_administration_local_self_government_panchayati_raj` | S4 — तृतीय राज्य वित्त आयोग रिपोर्ट, मुद्रित पृ. 26–27 |
 | RPO-013 | राजस्थान में पंचायती राज का उद्घाटन कब, कहाँ और किसने किया? | 2 अक्टूबर 1959 को नागौर में प्रधानमंत्री जवाहरलाल नेहरू ने। | `catalog.rajasthan_polity_and_administration_local_self_government_panchayati_raj` | S4 — मुद्रित पृ. 26 |
@@ -43,9 +43,9 @@
 
 ## 5. राजस्थान के राज्य संस्थान — राज्य वित्त आयोग
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
-| RPO-016 | पंचायतों की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-I में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना, मुद्रित पृ. i |
+| RPO-016 | पंचायतों की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-I में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना (Preface) |
 | RPO-017 | नगरपालिकाओं की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-Y में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना, मुद्रित पृ. i |
 
 ## स्रोत रजिस्टर
