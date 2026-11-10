@@ -292,3 +292,12 @@ This roadmap records required work and observed caveats; it does not claim compl
 - KLB-8 now has Gazetteer, ASI Jodhpur Circle and ASI Part II figure-register support, but B. B. Lal 1979 Fig. 1 still labels cemetery KLB-4; the inconsistency is preserved, not silently resolved.
 - Screenshot/page-image retrieval for the 13.69 MB ASI PDF failed; figure captions are text-extracted only. No map, burial illustration or pathology plate is considered visually verified, and no Q&A was added from caption-only evidence.
 - No new notes count: 240 primary Q&A, 3 corroborative points, 2 ASI images; every item remains NEEDS_REVIEW. Kalibangan remains DRAFTING; Ahar-Banas remains NOT STARTED. No app/code/database/APK changes; automated application tests not run.
+
+
+### 2026-11-10 — cemetery Chapter 22–23 text increment (content-only)
+
+- Continued PR #113 on the same branch; added KAL-241–KAL-264 from selected readable text passages in ASI Part II Chapter 22 (A.K. Sharma, “The Cemetery”) and Chapter 23 (K.S. Ramachandran, “Pot Burials”). New topics include 88 extended burials across 16 groups, 14 large skeleton-free pits, pit dimensions, selected individual pot burials, burial-chamber construction, and cautiously attributed palaeopathological observations.
+- Current notes count is 264 primary AI-authored Hindi Q&A drafts, 3 corroborative items and 2 ASI images. All remain NEEDS_REVIEW; this is not an independent review or syllabus-mapped/verified learner content.
+- Selected chapter text was read using a same-title text-readable copy hosted on a Government of India PM Gati Shakti staging subdomain. This was an extraction aid; no binary-hash comparison to the canonical official ASI PDF was possible. Cite S6 (official ASI) and re-check exact pages during independent review. PDF screenshots failed due payload limits; no images/plans were visually verified.
+- Preserved a count discrepancy: primary ASI Part II p. 1422 says 6–10 extended burials per group; secondary Satarupa Bal 2020 summary S21 says 8–10. KAL-243 provisionally uses the primary report's range. KLB-4 vs KLB-8 remains unresolved.
+- No MCQs/tests, application code, migrations, database, APK or learner data changed. No application tests run; exact/normalized in-file question audit performed after the addition. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Kalibangan remains DRAFTING / NOT COMPLETE; Ahar-Banas remains NOT STARTED.
