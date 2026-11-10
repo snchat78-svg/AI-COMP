@@ -35,7 +35,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 ### Kalibangan content expansion — 2026-11-10
 
 - Reviewed PR #112's merged content and the 34-topic Rajasthan History tracker before continuing; no subject/topic sequence was skipped.
-- New branch: `content/kalibangan-full-topic-coverage-asi` (PR #113 to be opened after this documentation increment).
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is open on branch `content/kalibangan-full-topic-coverage-asi`.
 - Added KAL-065 through KAL-119: fabrics A–F, construction phases and houses, museum gallery evidence, mature pottery and graffiti, copper assemblage and source hypothesis, crops/animal traction, gypsum interpretation, querns/kitchen tools, bead types, measuring devices, shell and textile objects, and cemetery/burial details.
 - Added 2 direct image links from the official ASI Jodhpur Circle museum page (excavation trench; present-day KLB-2) with credit and reuse-permission caution.
 - Added explicit authorship statement: Hindi question wording is AI-authored in new phrasing; answers are sourced paraphrases; these are not copied verbatim questions and are not PYQs. All are NEEDS_REVIEW.
