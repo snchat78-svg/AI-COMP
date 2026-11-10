@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-10-30 (main `0f8da54ca22ec5e76857587e92df2a9913b92521`; PR #107 merged after backend and Flutter/APK CI passed. Phase 6.56 continues; Phase 6.57 has not been skipped or started.)  
+**Last updated:** 2026-11-10 (main merge PR #111 is present at `138dd73ea8affdb86a37800ad38b1c80a62b4ff9`; exact-head CI run `42450399282` passed 645 backend tests/14 existing warnings plus API container build. Notes-first content work begins on branch `content/notes-first-rajasthan-history-kalibangan`.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -17,6 +17,18 @@
 4. Select the next PLANNED phase or resume an IN_PROGRESS phase. Never repeat merged phases unless fixing a specific defect.
 5. Update this checkpoint and Phase Registry in the same PR as meaningful work; include exact branch, PR, merge SHA, test evidence, uncompleted gates and the next task.
 6. Do not claim content complete from catalogue rows, code, generated text, or Git seed files. Only source-backed, independent-reviewed VERIFIED records count.
+
+## User priority — Study Notes first (2026-11-10)
+
+The user has set the immediate content priority: before adding more MCQ generation, topic tests, mastery or revision features, build concise **Subject → Topic → Subtopic → One-Liner Question + Direct Answer notes** that cover the full set of examinable points.
+
+- Follow the 14 existing subject categories and concept order in `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; do not create a parallel taxonomy.
+- First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
+- Initial notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md` on branch `content/notes-first-rajasthan-history-kalibangan`.
+- It is a draft research slice, not a complete topic: Q&A items remain `NEEDS_REVIEW`; no exam-specific official syllabus mapping is claimed. Continue filling gaps from primary ASI material and exact page/plate locators.
+- Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
+- Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
+- Do not start Phase 6.57 early. Phase 6.56, Phase 2.2 and Phase 6.58 retain their existing acceptance gates.
 
 ## Current phase state
 
