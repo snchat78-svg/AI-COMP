@@ -102,10 +102,10 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | स्थिति एवं विस्तार — Location and Extent | `catalog.rajasthan_geography_location_and_physical_features_location_and_extent` | मसौदा शुरू नहीं |
+| 1 | स्थिति एवं विस्तार — Location and Extent | `catalog.rajasthan_geography_location_and_physical_features_location_and_extent` | 1 Q&A; NEEDS_REVIEW |
 | 2 | अरावली पर्वतमाला — Aravalli Range | `catalog.rajasthan_geography_location_and_physical_features_aravalli_range` | 1 seed Q&A; समीक्षा लंबित |
-| 3 | थार मरुस्थल — Thar Desert | `catalog.rajasthan_geography_location_and_physical_features_thar_desert` | 1 seed Q&A; समीक्षा लंबित |
-| 4 | पूर्वी मैदान — Eastern Plains | `catalog.rajasthan_geography_location_and_physical_features_eastern_plains` | मसौदा शुरू नहीं |
+| 3 | थार मरुस्थल — Thar Desert | `catalog.rajasthan_geography_location_and_physical_features_thar_desert` | 2 नए + 1 seed Q&A; NEEDS_REVIEW |
+| 4 | पूर्वी मैदान — Eastern Plains | `catalog.rajasthan_geography_location_and_physical_features_eastern_plains` | 1 Q&A; NEEDS_REVIEW |
 | 5 | दक्षिण-पूर्वी पठार — South-Eastern Plateau | `catalog.rajasthan_geography_location_and_physical_features_south_eastern_plateau` | मसौदा शुरू नहीं |
 
 #### 2. नदियाँ एवं अपवाह तंत्र — Rivers and Drainage
@@ -113,11 +113,11 @@
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
 | 1 | लूनी नदी — Luni River | `catalog.rajasthan_geography_rivers_and_drainage_luni_river` | 2 seed Q&A; समीक्षा लंबित |
-| 2 | चम्बल नदी — Chambal River | `catalog.rajasthan_geography_rivers_and_drainage_chambal_river` | मसौदा शुरू नहीं |
-| 3 | बनास नदी — Banas River | `catalog.rajasthan_geography_rivers_and_drainage_banas_river` | 1 seed Q&A; समीक्षा लंबित |
+| 2 | चम्बल नदी — Chambal River | `catalog.rajasthan_geography_rivers_and_drainage_chambal_river` | 1 साझा Banas–Chambal Q&A; NEEDS_REVIEW |
+| 3 | बनास नदी — Banas River | `catalog.rajasthan_geography_rivers_and_drainage_banas_river` | 1 नया साझा Q&A + 1 seed; NEEDS_REVIEW |
 | 4 | माही नदी — Mahi River | `catalog.rajasthan_geography_rivers_and_drainage_mahi_river` | मसौदा शुरू नहीं |
 | 5 | साबरमती नदी — Sabarmati River | `catalog.rajasthan_geography_rivers_and_drainage_sabarmati_river` | मसौदा शुरू नहीं |
-| 6 | आंतरिक अपवाह तंत्र — Inland Drainage | `catalog.rajasthan_geography_rivers_and_drainage_inland_drainage` | मसौदा शुरू नहीं |
+| 6 | आंतरिक अपवाह तंत्र — Inland Drainage | `catalog.rajasthan_geography_rivers_and_drainage_inland_drainage` | 4 Ghaggar Q&A; NEEDS_REVIEW |
 
 #### 3. झीलें, बाँध एवं नहरें — Lakes, Dams and Canals
 
@@ -133,8 +133,8 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | जलवायु प्रदेश — Climate Regions | `catalog.rajasthan_geography_climate_and_environment_climate_regions` | मसौदा शुरू नहीं |
-| 2 | वर्षा — Rainfall | `catalog.rajasthan_geography_climate_and_environment_rainfall` | मसौदा शुरू नहीं |
+| 1 | जलवायु प्रदेश — Climate Regions | `catalog.rajasthan_geography_climate_and_environment_climate_regions` | 2 Q&A; NEEDS_REVIEW |
+| 2 | वर्षा — Rainfall | `catalog.rajasthan_geography_climate_and_environment_rainfall` | 1 Q&A; NEEDS_REVIEW |
 | 3 | सूखा — Drought | `catalog.rajasthan_geography_climate_and_environment_drought` | मसौदा शुरू नहीं |
 | 4 | मृदाएँ — Soils | `catalog.rajasthan_geography_climate_and_environment_soils` | मसौदा शुरू नहीं |
 | 5 | प्राकृतिक वनस्पति — Natural Vegetation | `catalog.rajasthan_geography_climate_and_environment_natural_vegetation` | मसौदा शुरू नहीं |
@@ -145,7 +145,7 @@
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
 | 1 | प्रमुख फसलें — Major Crops | `catalog.rajasthan_geography_agriculture_and_resources_major_crops` | मसौदा शुरू नहीं |
-| 2 | सिंचाई — Irrigation | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | मसौदा शुरू नहीं |
+| 2 | सिंचाई — Irrigation | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | 2 Q&A; NEEDS_REVIEW |
 | 3 | पशुधन — Livestock | `catalog.rajasthan_geography_agriculture_and_resources_livestock` | मसौदा शुरू नहीं |
 | 4 | धात्विक खनिज — Metallic Minerals | `catalog.rajasthan_geography_agriculture_and_resources_metallic_minerals` | मसौदा शुरू नहीं |
 | 5 | अधात्विक खनिज — Non-Metallic Minerals | `catalog.rajasthan_geography_agriculture_and_resources_non_metallic_minerals` | मसौदा शुरू नहीं |
@@ -171,14 +171,14 @@
 |---:|---|---|---|
 | 1 | राज्यपाल — Governor | `catalog.rajasthan_polity_and_administration_state_government_governor` | मसौदा शुरू नहीं |
 | 2 | मुख्यमंत्री एवं मंत्रिपरिषद — Chief Minister and Council of Ministers | `catalog.rajasthan_polity_and_administration_state_government_chief_minister_and_council_of_ministers` | मसौदा शुरू नहीं |
-| 3 | राज्य विधानमंडल — State Legislature | `catalog.rajasthan_polity_and_administration_state_government_state_legislature` | मसौदा शुरू नहीं |
-| 4 | राजस्थान उच्च न्यायालय — Rajasthan High Court | `catalog.rajasthan_polity_and_administration_state_government_rajasthan_high_court` | मसौदा शुरू नहीं |
+| 3 | राज्य विधानमंडल — State Legislature | `catalog.rajasthan_polity_and_administration_state_government_state_legislature` | 4 Q&A; NEEDS_REVIEW |
+| 4 | राजस्थान उच्च न्यायालय — Rajasthan High Court | `catalog.rajasthan_polity_and_administration_state_government_rajasthan_high_court` | 2 Q&A; NEEDS_REVIEW |
 
 #### 2. संवैधानिक एवं वैधानिक निकाय — Constitutional and Statutory Bodies
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | राजस्थान लोक सेवा आयोग — RPSC | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc` | मसौदा शुरू नहीं |
+| 1 | राजस्थान लोक सेवा आयोग — RPSC | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc` | 5 Q&A; NEEDS_REVIEW |
 | 2 | राज्य निर्वाचन आयोग — State Election Commission | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_election_commission` | मसौदा शुरू नहीं |
 | 3 | राज्य सूचना आयोग — State Information Commission | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_information_commission` | मसौदा शुरू नहीं |
 | 4 | लोकायुक्त — Lokayukta | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | मसौदा शुरू नहीं |
@@ -188,7 +188,7 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | पंचायती राज — Panchayati Raj | `catalog.rajasthan_polity_and_administration_local_self_government_panchayati_raj` | मसौदा शुरू नहीं |
+| 1 | पंचायती राज — Panchayati Raj | `catalog.rajasthan_polity_and_administration_local_self_government_panchayati_raj` | 4 Q&A; NEEDS_REVIEW |
 | 2 | ग्राम पंचायत — Gram Panchayat | `catalog.rajasthan_polity_and_administration_local_self_government_gram_panchayat` | मसौदा शुरू नहीं |
 | 3 | पंचायत समिति — Panchayat Samiti | `catalog.rajasthan_polity_and_administration_local_self_government_panchayat_samiti` | मसौदा शुरू नहीं |
 | 4 | जिला परिषद — Zila Parishad | `catalog.rajasthan_polity_and_administration_local_self_government_zila_parishad` | मसौदा शुरू नहीं |
@@ -208,7 +208,7 @@
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
 | 1 | राज्य लोक सेवा आयोग — State Public Service Commission | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_public_service_commission` | मसौदा शुरू नहीं |
-| 2 | राज्य वित्त आयोग — State Finance Commission | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | मसौदा शुरू नहीं |
+| 2 | राज्य वित्त आयोग — State Finance Commission | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | 2 Q&A; NEEDS_REVIEW |
 | 3 | महिला एवं बाल आयोग — State Commissions for Women and Children | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_commissions_for_women_and_children` | मसौदा शुरू नहीं |
 
 ### हिंदी भाषा — Hindi
@@ -220,7 +220,7 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | वर्ण एवं वर्णमाला — वर्ण and वर्णमाला | `catalog.hindi_grammar_वर_ण_and_वर_णम_ल` | मसौदा शुरू नहीं |
+| 1 | वर्ण एवं वर्णमाला — वर्ण and वर्णमाला | `catalog.hindi_grammar_वर_ण_and_वर_णम_ल` | 12 Q&A; NEEDS_REVIEW |
 | 2 | संधि — संधि | `catalog.hindi_grammar_स_ध` | मसौदा शुरू नहीं |
 | 3 | समास — समास | `catalog.hindi_grammar_सम_स` | मसौदा शुरू नहीं |
 | 4 | उपसर्ग — उपसर्ग | `catalog.hindi_grammar_उपसर_ग` | मसौदा शुरू नहीं |
@@ -264,7 +264,7 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | शब्द-भेद — Parts of Speech | `catalog.english_grammar_parts_of_speech` | मसौदा शुरू नहीं |
+| 1 | शब्द-भेद — Parts of Speech | `catalog.english_grammar_parts_of_speech` | 14 Q&A; NEEDS_REVIEW |
 | 2 | काल — Tenses | `catalog.english_grammar_tenses` | मसौदा शुरू नहीं |
 | 3 | कर्ता-क्रिया का सामंजस्य — Subject-Verb Agreement | `catalog.english_grammar_subject_verb_agreement` | मसौदा शुरू नहीं |
 | 4 | आर्टिकल (A, An, The) — Articles | `catalog.english_grammar_articles` | मसौदा शुरू नहीं |
