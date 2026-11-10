@@ -138,7 +138,7 @@
 | 3 | सूखा — Drought | `catalog.rajasthan_geography_climate_and_environment_drought` | मसौदा शुरू नहीं |
 | 4 | मृदाएँ — Soils | `catalog.rajasthan_geography_climate_and_environment_soils` | मसौदा शुरू नहीं |
 | 5 | प्राकृतिक वनस्पति — Natural Vegetation | `catalog.rajasthan_geography_climate_and_environment_natural_vegetation` | मसौदा शुरू नहीं |
-| 6 | राष्ट्रीय उद्यान एवं वन्यजीव अभयारण्य — National Parks and Sanctuaries | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | 2 seed Q&A; समीक्षा लंबित |
+| 6 | राष्ट्रीय उद्यान एवं वन्यजीव अभयारण्य — National Parks and Sanctuaries | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | 15 नए Q&A + 2 seed; NEEDS_REVIEW |
 
 #### 5. कृषि एवं संसाधन — Agriculture and Resources
 
