@@ -140,6 +140,36 @@
 | KAL-118 | ASI Jodhpur Circle संग्रहालय के अनुसार KLB-8 से मिले मानव-अवशेषों को कहाँ प्रदर्शित किया गया है? | संग्रहालय के courtyard में skeletal remains की replica के रूप में। | S7 — “Third Gallery” |
 | KAL-119 | कालीबंगा के cemetery में extended burial में शव की सामान्य दिशा क्या बताई गई है? | शव को उत्तर-दक्षिण दिशा में रखा जाता था और सिर उत्तर की ओर होता था। | S7 — “Burial Site (KLB-8)”; S6 — Ch. 22 “The Cemetery”, printed pp. 1285–1427 |
 
+## Additional small-finds, gallery and burial one-liners
+
+These questions split short ASI Jodhpur Circle museum-page observations into individual revision prompts. The source page is an official descriptive/display catalogue; a display caption is not automatically proof of an artefact's exact archaeological context. All remain `NEEDS_REVIEW`.
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-120 | ASI Jodhpur Circle संग्रहालय में कौन-सी मिट्टी की आकृतियों को प्रारम्भिक और परिपक्व हड़प्पा काल से जोड़ा गया है? | बैल, कुत्ता, बिल्ली और ऊँट की टेराकोटा पशु-आकृतियाँ। | S7 — First Gallery; display inventory |
+| KAL-121 | ASI संग्रहालय की पहली gallery में किन पक्षियों की figurines का उल्लेख है? | छोटी बतख, गौरैया, बाज/ईगल, तोता और कबूतर। | S7 — First Gallery; display inventory |
+| KAL-122 | कालीबंगा संग्रहालय में मिले terracotta toy-cart के साथ किस अन्य खिलौना-अवशेष का उल्लेख है? | खिलौना-गाड़ी के पहिए (toy-cart wheels)। | S7 — First Gallery |
+| KAL-123 | ASI museum page पर terracotta feeding cup को किस प्रकार की पुरावस्तु के रूप में दिखाया गया है? | प्रारम्भिक/परिपक्व हड़प्पा संग्रह की दैनिक उपयोग से संबंधित प्रदर्शित वस्तु के रूप में; उसका सटीक उपयोग-प्रसंग अलग से जाँचना चाहिए। | S7 — First Gallery |
+| KAL-124 | ASI Jodhpur Circle के विवरण में कालीबंगा की terracotta pipe का उपयोग किस लिए बताया गया है? | जल-निकासी (drainage system) के लिए। | S7 — First Gallery |
+| KAL-125 | ASI Jodhpur Circle page के अनुसार terracotta sling ball का संभावित उपयोग क्या था? | छोटे पक्षियों के शिकार के लिए; यह संग्रहालय पृष्ठ की व्याख्या है। | S7 — First Gallery |
+| KAL-126 | कालीबंगा के Early Harappan display में कौन-से खेल/मनोरंजन-संबंधी अवशेष सूचीबद्ध हैं? | Gamesmen, hopscotch pieces, whistles और rattles आदि। | S7 — First Gallery |
+| KAL-127 | कालीबंगा के Early Harappan संग्रहालय display में किस प्रकार के stone grinding tools दिखाए गए हैं? | Saddle querns। | S7 — First Gallery |
+| KAL-128 | ASI museum के अनुसार Early Harappan स्तर से किस प्रकार के stone blades मिले/प्रदर्शित हैं? | Chert blades। | S7 — First Gallery |
+| KAL-129 | ASI museum के Early Harappan display में कौन-से ताँबे के छोटे पुरावशेष बताए गए हैं? | ताँबे की अंगूठियाँ, तीरों के अग्रभाग (arrowheads) और मनके। | S7 — First Gallery |
+| KAL-130 | ASI museum की दूसरी gallery में Mature Harappan pottery के साथ कौन-से छोटे पात्र प्रदर्शित हैं? | Miniature pots। | S7 — Second Gallery |
+| KAL-131 | Mature Harappan pottery display में perforated vessels के अतिरिक्त कौन-से पेय-पात्र दिखाए गए हैं? | Beakers और goblets। | S7 — Second Gallery |
+| KAL-132 | ASI museum की दूसरी gallery में Mature Harappan pottery पर कौन-से Harappan चिह्न दिखाए गए हैं? | Painted और graffiti-marked potsherds पर Harappan signs/letters। | S7 — Second Gallery |
+| KAL-133 | ASI Jodhpur Circle संग्रहालय के अनुसार कालीबंगा की तीसरी gallery में कौन-से प्रमुख ताँबे के हथियार/औज़ार प्रदर्शित हैं? | कुल्हाड़ियाँ, blades, knives, arrowheads और spearheads। | S7 — Third Gallery |
+| KAL-134 | ASI museum page पर कालीबंगा से मिली किस धातु-वस्तु का दर्पण के रूप में उल्लेख है? | ताँबे का दर्पण (copper mirror)। | S7 — Third Gallery |
+| KAL-135 | ASI museum page के अनुसार कालीबंगा के कुछ ताँबे के rods का उपयोग किस काम में बताया गया है? | काटने और आत्मरक्षा (self-defence) से जुड़े उपयोग के रूप में; यह संग्रहालय page की व्याख्या है। | S7 — Third Gallery |
+| KAL-136 | ASI museum की तीसरी gallery में किस प्रकार की सजावटी वस्तु shell से बनी दिखाई गई है? | Shell button (शंख/सीप से बना बटन)। | S7 — Third Gallery |
+| KAL-137 | ASI museum page के अनुसार कालीबंगा के semi-precious stone beads में कौन-से पत्थर शामिल हैं? | Agate, carnelian, jasper, steatite और lapis lazuli; faience भी सूची में है, पर वह पत्थर नहीं बल्कि glazed siliceous material है। | S7 — Third Gallery |
+| KAL-138 | कालीबंगा का cemetery mound KLB-8 वर्तमान घग्घर नदी के किस भू-भाग पर स्थित बताया गया है? | घग्घर नदी के वर्तमान floodplain पर, पश्चिमी mound के लगभग 300 मीटर दक्षिण-पश्चिम में। | S7 — “Burial Site (KLB-8)” |
+| KAL-139 | कालीबंगा के cemetery में कौन-से दो burial forms सामान्यतः skeletal remains के बिना पाए गए? | Circular pit में pot burial; तथा आयताकार/अंडाकार pit में केवल pottery और funerary objects वाला burial। | S7 — “Harappan Site Kalibangan”; S4 — printed p. 36 |
+| KAL-140 | KLB-8 में extended burial के लिए grave pits की सामान्य आकृति और दिशा क्या बताई गई है? | आयताकार/लंबोतरे या चौकोर pits, सामान्यतः उत्तर-दक्षिण दिशा में। | S7 — “Burial Site (KLB-8)” |
+| KAL-141 | कालीबंगा के तीसरे प्रकार के burial pit में मिट्टी के बर्तनों के साथ कौन-सी छोटी वस्तुएँ रखे जाने का उल्लेख है? | चूड़ियाँ, मनके, हड्डी के नुकीले औज़ार और ताँबे की वस्तुएँ आदि। | S7 — “Burial Site (KLB-8)” |
+| KAL-142 | कालीबंगा के cemetery mound KLB-8 को ASI museum page किस मुख्य पुरातात्त्विक महत्व से जोड़ता है? | यह स्थल की burial practices और funerary customs का प्रमाण देता है। | S7 — “Burial Site (KLB-8)” |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -183,7 +213,7 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Excavation history and personnel | DRAFTED | Check ASI report title pages and field-season details |
 | Cultural sequence and chronology | DRAFTED | Validate date ranges with excavation stratigraphy; preserve approximate dating |
 | Mound geography and identifiers | PARTIAL | Inspect ASI plans and confirm numbered mound labels and cemetery placement |
-| Burials and mortuary practice | PARTIAL | Verify each burial type and its sample/context from excavation report |
+| Burials and mortuary practice | PARTIAL | Added KLB-8 floodplain location, three burial forms, skeleton-free types, extended orientation and funerary objects; verify pit-level samples and ASI plate contexts |
 | Town planning, fortification and architecture | DRAFTED | Add plan/plate-level locators and distinguish Early vs Mature layouts |
 | Agriculture and field layout | DRAFTED | Check field context against ASI report; no unsupported superlative |
 | Pottery / technology / production | PARTIAL | Validate fabric names, production temperature and artefact context from primary report |
@@ -191,7 +221,7 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Script, seals and inscriptions | PARTIAL | Add object/plate references and keep undeciphered status precise |
 | Crafts, ornaments and material culture | PARTIAL | Added ASI-backed draft questions on bangles, beads, copper, shell, bone/ivory, stone tools and weaving implements; still review artefact identifications, craft production, provenance and trade interpretations |
 | Diet and animal husbandry | PARTIAL | Added ASI Vol. II crop and Bos indicus evidence; resolve botanical terminology in the report and add faunal detail from primary chapters |
-| Museum and artefact inventory | PARTIAL | Added ASI Jodhpur Circle gallery inventory and two ASI-hosted photos; establishment-year sources conflict (1983/1985), and image reuse permission must be confirmed before app distribution |
+| Museum and artefact inventory | PARTIAL | Expanded to individually listed animal/bird figurines, toy and game objects, drainage pipe, sling ball, chert blades, copper objects, miniature pots, mirrors, shell button and display catalogue; two ASI-hosted photos linked. Establishment-year conflict (1983/1985) and image reuse permission remain open |
 | Comparison, cause/effect and common confusions | GAP | Build evidence-based comparison with other Harappan sites; preserve uncertainty about earthquake hypothesis |
 | Maps, diagrams and site plans | GAP | Add reviewed mounds/citadel/lower-town/field plan notes with scale and exact plate/page |
 | Exam-specific applicability | NOT MAPPED | Requires relevant official exam notification/syllabus and reviewer-approved mapping |
