@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 119 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 142 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 119 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 142 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -36,7 +36,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 
 - Reviewed PR #112's merged content and the 34-topic Rajasthan History tracker before continuing; no subject/topic sequence was skipped.
 - Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is open on branch `content/kalibangan-full-topic-coverage-asi`.
-- Added KAL-065 through KAL-119: fabrics A–F, construction phases and houses, museum gallery evidence, mature pottery and graffiti, copper assemblage and source hypothesis, crops/animal traction, gypsum interpretation, querns/kitchen tools, bead types, measuring devices, shell and textile objects, and cemetery/burial details.
+- Added KAL-065 through KAL-142: fabrics A–F, construction phases and houses, museum gallery evidence, mature pottery and graffiti, copper assemblage and source hypothesis, crops/animal traction, gypsum interpretation, querns/kitchen tools, bead types, measuring devices, shell and textile objects, small finds, animals/birds, games, drainage pipes and detailed cemetery/burial evidence.
 - Added 2 direct image links from the official ASI Jodhpur Circle museum page (excavation trench; present-day KLB-2) with credit and reuse-permission caution.
 - Added explicit authorship statement: Hindi question wording is AI-authored in new phrasing; answers are sourced paraphrases; these are not copied verbatim questions and are not PYQs. All are NEEDS_REVIEW.
 - Recorded two source issues rather than hiding them: museum establishment year differs between Rajasthan Tourism (1983) and ASI Jodhpur Circle (1985); ASI Part II Ch. 14's parenthetical gloss for Cicer arietinum needs botanical/expert review.
