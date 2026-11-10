@@ -17,6 +17,10 @@
 7. After notes are reviewed, generate practice MCQs from those notes. Keep generated MCQs separate from actual previous-year questions and their official answer-key provenance.
 8. Later map the notes to each exam's official syllabus. A generic reference note must not be labelled as an exam-specific verified syllabus item without an independently reviewed mapping.
 
+## Master topic structure
+
+See [Master Subject–Topic–Subtopic Structure](MASTER_SUBJECT_TOPIC_STRUCTURE.md) for the bilingual, canonical topic tree across Rajasthan History, Rajasthan Geography, Rajasthan Polity & Administration, Hindi and English. It lists all 132 existing subtopic concept IDs, current seed/draft status, the first gap-check list and the Hindi-only Q&A rule.
+
 ## Subject order from the existing catalogue
 
 The existing 340 concept rows across 14 navigation subjects remain the working catalogue. They are not proof that any one examination syllabus is complete.
