@@ -612,3 +612,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 - Added KAL-178 from ZSI *Annual Report 2021–22*, printed p. 35: ZSI associates the studied faunal remains with both pre-Harappan and Harappan cultural phases.
 - Current Kalibangan branch count is **178 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
+
+
+## 2026-11-10 — ZSI faunal monograph lead (not yet reviewed)
+
+- A specialist book catalogue lists Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan: An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809. Listed contents include domestic species, wild/free-living species, bone modification and bone measurements.
+- This is an unverified bibliographic lead from a distributor listing only; the book text has not been obtained or read, and no Q&A relies on it. ZSI's digital archive page returned a retrieval error in this research pass.
+- Next source action: locate an authorized ZSI/library copy, inspect the species tables and bone-modification/measurement sections, and reconcile them with the ZSI Annual Report 2021–22 before any additional faunal Q&A are drafted. Current total remains 178 primary Q&A; all NEEDS_REVIEW.
