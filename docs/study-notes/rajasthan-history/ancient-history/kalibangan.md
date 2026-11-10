@@ -350,22 +350,22 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Knowledge-point dimension | Draft status | Remaining work |
 |---|---|---|
 | Identity, importance and location | DRAFTED | Independent reviewer to verify location, river-name and coordinate transcription |
-| Archaeological research / recorded history | PARTIAL | Reconcile James Tod, Tessitori, Stein and Ghosh references against ASI primary reports |
-| Excavation history and personnel | DRAFTED | Check ASI report title pages and field-season details |
-| Cultural sequence and chronology | DRAFTED | Validate date ranges with excavation stratigraphy; preserve approximate dating |
-| Mound geography and identifiers | PARTIAL | Inspect ASI plans and confirm numbered mound labels and cemetery placement |
-| Burials and mortuary practice | PARTIAL | Added KLB-8 floodplain location, three burial forms, skeleton-free types, extended orientation and funerary objects; verify pit-level samples and ASI plate contexts |
-| Town planning, fortification and architecture | DRAFTED | Add plan/plate-level locators and distinguish Early vs Mature layouts |
-| Agriculture and field layout | DRAFTED | Check field context against ASI report; no unsupported superlative |
-| Pottery / technology / production | PARTIAL | Validate fabric names, production temperature and artefact context from primary report |
-| Religion / ritual interpretation | PARTIAL | Fire-altars and platforms require cautious wording; distinguish archaeological structure from inferred use |
-| Script, seals and inscriptions | PARTIAL | Add object/plate references and keep undeciphered status precise |
-| Crafts, ornaments and material culture | PARTIAL | Added ASI-backed draft questions on bangles, beads, copper, shell, bone/ivory, stone tools and weaving implements; still review artefact identifications, craft production, provenance and trade interpretations |
-| Diet and animal husbandry | PARTIAL | Added ASI Vol. II crop and Bos indicus evidence; resolve botanical terminology in the report and add faunal detail from primary chapters |
-| Museum and artefact inventory | PARTIAL | Expanded to individually listed animal/bird figurines, toy and game objects, drainage pipe, sling ball, chert blades, copper objects, miniature pots, mirrors, shell button and display catalogue; two ASI-hosted photos linked. Establishment-year conflict (1983/1985) and image reuse permission remain open |
-| Comparison, cause/effect and common confusions | GAP | Build evidence-based comparison with other Harappan sites; preserve uncertainty about earthquake hypothesis |
-| Maps, diagrams and site plans | GAP | Add reviewed mounds/citadel/lower-town/field plan notes with scale and exact plate/page |
-| Exam-specific applicability | NOT MAPPED | Requires relevant official exam notification/syllabus and reviewer-approved mapping |
+| Archaeological research / recorded history | PARTIAL | Reconcile James Tod, Tessitori, Stein and Ghosh references against the separate MASI 98 and MASI 110 primary reports |
+| Excavation history and personnel | DRAFTED | Check ASI report title pages, campaign/season wording and field-season details |
+| Cultural sequence and chronology | PARTIAL | Gazetteer ranges and Lal 1979 uncorrected/corrected radiocarbon estimates differ; specialist review of sample IDs and correction conventions is still required |
+| Mound geography and identifiers | PARTIAL | Inspect original ASI plans; cemetery code conflict KLB-4 (Lal Fig. 1) vs KLB-8 (Gazetteer/ASI museum) remains unresolved |
+| Burials and mortuary practice | PARTIAL | Added three burial forms, skeleton-free types, extended orientation, KLB-8 floodplain/cemetery notes and funerary objects; verify original pit-level contexts and resolve KLB-4/KLB-8 from excavation plans/objects |
+| Town planning, fortification and architecture | DRAFTED | Add visual plan/plate-level locators; distinguish Early vs Mature layouts and verify exact dimensions/masonry |
+| Agriculture and field layout | PARTIAL | Cross-furrow ploughed-field evidence is drafted; rice vs barley/wheat and rice/horse-gram site attribution remain disputed; inspect original archaeobotanical samples/report |
+| Pottery / technology / production | PARTIAL | Fabric A–F and Mature pottery are drafted; validate temperatures, fabric labels and context against MASI 98 and Mature Harappan Part I plates |
+| Religion / ritual interpretation | PARTIAL | Fire-altars/platforms require cautious wording; distinguish excavated structure from inferred ritual and avoid naming an unsupported deity |
+| Script, seals and inscriptions | PARTIAL | Added Lal, Pande and Mahadevan corpora, 99-object breakdown, K-series references and selected object refs; still reconcile every K-series accession/object/photo/context and complete the sign/plate inventory without claiming decipherment |
+| Crafts, ornaments and material culture | PARTIAL | Drafts cover bangles, beads, copper, shell, bone/ivory, lithic, weaving, seals and NMMA catalogue artefacts; verify identifications, craft production, provenance, trade interpretations and all plates |
+| Diet and animal husbandry | PARTIAL | ZSI 2017–18, 2018–19, 2020–21 and completed 2021–22 milestones added, plus NMMA animal figurine inventory; 2026 Occasional Paper 430 is bibliographically confirmed but unread, so detailed species tables, bone measurements and modification evidence remain open |
+| Museum and artefact inventory | PARTIAL | Added ASI museum and NMMA accession metadata for figurines, carts, bird, cot, pipe/sling-ball and other displays; NMMA warns records are under correction/validation. Two ASI photos linked; 1983/1985 museum-year conflict and reuse permission remain open |
+| Comparison, cause/effect and common confusions | GAP | Build evidence-based comparison with other Harappan sites; preserve uncertainty about earthquake and Ghaggar-drying hypotheses |
+| Maps, diagrams and site plans | GAP | Add independently reviewed KLB-1/2/3, cemetery, citadel/lower-town and field plans with scale and exact ASI figure/plate/page |
+| Exam-specific applicability | NOT MAPPED | Requires the selected exam's current official notification/syllabus and reviewer-approved mapping |
 
 ## Claims deliberately qualified or not included
 
