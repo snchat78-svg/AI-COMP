@@ -38,7 +38,7 @@
 | ENG-020 | भूतकाल की ऐसी घटना जिसका संबंध वर्तमान से हो, उसके लिए कौन-सा काल प्रयोग होता है? | पूर्ण वर्तमान काल। | `catalog.english_grammar_tenses` | S11 — “Time up to now” |
 | ENG-021 | भविष्य की समय-सारणी या नियत कार्यक्रम बताने के लिए कौन-सा वर्तमान रूप आ सकता है? | सामान्य वर्तमान; जैसे *The train leaves at 6.* | `catalog.english_grammar_tenses` | S12 — “Present simple”; “Timetables and plans” |
 | ENG-022 | भविष्य-संदर्भ वाले when, before, as soon as या if उपवाक्य में सामान्यतः कौन-सा काल आता है? | सामान्य वर्तमान; जैसे *I’ll call when I arrive.* | `catalog.english_grammar_tenses` | S12 — “Present simple after when, before, etc.” |
-| ENG-023 | निश्चित बीते समय के साथ सामान्यतः कौन-सा रूप चुनते हैं—सामान्य भूत या पूर्ण वर्तमान? | सामान्य भूतकाल; पूर्ण वर्तमान का प्रयोग भूतकाल से वर्तमान तक जुड़े समय/परिणाम के लिए होता है। | `catalog.english_grammar_tenses` | S11 — “Past simple or present perfect?”
+| ENG-023 | निश्चित बीते समय के साथ सामान्यतः कौन-सा रूप चुनते हैं—सामान्य भूत या पूर्ण वर्तमान? | सामान्य भूतकाल; पूर्ण वर्तमान का प्रयोग भूतकाल से वर्तमान तक जुड़े समय/परिणाम के लिए होता है। | `catalog.english_grammar_tenses` | S11 — “Past simple or present perfect?” |
 
 ## स्रोत रजिस्टर
 
