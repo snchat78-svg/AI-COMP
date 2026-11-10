@@ -49,8 +49,8 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - [Rajasthan History](rajasthan-history/README.md): Kalibangan — 282 primary Q&A drafts in PR #113; all NEEDS_REVIEW.
 - [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
 - [Rajasthan Polity & Administration](rajasthan-polity-administration/initial-source-review.md): 27 Hindi Q&A drafts; all NEEDS_REVIEW.
-- [Hindi](hindi/initial-source-review.md): 12 Hindi grammar Q&A drafts; all NEEDS_REVIEW.
-- [English](english/initial-source-review.md): 14 Q&A drafts with Hindi questions/answers and English examples; all NEEDS_REVIEW.
+- [Hindi](hindi/initial-source-review.md): 24 Hindi grammar Q&A drafts across वर्णमाला and संधि; all NEEDS_REVIEW.
+- [English](english/initial-source-review.md): 23 Q&A drafts across Parts of Speech, Tenses and Modals; questions/answers in Hindi with English examples only where needed; all NEEDS_REVIEW.
 - The master structure still tracks all 21 + 24 + 21 canonical concepts in Polity, Hindi and English; these first batches cover only initial subtopics, not whole subjects.
 
 ## First content slice
