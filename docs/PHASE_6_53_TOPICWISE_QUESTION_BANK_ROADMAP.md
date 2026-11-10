@@ -301,3 +301,12 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Selected chapter text was read using a same-title text-readable copy hosted on a Government of India PM Gati Shakti staging subdomain. This was an extraction aid; no binary-hash comparison to the canonical official ASI PDF was possible. Cite S6 (official ASI) and re-check exact pages during independent review. PDF screenshots failed due payload limits; no images/plans were visually verified.
 - Preserved a count discrepancy: primary ASI Part II p. 1422 says 6–10 extended burials per group; secondary Satarupa Bal 2020 summary S21 says 8–10. KAL-243 provisionally uses the primary report's range. KLB-4 vs KLB-8 remains unresolved.
 - No MCQs/tests, application code, migrations, database, APK or learner data changed. No application tests run; exact/normalized in-file question audit performed after the addition. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Kalibangan remains DRAFTING / NOT COMPLETE; Ahar-Banas remains NOT STARTED.
+
+
+### 2026-11-10 — additional Chapter 23–24 pot-burial and cemetery-pottery coverage
+
+- Added KAL-265–KAL-282 (18 further Q&A) from selected ASI Part II printed pp. 1432, 1439–1459 and 1460–1467. Topics include burial-specific pottery counts, pre-firing graffiti, beads/faience/shell bangle, relative sequence by pit intersection, oblong pit inventories, wind/water laminations, wheel-turned cemetery pottery, absent grey ware/terracotta cakes and a solitary perforated jar.
+- Current Kalibangan total: 282 primary AI-authored Q&A, 3 corroborative classroom items, 2 ASI photographs; all remain NEEDS_REVIEW. No MCQ/test generation yet.
+- New inconsistency recorded: Chapter 23 introductory summary p. 1430 says Burial 13 lacked an urn, whereas its detailed entry pp. 1444–1445 describes a broken urn. KAL-270 asks only about the two-layer pottery placement and avoids the disputed urn detail.
+- New passages were read through the same-title Government of India PM Gati Shakti staging-domain text copy as a text extraction aid. No hash comparison with official ASI S6 and no page-image visual check. All locators need independent official-source verification.
+- No phase transition or app/database/APK change. Kalibangan remains DRAFTING / NOT COMPLETE; Ahar-Banas NOT STARTED.
