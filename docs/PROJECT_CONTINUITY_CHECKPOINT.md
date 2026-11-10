@@ -606,3 +606,9 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Existing limitations persist: Part I and MASI 98 PDFs exceed the reader size limit; complete plate/plan inspection, live question-bank duplicate check, source review by an independent reviewer, image-use permissions and exam-specific syllabus mapping remain open. All candidates NEEDS_REVIEW.
 - No app code, database, migration, secret, APK, or learner-visible content was changed. This is content research/documentation only; automated application tests not run. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
 - Next: audit Part I/MASI 98 and the remaining seal/sign/archaeobotanical material through normal official/academic source access; continue small-find and visual plan/plate review; then independent review. Do not move to Ahar-Banas until Kalibangan's coverage gate closes.
+
+
+## 2026-11-10 — Kalibangan faunal phase linkage addendum
+
+- Added KAL-178 from ZSI *Annual Report 2021–22*, printed p. 35: ZSI associates the studied faunal remains with both pre-Harappan and Harappan cultural phases.
+- Current Kalibangan branch count is **178 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
