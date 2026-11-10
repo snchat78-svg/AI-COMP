@@ -552,3 +552,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - The Chapter 23 Burial 13 urn inconsistency is explicitly logged: introductory summary p.1430 says no urn; detailed record pp.1444–1445 describes a broken urn. Avoid treating it as settled.
 - Text source remains the same-title Government of India PM Gati Shakti staging-domain rendering used as an extraction aid; official ASI PDF S6 is canonical. No hash match or visual plate verification is claimed.
 - All drafts NEEDS_REVIEW. No app code, migration, DB, APK or live data changed. Phase states unchanged.
+
+
+## 2026-11-10 — five-subject master structure and parallel geography Q&A
+
+- Added bilingual [master topic structure](study-notes/MASTER_SUBJECT_TOPIC_STRUCTURE.md) containing all 132 existing canonical concept IDs in the five requested subjects: Rajasthan History 34, Rajasthan Geography 32, Rajasthan Polity & Administration 21, Hindi 24 and English 21. This is the existing catalogue baseline plus a separate proposed gap list, not a claim of complete official syllabus coverage.
+- Added 14 Hindi Rajasthan Geography Q&A drafts in `docs/study-notes/rajasthan-geography/initial-source-review.md` using the Rajasthan Government “Rajasthan at a Glance” page. Existing seven migration seed candidates remain separate and NEEDS_REVIEW; no duplicate seed rewrites were done.
+- Global content rule recorded: question and answer prose in Hindi across all five subjects. English target words/sentences may appear as examples; explanations/answers remain Hindi.
+- No implementation, migration, live database, APK or phase transition. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED.
