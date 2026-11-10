@@ -560,3 +560,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Added 14 Hindi Rajasthan Geography Q&A drafts in `docs/study-notes/rajasthan-geography/initial-source-review.md` using the Rajasthan Government “Rajasthan at a Glance” page. Existing seven migration seed candidates remain separate and NEEDS_REVIEW; no duplicate seed rewrites were done.
 - Global content rule recorded: question and answer prose in Hindi across all five subjects. English target words/sentences may appear as examples; explanations/answers remain Hindi.
 - No implementation, migration, live database, APK or phase transition. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — parallel Polity, Hindi and English starter batches
+
+- Added 17 Hindi One-Liner drafts for Rajasthan Polity & Administration in `docs/study-notes/rajasthan-polity-administration/initial-source-review.md`, backed by the Rajasthan Legislative Assembly, RPSC RTI Handbook (updated 12 Dec 2025), e-Committee / Supreme Court of India High Court history, and Rajasthan Third State Finance Commission report. All NEEDS_REVIEW.
+- Added 12 Hindi grammar drafts for Hindi → वर्ण एवं वर्णमाला in `docs/study-notes/hindi/initial-source-review.md`, based on Central Hindi Directorate, Ministry of Education, Government of India, *Devanagari Script and Standardization of Hindi Orthography*, revised 2024. Text screenshot retrieval failed due file size; page-image verification is explicitly open.
+- Added 14 Hindi-medium drafts for English → Parts of Speech in `docs/study-notes/english/initial-source-review.md`, based on Cambridge Grammar. Question/answer prose is Hindi; only grammar labels/example words remain English. All NEEDS_REVIEW.
+- Master structure and notes index now link the first batches. All 132 canonical concept rows remain intact; content batches are only partial subtopic coverage. The current initial notes counts are: Kalibangan 282; Rajasthan Geography 14 new drafts plus 7 old migration candidates; Rajasthan Polity 17; Hindi 12; English 14. No fixed count means completion.
+- No app code, DB, migration, APK or learner-visible verified status changed. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED.
