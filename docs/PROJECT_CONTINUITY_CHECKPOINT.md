@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan content expansion is on branch `content/kalibangan-full-topic-coverage-asi`; 119 primary AI-authored Q&A drafts, 3 corroborative points, 2 ASI photos; PR #113 being prepared. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 119 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- PR #113 branch `content/kalibangan-full-topic-coverage-asi` expands the topic to 119 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 119 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -40,7 +40,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - Added 2 direct image links from the official ASI Jodhpur Circle museum page (excavation trench; present-day KLB-2) with credit and reuse-permission caution.
 - Added explicit authorship statement: Hindi question wording is AI-authored in new phrasing; answers are sourced paraphrases; these are not copied verbatim questions and are not PYQs. All are NEEDS_REVIEW.
 - Recorded two source issues rather than hiding them: museum establishment year differs between Rajasthan Tourism (1983) and ASI Jodhpur Circle (1985); ASI Part II Ch. 14's parenthetical gloss for Cicer arietinum needs botanical/expert review.
-- Still open: review ASI Part I / Early Harappan monograph, detailed seal and script corpus, lithic-tool typology, full faunal evidence, small finds, figures/plans/plates, duplicates against live question bank, independent verification, and exam-syllabus applicability. Do not mark topic complete or start Ahar-Banas until these are reconciled.
+- Still open: review ASI Part I / Early Harappan monograph (official catalogue entry found, but 17 MB PDF download exceeds the current reader size limit), detailed seal and script corpus, lithic-tool typology, full faunal evidence, small finds, figures/plans/plates, duplicates against live question bank, independent verification, and exam-syllabus applicability. Do not mark topic complete or start Ahar-Banas until these are reconciled.
 - No production database, One-Liner review API or APK content has been changed. This remains documentation research; the learner-facing database is not populated by this PR.
 ## Current phase state
 
