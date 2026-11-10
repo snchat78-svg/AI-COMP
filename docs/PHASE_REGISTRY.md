@@ -544,3 +544,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Selected passages were text-read from a same-title Government of India PM Gati Shakti staging-domain rendering to overcome the reader limit; official ASI PDF S6 remains the canonical source. No binary hash comparison or page-image verification was possible; independent page-by-page check remains required.
 - Preserved group-size discrepancy: ASI Part II p. 1422 says 6–10 burials/group, secondary Satarupa Bal 2020 (S21) says 8–10. KAL-243 follows ASI provisionally. KLB-4 vs KLB-8 remains open.
 - All drafts remain NEEDS_REVIEW. No application code/database/APK/migration changed and no app tests were run. No phase state changed: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Ahar-Banas remains NOT STARTED.
+
+
+## 2026-11-10 — cemetery pottery and individual pot-burial increment
+
+- PR #113 notes now contain 282 primary Q&A drafts (KAL-001–KAL-282), 3 corroborative points and 2 ASI photos. The latest KAL-265–KAL-282 cover select Chapter 23 burial records and Chapter 24 cemetery-pottery observations.
+- The Chapter 23 Burial 13 urn inconsistency is explicitly logged: introductory summary p.1430 says no urn; detailed record pp.1444–1445 describes a broken urn. Avoid treating it as settled.
+- Text source remains the same-title Government of India PM Gati Shakti staging-domain rendering used as an extraction aid; official ASI PDF S6 is canonical. No hash match or visual plate verification is claimed.
+- All drafts NEEDS_REVIEW. No app code, migration, DB, APK or live data changed. Phase states unchanged.
