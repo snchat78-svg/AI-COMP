@@ -619,3 +619,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - A specialist book catalogue lists Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan: An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809. Listed contents include domestic species, wild/free-living species, bone modification and bone measurements.
 - This is an unverified bibliographic lead from a distributor listing only; the book text has not been obtained or read, and no Q&A relies on it. ZSI's digital archive page returned a retrieval error in this research pass.
 - Next source action: locate an authorized ZSI/library copy, inspect the species tables and bone-modification/measurement sections, and reconcile them with the ZSI Annual Report 2021–22 before any additional faunal Q&A are drafted. Current total remains 178 primary Q&A; all NEEDS_REVIEW.
+
+
+### 178-Q&A draft integrity check
+
+- Fetched the exact current Kalibangan notes file from the working branch and audited its Markdown Q&A rows: **178 rows, IDs KAL-001–KAL-178, no missing or repeated IDs, no malformed four-field rows**.
+- Ran an in-file exact/normalized duplicate scan using Unicode NFKC normalization, case folding, punctuation removal and whitespace normalization. No normalized duplicate question or exact normalized Q&A pair was found within this 178-item draft.
+- This is not a semantic similarity review and does not query the live production question-bank records. Live exact/semantic duplicate reconciliation and separate human fact-review remain required; do not mark any item VERIFIED.
