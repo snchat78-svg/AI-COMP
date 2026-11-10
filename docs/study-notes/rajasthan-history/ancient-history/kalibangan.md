@@ -447,6 +447,12 @@ Exact locators: Introduction §§2.2–2.3 (1976 revision incorporating unpublis
 URL: https://zsi.gov.in/uploads/documents/importantLinks/english/Annual_Report_2017_18.pdf  
 Exact locator: project 06 “Zooarchaeology of faunal remains of Kalibangan, Rajasthan — An Indus Valley site”, printed p. 45 (about 1,400 specimens worked out; 612 identified and registered, under six species/six genera/three families/two orders of Mammalia). This is an early, dated progress snapshot, not the final faunal inventory.
 
+**S21 — Bibliographic / table-of-contents evidence for the separate Kalibangan primary reports.**  
+- ASI official excavation-report catalogue: https://asi.nic.in/pages/Publications/excavationReports (lists *Excavation Report of Kalibangan Part II*, MASI 98 *Excavations at Kalibangan: Early Harappans*, and *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and Part II as distinct catalogue entries).  
+- *Excavations at Kalibangan: The Early Harappans*, Google Books metadata / contents view: https://books.google.com/books?id=G9dtAAAAMAAJ ; a fuller chapter list is available in the specialist bibliographic listing: https://vedamsbooks.com/books/excavations_at_kalibangan_the_early_harappans_1960_1969 .  
+- *Excavations at Kalibangan: The Harappans (1960–1969), Part I*, Google Books / bibliographic record: https://books.google.com/books?id=SlCG5bXE6g8C and specialist TOC: https://www.vedamsbooks.com/books/excavations_at_kalibangan_the_harappans_1960_69_part_1 .  
+**Limit:** These are catalogue/contents sources only. They establish title, report separation, chapter headings and bibliographic details—not the detailed archaeological findings. Do not create Q&A from a TOC alone.
+
 **S20 — Bibliographic lead only: ResearchGate publication record and specialist distributor catalogue for Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809.**  
 URLs: https://www.researchgate.net/publication/403649495_Zooarchaeology_of_faunal_remains_of_Kalibangan_Rajasthan_-_an_Indus_Valley_site ; https://www.vedamsbooks.com/public/books/zooarchaeology-of-faunal-remains-of-kalibangan-rajasthan-an-indus-valley-site-occasional-paper-no-430  
 The ResearchGate record identifies the Director, ZSI as publisher and displays “Request full-text”; the bookseller lists chapters on domestic species, wild/free-living species, bone modification and bone measurements. **The monograph text was not available/read. No question or answer is based on this bibliographic record.** Use only as a lead for authorized full-text access.
@@ -486,6 +492,18 @@ Exact locator: printed p. 267, where Thapar explains the literal “black bangle
 **S5 — Archaeological Survey of India (ASI).** *Excavation Reports of Archaeological Survey of India (MASI)*.  
 URL: https://asi.nic.in/pages/Publications/excavationReports  
 Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960–1969), Part I and Part II” and “Excavations at Kalibangan: Early Harappans”. These primary reports remain the next required evidence layer for plate/plan-level review.
+
+## Primary excavation-report chapter audit — contents-only, not fact evidence
+
+The ASI catalogue lists three distinct Kalibangan reports. The following chapter inventory is a **reading plan based on report contents / bibliographic TOC metadata**, not a claim that those chapters have been read or their archaeological contents verified.
+
+| Report | Contents listed in the catalogue / TOC | Evidence status in this notes draft |
+|---|---|---|
+| *Excavations at Kalibangan: The Early Harappans (1960–1969)*, MASI 98 (2003), 340 pp. | Ch. 1 setting; Ch. 2 discovery/previous work; Ch. 3 summary; Ch. 4 Early Harappan chronology; Ch. 5 wider culture-complex; Ch. 6 stratigraphy; Ch. 7 structures; Ch. 8 agricultural field; Ch. 9 end of Early Harappan settlement; Ch. 10 pottery; Ch. 11 minor antiquities; Ch. 12 graffiti; Ch. 13 technical reports (pottery analysis, metals, animal remains, plants/seeds). | **TOC metadata only**. Full official PDF exceeds reader limit. Detailed findings, sample counts, identifications, plans and plates from these chapters are not claimed as reviewed. |
+| *Excavations at Kalibangan: The Harappans (1960–1969), Part I*, Memoirs ASI No. 110 (2015), 721 pp. | Ch. 1 introduction/results; Ch. 2 thoughts on the now-dry river; Ch. 3 chronological horizon; Ch. 4 settlement overview; Ch. 5 KLB-1 stratigraphy/structures; Ch. 6 KLB-2; Ch. 7 KLB-3; Ch. 8 pottery; Ch. 9 inscribed material; Ch. 10 crafts at Kalibangan. | **TOC metadata only** for chapters not independently read here. The full official PDF exceeds reader limit; do not draft detailed chapter-specific facts from the contents list. |
+| *Excavations at Kalibangan: The Harappans (1960–1969), Part II*, Memoirs ASI No. 110 (2020) | Chapters 11–25 include lithic tools, metal objects, ivory/bone, kitchen equipment, bangles, beads, measuring instruments, shell objects, weaving tools, other objects and cemetery material. | Text-level chapter coverage used in some Q&A, but visual plate/plan/context verification remains open. |
+
+**Priority when an authorized readable copy / better reader is available:** (1) MASI 98 Ch. 8–13, especially archaeobotany, animal remains, graffiti and minor antiquities; (2) Mature Part I Ch. 5–10, especially mound stratigraphy, inscriptions and crafts; (3) all referenced plates/plans and context registers; (4) reconcile sample IDs and catalogue numbers before drafting additional answers.
 
 ## Additional source-access limitation
 
