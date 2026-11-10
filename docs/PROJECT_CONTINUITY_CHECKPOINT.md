@@ -694,3 +694,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 - Added KAL-234–KAL-237 from NMMA Archaeological Museum Kalibangan catalogue: GM-KAM-RJ-775637 handmade terracotta cart (broken, holes); GM-KAM-RJ-775897 hollow bird figure with hole and recorded measurements; GM-KAM-RJ-776047 titled “Terracotta birds whistle” (description blank); GM-KAM-RJ-775543 handmade terracotta cot with one surviving leg. These are metadata summaries only; do not infer functionality beyond catalogue labels.
 - Current Kalibangan draft count is **237 primary AI-authored Q&A (KAL-001–KAL-237)**, 3 corroborative items, 2 ASI images. All remain NEEDS_REVIEW. NMMA documented data remains subject to correction/validation.
+
+
+### 237-Q&A final integrity audit for this increment
+
+- Re-fetched the exact current notes file after adding KAL-234–KAL-237. Confirmed **237 rows, IDs KAL-001–KAL-237 continuous and unique, zero missing IDs, zero malformed Q&A rows**.
+- Re-ran the in-file normalized duplicate scan (Unicode NFKC, lower-case folding, punctuation removal and whitespace normalization). No repeated normalized questions or exact normalized Q&A pairs were detected across all 237 items.
+- This check does not query the live One-Liner database and does not prove semantic non-duplication. Independent source/answer review is still required. All items remain NEEDS_REVIEW.
