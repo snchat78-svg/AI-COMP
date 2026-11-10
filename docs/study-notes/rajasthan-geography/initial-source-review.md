@@ -16,14 +16,14 @@
 
 ## 2. थार मरुस्थल — Thar Desert
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RGEO-002 | थार मरुस्थल राजस्थान से आगे किस देश के समीपवर्ती भागों तक फैला है? | पाकिस्तान तक। | `catalog.rajasthan_geography_location_and_physical_features_thar_desert` | S1 — “Rajasthan at a Glance”, अनुच्छेद 1 |
 | RGEO-003 | थार मरुस्थल को स्रोत-पृष्ठ किस जनसंख्या स्थिति वाला बताता है? | विरल आबादी वाला। | `catalog.rajasthan_geography_location_and_physical_features_thar_desert` | S1 — “Rajasthan at a Glance”, अनुच्छेद 1 |
 
 ## 3. जलवायु एवं पर्यावरण — Climate and Environment
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RGEO-004 | उत्तर-पश्चिमी राजस्थान में औसत वार्षिक वर्षा कितनी बताई गई है? | 400 मिमी से कम। | `catalog.rajasthan_geography_climate_and_environment_rainfall` | S1 — “Rajasthan at a Glance”, अनुच्छेद 1 |
 | RGEO-005 | उत्तर-पश्चिमी क्षेत्र में ग्रीष्मकालीन तापमान कितना पार कर सकता है? | 45°C से अधिक। | `catalog.rajasthan_geography_climate_and_environment_climate_regions` | S1 — “Rajasthan at a Glance”, अनुच्छेद 2 |
@@ -31,7 +31,7 @@
 
 ## 4. नदियाँ एवं अपवाह तंत्र — Rivers and Drainage
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RGEO-007 | स्रोत-पृष्ठ के अनुसार घग्घर नदी का उद्गम किस राज्य में है? | हरियाणा में। | `catalog.rajasthan_geography_rivers_and_drainage_inland_drainage` | S1 — “Rajasthan at a Glance”, अनुच्छेद 3 |
 | RGEO-008 | घग्घर नदी को किस प्रकार की धारा बताया गया है? | अंतरालिक (Intermittent) धारा। | `catalog.rajasthan_geography_rivers_and_drainage_inland_drainage` | S1 — “Rajasthan at a Glance”, अनुच्छेद 3 |
@@ -41,13 +41,13 @@
 
 ## 5. पूर्वी मैदान — Eastern Plains
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RGEO-012 | अरावली के पूर्व और दक्षिण-पूर्व का राजस्थान सामान्यतः कैसा बताया गया है? | अधिक उपजाऊ और बेहतर जल-प्राप्ति वाला। | `catalog.rajasthan_geography_location_and_physical_features_eastern_plains` | S1 — “Rajasthan at a Glance”, अनुच्छेद 4 |
 
 ## 6. कृषि एवं संसाधन — Agriculture and Resources
 
-| Draft ID | प्रश्न | उत्तर | प्रमाण |
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RGEO-013 | उत्तर-पश्चिमी राजस्थान की सिंचाई में कौन-सी प्रमुख नहर सहायक है? | इंदिरा गांधी नहर। | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | S1 — “Rajasthan at a Glance”, अनुच्छेद 5 |
 | RGEO-014 | इस स्रोत-पृष्ठ के अनुसार सिंचाई के लिए पानी के दो प्रमुख स्रोत कौन-से हैं? | कुएँ और टैंक/तालाब। | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | S1 — “Rajasthan at a Glance”, अनुच्छेद 5 |
