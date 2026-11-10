@@ -52,6 +52,28 @@
 | RGEO-013 | उत्तर-पश्चिमी राजस्थान की सिंचाई में कौन-सी प्रमुख नहर सहायक है? | इंदिरा गांधी नहर। | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | S1 — “Rajasthan at a Glance”, अनुच्छेद 5 |
 | RGEO-014 | इस स्रोत-पृष्ठ के अनुसार सिंचाई के लिए पानी के दो प्रमुख स्रोत कौन-से हैं? | कुएँ और टैंक/तालाब। | `catalog.rajasthan_geography_agriculture_and_resources_irrigation` | S1 — “Rajasthan at a Glance”, अनुच्छेद 5 |
 
+## 7. राष्ट्रीय उद्यान एवं वन्यजीव अभयारण्य — National Parks and Sanctuaries
+
+**स्रोत-सीमा:** निम्न जिले/क्षेत्रफल राजस्थान वन विभाग की वर्तमान ऑनलाइन तालिका में दिए गए नाम/प्रविष्टि के अनुसार हैं। पुराने seed candidates में केवलादेव और रणथम्भौर के जिले पहले से हैं; उन्हें यहाँ दोहराया नहीं गया। सभी नए प्रश्न उसी canonical उपविषय से जुड़े हैं।
+
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
+|---|---|---|---|---|
+| RGEO-015 | राजस्थान वन विभाग की तालिका में कितने राष्ट्रीय उद्यान सूचीबद्ध हैं? | तीन। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “National Parks” तालिका |
+| RGEO-016 | मुकुंदरा हिल्स राष्ट्रीय उद्यान किन जिलों में सूचीबद्ध है? | कोटा और चित्तौड़गढ़। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “National Parks” तालिका |
+| RGEO-017 | वन विभाग की तालिका में मुकुंदरा हिल्स राष्ट्रीय उद्यान का क्षेत्रफल कितना है? | 199.55 वर्ग किमी। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “National Parks” तालिका |
+| RGEO-018 | बंध बारेठा वन्यजीव अभयारण्य किस जिले में सूचीबद्ध है? | भरतपुर जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-019 | भैंसरोड़गढ़ वन्यजीव अभयारण्य किस जिले में स्थित दर्ज है? | चित्तौड़गढ़ जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-020 | वन विभाग की तालिका में डेजर्ट नेशनल पार्क अभयारण्य किन जिलों में दर्ज है? | बाड़मेर और जैसलमेर। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका; नाम तालिका के अनुसार |
+| RGEO-021 | फूलवारी की नाल वन्यजीव अभयारण्य किस जिले में सूचीबद्ध है? | उदयपुर जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-022 | जामवा रामगढ़ वन्यजीव अभयारण्य किस जिले में सूचीबद्ध है? | जयपुर जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-023 | कुंभलगढ़ वन्यजीव अभयारण्य किन जिलों में फैला दर्ज है? | उदयपुर, राजसमंद और पाली। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-024 | माउंट आबू वन्यजीव अभयारण्य किस जिले में है? | सिरोही जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-025 | तालछापर वन्यजीव अभयारण्य किस जिले में स्थित है? | चूरू जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-026 | सरिस्का वन्यजीव अभयारण्य किस जिले में सूचीबद्ध है? | अलवर जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-027 | सीतामाता वन्यजीव अभयारण्य किन जिलों में सूचीबद्ध है? | चित्तौड़गढ़ और उदयपुर। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-028 | रामगढ़ विषधारी वन्यजीव अभयारण्य किस जिले में सूचीबद्ध है? | बूंदी जिले में। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+| RGEO-029 | राष्ट्रीय घड़ियाल अभयारण्य राजस्थान के किन जिलों में सूचीबद्ध है? | कोटा, सवाई माधोपुर, बूंदी, धौलपुर और करौली। | `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries` | S2 — “Wildlife Sanctuaries” तालिका |
+
 ## स्रोत रजिस्टर
 
 **S1 — राजस्थान राज्य जैव-विविधता बोर्ड / पर्यावरण विभाग, राजस्थान सरकार।** “Rajasthan at a Glance”.  
