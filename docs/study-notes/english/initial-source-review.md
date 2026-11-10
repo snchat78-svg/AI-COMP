@@ -1,6 +1,6 @@
 # अंग्रेज़ी भाषा — शब्द-भेद एवं व्याकरण के प्रारम्भिक One-Liner Q&A
 
-**स्थिति:** DRAFTING • सभी 14 प्रश्न NEEDS_REVIEW • 10 नवम्बर 2026  
+**स्थिति:** DRAFTING • सभी 23 प्रश्न NEEDS_REVIEW • 10 नवम्बर 2026  
 **कैनोनिकल उपविषय:** Parts of Speech / शब्द-भेद  
 **भाषा नियम:** प्रश्न और उत्तर हिंदी में; केवल लक्षित अंग्रेज़ी शब्द/उदाहरण मूल रूप में रहेंगे।  
 **संबंधित मास्टर सूची:** [Master Subject–Topic Structure](../MASTER_SUBJECT_TOPIC_STRUCTURE.md)
@@ -26,6 +26,20 @@
 | ENG-013 | मुख्य Modal verbs के उदाहरण कौन-से हैं? | Can, could, may, might, will, shall, would, should और must। | `catalog.english_grammar_modals` | S7 — “Modal verbs and modality” |
 | ENG-014 | Modal verb के बाद मुख्य क्रिया सामान्यतः किस रूप में आती है? | मूल रूप (base form) में। | `catalog.english_grammar_modals` | S8 — “Modality: forms” |
 
+## 2. काल — Tenses
+
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
+|---|---|---|---|---|
+| ENG-015 | सामान्य तथ्य और नियमित आदत बताने के लिए अंग्रेज़ी का कौन-सा वर्तमान रूप प्रयोग होता है? | सामान्य वर्तमान काल; जैसे *The sun rises in the east.* | `catalog.english_grammar_tenses` | S9 — “Present”; S10 — “Present simple or present continuous?” |
+| ENG-016 | बोलते समय जारी क्रिया बताने के लिए कौन-सा वर्तमान रूप प्रयुक्त होता है? | अपूर्ण वर्तमान काल; जैसे *She is reading.* | `catalog.english_grammar_tenses` | S9 — “Present”; S10 — “Present simple or present continuous?” |
+| ENG-017 | कौन-सी क्रियाएँ सामान्यतः अपूर्ण वर्तमान में नहीं आतीं? | जानना, समझना, पसंद करना, नापसंद करना, गंध/स्वाद और स्थायी गुण बताने वाली क्रियाएँ। | `catalog.english_grammar_tenses` | S10 — “Verbs not often used in the present continuous” |
+| ENG-018 | बीते निश्चित समय पर पूरी हुई घटना के लिए कौन-सा काल प्रयोग होता है? | सामान्य भूतकाल। | `catalog.english_grammar_tenses` | S11 — “Past simple or present perfect?” |
+| ENG-019 | सामान्य भूतकाल के साथ प्रयुक्त निश्चित भूतकाल-सूचक उदाहरण कौन-से हैं? | Yesterday, last year, two weeks ago और in 1995। | `catalog.english_grammar_tenses` | S11 — “Definite time in the past” |
+| ENG-020 | भूतकाल की ऐसी घटना जिसका संबंध वर्तमान से हो, उसके लिए कौन-सा काल प्रयोग होता है? | पूर्ण वर्तमान काल। | `catalog.english_grammar_tenses` | S11 — “Time up to now” |
+| ENG-021 | भविष्य की समय-सारणी या नियत कार्यक्रम बताने के लिए कौन-सा वर्तमान रूप आ सकता है? | सामान्य वर्तमान; जैसे *The train leaves at 6.* | `catalog.english_grammar_tenses` | S12 — “Present simple”; “Timetables and plans” |
+| ENG-022 | भविष्य-संदर्भ वाले when, before, as soon as या if उपवाक्य में सामान्यतः कौन-सा काल आता है? | सामान्य वर्तमान; जैसे *I’ll call when I arrive.* | `catalog.english_grammar_tenses` | S12 — “Present simple after when, before, etc.” |
+| ENG-023 | निश्चित बीते समय के साथ सामान्यतः कौन-सा रूप चुनते हैं—सामान्य भूत या पूर्ण वर्तमान? | सामान्य भूतकाल; पूर्ण वर्तमान का प्रयोग भूतकाल से वर्तमान तक जुड़े समय/परिणाम के लिए होता है। | `catalog.english_grammar_tenses` | S11 — “Past simple or present perfect?”
+
 ## स्रोत रजिस्टर
 
 - **S1 — Cambridge Dictionary, English Grammar Today.** “Word classes and phrase classes”.  
@@ -44,6 +58,11 @@
   https://dictionary.cambridge.org/grammar/british-grammar/modal
 - **S8 — Cambridge Dictionary, English Grammar Today.** “Modality: forms”.  
   https://dictionary.cambridge.org/grammar/british-grammar/modality-
+
+- **S9 — Cambridge Dictionary, English Grammar Today.** “Present”. https://dictionary.cambridge.org/grammar/british-grammar/present
+- **S10 — Cambridge Dictionary, English Grammar Today.** “Present simple or present continuous?”. https://dictionary.cambridge.org/grammar/british-grammar/present-simple-or-present-continuous
+- **S11 — Cambridge Dictionary, English Grammar Today.** “Past simple or present perfect?”. https://dictionary.cambridge.org/grammar/british-grammar/past-simple-present-perfect
+- **S12 — Cambridge Dictionary, English Grammar Today.** “Present simple”. https://dictionary.cambridge.org/grammar/british-grammar/present-simple
 
 ## समीक्षा एवं आगे का काम
 
