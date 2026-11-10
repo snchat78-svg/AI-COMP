@@ -708,3 +708,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - ResearchGate now has a bibliographic page for Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site*, identifying the Director, ZSI as publisher (2026) and showing only a “Request full-text” action. A specialist bookseller lists ZSI Occasional Paper No. 430, ISBN 9788199884809, with chapter headings on domestic/wild species, bone modification and bone measurements.
 - The book's full text was not accessible/read; no facts or Q&A were generated from it. No request, email or author contact was initiated. The source remains a bibliographic research lead; wait for a lawful public/ZSI/library copy before using it.
 - Current note count remains 237 primary Q&A; all NEEDS_REVIEW.
+
+
+## 2026-11-10 — Kalibangan examinable-point coverage checklist re-audit
+
+- Reworked the topic-wide checklist to distinguish drafted dimensions from genuinely complete coverage. Cultural chronology, mound/burial labels, archaeobotany, pottery technology, seals/signs, crafts, fauna, NMMA inventory and map/plate evidence remain PARTIAL where review is still outstanding; cross-site comparison and reviewed map/plan inventory remain GAP; exam applicability remains NOT MAPPED.
+- New additions do not turn a topic into COMPLETE based on count. All 237 primary Q&A and 3 corroborative points remain NEEDS_REVIEW until independent review.
+- Key explicit open conflicts in checklist: KLB-4 vs KLB-8 cemetery label, source-dependent radiocarbon estimates, rice vs barley/wheat site attribution, museum-year discrepancy, NMMA record GM-KAM-RJ-761412 field conflict and provisional NMMA catalogue validation.
