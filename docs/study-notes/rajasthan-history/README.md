@@ -9,7 +9,7 @@
 
 | # | Topic group | Topic / subtopic | Concept ID | Notes status |
 |---:|---|---|---|---|
-| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 264 primary AI-authored Q&A + 3 corroborative points + 2 ASI photos; selected ASI Part II Ch. 22–23 text added for cemetery/pot-burial detail; KLB-4/KLB-8 conflict, group-count discrepancy and visual review remain open |
+| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 282 primary AI-authored Q&A + 3 corroborative points + 2 ASI photos; selected ASI Part II Ch. 22–24 text added for cemetery/pot-burial and cemetery-pottery detail; KLB-4/KLB-8 conflict, group-count, Burial 13 urn discrepancy and visual review remain open |
 | 2 | Ancient History | Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | NOT STARTED |
 | 3 | Ancient History | Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | NOT STARTED |
 | 4 | Ancient History | Bairat | `catalog.rajasthan_history_ancient_history_bairat` | NOT STARTED |
@@ -63,4 +63,4 @@ Only after the notes are reviewed should the app derive practice MCQs and topic 
 
 ## First in-progress topic
 
-Kalibangan notes now contain 264 primary AI-authored Q&A drafts, 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. They remain NEEDS_REVIEW / NOT COMPLETE. The ASI Part II figure register independently indexes the KLB-8 cemetery location plan (printed p. 1288) and cemetery view (p. 1290); selected Chapter 22–23 textual Q&A have been added, but the KLB-4 vs KLB-8 and 6–10 vs 8–10 group-count discrepancies and visual plate checks remain open. Next inspect the separate ASI MASI 98 Early Harappans report and mature-period Part I report, reconcile the K-series/sign corpus and remaining figures/plans, obtain the detailed ZSI faunal monograph, and request independent review before moving to Ahar-Banas Culture.
+Kalibangan notes now contain 282 primary AI-authored Q&A drafts, 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. They remain NEEDS_REVIEW / NOT COMPLETE. The ASI Part II figure register independently indexes the KLB-8 cemetery location plan (printed p. 1288) and cemetery view (p. 1290); selected Chapter 22–23 textual Q&A have been added, but the KLB-4 vs KLB-8 and 6–10 vs 8–10 group-count discrepancies and visual plate checks remain open. Next inspect the separate ASI MASI 98 Early Harappans report and mature-period Part I report, reconcile the K-series/sign corpus and remaining figures/plans, obtain the detailed ZSI faunal monograph, and request independent review before moving to Ahar-Banas Culture.
