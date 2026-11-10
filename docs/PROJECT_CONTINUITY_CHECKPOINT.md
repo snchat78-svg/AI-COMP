@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 142 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 188 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 142 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 188 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -611,7 +611,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 ## 2026-11-10 — Kalibangan faunal phase linkage addendum
 
 - Added KAL-178 from ZSI *Annual Report 2021–22*, printed p. 35: ZSI associates the studied faunal remains with both pre-Harappan and Harappan cultural phases.
-- Current Kalibangan branch count is **178 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
+- Current Kalibangan branch count is **188 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
 
 
 ## 2026-11-10 — ZSI faunal monograph lead (not yet reviewed)
@@ -626,3 +626,15 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Fetched the exact current Kalibangan notes file from the working branch and audited its Markdown Q&A rows: **178 rows, IDs KAL-001–KAL-178, no missing or repeated IDs, no malformed four-field rows**.
 - Ran an in-file exact/normalized duplicate scan using Unicode NFKC normalization, case folding, punctuation removal and whitespace normalization. No normalized duplicate question or exact normalized Q&A pair was found within this 178-item draft.
 - This is not a semantic similarity review and does not query the live production question-bank records. Live exact/semantic duplicate reconciliation and separate human fact-review remain required; do not mark any item VERIFIED.
+
+
+## 2026-11-10 — Kalibangan corpus-level seals and staged faunal progress
+
+- Current notes branch `content/kalibangan-full-topic-coverage-asi`, PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), contains **188 primary AI-authored Q&A drafts (KAL-001–KAL-188)**, 3 separately labelled corroborative points and 2 ASI Jodhpur Circle photographs. Every candidate remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE.
+- New source S13: *Corpus of Indus Seals and Inscriptions*, Vol. 1, ASI Memoirs No. 86 (1987), edited by Jagat Pati Joshi and Asko Parpola. It lists Kalibangan catalogue references K-1 to K-122 on printed pp. 298–326. This is a corpus-reference range, not a count of seals; K-122 is specifically categorised as “Miscellaneous — copper objects” (p. 326).
+- New source S14: Iravatham Mahadevan, *The Indus Script: Texts, Concordance and Tables*, ASI Memoirs No. 77 (1977). It describes Kalibangan seal 8011 as pink terracotta with a boss on the reverse, two lines of text and a left-facing rhinoceros field symbol in relief; Mahadevan classifies it as a separate “raised seal” subtype. It also records his 1976 revision of sign lists after unpublished Lothal/Kalibangan texts became available and his rule of relying on original objects or mechanically reproduced originals.
+- New source S15: ZSI Annual Reports 2018–19 and 2020–21. The 2018–19 snapshot records 11 Mammalia, 1 Aves and 2 Reptilia species; the 2020–21 snapshot records 1,075 specimens, 19 species, 9 families and 6 orders. Both mark the project ongoing. The completed 2021–22 result (5,230 specimens, 36 species) remains separately recorded; these are date-specific project milestones.
+- **Terminology correction:** ASI's official list separates (1) *Excavations at Kalibangan: Early Harappans* (MASI No. 98, 2003) from (2) *Excavations at Kalibangan: The Harappans (1960–1969), Part I* (a Mature Harappan report in the MASI No. 110 series). Their large official PDFs are about 19.5 MB and 17 MB respectively and exceed the reader size limit. Neither full report is claimed as reviewed. The Part I table of contents names separate chapters on inscribed material and crafts, but no facts are drafted from those inaccessible chapter contents.
+- Integrity audit of current notes: 188 Q&A rows; continuous unique IDs KAL-001–KAL-188; zero malformed rows; no duplicate normalized questions or exact normalized Q&A pairs within this file (Unicode NFKC, case-fold, punctuation and whitespace normalization). This is not a semantic scan against the live database or independent review.
+- PDF screenshots of the Corpus, Mahadevan scan and ZSI Annual Reports failed with size/timeout/404 errors in the screenshot renderer; text lines were reviewed, but no visual plate confirmation is claimed.
+- Remaining gates: full MASI 98 and mature-period Part I/II page/plate review, K-series object-photo/context reconciliation, complete sign inventory, authorized text of ZSI Occasional Paper 430, detailed faunal/osteological review, archaeobotanical conflict review, live semantic duplicate check, independent fact review, image permission and exam-specific syllabus mapping. Do not move to Ahar-Banas.
