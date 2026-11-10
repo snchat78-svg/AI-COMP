@@ -44,7 +44,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 - [Rajasthan History — all 34 catalogue topics](rajasthan-history/README.md). Work through the list in order and close each topic's coverage gaps before moving forward.
 
-## Current parallel content tracks
+## Existing drafts — queued, not being expanded in parallel
 
 - [Rajasthan History](rajasthan-history/README.md): Kalibangan — 282 primary Q&A drafts in PR #113; all NEEDS_REVIEW.
 - [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
@@ -60,7 +60,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - Subtopic: Kalibangan
 - Concept ID: `catalog.rajasthan_history_ancient_history_kalibangan`
 - Notes: [Kalibangan — one-liner Q&A notes](rajasthan-history/ancient-history/kalibangan.md)
-- Current state: `DRAFTING / NOT COMPLETE`; 282 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, and all items remain `NEEDS_REVIEW`. The ASI Part II figure register records KLB-8 cemetery plan/view locators at printed pp. 1288–1290; visual review, KLB-4/KLB-8 label conflict and Ch.22 group-count and Ch.23 Burial 13 urn discrepancy remain open. No exam-specific official-syllabus mapping is claimed.
+- Current state: `DRAFTING / NOT COMPLETE`; 287 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, and all items remain `NEEDS_REVIEW`. The ASI Part II figure register records KLB-8 cemetery plan/view locators at printed pp. 1288–1290; visual review, KLB-4/KLB-8 label conflict and Ch.22 group-count and Ch.23 Burial 13 urn discrepancy remain open. No exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
@@ -98,3 +98,10 @@ Do not create a fixed question-count ceiling. Add Q&As until all syllabus-releva
 - The previous 14-question English batch is now 23 total: Parts of Speech 9, Tenses 11, Modals 3. All questions/answers remain Hindi; English terms/examples are shown only as the target language content. All remain NEEDS_REVIEW.
 - Source references are Cambridge English Grammar Today: Present, Present simple or present continuous, Past simple or present perfect, and Present simple. Cambridge is a grammar reference, not an exam syllabus; RBSE/selected exam applicability must be mapped separately.
 - No MCQ generation, app code, database, migrations, APK or learner publication. No phase transition; Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — sequential topic rule
+
+- Kalibanga now contains 287 AI-authored Hindi Q&A drafts (KAL-001–KAL-287), 3 separately labelled corroborative items and 2 ASI photographs. All Q&A remain NEEDS_REVIEW; the topic is not complete.
+- User-directed workflow: finish Kalibanga first. Other subject drafts are parked; do not create fresh parallel question batches until the active topic passes its source, coverage, duplicate and independent-review gates.
+- APK CI now also runs on documentation-note pull requests. Its APK represents the existing mobile app; documentation drafts are not automatically included in the app or live database.
