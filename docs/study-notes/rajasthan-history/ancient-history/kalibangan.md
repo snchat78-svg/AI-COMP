@@ -219,6 +219,21 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 
 | KAL-178 | ZSI की faunal study कालीबंगा के पशु-अवशेषों को किन सांस्कृतिक चरणों से जोड़ती है? | दोनों—पूर्व-हड़प्पा (pre-Harappan) और हड़प्पा (Harappan) चरणों से। | S10 — Annual Report 2021–22, printed p. 35 |
 
+## Catalogue-level seal corpus and dated faunal research milestones
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-179 | *Corpus of Indus Seals and Inscriptions* में Kalibangan के objects किस reference range में सूचीबद्ध हैं? | K-1 से K-122 तक; corpus में Kalibangan का चित्रित catalogue printed pp. 298–326 पर है। यह catalogue-reference range है, इसे 122 seals की कुल संख्या न समझें। | S13 — Vol. 1 “Collections in India”, printed pp. 298–326 |
+| KAL-180 | क्या Kalibangan corpus की K-series की हर entry को seal कहना सही होगा? | नहीं; corpus में K-122 जैसी entry को “Miscellaneous — copper objects” के अंतर्गत रखा गया है। K-series में केवल एक ही वस्तु-प्रकार नहीं है। | S13 — K-122, printed p. 326 |
+| KAL-181 | *Corpus of Indus Seals and Inscriptions* में K-122 को किस रूप में वर्गीकृत किया गया है? | “Miscellaneous — copper objects” के रूप में; पृष्ठ पर K-122 A और K-122 B के चित्र भी दिए हैं। | S13 — printed p. 326 |
+| KAL-182 | Iravatham Mahadevan ने Kalibangan की विशिष्ट seal no. 8011 किस पदार्थ की बताई है? | गुलाबी टेराकोटा (pink terracotta) की; इसके पीछे उभरा हुआ boss है, जो इसे stamp seal के रूप में पहचानने में मदद करता है। | S14 — Introduction, Note 7, printed p. 25 |
+| KAL-183 | Mahadevan के अनुसार Kalibangan seal 8011 पर कौन-से दो प्रमुख चिह्न relief में बने हैं? | दो पंक्तियों का लेख और बाईं ओर देखता rhinoceros का field-symbol; मूल वस्तु पर दोनों relief में हैं। | S14 — Introduction, Note 7, printed p. 25 |
+| KAL-184 | Mahadevan ने seal 8011 को Indus seal की किस विशिष्ट उप-श्रेणी में रखा? | “Raised seal” नामक अलग subtype में; उनके अनुसार mould से बनी seal का impression धँसा हुआ (sunken) होगा। | S14 — Introduction, Note 7; Fig. 27, Plate II, printed p. 803 |
+| KAL-185 | Iravatham Mahadevan ने Indus sign-list और sign-variants को 1976 में क्यों संशोधित किया? | Lothal और Kalibangan से प्राप्त अप्रकाशित inscriptions/texts उपलब्ध होने के बाद sign-list को अद्यतन किया गया। | S14 — Introduction, §§2.2–2.3 |
+| KAL-186 | Mahadevan ने अपने Indus-script corpus में किसी text को शामिल करने के लिए किस प्रकार का source-standard अपनाया? | प्रत्येक text को मूल वस्तु से सीधे copy करके या उसके cast/photograph/impression से लिया; मूल source उपलब्ध न होने पर text को corpus से बाहर रखना पसंद किया। | S14 — Introduction, §3.6 |
+| KAL-187 | ZSI की 2018–19 Annual Report में Kalibangan faunal project ने कितनी species की प्रारम्भिक पहचान दर्ज की? | 11 Mammalia, 1 Aves और 2 Reptilia species—कुल 14 species। उस रिपोर्ट में project अभी ongoing था। | S15 — Annual Report 2018–19, project 21, printed p. 039 |
+| KAL-188 | ZSI की 2020–21 Annual Report में Kalibangan से कितने faunal specimens और कितनी species दर्ज थीं? | 1,075 specimens, 19 species, 9 families और 6 orders; उस रिपोर्ट में project अभी ongoing था। | S15 — Annual Report 2020–21, project 19, printed p. 031 |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -331,6 +346,20 @@ Exact locator: project “Zooarchaeology of Faunal remains of Kalibangan, Rajast
 URL: https://nmma.nic.in/nmma/NAS1/nmma_doc/IAR/Indian%20Archaeology%201974-75%20A%20Review.pdf  
 Exact locator: printed p. 79, entry 11 “Kalibangan, District Ganganagar”. The review summarizes Vishnu-Mittre and R. Savithri's reassessment of reported rice remains in terracotta cakes and pai; their identification is barley and, in a few cases, wheat, and they question the earlier rice identification.
 
+**S13 — Archaeological Survey of India / Finnish Academy.** Jagat Pati Joshi and Asko Parpola (eds.), *Corpus of Indus Seals and Inscriptions, 1: Collections in India*, Memoirs of the Archaeological Survey of India No. 86 (Helsinki, 1987).  
+URL: https://ignca.gov.in/Asi_data/76884.pdf  
+Exact locators: contents, “Kalibangan (K-1 to 122)” and printed pp. 298–326; K-122 “Miscellaneous — copper objects”, printed p. 326; basic data for illustrated objects, printed pp. 365–375. The PDF is a digitised library copy; object photographs remain subject to their separate rights notice.
+
+**S14 — Archaeological Survey of India.** Iravatham Mahadevan, *The Indus Script: Texts, Concordance and Tables*, Memoirs of the Archaeological Survey of India No. 77 (1977).  
+URL: https://kashmirasitis.com/wp-content/uploads/2020/10/Indus-scriptdarend.pdf  
+Exact locators: Introduction §§2.2–2.3 (1976 revision incorporating unpublished Lothal/Kalibangan texts) and §3.6 (original-source rule); Introduction, Note 7, printed p. 25 (Kalibangan seal 8011); Fig. 27, Plate II, printed p. 803 (raised-seal illustration). The PDF is a third-party hosted scan of an ASI publication; the text is used for research and no plates are redistributed.
+
+**S15 — Zoological Survey of India (Government of India).** *Annual Report 2018–19* and *Annual Report 2020–21*.  
+URLs:  
+- 2018–19: https://zsi.gov.in/uploads/documents/importantLinks/english/Annual_Report_2018-19.pdf  
+- 2020–21: https://zsi.gov.in/uploads/documents/importantLinks/english/Annual_Report_2020-21.pdf  
+Exact locators: 2018–19, project 21 “Zooarchaeology of Faunal remains of Kalibangan”, printed p. 039 (project ongoing; 11 Mammalia, 1 Aves and 2 Reptilia species identified); 2020–21, project 19, printed p. 031 (project ongoing; 1,075 specimens, 19 species, 9 families and 6 orders identified). These are dated progress snapshots, not final totals; the completed-study result is recorded separately in S10.
+
 **S12 — Indian Archaeological Society / Archaeological Survey of India Central Archaeological Library copy.** B. B. Lal, “Some Aspects of the Archaeological Evidence Relating to the Indus Script”, *Puratattva*, No. 7 (1974).  
 URL: https://ignca.gov.in/Asi_data/57533.pdf  
 Exact locators: printed pp. 22–23. Lal discusses two Kalibangan inscribed potsherds with overlapping signs, his right-to-left direction inference, possible boustrophedon second lines, seven repetitive-legend clay sealings from the citadel, seal use, inscription-bearing object types, and his tentative vase-shape interpretation for a V-like sign. These are explicitly attributed to Lal's 1974 analysis, not presented as a universally accepted decipherment.
@@ -350,7 +379,7 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 ## Additional source-access limitation
 
-- **ASI Part I / MASI 98 review gate:** The official ASI catalogue lists *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and *Excavations at Kalibangan: Early Harappans* (MASI No. 98). Their ASI download endpoints returned PDFs of about 17–19 MB, which this reader rejected for size. These reports have not been independently reviewed in this pass. Part II does contain a dedicated lithic-tools chapter (Ch. 11), now used for the Period I/II lithic draft items above; do not treat it as a substitute for complete Period I-specific report/plan/plate review or the detailed seal/sign corpus. The browser screenshot renderer also rejected the large Part II PDF, so page-image/plate inspection remains open.
+- **Separate official report review gates:** The ASI catalogue lists (a) *Excavations at Kalibangan: Early Harappans* (MASI No. 98; a separate report) and (b) *Excavations at Kalibangan: The Harappans (1960–1969), Part I* (the Mature Harappan report, ASI MASI No. 110 series). Their official ASI PDF endpoints returned payloads of about 19.5 MB and 17 MB respectively, beyond this reader's size limit. Neither report's complete contents have been independently reviewed in this pass. The Part I catalogue/search extract identifies separate chapters on “The inscribed material” and “Crafts at Kalibangan”, but no detailed claims from those inaccessible chapters are added here. ASI Part II Chapter 11 is not a substitute for the MASI 98 Early Harappan report or Part I's full sign/craft/plan/plate review. Visual screenshots of the large Corpus/ASI/ZSI PDFs also failed in this pass, so image/plate verification remains open.
 
 ## Newly surfaced source lead — not yet reviewed / not used for answers
 
@@ -369,4 +398,4 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 178 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 188 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
