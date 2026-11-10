@@ -264,12 +264,12 @@
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | शब्द-भेद — Parts of Speech | `catalog.english_grammar_parts_of_speech` | 14 Q&A; NEEDS_REVIEW |
-| 2 | काल — Tenses | `catalog.english_grammar_tenses` | मसौदा शुरू नहीं |
+| 1 | शब्द-भेद — Parts of Speech | `catalog.english_grammar_parts_of_speech` | 9 Q&A; NEEDS_REVIEW |
+| 2 | काल — Tenses | `catalog.english_grammar_tenses` | 2 Q&A; NEEDS_REVIEW |
 | 3 | कर्ता-क्रिया का सामंजस्य — Subject-Verb Agreement | `catalog.english_grammar_subject_verb_agreement` | मसौदा शुरू नहीं |
 | 4 | आर्टिकल (A, An, The) — Articles | `catalog.english_grammar_articles` | मसौदा शुरू नहीं |
 | 5 | संबंधसूचक अव्यय — Prepositions | `catalog.english_grammar_prepositions` | मसौदा शुरू नहीं |
-| 6 | सहायक/मोडल क्रियाएँ — Modals | `catalog.english_grammar_modals` | मसौदा शुरू नहीं |
+| 6 | सहायक/मोडल क्रियाएँ — Modals | `catalog.english_grammar_modals` | 3 Q&A; NEEDS_REVIEW |
 | 7 | कर्तृवाच्य एवं कर्मवाच्य — Active and Passive Voice | `catalog.english_grammar_active_and_passive_voice` | मसौदा शुरू नहीं |
 | 8 | प्रत्यक्ष एवं अप्रत्यक्ष कथन — Direct and Indirect Speech | `catalog.english_grammar_direct_and_indirect_speech` | मसौदा शुरू नहीं |
 | 9 | उपवाक्य एवं वाक्य — Clauses and Sentences | `catalog.english_grammar_clauses_and_sentences` | मसौदा शुरू नहीं |
