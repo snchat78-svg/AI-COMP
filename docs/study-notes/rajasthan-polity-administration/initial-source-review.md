@@ -46,7 +46,7 @@
 | Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
 |---|---|---|---|
 | RPO-016 | पंचायतों की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-I में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना (Preface) |
-| RPO-017 | नगरपालिकाओं की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-Y में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना, मुद्रित पृ. i |
+| RPO-017 | नगरपालिकाओं की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-Y में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना (Preface) |
 
 ## 6. लोकायुक्त — Lokayukta
 
