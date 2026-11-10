@@ -603,6 +603,22 @@ The ASI catalogue lists three distinct Kalibangan reports. The following chapter
 - Selected text from Ch. 23–24 was read using the same-title Government of India PM Gati Shakti staging-domain text copy as an extraction aid; the official ASI PDF S6 remains canonical. No file-hash comparison or page-image visual verification was possible. Every new locator needs independent re-check against S6.
 - Existing source discrepancies remain visible: KLB-4 vs KLB-8 cemetery label; 6–10 vs 8–10 group count; and Burial 13 urn presence. The source review is selective, not a complete audit of all numbered graves or plates.
 
+
+## 2026-11-10 — cemetery Chapter 25 small-finds continuation
+
+The following five additions retain only details that were not already adequately covered by the earlier one-liners. Broad material categories, generic bead types, generic copper mirrors, shell bangles, and general measuring instruments were not repeated.
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-283 | कालीबंगा के KLB-8 कब्रिस्तान की विस्तारित कब्र संख्या 10 से कौन-सी ताँबे की वस्तु मिली? | ताँबे का दर्पण; ASI विवरण में इसकी कुल लंबाई लगभग 11 सेमी और दर्पण वाले भाग का व्यास लगभग 6 सेमी दिया गया है। | S6 — Ch. 25, “Copper Objects”, printed pp. 1475–1476; exact grave-context and measurements need independent re-check. |
+| KAL-284 | KLB-8 कब्रिस्तान के छोटे पुरावशेषों में किस आकृति का फायेंस का बाट/लटकन मिला? | कलीनुमा (bud-shaped) फायेंस का plumb-bob, जिसकी ऊँचाई लगभग 7 सेमी बताई गई है। | S6 — Ch. 25, “Faience Objects”, printed pp. 1477–1478. |
+| KAL-285 | KLB-8 कब्रिस्तान की किस कब्र से लगभग 4 सेमी व्यास वाला शंख/सीप का कान का आभूषण मिला? | Burial 28 से; ASI इसे ear-ring/bala के रूप में वर्णित करता है। | S6 — Ch. 25, “Shell Objects”, printed pp. 1480–1481. |
+| KAL-286 | कालीबंगा के कब्रिस्तान से मिले एक अगेट (अकीक) के बाट का दर्ज वजन कितना था? | लगभग 0.874 ग्राम। | S6 — Ch. 25, “Agate, Bone and Terracotta Objects”, printed pp. 1482–1483; केवल रिपोर्ट में दर्ज मान, स्वतंत्र मापन नहीं। |
+| KAL-287 | ASI के अनुसार KLB-8 कब्रिस्तान की स्वर्ण मनकियों के प्रमुख आकार कौन-से थे? | गोलाकार द्विशंक्वाकार, लंबी द्विशंक्वाकार, पीपे/बैरल जैसी और नलिकाकार मनकियाँ; रिपोर्ट Grave 22 से स्वर्ण का एक अलग टुकड़ा भी दर्ज करती है। | S6 — Ch. 25, “Gold Objects”, printed pp. 1486–1487. |
+
+**Source / review caution:** ये प्रश्न AI द्वारा मूल हिंदी में लिखे गए हैं; उत्तर ASI रिपोर्ट के विवरण का संक्षिप्त हिंदी रूपांतरण हैं, वास्तविक परीक्षा के पूर्ववर्ती प्रश्न नहीं। अध्याय 25 का पाठ पहले उपलब्ध same-title Government of India PM Gati Shakti staging-domain text copy से text-extraction aid के रूप में पढ़ा गया था; उस प्रति का binary hash आधिकारिक ASI प्रति S6 से मिलाया नहीं गया। आधिकारिक ASI PDF को ही canonical source माना गया है। इस प्रयास में staging PDF की page-image screenshot retrieval भी 404 पर विफल हुई; अतः किसी चित्र/प्लेट को दृष्टिगत रूप से सत्यापित नहीं कहा जा रहा। सभी पाँच नए प्रश्न NEEDS_REVIEW हैं और पृष्ठ-संदर्भ, grave context, माप तथा भार की स्वतंत्र जाँच आवश्यक है। अध्याय 25 की selective text review का अर्थ पूरे अध्याय/सभी पुरावशेषों की पूर्ण समीक्षा नहीं है।
+
+
 ## Review and publishing status
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
