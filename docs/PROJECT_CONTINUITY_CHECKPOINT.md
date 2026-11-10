@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 237 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 240 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -673,7 +673,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 ## 2026-11-10 — Mahadevan corpus statistics and Pande inscription methodology
 
-- Current working notes branch/PR #113 has **237 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
+- Current working notes branch/PR #113 has **240 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
 - Mahadevan 1977 (ASI Memoir 77), Introduction pp. 5–6: Kalibangan has 99 inscribed objects in that selected corpus, broken down as 56 seals, 21 sealings, 20 pottery graffiti and 2 bronze implements; 46 Kalibangan texts were unpublished prior to the corpus. The 1977 corpus excluded 549 photographed objects without inscriptions or with wholly missing/damaged/illegible text, leaving 2,906 inscribed objects overall.
 - Pande 1978, *Purātattva* No. 8, pp. 156–157: stresses spatial/temporal and stratigraphic distribution rather than treating all inscribed material en masse; Pande and Lal separated Citadel and Lower City material and planned vertical/horizontal plotting; tentative plant-like and triangular signs are described as Kalibangan-specific; copper tablets with one inscribed face and reverse animal/human symbol were then known only from Mohenjo-daro.
 - The 99-object Mahadevan corpus count, later K-1–K-122 catalogue references, and the number of “seals” are not interchangeable. Preserve their separate definitions, date and inclusion criteria.
@@ -682,7 +682,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 ## 2026-11-10 — NMMA antiquity records and ZSI 2017–18 faunal milestone
 
-- Current content PR #113 branch contains **237 primary AI-authored Q&A drafts (KAL-001–KAL-233)**, 3 separately labelled corroborative items and 2 ASI-hosted photos; all remain `NEEDS_REVIEW`, topic DRAFTING / NOT COMPLETE.
+- Current content PR #113 branch contains **240 primary AI-authored Q&A drafts (KAL-001–KAL-233)**, 3 separately labelled corroborative items and 2 ASI-hosted photos; all remain `NEEDS_REVIEW`, topic DRAFTING / NOT COMPLETE.
 - ZSI *Annual Report 2017–18*, printed p. 45: about 1,400 Kalibangan animal-remain specimens worked out; 612 identified/registered, under six species, six genera, three families and two orders of Mammalia. This is an early progress snapshot and must not be confused with the 2018–19, 2020–21 or completed 2021–22 values.
 - NMMA Archaeological Museum Kalibangan object records added: GM-KAM-RJ-775921, 761412, 1393795, 1393288 and 1393832. The items include separate terracotta bulls, a KLB-1 early-level bull, a perforated bull fragment, a buffalo fragment and a decorated bull head, with catalogue descriptions and accession references.
 - NMMA's public website declares documented data are under correction and subject to validation. Treat these as provisional museum catalogue metadata. The 761412 record has a field-level inconsistency (Harappan/Proto-Historic dynasty/period but “PRE Harappan” provenance and KLB-1 early-level description); do not infer an absolute period until cross-checked against the museum register.
@@ -715,3 +715,9 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Reworked the topic-wide checklist to distinguish drafted dimensions from genuinely complete coverage. Cultural chronology, mound/burial labels, archaeobotany, pottery technology, seals/signs, crafts, fauna, NMMA inventory and map/plate evidence remain PARTIAL where review is still outstanding; cross-site comparison and reviewed map/plan inventory remain GAP; exam applicability remains NOT MAPPED.
 - New additions do not turn a topic into COMPLETE based on count. All 237 primary Q&A and 3 corroborative points remain NEEDS_REVIEW until independent review.
 - Key explicit open conflicts in checklist: KLB-4 vs KLB-8 cemetery label, source-dependent radiocarbon estimates, rice vs barley/wheat site attribution, museum-year discrepancy, NMMA record GM-KAM-RJ-761412 field conflict and provisional NMMA catalogue validation.
+
+
+## 2026-11-10 — NMMA feeding cup, scale and net-sinker records
+
+- Added KAL-238–KAL-240 from NMMA individual object entries: GM-KAM-RJ-1392979 (broken small spouted terracotta feeding cup, thin straight rim); GM-KAM-RJ-1391780 (terracotta scale with two sets of incised vertical marks and circular section); GM-KAM-RJ-770761 (round handmade terracotta fragment, catalogue says it may have been a net sinker; only one quarter survives).
+- Current Kalibangan draft count **240 primary Q&A (KAL-001–KAL-240)**, 3 corroborative points, 2 ASI photos. All remain NEEDS_REVIEW; all NMMA data remains provisional and under correction/validation.
