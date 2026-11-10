@@ -20,11 +20,11 @@
 | ENG-007 | क्रिया-विशेषण (Adverb) किन बातों को व्यक्त कर सकता है? | समय, स्थान, ढंग, मात्रा और आवृत्ति। | `catalog.english_grammar_parts_of_speech` | S3 — “Adjectives and adverbs” |
 | ENG-008 | पूर्वसर्ग (Preposition) किनके बीच संबंध दिखाता है? | स्थान, समय या तार्किक संबंध। | `catalog.english_grammar_parts_of_speech` | S4 — “Prepositions” |
 | ENG-009 | संयोजक (Conjunction) का काम क्या है? | शब्दों, पदबंधों या उपवाक्यों को जोड़ना। | `catalog.english_grammar_parts_of_speech` | S5 — “Conjunctions” |
-| ENG-010 | अंग्रेज़ी में काल (Tense) किन रूपों से व्यक्त होता है? | क्रिया या क्रिया-पदबंध के रूपों से। | `catalog.english_grammar_parts_of_speech` | S6 — “Tenses and time” |
-| ENG-011 | क्या अंग्रेज़ी में भविष्यकाल की अलग रूपात्मक क्रिया-रचना होती है? | नहीं; भविष्य का अर्थ कई रचनाओं से व्यक्त होता है, जैसे *will* या *be going to*। | `catalog.english_grammar_parts_of_speech` | S6 — “Tenses and time” |
-| ENG-012 | Modal verbs किन भावों को व्यक्त करते हैं? | क्षमता, संभावना, इच्छा, बाध्यता या आवश्यकता। | `catalog.english_grammar_parts_of_speech` | S7 — “Modal verbs and modality” |
-| ENG-013 | मुख्य Modal verbs के उदाहरण कौन-से हैं? | Can, could, may, might, will, shall, would, should और must। | `catalog.english_grammar_parts_of_speech` | S7 — “Modal verbs and modality” |
-| ENG-014 | Modal verb के बाद मुख्य क्रिया सामान्यतः किस रूप में आती है? | मूल रूप (base form) में। | `catalog.english_grammar_parts_of_speech` | S8 — “Modality: forms” |
+| ENG-010 | अंग्रेज़ी में काल (Tense) किन रूपों से व्यक्त होता है? | क्रिया या क्रिया-पदबंध के रूपों से। | `catalog.english_grammar_tenses` | S6 — “Tenses and time” |
+| ENG-011 | क्या अंग्रेज़ी में भविष्यकाल की अलग रूपात्मक क्रिया-रचना होती है? | नहीं; भविष्य का अर्थ कई रचनाओं से व्यक्त होता है, जैसे *will* या *be going to*। | `catalog.english_grammar_tenses` | S6 — “Tenses and time” |
+| ENG-012 | Modal verbs किन भावों को व्यक्त करते हैं? | क्षमता, संभावना, इच्छा, बाध्यता या आवश्यकता। | `catalog.english_grammar_modals` | S7 — “Modal verbs and modality” |
+| ENG-013 | मुख्य Modal verbs के उदाहरण कौन-से हैं? | Can, could, may, might, will, shall, would, should और must। | `catalog.english_grammar_modals` | S7 — “Modal verbs and modality” |
+| ENG-014 | Modal verb के बाद मुख्य क्रिया सामान्यतः किस रूप में आती है? | मूल रूप (base form) में। | `catalog.english_grammar_modals` | S8 — “Modality: forms” |
 
 ## स्रोत रजिस्टर
 
