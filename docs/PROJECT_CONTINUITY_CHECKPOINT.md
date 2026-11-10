@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 215 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 225 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -669,3 +669,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Added KAL-215: B. B. Lal 1979 Fig. 1 labels cemetery KLB-4 (printed p. 66), while Hanumangarh Gazetteer p. 36 and ASI Jodhpur Circle page say KLB-8. Keep unresolved until the original plan/register is examined.
 - Kalibangan now has **215 primary Q&A drafts (KAL-001–KAL-215)**, plus 3 corroborative items and 2 ASI photos. All remain NEEDS_REVIEW / DRAFTING.
 - Also recorded that Lal's 1979 uncorrected (Period I 2400–2250 BCE; Period II 2200–1700 BCE) and corrected (Period I 2900–2700 BCE; Period II 2500–2000 BCE) radiocarbon estimates are not interchangeable with Gazetteer date ranges. Exact sample IDs/correction conventions need specialist review.
+
+
+## 2026-11-10 — Mahadevan corpus statistics and Pande inscription methodology
+
+- Current working notes branch/PR #113 has **225 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
+- Mahadevan 1977 (ASI Memoir 77), Introduction pp. 5–6: Kalibangan has 99 inscribed objects in that selected corpus, broken down as 56 seals, 21 sealings, 20 pottery graffiti and 2 bronze implements; 46 Kalibangan texts were unpublished prior to the corpus. The 1977 corpus excluded 549 photographed objects without inscriptions or with wholly missing/damaged/illegible text, leaving 2,906 inscribed objects overall.
+- Pande 1978, *Purātattva* No. 8, pp. 156–157: stresses spatial/temporal and stratigraphic distribution rather than treating all inscribed material en masse; Pande and Lal separated Citadel and Lower City material and planned vertical/horizontal plotting; tentative plant-like and triangular signs are described as Kalibangan-specific; copper tablets with one inscribed face and reverse animal/human symbol were then known only from Mohenjo-daro.
+- The 99-object Mahadevan corpus count, later K-1–K-122 catalogue references, and the number of “seals” are not interchangeable. Preserve their separate definitions, date and inclusion criteria.
+- No script decipherment is claimed. Sign-site specificity remains tentative as Pande explicitly cautions against over-inference from limited data.
