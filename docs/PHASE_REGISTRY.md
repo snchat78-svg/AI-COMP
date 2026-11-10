@@ -536,3 +536,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - ASI Part II Chapter 22's figure register lists Fig. 22.2 KLB-8 cemetery location at p. 1288 and Fig. 22.3 KLB-8 cemetery view at p. 1290. Chapter 23 is Pot Burials; figures also list individual pot-burial plans.
 - This is text-index evidence only. Page-image extraction failed; visual check remains open. The KLB-4 label in B. B. Lal 1979 Fig. 1 versus KLB-8 in Gazetteer / ASI Jodhpur Circle / ASI Part II remains a preserved conflict pending original-plan reconciliation.
 - Phase states are unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No implementation phase was started or marked complete; no code, live DB or APK changed.
+
+
+## 2026-11-10 — ASI Part II Chapter 22–23 text increment
+
+- PR #113 branch now carries 264 primary Kalibangan Q&A drafts (KAL-001–KAL-264), 3 corroborative items and 2 ASI photos. The latest 24 items are KAL-241–KAL-264 and cover selected cemetery/pot-burial passages and selected, carefully attributed osteological observations.
+- Selected passages were text-read from a same-title Government of India PM Gati Shakti staging-domain rendering to overcome the reader limit; official ASI PDF S6 remains the canonical source. No binary hash comparison or page-image verification was possible; independent page-by-page check remains required.
+- Preserved group-size discrepancy: ASI Part II p. 1422 says 6–10 burials/group, secondary Satarupa Bal 2020 (S21) says 8–10. KAL-243 follows ASI provisionally. KLB-4 vs KLB-8 remains open.
+- All drafts remain NEEDS_REVIEW. No application code/database/APK/migration changed and no app tests were run. No phase state changed: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Ahar-Banas remains NOT STARTED.
