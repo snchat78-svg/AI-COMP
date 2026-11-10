@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 233 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 237 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -673,7 +673,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 ## 2026-11-10 — Mahadevan corpus statistics and Pande inscription methodology
 
-- Current working notes branch/PR #113 has **233 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
+- Current working notes branch/PR #113 has **237 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
 - Mahadevan 1977 (ASI Memoir 77), Introduction pp. 5–6: Kalibangan has 99 inscribed objects in that selected corpus, broken down as 56 seals, 21 sealings, 20 pottery graffiti and 2 bronze implements; 46 Kalibangan texts were unpublished prior to the corpus. The 1977 corpus excluded 549 photographed objects without inscriptions or with wholly missing/damaged/illegible text, leaving 2,906 inscribed objects overall.
 - Pande 1978, *Purātattva* No. 8, pp. 156–157: stresses spatial/temporal and stratigraphic distribution rather than treating all inscribed material en masse; Pande and Lal separated Citadel and Lower City material and planned vertical/horizontal plotting; tentative plant-like and triangular signs are described as Kalibangan-specific; copper tablets with one inscribed face and reverse animal/human symbol were then known only from Mohenjo-daro.
 - The 99-object Mahadevan corpus count, later K-1–K-122 catalogue references, and the number of “seals” are not interchangeable. Preserve their separate definitions, date and inclusion criteria.
@@ -682,9 +682,15 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 ## 2026-11-10 — NMMA antiquity records and ZSI 2017–18 faunal milestone
 
-- Current content PR #113 branch contains **233 primary AI-authored Q&A drafts (KAL-001–KAL-233)**, 3 separately labelled corroborative items and 2 ASI-hosted photos; all remain `NEEDS_REVIEW`, topic DRAFTING / NOT COMPLETE.
+- Current content PR #113 branch contains **237 primary AI-authored Q&A drafts (KAL-001–KAL-233)**, 3 separately labelled corroborative items and 2 ASI-hosted photos; all remain `NEEDS_REVIEW`, topic DRAFTING / NOT COMPLETE.
 - ZSI *Annual Report 2017–18*, printed p. 45: about 1,400 Kalibangan animal-remain specimens worked out; 612 identified/registered, under six species, six genera, three families and two orders of Mammalia. This is an early progress snapshot and must not be confused with the 2018–19, 2020–21 or completed 2021–22 values.
 - NMMA Archaeological Museum Kalibangan object records added: GM-KAM-RJ-775921, 761412, 1393795, 1393288 and 1393832. The items include separate terracotta bulls, a KLB-1 early-level bull, a perforated bull fragment, a buffalo fragment and a decorated bull head, with catalogue descriptions and accession references.
 - NMMA's public website declares documented data are under correction and subject to validation. Treat these as provisional museum catalogue metadata. The 761412 record has a field-level inconsistency (Harappan/Proto-Historic dynasty/period but “PRE Harappan” provenance and KLB-1 early-level description); do not infer an absolute period until cross-checked against the museum register.
 - Current notes integrity gate to be repeated: exact/normalized draft-only duplicate scan and continuous IDs; no live DB semantic scan or independent review. No application code, production DB, migrations, secrets, APK or learner UI changed.
 - Next: accession-level NMMA catalogue audit; authorized ZSI Occasional Paper 430 access; ASI excavation plan/plate confirmation; report-level date/period reconciliation; independent factual review and exam mapping. Do not move to Ahar-Banas.
+
+
+## 2026-11-10 — additional NMMA transport, bird and furniture entries
+
+- Added KAL-234–KAL-237 from NMMA Archaeological Museum Kalibangan catalogue: GM-KAM-RJ-775637 handmade terracotta cart (broken, holes); GM-KAM-RJ-775897 hollow bird figure with hole and recorded measurements; GM-KAM-RJ-776047 titled “Terracotta birds whistle” (description blank); GM-KAM-RJ-775543 handmade terracotta cot with one surviving leg. These are metadata summaries only; do not infer functionality beyond catalogue labels.
+- Current Kalibangan draft count is **237 primary AI-authored Q&A (KAL-001–KAL-237)**, 3 corroborative items, 2 ASI images. All remain NEEDS_REVIEW. NMMA documented data remains subject to correction/validation.
