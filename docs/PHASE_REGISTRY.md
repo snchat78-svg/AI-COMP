@@ -516,3 +516,5 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Phase status unchanged; no code/database/APK or learner-facing data changed. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
 
 - Additional NMMA museum records KAL-234–KAL-237 document GM-KAM-RJ-775637 cart, 775897 bird figure, 776047 “birds whistle” and 775543 terracotta cot. Data are provisional catalogue metadata and the NMMA disclaimer remains in force. Current draft total 237 primary Q&A, all NEEDS_REVIEW.
+
+- ZSI Occasional Paper 430 access status updated: the ResearchGate page identifies the 2026 ZSI publication and provides only a “Request full-text” option; no full text was accessible/read and no request was initiated. Treat as a bibliography lead only; current 237 notes do not rely on it.
