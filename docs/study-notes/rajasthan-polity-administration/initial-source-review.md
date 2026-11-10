@@ -48,6 +48,21 @@
 | RPO-016 | पंचायतों की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-I में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना (Preface) |
 | RPO-017 | नगरपालिकाओं की वित्तीय स्थिति की समीक्षा हेतु राज्य वित्त आयोग का प्रावधान किस अनुच्छेद में है? | अनुच्छेद 243-Y में। | `catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission` | S4 — प्रस्तावना, मुद्रित पृ. i |
 
+## 6. लोकायुक्त — Lokayukta
+
+| Draft ID | प्रश्न | उत्तर | स्थायी Concept ID | प्रमाण |
+|---|---|---|---|---|
+| RPO-018 | राजस्थान लोकायुक्त संस्था किस अधिनियम के अंतर्गत बनी? | राजस्थान लोकायुक्त तथा उप-लोकायुक्त अधिनियम, 1973। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — प्रस्तावना/धारा 1 |
+| RPO-019 | राजस्थान लोकायुक्त तथा उप-लोकायुक्त अधिनियम का अधिनियम क्रमांक क्या है? | अधिनियम संख्या 9, वर्ष 1973। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — शीर्षक पृष्ठ |
+| RPO-020 | राजस्थान लोकायुक्त अधिनियम कब से प्रभावी माना गया? | 3 फरवरी 1973 से। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 1(3) |
+| RPO-021 | राजस्थान लोकायुक्त अधिनियम का विस्तार कहाँ तक है? | पूरे राजस्थान राज्य में। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 1(2) |
+| RPO-022 | राजस्थान लोकायुक्त की नियुक्ति किसके द्वारा की जाती है? | राज्यपाल अपने हस्ताक्षर और मुहरयुक्त अधिपत्र से नियुक्त करते हैं। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 3(1) |
+| RPO-023 | राजस्थान लोकायुक्त अधिनियम में “मंत्री” की परिभाषा से कौन बाहर है? | मुख्यमंत्री। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 2(f); S6 — कार्यक्षेत्र |
+| RPO-024 | लोकायुक्त किन प्रकार के आरोपों की जाँच कर सकता है? | पद का दुरुपयोग, अनुचित लाभ, अनुचित हानि, निजी/भ्रष्ट उद्देश्य या सत्यनिष्ठा की कमी। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S6 — “लोकायुक्त की शक्तियाँ”, धारा 7 |
+| RPO-025 | लोकायुक्त के अधिकार-क्षेत्र में पंचायती राज के किन पदों का उल्लेख है? | जिला परिषद प्रमुख/उप-प्रमुख, पंचायत समिति प्रधान/उप-प्रधान और स्थायी समिति अध्यक्ष। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 2(i)(iii)(a); S6 — शक्तियाँ |
+| RPO-026 | लोकायुक्त के अधिकार-क्षेत्र में नगर निकायों के किन प्रमुख पदों का उल्लेख है? | नगर निगम महापौर/उप-महापौर तथा नगर परिषद/पालिका अध्यक्ष/उपाध्यक्ष। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S5 — धारा 2(i)(iii)(b); S6 — शक्तियाँ |
+| RPO-027 | राजस्थान लोकायुक्त संस्था क्या राज्य सरकार का विभाग है? | नहीं; यह स्वतंत्र संस्थान है और राज्य सरकार का विभाग नहीं है। | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | S7 — “लोकायुक्त संस्था—एक परिचय” |
+
 ## स्रोत रजिस्टर
 
 - **S1 — राजस्थान विधान सभा, राजस्थान सरकार।** “Introduction” और “House Tenure”.  
@@ -63,6 +78,10 @@
 - **S4 — वित्त विभाग, राजस्थान सरकार।** *Report of the Third State Finance Commission, Rajasthan (2005–2010)*, फरवरी 2008.  
   https://finance.rajasthan.gov.in/docs/fincommission/FC3.pdf  
   उपयोग: प्रस्तावना तथा मुद्रित पृ. 26–30, पंचायती राज का इतिहास, तीन-स्तरीय ढाँचा और अधिनियम की तिथि।
+
+- **S5 — लोकायुक्त सचिवालय, राजस्थान सरकार।** *राजस्थान लोकायुक्त तथा उप-लोकायुक्त अधिनियम, 1973*, 31 जनवरी 2015 तक संशोधित पाठ. https://lokayukta.rajasthan.gov.in/DownloadFiles/mjzu5160MJlokayukta%20act_compressed%20%281%29.pdf — शीर्षक/प्रस्तावना और धाराएँ 1, 2, 3, 7; मुद्रित पृ. 1–6, 15–16। यह उपलब्ध संशोधित प्रति है; बाद के संशोधन की अलग जाँच आवश्यक है।
+- **S6 — लोकायुक्त सचिवालय, राजस्थान सरकार।** “संस्था के अधिकारियों की शक्तियाँ एवं कर्त्तव्य”. https://lokayukta.rajasthan.gov.in/article_detail.aspx?ids=7YbQuDYmH+slA4JPBG7SrQ%3D%3D — धारा 7 के अंतर्गत आरोपों और लोक सेवक-वर्ग का हिंदी सार।
+- **S7 — लोकायुक्त सचिवालय, राजस्थान सरकार।** “लोकायुक्त संस्था — एक परिचय”. https://lokayukta.rajasthan.gov.in/article_detail.aspx?ids=lOi5jUXk9XbkTnWm6iYlJg%3D%3D — स्वतंत्र संस्था और कार्य का परिचय।
 
 ## समीक्षा एवं आगे का काम
 
