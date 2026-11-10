@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 215 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 240 primary AI-authored Q&A drafts (KAL-001–KAL-240), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -732,3 +732,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
   - Part II: Ch. 11–25 text-level chapters already partly used for Q&A; plates/plans still need visual review.
 - These are chapter headings from report TOCs/catalogue metadata only. MASI 98 and Mature Part I full text were not read because the official PDFs exceed the current reader size limit; no factual Q&A was drafted from TOC headings. No claims of chapter review beyond actually read Part II text.
 - Current note total: **240 primary AI-authored Q&A**, 3 corroborative items, 2 ASI photos; all NEEDS_REVIEW. Topic not complete; Ahar-Banas stays NOT STARTED.
+
+
+## 2026-11-10 — latest Kalibangan source-review checkpoint
+
+- PR #113 remains OPEN / DRAFT on `content/kalibangan-full-topic-coverage-asi`; 240 primary Q&A drafts, 3 corroborative items and 2 ASI photos; all NEEDS_REVIEW. No question-count completion threshold applies.
+- Official ASI Part II Chapter 22 figure index now cross-referenced: Fig. 22.2 identifies the Harappan cemetery location as KLB-8 (printed p. 1288), and Fig. 22.3 shows the KLB-8 cemetery (p. 1290). Chapter 23 figure index includes individual pot-burial plans.
+- Page-image screenshot retrieval failed because the official PDF payload exceeded the reader limit. These are indexed textual captions/locators only; no visual plan/plate verification is claimed. Chapter 22 full body not independently completed in this pass.
+- The Gazetteer and ASI Jodhpur Circle and the ASI Part II figure register identify KLB-8, but B. B. Lal 1979 Fig. 1 labels the cemetery KLB-4. Preserve this as an unresolved conflict pending the original plan/register and context audit.
+- Current next research: (1) secure readable, lawful access to official MASI 98 and Mature Part I; (2) complete Part II cemetery text and plate/plan visual review; (3) reconcile KLB-4/KLB-8, chronology and sign/object corpus; (4) obtain and review ZSI Occasional Paper 430; (5) complete live semantic duplicate scan, independent source/answer review, image permissions and exam syllabus mapping. Do not begin Ahar-Banas before all Kalibangan exit gates close.
+- Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-fetch workaround, unsafe TLS bypass, application code, live DB, migration, secret or APK change was performed.
