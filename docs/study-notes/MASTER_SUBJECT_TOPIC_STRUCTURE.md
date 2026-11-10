@@ -258,14 +258,14 @@
 ### अंग्रेज़ी भाषा — English
 
 **मुख्य topic groups:** 3 • **उपविषय:** 21  
-**मसौदा:** [14 हिंदी Q&A](english/initial-source-review.md) — Cambridge Grammar से; प्रश्न/उत्तर हिंदी में, अंग्रेज़ी उदाहरण मूल रूप में; NEEDS_REVIEW। शेष English grammar/vocabulary/usage उपविषय लंबित। प्रश्न एवं उत्तर हिंदी में होंगे; मूल अंग्रेज़ी उदाहरण यथावत रहेंगे।
+**मसौदा:** [23 हिंदी Q&A](english/initial-source-review.md) — Cambridge Grammar से; प्रश्न/उत्तर हिंदी में, अंग्रेज़ी उदाहरण मूल रूप में; NEEDS_REVIEW। शेष English grammar/vocabulary/usage उपविषय लंबित। प्रश्न एवं उत्तर हिंदी में होंगे; मूल अंग्रेज़ी उदाहरण यथावत रहेंगे।
 
 #### 1. व्याकरण — Grammar
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
 | 1 | शब्द-भेद — Parts of Speech | `catalog.english_grammar_parts_of_speech` | 9 Q&A; NEEDS_REVIEW |
-| 2 | काल — Tenses | `catalog.english_grammar_tenses` | 2 Q&A; NEEDS_REVIEW |
+| 2 | काल — Tenses | `catalog.english_grammar_tenses` | 11 Q&A; NEEDS_REVIEW |
 | 3 | कर्ता-क्रिया का सामंजस्य — Subject-Verb Agreement | `catalog.english_grammar_subject_verb_agreement` | मसौदा शुरू नहीं |
 | 4 | आर्टिकल (A, An, The) — Articles | `catalog.english_grammar_articles` | मसौदा शुरू नहीं |
 | 5 | संबंधसूचक अव्यय — Prepositions | `catalog.english_grammar_prepositions` | मसौदा शुरू नहीं |
