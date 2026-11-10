@@ -282,3 +282,13 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Added an explicit TOC-only chapter audit to the Kalibangan notes. MASI 98 reading priorities are Ch. 8 agricultural field, Ch. 9 end of Early Harappan settlement, Ch. 10 pottery, Ch. 11 minor antiquities, Ch. 12 graffiti and Ch. 13 technical reports on pottery/metals/animal remains/plants/seeds. Mature Part I priorities are Ch. 5–7 KLB-1/2/3 stratigraphy/structures, Ch. 8 pottery, Ch. 9 inscribed material and Ch. 10 crafts.
 - **Important evidence limit:** MASI 98 and Mature Part I full PDFs still exceed the current reader limit. The chapter names come from official catalogue plus bibliographic TOC metadata; no detailed facts have been added from these TOC lines. Part II is the only report among these for which multiple chapter texts have been reviewed at text level; its visual plate/plan verification remains open.
 - This turns the next research pass into a defined chapter-by-chapter reading queue without converting unreviewed contents metadata into historical assertions. Kalibangan remains DRAFTING / NOT COMPLETE; all 240 primary Q&A remain NEEDS_REVIEW.
+
+
+### 2026-11-10 — ASI Part II cemetery figure-register cross-check (PR #113)
+
+- Re-opened official ASI Part II (Memoirs ASI No. 110, 2020). The front matter assigns object identifications/descriptions to the individual authors and disclaims ASI responsibility for those interpretations; source-based notes should retain author attribution.
+- Chapter 22 “The Cemetery” (A.K. Sharma) is listed at pp. 1285–1427, with locating/plotting burials, extended inhumation, rectangular graves without skeletal material and palaeo-pathological study. Chapter 23 pot burials is pp. 1429–1465; cemetery pottery and small finds are Chapters 24–25.
+- The official figure register labels Fig. 22.2 as the location of Harappan Cemetery KLB-8 (p. 1288) and Fig. 22.3 as KLB-8 Harappan Cemetery (p. 1290). The figure register also lists plans/sections for individual burials and pot burials, and osteological case captions on pp. 1404–1421.
+- KLB-8 now has Gazetteer, ASI Jodhpur Circle and ASI Part II figure-register support, but B. B. Lal 1979 Fig. 1 still labels cemetery KLB-4; the inconsistency is preserved, not silently resolved.
+- Screenshot/page-image retrieval for the 13.69 MB ASI PDF failed; figure captions are text-extracted only. No map, burial illustration or pathology plate is considered visually verified, and no Q&A was added from caption-only evidence.
+- No new notes count: 240 primary Q&A, 3 corroborative points, 2 ASI images; every item remains NEEDS_REVIEW. Kalibangan remains DRAFTING; Ahar-Banas remains NOT STARTED. No app/code/database/APK changes; automated application tests not run.
