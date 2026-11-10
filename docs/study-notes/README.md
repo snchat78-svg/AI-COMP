@@ -44,6 +44,12 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 - [Rajasthan History — all 34 catalogue topics](rajasthan-history/README.md). Work through the list in order and close each topic's coverage gaps before moving forward.
 
+## Current parallel content tracks
+
+- [Rajasthan History](rajasthan-history/README.md): Kalibangan — 282 primary Q&A drafts in PR #113; all NEEDS_REVIEW.
+- [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 14 new Hindi Q&A drafts from the official Rajasthan at a Glance page; 7 earlier seed candidates are tracked separately and need review.
+- Rajasthan Polity & Administration, Hindi and English: the 21 + 24 + 21 catalogue concepts are in the master structure; dedicated Q&A drafting has not started yet.
+
 ## First content slice
 
 - Subject: Rajasthan History
