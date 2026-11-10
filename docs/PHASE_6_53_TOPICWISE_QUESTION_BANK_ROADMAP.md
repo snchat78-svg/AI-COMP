@@ -274,3 +274,11 @@ This roadmap records required work and observed caveats; it does not claim compl
 - The Kalibangan topic checklist has been re-audited after the NMMA/ZSI additions. It now explicitly separates DRAFTED, PARTIAL, GAP and NOT MAPPED dimensions; remaining partial areas include chronology, cemetery mound identifiers, archaeobotany, seals/sign corpus, fauna, museum catalogue validation and plan/plate evidence. Cross-site comparison and reviewed map inventory remain GAP. Count of Q&A is not a completion threshold.
 
 - NMMA individual catalogue descriptions add KAL-238–KAL-240: GM-KAM-RJ-1392979 spouted terracotta feeding cup; GM-KAM-RJ-1391780 terracotta measuring scale with two sets of incised vertical markings; GM-KAM-RJ-770761 broken round terracotta object catalogued as a **possible** net sinker. These remain provisional catalogue metadata under the NMMA correction/validation caveat.
+
+
+### 2026-11-10 — primary ASI report chapter audit (contents-only)
+
+- The official ASI catalogue was re-read and the three Kalibangan listings kept distinct: MASI 98 *The Early Harappans* (2003); Mature Harappan *The Harappans (1960–1969), Part I* (2015); Part II (2020).
+- Added an explicit TOC-only chapter audit to the Kalibangan notes. MASI 98 reading priorities are Ch. 8 agricultural field, Ch. 9 end of Early Harappan settlement, Ch. 10 pottery, Ch. 11 minor antiquities, Ch. 12 graffiti and Ch. 13 technical reports on pottery/metals/animal remains/plants/seeds. Mature Part I priorities are Ch. 5–7 KLB-1/2/3 stratigraphy/structures, Ch. 8 pottery, Ch. 9 inscribed material and Ch. 10 crafts.
+- **Important evidence limit:** MASI 98 and Mature Part I full PDFs still exceed the current reader limit. The chapter names come from official catalogue plus bibliographic TOC metadata; no detailed facts have been added from these TOC lines. Part II is the only report among these for which multiple chapter texts have been reviewed at text level; its visual plate/plan verification remains open.
+- This turns the next research pass into a defined chapter-by-chapter reading queue without converting unreviewed contents metadata into historical assertions. Kalibangan remains DRAFTING / NOT COMPLETE; all 240 primary Q&A remain NEEDS_REVIEW.
