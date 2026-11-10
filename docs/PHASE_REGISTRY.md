@@ -471,3 +471,5 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Phase status unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No app/live DB/APK changed.
 
 - Addendum: KAL-178 captures ZSI's explicit association of faunal remains with both pre-Harappan and Harappan cultural phases (Annual Report 2021–22, p. 35); all candidates remain NEEDS_REVIEW.
+
+- Faunal follow-up lead only (not yet reviewed): a specialist distributor catalogue lists Supriya Nandy's ZSI *Zooarchaeology of Faunal Remains of Kalibangan* (Occasional Paper No. 430, 2026). The book text and ZSI digital record were not accessed; do not rely on it for facts until an authorized copy is independently reviewed.
