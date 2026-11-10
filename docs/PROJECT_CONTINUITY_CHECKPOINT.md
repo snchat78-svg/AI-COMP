@@ -762,3 +762,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Record internal discrepancy: Burial 13 intro p.1430 says no urn, detailed section pp.1444–1445 says a broken urn. KAL-270 avoids the conflicting urn fact.
 - Readable text was from the matching-title PM Gati Shakti staging copy; official ASI S6 remains canonical, but no hash comparison or page-image validation was possible. Independent official-source page checks remain mandatory.
 - No phase-state changes, no app code/database/migration/APK/learner data. Kalibangan remains DRAFTING; Ahar-Banas not started.
+
+
+## 2026-11-10 — parallel five-subject notes structure and Hindi-only drafting
+
+- Created `docs/study-notes/MASTER_SUBJECT_TOPIC_STRUCTURE.md` from the canonical topic ledger: 132 existing concept rows across Rajasthan History (34), Rajasthan Geography (32), Rajasthan Polity & Administration (21), Hindi (24) and English (21), grouped as 24 parent topics. The structure includes each stable concept ID, Hindi/English topic labels, a proposed gap list, current seed/draft counts and source entry points.
+- User's language instruction is now a project rule: write all One-Liner questions and answers in Hindi, including for English-subject grammar/vocabulary. Use English examples/terms only when unavoidable and explain in Hindi. Keep the question/answer compact and dense, with one fact per item.
+- Began parallel Rajasthan Geography notes in `docs/study-notes/rajasthan-geography/initial-source-review.md`: 14 new Hindi Q&A drafts from the Government of Rajasthan “Rajasthan at a Glance” page; they cover arid-region climate, Ghaggar, regional drainage and irrigation. All remain NEEDS_REVIEW. Existing 7 migration seed candidates are kept separate and must be source/duplicate-reviewed before adding related candidates.
+- Current cross-subject work state: Kalibangan 282 draft Q&A in PR #113; Geography 14 new docs Q&A + 7 old migration seed candidates; Rajasthan Polity 21 concepts, Hindi 24 and English 21 concepts structurally registered but Q&A drafting not yet started. The starter catalogue is not the final official syllabus; exam mapping remains pending.
+- No code, live DB, migration, APK or learner-visible VERIFIED records changed. Phase 6.56 remains IN_PROGRESS, Phase 6.57 remains PLANNED; no phase skip. Ahar-Banas remains next in Rajasthan History after Kalibangan exits.
