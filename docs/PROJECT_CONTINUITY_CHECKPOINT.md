@@ -753,3 +753,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Keep two cemetery conflicts visible: KLB-4 in Lal 1979 Fig.1 vs KLB-8 in Gazetteer/ASI Part II; ASI primary report's 6–10 extended burials per group vs Satarupa Bal 2020 secondary overview's 8–10. KAL-243 provisionally follows ASI S6 p.1422.
 - Next: independently compare every new row with official S6 exact page text and figures/plans; finish MASI 98 and Mature Part I through lawful readable access; reconcile burial plan labels and group counts; review full faunal monograph, signs/corpus, then conduct semantic duplicate scan against live DB, independent review, image permission and named-exam syllabus mapping. Do not start Ahar-Banas before Kalibangan's exit gates close.
 - Phase statuses unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No app code, migrations, live DB, learner data or APK changed; app tests not run.
+
+
+## 2026-11-10 — cemetery pottery and pot-burial second increment
+
+- Added KAL-265–KAL-282 (18 new source-paraphrased Q&A) from selected ASI Part II Chapter 23–24 passages. Current total 282 primary Q&A, 3 corroborative items, 2 ASI photos; all NEEDS_REVIEW.
+- New questions cover selected pottery inventories for Pot Burials 1, 6, 7, 13, 15, 17, 18, 20, 23, 24 and 25; relative sequence of pits 6/7/17; cemetery pottery manufacture and types; no grey ware/terracotta cakes; and one perforated-jar occurrence.
+- Record internal discrepancy: Burial 13 intro p.1430 says no urn, detailed section pp.1444–1445 says a broken urn. KAL-270 avoids the conflicting urn fact.
+- Readable text was from the matching-title PM Gati Shakti staging copy; official ASI S6 remains canonical, but no hash comparison or page-image validation was possible. Independent official-source page checks remain mandatory.
+- No phase-state changes, no app code/database/migration/APK/learner data. Kalibangan remains DRAFTING; Ahar-Banas not started.
