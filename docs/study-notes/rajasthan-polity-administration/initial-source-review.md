@@ -1,6 +1,6 @@
 # राजस्थान राजव्यवस्था एवं प्रशासन — प्रारम्भिक स्रोत-आधारित One-Liner Q&A
 
-**स्थिति:** DRAFTING • सभी 17 प्रश्न NEEDS_REVIEW • 10 नवम्बर 2026  
+**स्थिति:** DRAFTING • सभी 27 प्रश्न NEEDS_REVIEW • 10 नवम्बर 2026  
 **भाषा:** प्रश्न और उत्तर हिंदी में।  
 **संबंधित मास्टर सूची:** [Master Subject–Topic Structure](../MASTER_SUBJECT_TOPIC_STRUCTURE.md)
 
