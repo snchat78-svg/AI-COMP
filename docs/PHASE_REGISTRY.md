@@ -594,3 +594,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - The previous 14-question English batch is now 23 total: Parts of Speech 9, Tenses 11, Modals 3. All questions/answers remain Hindi; English terms/examples are shown only as the target language content. All remain NEEDS_REVIEW.
 - Source references are Cambridge English Grammar Today: Present, Present simple or present continuous, Past simple or present perfect, and Present simple. Cambridge is a grammar reference, not an exam syllabus; RBSE/selected exam applicability must be mapped separately.
 - No MCQ generation, app code, database, migrations, APK or learner publication. No phase transition; Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — consolidated five-subject notes checkpoint
+
+- The canonical master structure covers **132 existing subtopic/concept IDs across 5 subjects and 24 parent topic groups**: Rajasthan History 34; Rajasthan Geography 32; Rajasthan Polity & Administration 21; Hindi 24; English 21. Proposed additional syllabus gaps remain separately listed and are not treated as catalogue entries.
+- Current markdown Q&A counts: **Kalibangan 282; Rajasthan Geography 29; Rajasthan Polity 27; Hindi 24; English 23** — total **385 newly drafted Q&A**. Seven older Geography migration seed candidates remain a separate review pool, not added to these markdown counts.
+- Hindi is now the question/answer language across all five subject tracks. English examples/target forms remain only where necessary to test English grammar; explanations and answers are Hindi.
+- Each newly drafted Q&A row now contains its permanent canonical Concept ID. English entries are split correctly by concept: Parts of Speech 9, Tenses 11, Modals 3. Hindi Sandhi has 12 new Q&A; Rajasthan Polity Lokayukta has 10 new Q&A; English Tenses has 9 new Q&A; Geography protected-area list has 15 new Q&A.
+- All questions remain NEEDS_REVIEW. Per-file exact/normalized audits are not a live semantic scan and do not replace independent reviewer approval. Dynamic/current legal facts and official exam syllabus applicability must be checked separately.
+- No app code, database, migrations, APK or learner-visible VERIFIED content changed. Phase states remain Phase 6.56 IN_PROGRESS / Phase 6.57 PLANNED; no phase transition or PR merge.
