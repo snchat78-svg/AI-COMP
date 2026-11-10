@@ -520,3 +520,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - ZSI Occasional Paper 430 access status updated: the ResearchGate page identifies the 2026 ZSI publication and provides only a “Request full-text” option; no full text was accessible/read and no request was initiated. Treat as a bibliography lead only; current 237 notes do not rely on it.
 
 - Further NMMA records added KAL-238–KAL-240: feeding cup 1392979, terracotta measuring scale 1391780 and possible net-sinker fragment 770761. These are accession-level provisional museum metadata. Kalibangan total is now 240 primary Q&A, all NEEDS_REVIEW.
+
+
+## 2026-11-10 — ASI Kalibangan TOC audit and chapter reading queue
+
+- Notes PR #113 working branch now has **240 primary Q&A (KAL-001–KAL-240)**, 3 corroborative points and 2 ASI images. All NEEDS_REVIEW; Kalibangan remains DRAFTING / NOT COMPLETE.
+- ASI catalogue lists three separate report entries: MASI 98 Early Harappans (2003), Mature Harappan Part I (2015), Part II (2020). The notes now include a contents-only audit mapping MASI 98 Ch. 8–13 and Part I Ch. 5–10 as outstanding reading targets.
+- Full MASI 98 and Mature Part I PDFs remain beyond the current reader limit; the TOC only is not treated as archaeological evidence. Part II chapter text is partially reviewed; visual plates/plans remain open.
+- Phase status unchanged; no code/live DB/APK change.
