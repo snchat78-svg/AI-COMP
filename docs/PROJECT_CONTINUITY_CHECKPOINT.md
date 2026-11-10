@@ -701,3 +701,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Re-fetched the exact current notes file after adding KAL-234–KAL-237. Confirmed **237 rows, IDs KAL-001–KAL-237 continuous and unique, zero missing IDs, zero malformed Q&A rows**.
 - Re-ran the in-file normalized duplicate scan (Unicode NFKC, lower-case folding, punctuation removal and whitespace normalization). No repeated normalized questions or exact normalized Q&A pairs were detected across all 237 items.
 - This check does not query the live One-Liner database and does not prove semantic non-duplication. Independent source/answer review is still required. All items remain NEEDS_REVIEW.
+
+
+## 2026-11-10 — ZSI Occasional Paper 430 bibliographic access update
+
+- ResearchGate now has a bibliographic page for Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site*, identifying the Director, ZSI as publisher (2026) and showing only a “Request full-text” action. A specialist bookseller lists ZSI Occasional Paper No. 430, ISBN 9788199884809, with chapter headings on domestic/wild species, bone modification and bone measurements.
+- The book's full text was not accessible/read; no facts or Q&A were generated from it. No request, email or author contact was initiated. The source remains a bibliographic research lead; wait for a lawful public/ZSI/library copy before using it.
+- Current note count remains 237 primary Q&A; all NEEDS_REVIEW.
