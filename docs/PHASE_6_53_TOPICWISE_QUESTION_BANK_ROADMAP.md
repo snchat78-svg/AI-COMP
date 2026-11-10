@@ -15,8 +15,15 @@ For each topic, create enough independent Q&A pairs to cover the entire syllabus
 
 Every fact must have a source URL and an exact page/section/heading/evidence locator. New AI-assisted drafts remain `NEEDS_REVIEW` until a separate reviewer checks them. Keep generic reference notes distinct from exam-specific notes until an official syllabus is retrieved and its mapping is independently reviewed. Keep One-Liners, real previous-paper questions, and generated MCQs as separate content types.
 
-The subject sequence follows the current 14-category catalogue in `QUESTION_BANK_CONTENT_COVERAGE.csv`, beginning with Rajasthan History. The first content slice is Rajasthan History → Ancient History → Kalibangan, documented at [docs/study-notes/README.md](study-notes/README.md) and [Kalibangan Q&A notes](study-notes/rajasthan-history/ancient-history/kalibangan.md). Its current status is DRAFTING / NOT COMPLETE; the source and coverage review are still open. This content-first priority does not mark Phase 6.56 complete or unlock Phase 6.57.
+The subject sequence follows the current 14-category catalogue in `QUESTION_BANK_CONTENT_COVERAGE.csv`, beginning with Rajasthan History. The first content slice is Rajasthan History → Ancient History → Kalibangan, documented at [docs/study-notes/README.md](study-notes/README.md) and [Kalibangan Q&A notes](study-notes/rajasthan-history/ancient-history/kalibangan.md). Its current status is DRAFTING / NOT COMPLETE. As of 10 November 2026, the notes contain 119 primary AI-authored Q&A drafts, 3 separately labelled corroborative points and 2 ASI-hosted photographs. Question wording is authored in new Hindi phrasing; facts are source-paraphrased, not verbatim website/PYQ copies. All content remains NEEDS_REVIEW and the source/coverage review is open. This content-first priority does not mark Phase 6.56 complete or unlock Phase 6.57.
 
+### Kalibangan notes progress — 10 November 2026
+
+- PR #112 merged on main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`; it created the notes-first sequence and a tracker for all 34 Rajasthan History catalogue topics.
+- Next content branch: `content/kalibangan-full-topic-coverage-asi`. Adds 55 additional Q&A drafts (KAL-065–KAL-119), bringing Kalibangan to 119 primary Q&A + 3 separately labelled corroborative Q&As, with two official ASI Jodhpur Circle photos.
+- Source breadth now includes the Government of Rajasthan Hanumangarh Gazetteer, ASI Kalibangan Vol. II Chapters 12–20 and 22, ASI Jodhpur Circle museum description, NCERT, SCERT and B. K. Thapar's UNESCO-hosted chapter.
+- Question stems are written by AI in original concise Hindi phrasing; answer facts are paraphrased from source material. No copied verbatim question or PYQ is claimed. Actual PYQs remain a separate verified source type.
+- The notes record source disagreements (museum date 1983 vs 1985) and uncertain archaeological interpretations. Every Q&A remains NEEDS_REVIEW. Do not mark Kalibangan complete or advance the subject tracker until ASI Part I/early-Harappan source review, seals/script, lithic tools, faunal record, small finds, image rights, independent review and exam-specific mapping are closed.
 ## 1. User experience contract
 
 The question bank must be navigable without starting a test first:
