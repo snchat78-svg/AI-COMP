@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (main merge PR #111 is present at `138dd73ea8affdb86a37800ad38b1c80a62b4ff9`; exact-head CI run `42450399282` passed 645 backend tests/14 existing warnings plus API container build. Notes-first content work begins on branch `content/notes-first-rajasthan-history-kalibangan`.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan content expansion is on branch `content/kalibangan-full-topic-coverage-asi`; 119 primary AI-authored Q&A drafts, 3 corroborative points, 2 ASI photos; PR #113 being prepared. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -24,12 +24,24 @@ The user has set the immediate content priority: before adding more MCQ generati
 
 - Follow the 14 existing subject categories and concept order in `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; do not create a parallel taxonomy.
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
-- Initial notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md` on branch `content/notes-first-rajasthan-history-kalibangan`.
-- It is a draft research slice, not a complete topic: Q&A items remain `NEEDS_REVIEW`; no exam-specific official syllabus mapping is claimed. Continue filling gaps from primary ASI material and exact page/plate locators.
+- Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
+- PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
+- PR #113 branch `content/kalibangan-full-topic-coverage-asi` expands the topic to 119 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
 - Do not start Phase 6.57 early. Phase 6.56, Phase 2.2 and Phase 6.58 retain their existing acceptance gates.
 
+### Kalibangan content expansion — 2026-11-10
+
+- Reviewed PR #112's merged content and the 34-topic Rajasthan History tracker before continuing; no subject/topic sequence was skipped.
+- New branch: `content/kalibangan-full-topic-coverage-asi` (PR #113 to be opened after this documentation increment).
+- Added KAL-065 through KAL-119: fabrics A–F, construction phases and houses, museum gallery evidence, mature pottery and graffiti, copper assemblage and source hypothesis, crops/animal traction, gypsum interpretation, querns/kitchen tools, bead types, measuring devices, shell and textile objects, and cemetery/burial details.
+- Added 2 direct image links from the official ASI Jodhpur Circle museum page (excavation trench; present-day KLB-2) with credit and reuse-permission caution.
+- Added explicit authorship statement: Hindi question wording is AI-authored in new phrasing; answers are sourced paraphrases; these are not copied verbatim questions and are not PYQs. All are NEEDS_REVIEW.
+- Recorded two source issues rather than hiding them: museum establishment year differs between Rajasthan Tourism (1983) and ASI Jodhpur Circle (1985); ASI Part II Ch. 14's parenthetical gloss for Cicer arietinum needs botanical/expert review.
+- Still open: review ASI Part I / Early Harappan monograph, detailed seal and script corpus, lithic-tool typology, full faunal evidence, small finds, figures/plans/plates, duplicates against live question bank, independent verification, and exam-syllabus applicability. Do not mark topic complete or start Ahar-Banas until these are reconciled.
+- No production database, One-Liner review API or APK content has been changed. This remains documentation research; the learner-facing database is not populated by this PR.
 ## Current phase state
 
 - **Phase 6.54:** COMPLETED. PR #40 merge SHA 16f75e3c76e9c830235c39a4dc806710c116bed0. Backend tests/container and Flutter analysis/client/release APK workflows passed.
