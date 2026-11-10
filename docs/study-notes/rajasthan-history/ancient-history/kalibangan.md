@@ -193,6 +193,28 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 | KAL-159 | कालीबंगा से कितनी ivory combs मिलने का उल्लेख ASI रिपोर्ट में है? | चार; इनमें से तीन अपेक्षाकृत कम क्षतिग्रस्त थीं और वर्णित/चित्रित की गईं। | S6 — Ch. 13, “Combs”, printed pp. 811–815 |
 | KAL-160 | ASI रिपोर्ट के अनुसार कालीबंगा में ivory का सामान्य उपयोग किन वस्तुओं के निर्माण में बताया गया है? | Ivory objects कम थीं और ivory का सामान्य उपयोग combs बनाने में बताया गया है। | S6 — Ch. 13, printed pp. 809–815 |
 
+## Additional script, faunal and archaeobotanical one-liners
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-161 | B. B. Lal ने कालीबंगा के कितने inscribed potsherds पर signs के एक-दूसरे पर चढ़ने (overlap) का प्रमाण बताया? | दो potsherds पर; Lal ने इनके overlap से लेखन-दिशा का क्रम समझाया। | S12 — “Some Aspects of the Archaeological Evidence Relating to the Indus Script”, printed pp. 22–23 |
+| KAL-162 | B. B. Lal के 1974 के अध्ययन में Harappan script की सामान्य लेखन-दिशा क्या बताई गई? | दाएँ से बाएँ (right to left); यह Kalibangan के दो overlapping inscribed potsherds पर आधारित उनका पुरातात्त्विक निष्कर्ष है। | S12 — printed p. 22 |
+| KAL-163 | B. B. Lal के अनुसार Indus script की दूसरी पंक्ति कभी-कभी किस शैली में लिखी जाती थी? | Boustrophedon शैली में; लेखक ने यह भी जोड़ा कि ऐसा हर बार आवश्यक नहीं था। | S12 — printed p. 22 |
+| KAL-164 | B. B. Lal ने कालीबंगा के citadel क्षेत्र में एक ही legend वाली कितनी clay sealings मिलने का उल्लेख किया? | सात sealings। | S12 — printed p. 23, “Some Observations on the Use of the Indus Seals” |
+| KAL-165 | Lal के अनुसार कालीबंगा की सात समान legend वाली sealings का भौतिक रूप कैसा था? | पकी हुई मिट्टी की लंबी पट्टियों (long strips of baked clay) के रूप में; पीछे packing material की छाप नहीं थी। | S12 — printed p. 23 |
+| KAL-166 | B. B. Lal ने Indus seals का प्राथमिक उपयोग क्या माना? | वस्तुओं/पैकेजों पर छाप लगाने (impressing) के लिए; उनके अनुसार छाप का positive impression पढ़ने के लिए था। | S12 — printed p. 23 |
+| KAL-167 | Lal के अनुसार कालीबंगा से मिली inscriptions किन प्रकार की वस्तुओं पर दर्ज थीं? | Seals, sealings, copper/bronze objects, pottery और ivory sticks आदि पर। | S12 — printed p. 23 |
+| KAL-168 | B. B. Lal ने Kalibangan graffiti में V-जैसे sign की संभावित आकृति किस वस्तु से जोड़ी? | लंबे, संकरे आधार वाले vase/मटके जैसी आकृति से; यह Lal का 1974 का व्याख्यात्मक प्रस्ताव है, लिपि का प्रमाणित decipherment नहीं। | S12 — printed p. 23 |
+| KAL-169 | Zoological Survey of India (ZSI) के Kalibangan zooarchaeology अध्ययन में कितने fragmentary specimens की पहचान की गई? | 5,230 fragmentary specimens। | S10 — Annual Report 2021–22, project “Zooarchaeology of Faunal remains of Kalibangan”, printed pp. 34–35 |
+| KAL-170 | ZSI की Kalibangan faunal study में पहचाने गए अवशेष कितनी species, genera, families, orders और classes से संबंधित थे? | 36 species, 30 genera, 18 families, 11 orders और 5 classes। | S10 — Annual Report 2021–22, printed pp. 34–35 |
+| KAL-171 | ZSI के अनुसार Kalibangan के faunal remains में अधिकांश हड्डियाँ किन पालतू पशुओं/पक्षियों की थीं? | घरेलू cattle, buffalo, sheep, goat, camel और fowl आदि की। | S10 — Annual Report 2021–22, printed p. 35 |
+| KAL-172 | ZSI की व्याख्या के अनुसार Kalibangan के अधिकांश पशु-अवशेष किस प्रकार के पुरातात्त्विक संदर्भ से आए थे? | प्राचीन निवासियों के dietary waste (भोजन-संबंधी अवशेष) से। | S10 — Annual Report 2021–22, printed p. 35 |
+| KAL-173 | ZSI के अनुसार Kalibangan में animal bones पर मानव गतिविधि के कौन-से निशान मिले? | जलने (charring), काटने (cut marks) और टुकड़े करने (chopping marks) के निशान। | S10 — Annual Report 2021–22, printed p. 35 |
+| KAL-174 | ZSI की faunal study के अनुसार Kalibangan में किन प्रमुख जंगली पशुओं के अवशेष भी मिले? | विभिन्न deer, rhinoceros और gaur आदि; साथ में कुछ turtle तथा molluscan species भी दर्ज हुईं। | S10 — Annual Report 2021–22, printed p. 35 |
+| KAL-175 | ASI की *Indian Archaeology 1974–75 — A Review* में Kalibangan के terracotta cakes और pai के पौध-अवशेष मुख्यतः किन फसलों के बताए गए? | जौ (barley) तथा कुछ मामलों में गेहूँ (wheat)। | S11 — Section VI “Palaeobotanical and Pollen Analytical Investigations”, printed p. 79 |
+| KAL-176 | Vishnu-Mittre और R. Savithri ने Kalibangan में पहले बताए गए rice remains की पहचान पर क्या आपत्ति उठाई? | उन्होंने कहा कि cakes और pai में rice epidermis तथा rice का विशिष्ट chess-board pattern नहीं मिला; इसलिए पहले की rice पहचान soundly based नहीं थी। | S11 — printed p. 79; authors cite *Palaeobotanist* 22(2), 1975, pp. 124–126 |
+| KAL-177 | Kalibangan के rice evidence पर notes में विरोधाभास क्यों दर्ज किया गया है? | ASI Jodhpur Circle museum page rice का उल्लेख करता है, जबकि ASI की 1974–75 review में Vishnu-Mittre और Savithri ने उन्हीं terracotta cakes/pai के कथित rice remains को barley और कुछ wheat बताया; इसे unresolved source disagreement के रूप में रखा गया है। | S7 — “The Early Harappan Period”; S11 — printed p. 79 |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -260,6 +282,9 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 
 ## Source disagreements and editorial corrections
 
+- **Rice remains at Kalibangan:** ASI Jodhpur Circle's museum page mentions rice among crops, but the ASI *Indian Archaeology 1974–75 — A Review* (printed p. 79) records Vishnu-Mittre and R. Savithri's re-examination: plant remains from terracotta cakes and pai were identified as barley and, in a few cases, wheat; absence of rice epidermis and its characteristic chess-board pattern led them to reject the earlier rice identification as not soundly based. Keep the site-specific crop claim disputed; do not state rice as a confirmed Kalibangan crop without resolving the primary archaeobotanical evidence.
+
+
 
 - **Crop-name clarification:** ASI Part II Chapter 14 prints “Cicer arietinum (Chana, black gram)”. The botanical name conflicts with its parenthetical “black gram” gloss: the Government of India's PPV&FRA lists Cicer arietinum as chickpea/chana and Vigna mungo as black gram. The note therefore uses the botanical name and does not repeat “black gram” as its answer. A reviewer should check the original archaeobotanical identification.
 - **Rice / horse gram scope:** the ASI Jodhpur Circle museum webpage lists rice and horse gram among crops at Kalibangan, but the ASI Part II Chapter 14 passage discusses wheat, barley, pea and Cicer arietinum; its nearby footnote refers to rice and horse gram evidence from Kunal. Keep rice/horse gram as an unresolved site-specific source discrepancy until the excavation sample record is reviewed.
@@ -294,6 +319,18 @@ URL: https://www.asijodhpurcircle.in/museum
 Locators: museum introduction and “First Gallery” (establishment/reopening, two periods, six fabrics, display inventory); “Harappan Site Kalibangan” (location, excavators, chronology, mounds and burial types); “The Early Harappan Period” and “The Early Harappan Pottery” (settlement dimensions, fabrics A–F, agriculture); “The Mature Harappan Period” and “The Mature Harappan Pottery” (citadel/lower town, fire altars, pottery); “Third Gallery” and “Burial Site (KLB-8)” (tools, artefacts, cemetery/burial orientation). The page has a source discrepancy with Rajasthan Tourism about museum establishment year (1985 vs 1983); it is deliberately left unresolved.
 
 
+**S10 — Zoological Survey of India (Ministry of Environment, Forest and Climate Change, Government of India).** *Annual Report 2021–22*.  
+URL: https://zsi.gov.in/uploads/documents/importantLinks/english/Annual_Report_2021-22.pdf  
+Exact locator: project “Zooarchaeology of Faunal remains of Kalibangan, Rajasthan — An Indus Valley site”, printed pp. 34–35. Reports the completed 2017–2020 project, identified specimen totals, taxonomic counts, domestic/wild fauna and taphonomic modifications.
+
+**S11 — Archaeological Survey of India (Government of India).** *Indian Archaeology 1974–75 — A Review* (published 1979), Section VI “Palaeobotanical and Pollen Analytical Investigations”.  
+URL: https://nmma.nic.in/nmma/NAS1/nmma_doc/IAR/Indian%20Archaeology%201974-75%20A%20Review.pdf  
+Exact locator: printed p. 79, entry 11 “Kalibangan, District Ganganagar”. The review summarizes Vishnu-Mittre and R. Savithri's reassessment of reported rice remains in terracotta cakes and pai; their identification is barley and, in a few cases, wheat, and they question the earlier rice identification.
+
+**S12 — Indian Archaeological Society / Archaeological Survey of India Central Archaeological Library copy.** B. B. Lal, “Some Aspects of the Archaeological Evidence Relating to the Indus Script”, *Puratattva*, No. 7 (1974).  
+URL: https://ignca.gov.in/Asi_data/57533.pdf  
+Exact locators: printed pp. 22–23. Lal discusses two Kalibangan inscribed potsherds with overlapping signs, his right-to-left direction inference, possible boustrophedon second lines, seven repetitive-legend clay sealings from the citadel, seal use, inscription-bearing object types, and his tentative vase-shape interpretation for a V-like sign. These are explicitly attributed to Lal's 1974 analysis, not presented as a universally accepted decipherment.
+
 **S9 — Protection of Plant Varieties and Farmers’ Rights Authority (PPV&FRA), Government of India.** Crop DUS Guidelines / official crop botanical-name list.  
 URL: https://plantauthority.gov.in/crop-dus-guidelines  
 Locator: pulses and legume crops list; Chickpea — *Cicer arietinum*; Urdbean/Black Gram — *Vigna mungo*. Used only to flag the botanical-name/parenthetical-gloss issue in the ASI report, not as evidence that either crop was archaeobotanically recovered at Kalibangan.
@@ -322,4 +359,4 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 160 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 177 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
