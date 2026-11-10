@@ -11,6 +11,7 @@ on:
   pull_request:
     paths:
       - "apps/mobile/**"
+      - "docs/study-notes/**"
       - ".github/workflows/flutter-mobile.yml"
       - "src/ai_comp/api/preparation_guidance_routes.py"
       - "src/ai_comp/api/preparation_client_contract.py"
