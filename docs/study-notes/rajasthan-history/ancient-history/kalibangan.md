@@ -439,6 +439,10 @@ Exact locators: Introduction §§2.2–2.3 (1976 revision incorporating unpublis
 URL: https://zsi.gov.in/uploads/documents/importantLinks/english/Annual_Report_2017_18.pdf  
 Exact locator: project 06 “Zooarchaeology of faunal remains of Kalibangan, Rajasthan — An Indus Valley site”, printed p. 45 (about 1,400 specimens worked out; 612 identified and registered, under six species/six genera/three families/two orders of Mammalia). This is an early, dated progress snapshot, not the final faunal inventory.
 
+**S20 — Bibliographic lead only: ResearchGate publication record and specialist distributor catalogue for Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809.**  
+URLs: https://www.researchgate.net/publication/403649495_Zooarchaeology_of_faunal_remains_of_Kalibangan_Rajasthan_-_an_Indus_Valley_site ; https://www.vedamsbooks.com/public/books/zooarchaeology-of-faunal-remains-of-kalibangan-rajasthan-an-indus-valley-site-occasional-paper-no-430  
+The ResearchGate record identifies the Director, ZSI as publisher and displays “Request full-text”; the bookseller lists chapters on domestic species, wild/free-living species, bone modification and bone measurements. **The monograph text was not available/read. No question or answer is based on this bibliographic record.** Use only as a lead for authorized full-text access.
+
 **S19 — National Mission on Monuments and Antiquities (NMMA), Government of India, Archaeological Museum Kalibangan object catalogue.**  
 URL: https://nmma.nic.in/nmma/exploreMusObject.do?musname=GM-KAM&object=101  
 Individual records: GM-KAM-RJ-775921 (terracotta bull with wheel-holes; 10.00 × 4.60 × 3.60 cm); GM-KAM-RJ-761412 (small bull from early level of KLB-1; 6.2 × 3.9 cm); GM-KAM-RJ-1393795 (red terracotta bull fragment with five perforations); GM-KAM-RJ-1393288 (terracotta buffalo fragment); GM-KAM-RJ-1393832 (decorated bull head); GM-KAM-RJ-775637 (handmade terracotta cart); GM-KAM-RJ-775897 (hollow terracotta bird with a hole); GM-KAM-RJ-776047 (catalogued as a terracotta birds whistle, no description field); GM-KAM-RJ-775543 (handmade terracotta cot with one surviving leg); GM-KAM-RJ-775946 (humped bull with black incised-line decoration and paint described as in deteriorated condition).  
@@ -481,9 +485,9 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 ## Newly surfaced source lead — not yet reviewed / not used for answers
 
-- A specialist distributor's current catalogue lists Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan: An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809. Its listed contents include domestic species, wild/free-living species, bone modification and bone measurements.
-- This is only a bibliographic lead from a bookseller listing, not a directly reviewed primary text or independently verified official ZSI digital record. The ZSI digital-archive page was not retrievable in this pass. No question or answer in KAL-001–KAL-178 relies on the monograph.
-- Next faunal research gate: locate an authorized readable copy of Occasional Paper No. 430 through ZSI's publication/archive or a library, then reconcile its species list, element counts, measurements, cut/chop/burn modification evidence and taphonomic discussion with the 2021–22 Annual Report before adding more Q&A.
+- A 2026 ResearchGate bibliographic record identifies Supriya Nandy's *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site* as a book published by the Director, Zoological Survey of India; a specialist distributor catalogue independently lists it as ZSI Occasional Paper No. 430, ISBN 9788199884809. Both records list chapters on domestic species, wild/free-living species, bone modification and bone measurements.
+- The ResearchGate page offers only a “Request full-text” action; no full book text or official public PDF was accessible in this pass. This confirms the bibliographic identity, not the book's findings. No question or answer in KAL-001–KAL-237 relies on the monograph.
+- Next faunal research gate: locate an authorized readable copy of Occasional Paper No. 430 via a public ZSI/library release or other lawful access, then reconcile its species list, element counts, measurements, cut/chop/burn modification evidence and taphonomic discussion with ZSI Annual Report 2021–22 before adding more Q&A.
 
 ## Review and publishing status
 
