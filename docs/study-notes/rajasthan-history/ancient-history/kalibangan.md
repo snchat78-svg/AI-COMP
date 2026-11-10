@@ -254,6 +254,10 @@ Exact locator: printed p. 267, where Thapar explains the literal “black bangle
 URL: https://asi.nic.in/pages/Publications/excavationReports  
 Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960–1969), Part I and Part II” and “Excavations at Kalibangan: Early Harappans”. These primary reports remain the next required evidence layer for plate/plan-level review.
 
+## Additional source-access limitation
+
+- **ASI Part I review gate:** The official ASI catalogue lists *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and *Excavations at Kalibangan: Early Harappans*. The Part I download endpoint returned a 17 MB PDF that this document reader rejected for size; those chapters have not been independently reviewed in this pass. Do not infer their detailed seal/inscription/lithic content from Part II or secondary summaries.
+
 ## Review and publishing status
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
