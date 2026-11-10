@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (main merge PR #111 is present at `138dd73ea8affdb86a37800ad38b1c80a62b4ff9`; exact-head CI run `42450399282` passed 645 backend tests/14 existing warnings plus API container build. Notes-first content work begins on branch `content/notes-first-rajasthan-history-kalibangan`.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 240 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -24,12 +24,24 @@ The user has set the immediate content priority: before adding more MCQ generati
 
 - Follow the 14 existing subject categories and concept order in `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; do not create a parallel taxonomy.
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
-- Initial notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md` on branch `content/notes-first-rajasthan-history-kalibangan`.
-- It is a draft research slice, not a complete topic: Q&A items remain `NEEDS_REVIEW`; no exam-specific official syllabus mapping is claimed. Continue filling gaps from primary ASI material and exact page/plate locators.
+- Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
+- PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 240 primary AI-authored Q&A drafts (KAL-001–KAL-240), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
 - Do not start Phase 6.57 early. Phase 6.56, Phase 2.2 and Phase 6.58 retain their existing acceptance gates.
 
+### Kalibangan content expansion — 2026-11-10
+
+- Reviewed PR #112's merged content and the 34-topic Rajasthan History tracker before continuing; no subject/topic sequence was skipped.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is open on branch `content/kalibangan-full-topic-coverage-asi`.
+- Added KAL-065 through KAL-142: fabrics A–F, construction phases and houses, museum gallery evidence, mature pottery and graffiti, copper assemblage and source hypothesis, crops/animal traction, gypsum interpretation, querns/kitchen tools, bead types, measuring devices, shell and textile objects, small finds, animals/birds, games, drainage pipes and detailed cemetery/burial evidence.
+- Added 2 direct image links from the official ASI Jodhpur Circle museum page (excavation trench; present-day KLB-2) with credit and reuse-permission caution.
+- Added explicit authorship statement: Hindi question wording is AI-authored in new phrasing; answers are sourced paraphrases; these are not copied verbatim questions and are not PYQs. All are NEEDS_REVIEW.
+- Recorded two source issues rather than hiding them: museum establishment year differs between Rajasthan Tourism (1983) and ASI Jodhpur Circle (1985); ASI Part II Ch. 14's parenthetical gloss for Cicer arietinum needs botanical/expert review.
+- Still open: review ASI Part I / Early Harappan monograph (official catalogue entry found, but 17 MB PDF download exceeds the current reader size limit), detailed seal and script corpus, lithic-tool typology, full faunal evidence, small finds, figures/plans/plates, duplicates against live question bank, independent verification, and exam-syllabus applicability. Do not mark topic complete or start Ahar-Banas until these are reconciled.
+- No production database, One-Liner review API or APK content has been changed. This remains documentation research; the learner-facing database is not populated by this PR.
 ## Current phase state
 
 - **Phase 6.54:** COMPLETED. PR #40 merge SHA 16f75e3c76e9c830235c39a4dc806710c116bed0. Backend tests/container and Flutter analysis/client/release APK workflows passed.
@@ -569,3 +581,248 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Conclusion: general HTTPS egress works to a control host, while the registered RSSB/RPSC endpoints remain destination/path-specific blocked from the deployed runtime. Do not use proxy, DNS override, unsafe TLS, robots bypass, or mirrors. Phase 2.2 stays BLOCKED.
 - PR #111 implements point-level records, reviewer-separated authoring, nine assessment dimensions, exact point-linked VERIFIED One-Liner coverage with content-hash de-duplication, inventory attestation/reopen and read-only gap report. Coverage stays UNKNOWN when source/inventory gates are incomplete. Old Papers remain separate; historical-paper point linking and Flutter/mobile report UI remain future slices.
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. PR review/merge, production migration, production deploy, mobile parity and authentic official-data validation remain open.
+
+
+## 2026-11-10 — Kalibangan ASI Part II research checkpoint
+
+- User-directed content priority remains subject → topic → subtopic One-Liner notes before MCQ/test expansion. Continue the existing Kalibangan topic; do not move to Ahar-Banas yet.
+- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, currently carries **160 primary AI-authored Q&A drafts (KAL-001–KAL-160)**, 3 separately labelled corroborative points and 2 ASI-hosted Jodhpur Circle images. All candidate items remain `NEEDS_REVIEW`; status DRAFTING / NOT COMPLETE.
+- New source pass: ASI MASI catalogue lists the Kalibangan Early Harappan report (MASI 98), and *Excavations at Kalibangan — The Harappans (1960–69), Part I and Part II*. The catalogue was read. Part II Chapter 11 “Lithic Tools” (printed pp. 723–765) and Chapter 13 “Ivory and Bone Objects” (printed pp. 809–835) were examined at text level and yielded KAL-143–KAL-160.
+- Lithic draft coverage now includes the Early/Mature Harappan presence, jasper/agate/chalcedony small-blade industry, chert long blades, parallel-sided blades, lithic assemblage forms, pressure/percussion flaking, prismatic cores, Crested Guiding Ridge technique and cautious author-attributed interpretations of possible tool functions/wooden sickles.
+- Bone/ivory draft coverage now includes the report's count of 392 objects/materials including fragments/raw material/waste, evidence the authors interpret as local manufacture, object categories and four ivory combs (three described/illustrated).
+- **Access/visual limitation:** the official Part I and MASI 98 PDF endpoints returned large files (~17–19 MB) beyond the reader's size limit. The Part II browser screenshot tool also failed on the large PDF; page-image/plate verification is therefore still open. Do not pretend the full reports or plates were inspected. ASI Part II itself includes a disclaimer that object identifications/descriptions are the authors' responsibility; preserve interpretations as attributed.
+- Remaining Kalibangan gates: full Part I/MASI 98 review; seals and sign corpus; complete faunal evidence; remaining small finds; plan/figure/plate cross-check; resolve or explicitly retain conflicts; scan exact/semantic duplicates against live question-bank data; verify selected exam syllabus mapping; image reuse permission; independent reviewer approval. No learner publication or VERIFIED count is claimed.
+- No Phase 6.x code, database, secrets, APK or app data was changed in this research-only increment. Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not skip phase gates.
+- Next exact action: continue normal, official-source review for Part I/MASI 98 and seals/fauna/small finds; then complete plan/plate checks and independent review. Keep Ahar-Banas NOT STARTED until Kalibangan is accepted.
+
+
+## 2026-11-10 — Kalibangan seals, faunal and archaeobotanical checkpoint
+
+- Current content branch `content/kalibangan-full-topic-coverage-asi`, PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), now has **177 primary AI-authored Q&A drafts (KAL-001–KAL-177)**, 3 separately labelled corroborative points and 2 ASI Jodhpur Circle images. All primary and corroborative candidates remain `NEEDS_REVIEW`; the topic remains DRAFTING / NOT COMPLETE.
+- New source S10: Zoological Survey of India, *Annual Report 2021–22*, project “Zooarchaeology of Faunal remains of Kalibangan” (printed pp. 34–35). It reports 5,230 fragmentary specimens, 36 species, 30 genera, 18 families, 11 orders and 5 classes; mostly domestic cattle, buffalo, sheep, goat, camel and fowl; dietary-waste context and charring/cut/chopping traces; and selected wild fauna including deer, rhinoceros and gaur plus turtle/molluscan remains. Used for KAL-169–KAL-174.
+- New source S11: ASI, *Indian Archaeology 1974–75 — A Review* (published 1979), printed p. 79. Vishnu-Mittre and R. Savithri's re-examination of plant remains in Kalibangan terracotta cakes and pai identifies barley and, in a few cases, wheat; absence of rice epidermis and rice's characteristic chess-board pattern leads them to challenge the previous rice identification. This creates a documented disagreement with the ASI Jodhpur Circle museum page crop list; no final resolution claimed. Used for KAL-175–KAL-177.
+- New source S12: B. B. Lal, “Some Aspects of the Archaeological Evidence Relating to the Indus Script”, *Puratattva* No. 7 (1974), printed pp. 22–23. It discusses two overlapping inscribed Kalibangan potsherds, Lal's right-to-left direction inference, possible boustrophedon second lines, seven repetitive-legend clay sealings in the citadel, use of seals and materials carrying inscriptions, and a tentative V-like sign/vase interpretation. Used for KAL-161–KAL-168, with all interpretations clearly attributed to Lal (not definitive script decipherment).
+- PDF text/lines opened and inspected; screenshot renderer timed out on the ASI annual review and rejected the large Puratattva PDF due size. No visual plate-image verification is claimed.
+- Existing limitations persist: Part I and MASI 98 PDFs exceed the reader size limit; complete plate/plan inspection, live question-bank duplicate check, source review by an independent reviewer, image-use permissions and exam-specific syllabus mapping remain open. All candidates NEEDS_REVIEW.
+- No app code, database, migration, secret, APK, or learner-visible content was changed. This is content research/documentation only; automated application tests not run. Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+- Next: audit Part I/MASI 98 and the remaining seal/sign/archaeobotanical material through normal official/academic source access; continue small-find and visual plan/plate review; then independent review. Do not move to Ahar-Banas until Kalibangan's coverage gate closes.
+
+
+## 2026-11-10 — Kalibangan faunal phase linkage addendum
+
+- Added KAL-178 from ZSI *Annual Report 2021–22*, printed p. 35: ZSI associates the studied faunal remains with both pre-Harappan and Harappan cultural phases.
+- Current Kalibangan branch count is **215 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
+
+
+## 2026-11-10 — ZSI faunal monograph lead (not yet reviewed)
+
+- A specialist book catalogue lists Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan: An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809. Listed contents include domestic species, wild/free-living species, bone modification and bone measurements.
+- This is an unverified bibliographic lead from a distributor listing only; the book text has not been obtained or read, and no Q&A relies on it. ZSI's digital archive page returned a retrieval error in this research pass.
+- Next source action: locate an authorized ZSI/library copy, inspect the species tables and bone-modification/measurement sections, and reconcile them with the ZSI Annual Report 2021–22 before any additional faunal Q&A are drafted. Current total remains 178 primary Q&A; all NEEDS_REVIEW.
+
+
+### 178-Q&A draft integrity check
+
+- Fetched the exact current Kalibangan notes file from the working branch and audited its Markdown Q&A rows: **178 rows, IDs KAL-001–KAL-178, no missing or repeated IDs, no malformed four-field rows**.
+- Ran an in-file exact/normalized duplicate scan using Unicode NFKC normalization, case folding, punctuation removal and whitespace normalization. No normalized duplicate question or exact normalized Q&A pair was found within this 178-item draft.
+- This is not a semantic similarity review and does not query the live production question-bank records. Live exact/semantic duplicate reconciliation and separate human fact-review remain required; do not mark any item VERIFIED.
+
+
+## 2026-11-10 — Kalibangan corpus-level seals and staged faunal progress
+
+- Current notes branch `content/kalibangan-full-topic-coverage-asi`, PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), contains **215 primary AI-authored Q&A drafts (KAL-001–KAL-188)**, 3 separately labelled corroborative points and 2 ASI Jodhpur Circle photographs. Every candidate remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE.
+- New source S13: *Corpus of Indus Seals and Inscriptions*, Vol. 1, ASI Memoirs No. 86 (1987), edited by Jagat Pati Joshi and Asko Parpola. It lists Kalibangan catalogue references K-1 to K-122 on printed pp. 298–326. This is a corpus-reference range, not a count of seals; K-122 is specifically categorised as “Miscellaneous — copper objects” (p. 326).
+- New source S14: Iravatham Mahadevan, *The Indus Script: Texts, Concordance and Tables*, ASI Memoirs No. 77 (1977). It describes Kalibangan seal 8011 as pink terracotta with a boss on the reverse, two lines of text and a left-facing rhinoceros field symbol in relief; Mahadevan classifies it as a separate “raised seal” subtype. It also records his 1976 revision of sign lists after unpublished Lothal/Kalibangan texts became available and his rule of relying on original objects or mechanically reproduced originals.
+- New source S15: ZSI Annual Reports 2018–19 and 2020–21. The 2018–19 snapshot records 11 Mammalia, 1 Aves and 2 Reptilia species; the 2020–21 snapshot records 1,075 specimens, 19 species, 9 families and 6 orders. Both mark the project ongoing. The completed 2021–22 result (5,230 specimens, 36 species) remains separately recorded; these are date-specific project milestones.
+- **Terminology correction:** ASI's official list separates (1) *Excavations at Kalibangan: Early Harappans* (MASI No. 98, 2003) from (2) *Excavations at Kalibangan: The Harappans (1960–1969), Part I* (a Mature Harappan report in the MASI No. 110 series). Their large official PDFs are about 19.5 MB and 17 MB respectively and exceed the reader size limit. Neither full report is claimed as reviewed. The Part I table of contents names separate chapters on inscribed material and crafts, but no facts are drafted from those inaccessible chapter contents.
+- Integrity audit of current notes: 188 Q&A rows; continuous unique IDs KAL-001–KAL-188; zero malformed rows; no duplicate normalized questions or exact normalized Q&A pairs within this file (Unicode NFKC, case-fold, punctuation and whitespace normalization). This is not a semantic scan against the live database or independent review.
+- PDF screenshots of the Corpus, Mahadevan scan and ZSI Annual Reports failed with size/timeout/404 errors in the screenshot renderer; text lines were reviewed, but no visual plate confirmation is claimed.
+- Remaining gates: full MASI 98 and mature-period Part I/II page/plate review, K-series object-photo/context reconciliation, complete sign inventory, authorized text of ZSI Occasional Paper 430, detailed faunal/osteological review, archaeobotanical conflict review, live semantic duplicate check, independent fact review, image permission and exam-specific syllabus mapping. Do not move to Ahar-Banas.
+
+
+## 2026-11-10 — Kalibangan inscription-corpus object records addendum
+
+- Added KAL-189–KAL-191 from Mahadevan, *The Indus Script: Texts, Concordance and Tables*, Appendix §16.2, printed p. 24: ref 8123 is a terracotta-lump sealing with one surviving stamp impression; ref 8222 is an inscribed potsherd with overlapping incisions (cross-referenced to *Puratattva* 7, Plate VI-A); ref 8401 is an oval terracotta object with a large incised sign on each of its two flat sides.
+- Do not assume ref 8222 is physically identical to the potsherd(s) discussed by B. B. Lal unless excavation/object-number matching confirms it. Current total **191 primary Q&A (KAL-001–KAL-191)**; all NEEDS_REVIEW / DRAFTING.
+
+### 191-Q&A draft integrity check
+
+- Latest notes file audit: 191 rows, continuous unique IDs KAL-001–KAL-191, no malformed rows, no repeated or missing IDs.
+- Unicode NFKC + case-fold + punctuation/whitespace-normalized question and exact Q&A-pair scan: no duplicate questions or exact normalized pairs within this file. Live semantic database deduplication and independent human review remain outstanding.
+
+
+## 2026-11-10 — B. B. Lal 1979 synthesis: stratigraphy, trade, seals and dates
+
+- Current notes PR #113 working branch contains **215 primary AI-authored Q&A drafts (KAL-001–KAL-214)**, 3 corroborative points and 2 ASI Jodhpur Circle images. All remain `NEEDS_REVIEW`; Kalibangan is DRAFTING / NOT COMPLETE.
+- Added S16: B. B. Lal, “Kalibangan and the Indus Civilization”, in *Essays in Indian Protohistory* (1979), printed pp. 66–94. The PDF text is accessible through IGNCA/ASI Central Archaeological Library digitisation. The work is an author-attributed synthesis; interpretive content is not treated as certain institutional fact.
+- Added KAL-192–KAL-200: Period I's proposed Proto-/Early Harappan classification; site perimeter/mound height; wall dimensions and wall-width phases; north re-entrant entrance; cart evidence; structural sub-periods; headers/stretchers English-bond masonry.
+- Added KAL-201–KAL-210: reported absence of mother-goddess figurines; unusual terracotta human head and bull; copper/tin observations from about twenty specimens; cubical chert weights; graduated terracotta scale; clay sealings with reeds and knotted cord; reported seal motifs; speculative cylinder-seal/Mesopotamian-trader hypothesis; inscription beyond seals and sealings.
+- Added KAL-211–KAL-214: Lal's Ghaggar-drying hypothesis for Mature Harappan Kalibangan's abandonment; 1979 essay's uncorrected vs MASCA/Clark-corrected radiocarbon period ranges; and the author's warning against blind acceptance of single radiocarbon dates. This adds a source-specific chronological distinction; do not collapse it into the Gazetteer ranges. Independent review must reconcile sample IDs and correction conventions.
+- The ASI official Part I PDF remains too large for reader fetch, but the search-indexed official PDF table of contents identifies Chapter 9 as “The Inscribed Material” and Chapter 10 as “Crafts at Kalibangan”, with subtopics including seals, sealings, copper/bronze seals, copper tablets, terracotta drain-pipes, pottery inscriptions before/after firing/painted inscriptions, sign appendices, agriculture, house-building, carpentry, pottery, cobbler, ivory/bone, bead, lithic, shell and weaving crafts. The complete chapter text is not read, so no detailed question is drafted from that TOC alone.
+- The MASI 98 official PDF also remains beyond the document reader's size limit; its Google Books record confirms publication, chapter list and pagination but not the actual complete chapter text. Continue to distinguish TOC/bibliographic evidence from archaeological fact evidence.
+- Draft integrity must be rechecked after this increment; no semantic live-database scan, independent review or learner publication has been performed.
+- No app code, live database, migrations, secrets, APK or mobile screen changed. Phase statuses remain unchanged.
+
+
+## 2026-11-10 — cemetery plan label and chronology conflict addendum
+
+- Added KAL-215: B. B. Lal 1979 Fig. 1 labels cemetery KLB-4 (printed p. 66), while Hanumangarh Gazetteer p. 36 and ASI Jodhpur Circle page say KLB-8. Keep unresolved until the original plan/register is examined.
+- Kalibangan now has **215 primary Q&A drafts (KAL-001–KAL-215)**, plus 3 corroborative items and 2 ASI photos. All remain NEEDS_REVIEW / DRAFTING.
+- Also recorded that Lal's 1979 uncorrected (Period I 2400–2250 BCE; Period II 2200–1700 BCE) and corrected (Period I 2900–2700 BCE; Period II 2500–2000 BCE) radiocarbon estimates are not interchangeable with Gazetteer date ranges. Exact sample IDs/correction conventions need specialist review.
+
+
+## 2026-11-10 — Mahadevan corpus statistics and Pande inscription methodology
+
+- Current working notes branch/PR #113 has **240 primary AI-authored Q&A drafts (KAL-001–KAL-225)**, 3 corroborative points and 2 ASI photos. All items remain `NEEDS_REVIEW`; no learner publication or VERIFIED content.
+- Mahadevan 1977 (ASI Memoir 77), Introduction pp. 5–6: Kalibangan has 99 inscribed objects in that selected corpus, broken down as 56 seals, 21 sealings, 20 pottery graffiti and 2 bronze implements; 46 Kalibangan texts were unpublished prior to the corpus. The 1977 corpus excluded 549 photographed objects without inscriptions or with wholly missing/damaged/illegible text, leaving 2,906 inscribed objects overall.
+- Pande 1978, *Purātattva* No. 8, pp. 156–157: stresses spatial/temporal and stratigraphic distribution rather than treating all inscribed material en masse; Pande and Lal separated Citadel and Lower City material and planned vertical/horizontal plotting; tentative plant-like and triangular signs are described as Kalibangan-specific; copper tablets with one inscribed face and reverse animal/human symbol were then known only from Mohenjo-daro.
+- The 99-object Mahadevan corpus count, later K-1–K-122 catalogue references, and the number of “seals” are not interchangeable. Preserve their separate definitions, date and inclusion criteria.
+- No script decipherment is claimed. Sign-site specificity remains tentative as Pande explicitly cautions against over-inference from limited data.
+
+
+## 2026-11-10 — NMMA antiquity records and ZSI 2017–18 faunal milestone
+
+- Current content PR #113 branch contains **240 primary AI-authored Q&A drafts (KAL-001–KAL-233)**, 3 separately labelled corroborative items and 2 ASI-hosted photos; all remain `NEEDS_REVIEW`, topic DRAFTING / NOT COMPLETE.
+- ZSI *Annual Report 2017–18*, printed p. 45: about 1,400 Kalibangan animal-remain specimens worked out; 612 identified/registered, under six species, six genera, three families and two orders of Mammalia. This is an early progress snapshot and must not be confused with the 2018–19, 2020–21 or completed 2021–22 values.
+- NMMA Archaeological Museum Kalibangan object records added: GM-KAM-RJ-775921, 761412, 1393795, 1393288 and 1393832. The items include separate terracotta bulls, a KLB-1 early-level bull, a perforated bull fragment, a buffalo fragment and a decorated bull head, with catalogue descriptions and accession references.
+- NMMA's public website declares documented data are under correction and subject to validation. Treat these as provisional museum catalogue metadata. The 761412 record has a field-level inconsistency (Harappan/Proto-Historic dynasty/period but “PRE Harappan” provenance and KLB-1 early-level description); do not infer an absolute period until cross-checked against the museum register.
+- Current notes integrity gate to be repeated: exact/normalized draft-only duplicate scan and continuous IDs; no live DB semantic scan or independent review. No application code, production DB, migrations, secrets, APK or learner UI changed.
+- Next: accession-level NMMA catalogue audit; authorized ZSI Occasional Paper 430 access; ASI excavation plan/plate confirmation; report-level date/period reconciliation; independent factual review and exam mapping. Do not move to Ahar-Banas.
+
+
+## 2026-11-10 — additional NMMA transport, bird and furniture entries
+
+- Added KAL-234–KAL-237 from NMMA Archaeological Museum Kalibangan catalogue: GM-KAM-RJ-775637 handmade terracotta cart (broken, holes); GM-KAM-RJ-775897 hollow bird figure with hole and recorded measurements; GM-KAM-RJ-776047 titled “Terracotta birds whistle” (description blank); GM-KAM-RJ-775543 handmade terracotta cot with one surviving leg. These are metadata summaries only; do not infer functionality beyond catalogue labels.
+- Current Kalibangan draft count is **237 primary AI-authored Q&A (KAL-001–KAL-237)**, 3 corroborative items, 2 ASI images. All remain NEEDS_REVIEW. NMMA documented data remains subject to correction/validation.
+
+
+### 237-Q&A final integrity audit for this increment
+
+- Re-fetched the exact current notes file after adding KAL-234–KAL-237. Confirmed **237 rows, IDs KAL-001–KAL-237 continuous and unique, zero missing IDs, zero malformed Q&A rows**.
+- Re-ran the in-file normalized duplicate scan (Unicode NFKC, lower-case folding, punctuation removal and whitespace normalization). No repeated normalized questions or exact normalized Q&A pairs were detected across all 237 items.
+- This check does not query the live One-Liner database and does not prove semantic non-duplication. Independent source/answer review is still required. All items remain NEEDS_REVIEW.
+
+
+## 2026-11-10 — ZSI Occasional Paper 430 bibliographic access update
+
+- ResearchGate now has a bibliographic page for Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan — An Indus Valley Site*, identifying the Director, ZSI as publisher (2026) and showing only a “Request full-text” action. A specialist bookseller lists ZSI Occasional Paper No. 430, ISBN 9788199884809, with chapter headings on domestic/wild species, bone modification and bone measurements.
+- The book's full text was not accessible/read; no facts or Q&A were generated from it. No request, email or author contact was initiated. The source remains a bibliographic research lead; wait for a lawful public/ZSI/library copy before using it.
+- Current note count remains 237 primary Q&A; all NEEDS_REVIEW.
+
+
+## 2026-11-10 — Kalibangan examinable-point coverage checklist re-audit
+
+- Reworked the topic-wide checklist to distinguish drafted dimensions from genuinely complete coverage. Cultural chronology, mound/burial labels, archaeobotany, pottery technology, seals/signs, crafts, fauna, NMMA inventory and map/plate evidence remain PARTIAL where review is still outstanding; cross-site comparison and reviewed map/plan inventory remain GAP; exam applicability remains NOT MAPPED.
+- New additions do not turn a topic into COMPLETE based on count. All 237 primary Q&A and 3 corroborative points remain NEEDS_REVIEW until independent review.
+- Key explicit open conflicts in checklist: KLB-4 vs KLB-8 cemetery label, source-dependent radiocarbon estimates, rice vs barley/wheat site attribution, museum-year discrepancy, NMMA record GM-KAM-RJ-761412 field conflict and provisional NMMA catalogue validation.
+
+
+## 2026-11-10 — NMMA feeding cup, scale and net-sinker records
+
+- Added KAL-238–KAL-240 from NMMA individual object entries: GM-KAM-RJ-1392979 (broken small spouted terracotta feeding cup, thin straight rim); GM-KAM-RJ-1391780 (terracotta scale with two sets of incised vertical marks and circular section); GM-KAM-RJ-770761 (round handmade terracotta fragment, catalogue says it may have been a net sinker; only one quarter survives).
+- Current Kalibangan draft count **240 primary Q&A (KAL-001–KAL-240)**, 3 corroborative points, 2 ASI photos. All remain NEEDS_REVIEW; all NMMA data remains provisional and under correction/validation.
+
+
+## 2026-11-10 — ASI report TOC-only chapter audit
+
+- The official ASI catalogue lists three distinct Kalibangan report entries: MASI 98 *The Early Harappans* (2003), Mature Harappan *The Harappans (1960–1969), Part I* (2015), and Part II (2020).
+- Added a TOC-only review matrix to the Kalibangan notes so the unreviewed reports have an exact reading queue:
+  - MASI 98: Ch. 8 agricultural field; Ch. 9 end of Early Harappan settlement; Ch. 10 pottery; Ch. 11 minor antiquities; Ch. 12 graffiti; Ch. 13 pottery/metals/animal remains/plants/seeds technical reports.
+  - Mature Part I: Ch. 5–7 KLB-1/KLB-2/KLB-3 stratigraphy and structures; Ch. 8 pottery; Ch. 9 inscribed material; Ch. 10 crafts.
+  - Part II: Ch. 11–25 text-level chapters already partly used for Q&A; plates/plans still need visual review.
+- These are chapter headings from report TOCs/catalogue metadata only. MASI 98 and Mature Part I full text were not read because the official PDFs exceed the current reader size limit; no factual Q&A was drafted from TOC headings. No claims of chapter review beyond actually read Part II text.
+- Current note total: **240 primary AI-authored Q&A**, 3 corroborative items, 2 ASI photos; all NEEDS_REVIEW. Topic not complete; Ahar-Banas stays NOT STARTED.
+
+
+## 2026-11-10 — latest Kalibangan source-review checkpoint
+
+- PR #113 remains OPEN / DRAFT on `content/kalibangan-full-topic-coverage-asi`; 240 primary Q&A drafts, 3 corroborative items and 2 ASI photos; all NEEDS_REVIEW. No question-count completion threshold applies.
+- Official ASI Part II Chapter 22 figure index now cross-referenced: Fig. 22.2 identifies the Harappan cemetery location as KLB-8 (printed p. 1288), and Fig. 22.3 shows the KLB-8 cemetery (p. 1290). Chapter 23 figure index includes individual pot-burial plans.
+- Page-image screenshot retrieval failed because the official PDF payload exceeded the reader limit. These are indexed textual captions/locators only; no visual plan/plate verification is claimed. Chapter 22 full body not independently completed in this pass.
+- The Gazetteer and ASI Jodhpur Circle and the ASI Part II figure register identify KLB-8, but B. B. Lal 1979 Fig. 1 labels the cemetery KLB-4. Preserve this as an unresolved conflict pending the original plan/register and context audit.
+- Current next research: (1) secure readable, lawful access to official MASI 98 and Mature Part I; (2) complete Part II cemetery text and plate/plan visual review; (3) reconcile KLB-4/KLB-8, chronology and sign/object corpus; (4) obtain and review ZSI Occasional Paper 430; (5) complete live semantic duplicate scan, independent source/answer review, image permissions and exam syllabus mapping. Do not begin Ahar-Banas before all Kalibangan exit gates close.
+- Phase 2.2 remains BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No source-fetch workaround, unsafe TLS bypass, application code, live DB, migration, secret or APK change was performed.
+
+
+## 2026-11-10 — cemetery Chapter 22–23 parallel research checkpoint
+
+- Continued the current notes-first work on PR #113 / branch `content/kalibangan-full-topic-coverage-asi`; do not merge without the user's explicit instruction.
+- Added KAL-241–KAL-264 (24 new original Hindi question stems with source-paraphrased answers) from selected passages in ASI Part II Chapters 22–23. Current count: 264 primary draft Q&A, 3 separately labelled corroborative points, 2 ASI images. All items remain NEEDS_REVIEW and Kalibangan remains DRAFTING / NOT COMPLETE.
+- Selected Chapter 22–23 text was read from a matching-title copy on a Government of India PM Gati Shakti staging subdomain as an extraction aid. The ASI publication S6 remains the canonical source; its file hash was not compared with the mirror, and independent re-check against exact ASI printed pages is required. Page-image screenshot attempts failed; no plans/plates/pathology images are considered visually verified.
+- New coverage includes 88 extended burials / 16 groups, 14 skeleton-free large rectangular/oblong pits, pot-burial dimensions and selected individual grave inventories, selected burial chamber construction, and reported osteological observations. Avoid turning A.K. Sharma's provisional clinical/forensic interpretations into settled diagnoses.
+- Keep two cemetery conflicts visible: KLB-4 in Lal 1979 Fig.1 vs KLB-8 in Gazetteer/ASI Part II; ASI primary report's 6–10 extended burials per group vs Satarupa Bal 2020 secondary overview's 8–10. KAL-243 provisionally follows ASI S6 p.1422.
+- Next: independently compare every new row with official S6 exact page text and figures/plans; finish MASI 98 and Mature Part I through lawful readable access; reconcile burial plan labels and group counts; review full faunal monograph, signs/corpus, then conduct semantic duplicate scan against live DB, independent review, image permission and named-exam syllabus mapping. Do not start Ahar-Banas before Kalibangan's exit gates close.
+- Phase statuses unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No app code, migrations, live DB, learner data or APK changed; app tests not run.
+
+
+## 2026-11-10 — cemetery pottery and pot-burial second increment
+
+- Added KAL-265–KAL-282 (18 new source-paraphrased Q&A) from selected ASI Part II Chapter 23–24 passages. Current total 282 primary Q&A, 3 corroborative items, 2 ASI photos; all NEEDS_REVIEW.
+- New questions cover selected pottery inventories for Pot Burials 1, 6, 7, 13, 15, 17, 18, 20, 23, 24 and 25; relative sequence of pits 6/7/17; cemetery pottery manufacture and types; no grey ware/terracotta cakes; and one perforated-jar occurrence.
+- Record internal discrepancy: Burial 13 intro p.1430 says no urn, detailed section pp.1444–1445 says a broken urn. KAL-270 avoids the conflicting urn fact.
+- Readable text was from the matching-title PM Gati Shakti staging copy; official ASI S6 remains canonical, but no hash comparison or page-image validation was possible. Independent official-source page checks remain mandatory.
+- No phase-state changes, no app code/database/migration/APK/learner data. Kalibangan remains DRAFTING; Ahar-Banas not started.
+
+
+## 2026-11-10 — parallel five-subject notes structure and Hindi-only drafting
+
+- Created `docs/study-notes/MASTER_SUBJECT_TOPIC_STRUCTURE.md` from the canonical topic ledger: 132 existing concept rows across Rajasthan History (34), Rajasthan Geography (32), Rajasthan Polity & Administration (21), Hindi (24) and English (21), grouped as 24 parent topics. The structure includes each stable concept ID, Hindi/English topic labels, a proposed gap list, current seed/draft counts and source entry points.
+- User's language instruction is now a project rule: write all One-Liner questions and answers in Hindi, including for English-subject grammar/vocabulary. Use English examples/terms only when unavoidable and explain in Hindi. Keep the question/answer compact and dense, with one fact per item.
+- Began parallel Rajasthan Geography notes in `docs/study-notes/rajasthan-geography/initial-source-review.md`: 14 new Hindi Q&A drafts from the Government of Rajasthan “Rajasthan at a Glance” page; they cover arid-region climate, Ghaggar, regional drainage and irrigation. All remain NEEDS_REVIEW. Existing 7 migration seed candidates are kept separate and must be source/duplicate-reviewed before adding related candidates.
+- Current cross-subject work state: Kalibangan 282 draft Q&A in PR #113; Geography 14 new docs Q&A + 7 old migration seed candidates; Rajasthan Polity 21 concepts, Hindi 24 and English 21 concepts structurally registered but Q&A drafting not yet started. The starter catalogue is not the final official syllabus; exam mapping remains pending.
+- No code, live DB, migration, APK or learner-visible VERIFIED records changed. Phase 6.56 remains IN_PROGRESS, Phase 6.57 remains PLANNED; no phase skip. Ahar-Banas remains next in Rajasthan History after Kalibangan exits.
+
+
+## 2026-11-10 — parallel Polity, Hindi and English starter batches
+
+- Added 17 Hindi One-Liner drafts for Rajasthan Polity & Administration in `docs/study-notes/rajasthan-polity-administration/initial-source-review.md`, backed by the Rajasthan Legislative Assembly, RPSC RTI Handbook (updated 12 Dec 2025), e-Committee / Supreme Court of India High Court history, and Rajasthan Third State Finance Commission report. All NEEDS_REVIEW.
+- Added 12 Hindi grammar drafts for Hindi → वर्ण एवं वर्णमाला in `docs/study-notes/hindi/initial-source-review.md`, based on Central Hindi Directorate, Ministry of Education, Government of India, *Devanagari Script and Standardization of Hindi Orthography*, revised 2024. Text screenshot retrieval failed due file size; page-image verification is explicitly open.
+- Added 14 Hindi-medium drafts for English → Parts of Speech in `docs/study-notes/english/initial-source-review.md`, based on Cambridge Grammar. Question/answer prose is Hindi; only grammar labels/example words remain English. All NEEDS_REVIEW.
+- Master structure and notes index now link the first batches. All 132 canonical concept rows remain intact; content batches are only partial subtopic coverage. The current initial notes counts are: Kalibangan 282; Rajasthan Geography 14 new drafts plus 7 old migration candidates; Rajasthan Polity 17; Hindi 12; English 14. No fixed count means completion.
+- No app code, DB, migration, APK or learner-visible verified status changed. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — canonical mapping and table-schema quality correction
+
+- All 57 first-batch questions across Geography (14), Rajasthan Polity (17), Hindi (12) and English (14) now carry the exact stable concept ID for the tested subtopic. Multi-section Geography and Polity tables have consistent column headers for these IDs.
+- Corrected English topic mapping: ENG-001–009 → Parts of Speech (9); ENG-010–011 → Tenses (2); ENG-012–014 → Modals (3). The master coverage matrix now shows those separate per-subtopic counts instead of incorrectly placing all 14 under Parts of Speech.
+- Corrected the SFC preface locator wording to “प्रस्तावना (Preface)” rather than treating the prefatory Roman page marker as a printed page number.
+- All new questions and answers remain in Hindi; English-language words/phrases appear only when they are the subject of the English-language example. All drafts remain NEEDS_REVIEW; no live DB semantic duplicate scan or independent reviewer approval is claimed.
+- Current first-batch totals remain Geography 14 + Polity 17 + Hindi 12 + English 14 = 57 new markdown Q&A; Kalibangan remains 282. Seven previous Geography migration seeds remain separate and pending review. No code/database/migration/APK change or phase transition.
+
+
+## 2026-11-10 — Rajasthan Geography protected-area second batch
+
+- Added RGEO-015–RGEO-029 (15 new Hindi Q&A) under the canonical concept `catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries`, using the Rajasthan Forest Department's “National Parks and Sanctuaries in Rajasthan” table. The questions cover Mukundara Hills, Band Baretha, Bhensrodgarh, Desert National Park Sanctuary (as labelled in the table), Phulwari ki Naal, Jamwa Ramgarh, Kumbhalgarh, Mount Abu, Tal Chhapar, Sariska, Sitamata, Ramgarh Vishdhari and National Gharial Sanctuary.
+- Current Rajasthan Geography markdown total is **29 new Hindi Q&A (RGEO-001–RGEO-029)**, all NEEDS_REVIEW, plus 7 separate older migration seed candidates (Aravalli 1, Thar 1, Luni 2, Banas 1, National Parks/Sanctuaries 2). The old seeds have not been merged into the markdown file or counted as reviewed content.
+- Exact/normalized in-file audit after this increment: IDs continuous; 0 normalized duplicate questions; 0 exact normalized Q&A duplicates; each row has a stable concept ID and source locator; all questions/answers under 240 characters. No live DB semantic duplicate scan or independent reviewer check is claimed.
+- The master structure, README, roadmap and phase registry/continuity now distinguish the 29 new markdown questions from the 7 older seed candidates. No app code, migration, live DB, APK or learner-visible VERIFIED record changed. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — English Tenses subtopic expansion
+
+- Added ENG-015–ENG-023 (9 Hindi-question/Hindi-answer Q&A) under canonical concept `catalog.english_grammar_tenses`. Topics include present simple/continuous uses, stative-verb usage, past simple with definite time, present perfect continuity, timetable future use and present tense in future time clauses.
+- The previous 14-question English batch is now 23 total: Parts of Speech 9, Tenses 11, Modals 3. All questions/answers remain Hindi; English terms/examples are shown only as the target language content. All remain NEEDS_REVIEW.
+- Source references are Cambridge English Grammar Today: Present, Present simple or present continuous, Past simple or present perfect, and Present simple. Cambridge is a grammar reference, not an exam syllabus; RBSE/selected exam applicability must be mapped separately.
+- No MCQ generation, app code, database, migrations, APK or learner publication. No phase transition; Phase 6.56 IN_PROGRESS and Phase 6.57 PLANNED.
+
+
+## 2026-11-10 — consolidated five-subject notes checkpoint
+
+- The canonical master structure covers **132 existing subtopic/concept IDs across 5 subjects and 24 parent topic groups**: Rajasthan History 34; Rajasthan Geography 32; Rajasthan Polity & Administration 21; Hindi 24; English 21. Proposed additional syllabus gaps remain separately listed and are not treated as catalogue entries.
+- Current markdown Q&A counts: **Kalibangan 282; Rajasthan Geography 29; Rajasthan Polity 27; Hindi 24; English 23** — total **385 newly drafted Q&A**. Seven older Geography migration seed candidates remain a separate review pool, not added to these markdown counts.
+- Hindi is now the question/answer language across all five subject tracks. English examples/target forms remain only where necessary to test English grammar; explanations and answers are Hindi.
+- Each newly drafted Q&A row now contains its permanent canonical Concept ID. English entries are split correctly by concept: Parts of Speech 9, Tenses 11, Modals 3. Hindi Sandhi has 12 new Q&A; Rajasthan Polity Lokayukta has 10 new Q&A; English Tenses has 9 new Q&A; Geography protected-area list has 15 new Q&A.
+- All questions remain NEEDS_REVIEW. Per-file exact/normalized audits are not a live semantic scan and do not replace independent reviewer approval. Dynamic/current legal facts and official exam syllabus applicability must be checked separately.
+- No app code, database, migrations, APK or learner-visible VERIFIED content changed. Phase states remain Phase 6.56 IN_PROGRESS / Phase 6.57 PLANNED; no phase transition or PR merge.
+
+
+## 2026-11-10 — sequential Kalibangan Chapter 25 continuation
+
+- User direction reaffirmed: **one topic at a time**; complete source coverage, Hindi Q&A, duplicate/fact review and topic checklist before starting another topic. Pause new drafting in Geography, Polity, Hindi and English; retain their current partial drafts without adding parallel batches.
+- Added KAL-283–KAL-287 (5 compact Hindi-question/Hindi-answer drafts) from selective text review of ASI Part II Chapter 25 “Small Finds from Cemetery”, printed pp. 1475–1487: Grave 10 copper mirror, bud-shaped faience plumb-bob, Burial 28 shell ear ornament, agate weight and cemetery gold-bead forms. Existing broad copper mirror, faience, shell-bangle, bead and measuring-instrument questions were checked first to avoid obvious repetition.
+- Kalibanga now has **287 primary Q&A drafts** (KAL-001–KAL-287), plus 3 separately labelled corroborative items and 2 linked ASI photographs. All remain NEEDS_REVIEW; topic status stays DRAFTING / NOT COMPLETE. The complete multi-subject markdown draft total is now 390 (287 + 29 + 27 + 24 + 23); seven older Geography migration seeds remain separate.
+- Chapter 25 text was previously read from a same-title Government of India PM Gati Shakti staging-domain copy as an extraction aid; no binary-hash match to official ASI PDF S6 was made. The canonical source remains the official ASI PDF. The page-image screenshot attempt against the staging copy returned 404, so no plate/image is claimed visually verified. All five new locators and grave/object details require independent re-check against S6.
+- The docs-only workflow path was added to .github/workflows/flutter-mobile.yml; on the previous head f0d02f07083af300b72c198f02194bfc58296ce4, Flutter analyze/tests/release APK build and upload all passed. Artifact ID 13745678087 (ai-comp-mobile-android-apk) is available for 14 days. A second build is running for the current notes head 8793c41eb4b5fd8f08c55ee58ae58af9f6c5c278. Backend pytest and API container build passed on f0d02f07083af300b72c198f02194bfc58296ce4; current-head backend run is in progress.
+- APK tests the existing Flutter app only. The five new Chapter 25 note drafts are documentation-only and are not in the mobile app, live database or learner-facing verified content. No migrations, app source, production data or learner records changed. PR #113 remains OPEN / DRAFT / UNMERGED; no phase transition. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
+- Next exact work: complete Kalibanga coverage gaps (MASI 98 and Mature Part I chapters, page/plate check, remaining small finds, seal/faunal/archaeobotanical reconciliation), perform semantic duplicate and independent factual review, verify current exam syllabus applicability, then submit through the existing NEEDS_REVIEW author workflow. Do not start Ahar-Banas or another subject before Kalibanga's acceptance gates are reviewed.
