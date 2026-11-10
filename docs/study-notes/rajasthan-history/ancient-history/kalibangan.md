@@ -170,6 +170,29 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 | KAL-141 | कालीबंगा के तीसरे प्रकार के burial pit में मिट्टी के बर्तनों के साथ कौन-सी छोटी वस्तुएँ रखे जाने का उल्लेख है? | चूड़ियाँ, मनके, हड्डी के नुकीले औज़ार और ताँबे की वस्तुएँ आदि। | S7 — “Burial Site (KLB-8)” |
 | KAL-142 | कालीबंगा के cemetery mound KLB-8 को ASI museum page किस मुख्य पुरातात्त्विक महत्व से जोड़ता है? | यह स्थल की burial practices और funerary customs का प्रमाण देता है। | S7 — “Burial Site (KLB-8)” |
 
+## Additional lithic and bone/ivory one-liners — ASI Part II continuation
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-143 | ASI Part II के अनुसार कालीबंगा में पत्थर के औज़ार किन सांस्कृतिक चरणों से मिले हैं? | प्रारम्भिक हड़प्पा और परिपक्व हड़प्पा—दोनों चरणों से। | S6 — Ch. 11 “Lithic Tools”, printed pp. 723–765 |
+| KAL-144 | कालीबंगा की छोटी blade industry में किन पत्थरों के औज़ारों का उल्लेख है? | Jasper, agate और chalcedony के छोटे blades, points तथा scrapers आदि। | S6 — Ch. 11, introductory section, printed pp. 723–727 |
+| KAL-145 | कालीबंगा की लंबी blade industry में मुख्यतः किस पत्थर का उपयोग दर्ज है? | चर्ट (chert)। | S6 — Ch. 11, introductory section, printed pp. 723–727 |
+| KAL-146 | ASI लेखक ने किस प्रकार के blades को हड़प्पा सभ्यता का diagnostic culture-trait कहा है? | Parallel-sided blades (समानांतर किनारों वाले blades)। | S6 — Ch. 11, printed pp. 723–727 |
+| KAL-147 | कालीबंगा के हड़प्पा स्तरों से lithic raw material और औज़ार किन रूपों में मिले? | चर्ट के nodules और pebbles, flakes, cores तथा तैयार औज़ार। | S6 — Ch. 11, printed pp. 727–730 |
+| KAL-148 | ASI Part II के अनुसार कालीबंगा के lithic assemblage में कौन-सी वस्तु अन्य औज़ारों से अधिक संख्या में थी? | Flakes (पत्थर के निकले हुए टुकड़े)। | S6 — Ch. 11, printed pp. 727–730 |
+| KAL-149 | कालीबंगा में कम संख्या में दर्ज विशिष्ट lithic tool types कौन-से थे? | Tanged points, shouldered points, drills, notched points, arrowheads, burins, serrated blades और notched blades। | S6 — Ch. 11, printed pp. 727–730 |
+| KAL-150 | कालीबंगा में stone blades बनाने के लिए किन दो flaking techniques का उल्लेख है? | Pressure flaking और percussion flaking। | S6 — Ch. 11, printed pp. 730–732 |
+| KAL-151 | ASI लेखक के अनुसार blades के mass manufacture में किस प्रकार के core का उपयोग हुआ? | Prismatic core। | S6 — Ch. 11, printed pp. 730–732 |
+| KAL-152 | ASI Part II में तेज़ी से blades बनाने की तकनीक का क्या नाम दिया गया है? | Crested Guiding Ridge technique (Crested Ridge technique)। | S6 — Ch. 11, printed pp. 730–732 |
+| KAL-153 | ASI लेखक ने tanged और shouldered stone points का संभावित उपयोग क्या बताया है? | लकड़ी में छेद करने या उसे ream करने के लिए; यह लेखक की कार्य-व्याख्या है। | S6 — Ch. 11, printed pp. 727–730 |
+| KAL-154 | ASI लेखक ने parallel-sided blade के छोटे टुकड़ों को किस संभावित कृषि-उपकरण से जोड़ा है? | लकड़ी की दरांती में bitumen से तिरछे जमाए गए blade inserts के रूप में, जिनसे अनाज की फसल काटी जाती थी; यह उत्खनन-सामग्री पर आधारित व्याख्या है। | S6 — Ch. 11, printed pp. 727–732 |
+| KAL-155 | कालीबंगा के lithic tools में प्रयुक्त चर्ट के कौन-से रंग दर्ज हैं? | भूरा (brown) और धूसर (grey) चर्ट। | S6 — Ch. 11, printed pp. 727–730 |
+| KAL-156 | ASI Part II के अनुसार कालीबंगा के Harappan levels से कितनी ivory और bone objects/संबंधित सामग्री दर्ज हुई? | कुल 392 वस्तुएँ—जिनमें छोटे fragments, raw material के टुकड़े और waste भी शामिल हैं। | S6 — Ch. 13 “Ivory and Bone Objects”, printed pp. 809–811 |
+| KAL-157 | कालीबंगा में ivory और bone objects के स्थानीय निर्माण का संकेत किन साक्ष्यों से मिलता है? | कच्चे ivory/bone के टुकड़े तथा अर्ध-निर्मित (semi-finished) वस्तुएँ मिलने से; रिपोर्ट इसे स्थानीय निर्माण का संकेत मानती है। | S6 — Ch. 13, printed pp. 809–811 |
+| KAL-158 | ASI Part II में कालीबंगा की ivory/bone objects की कौन-सी श्रेणियाँ सूचीबद्ध हैं? | Combs, scapulae, styli, arrowheads, needles, kohl-sticks, conical objects, ivory-tusk pieces और antlers/horns। | S6 — Ch. 13, printed pp. 809–811 |
+| KAL-159 | कालीबंगा से कितनी ivory combs मिलने का उल्लेख ASI रिपोर्ट में है? | चार; इनमें से तीन अपेक्षाकृत कम क्षतिग्रस्त थीं और वर्णित/चित्रित की गईं। | S6 — Ch. 13, “Combs”, printed pp. 811–815 |
+| KAL-160 | ASI रिपोर्ट के अनुसार कालीबंगा में ivory का सामान्य उपयोग किन वस्तुओं के निर्माण में बताया गया है? | Ivory objects कम थीं और ivory का सामान्य उपयोग combs बनाने में बताया गया है। | S6 — Ch. 13, printed pp. 809–815 |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -261,9 +284,9 @@ URL: https://jankalyanfile.rajasthan.gov.in/Content/UploadFolder/DepartmentMaste
 Exact locators: printed p. 34 (location, coordinates, highlighting, excavators, roads, houses and script); printed p. 36 (recorded mentions, earlier surveys, mound sequence, chronology and burials); printed p. 37 (fortification, field, pottery, earthquake caveat, citadel, fire altars and Lower Town).
 
 
-**S6 — Archaeological Survey of India (Government of India).** *Memoirs of the Archaeological Survey of India No. 110: Excavations at Kalibangan — The Harappans (1960–69), Part II* (2020), Chapter 15 “Bangles, Kangans and Rings” by Madhu Bala.  
+**S6 — Archaeological Survey of India (Government of India).** *Memoirs of the Archaeological Survey of India No. 110: Excavations at Kalibangan — The Harappans (1960–69), Part II* (2020).  
 URL: https://asi.nic.in/pdf/Excavation-at-Kalibangan-Part-II-min-1-compressed_compressed.pdf  
-Locators: printed p. 887 (name explanation, types/materials, frequency order, dimensions, designs and inscription); printed p. 888 (distribution table and counts). The report's disclaimer says authors' object identifications/descriptions are presented under author responsibility; treat interpretations and object identifications with that attribution.
+Locators: Chapter 11 “Lithic Tools”, printed pp. 723–765; Chapter 12 “Metal Objects”, pp. 767–807; Chapter 13 “Ivory and Bone Objects”, pp. 809–835; Chapter 14 “Kitchen Equipments”, pp. 837–885; Chapter 15 “Bangles, Kangans and Rings”, pp. 887–931; Chapter 16 “Beads”, pp. 933–994; Chapter 17 “Harappan Measuring Instruments from Kalibangan”, pp. 995–1021; Chapter 18 “Shell Objects”, pp. 1023–1034; Chapter 19 weaving tools, pp. 1035–1051; Chapters 20–21 other terracotta objects, pp. 1053–1284; Chapters 22–25 cemetery and related finds, pp. 1285–1487. The report's disclaimer says authors' object identifications/descriptions are presented under author responsibility; preserve interpretive wording as attributed claims, not unquestionable institutional certification.
 
 
 **S7 — Archaeological Survey of India, Jodhpur Circle.** “Archaeological Museum Kalibangan”.  
@@ -286,17 +309,17 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 ## Additional source-access limitation
 
-- **ASI Part I review gate:** The official ASI catalogue lists *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and *Excavations at Kalibangan: Early Harappans*. The Part I download endpoint returned a 17 MB PDF that this document reader rejected for size; those chapters have not been independently reviewed in this pass. Do not infer their detailed seal/inscription/lithic content from Part II or secondary summaries.
+- **ASI Part I / MASI 98 review gate:** The official ASI catalogue lists *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and *Excavations at Kalibangan: Early Harappans* (MASI No. 98). Their ASI download endpoints returned PDFs of about 17–19 MB, which this reader rejected for size. These reports have not been independently reviewed in this pass. Part II does contain a dedicated lithic-tools chapter (Ch. 11), now used for the Period I/II lithic draft items above; do not treat it as a substitute for complete Period I-specific report/plan/plate review or the detailed seal/sign corpus. The browser screenshot renderer also rejected the large Part II PDF, so page-image/plate inspection remains open.
 
 ## Review and publishing status
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
 - [ ] Re-check each answer against the Gazetteer and the exact ASI report/plate where site-specific archaeology is involved.
-- [ ] Add exact ASI page/plate/plan locators to every archaeological statement; current added chapter coverage includes metal (Ch. 12, pp. 767–807), ivory/bone (Ch. 13, pp. 809–835), kitchen tools (Ch. 14, pp. 837–885), bangles (Ch. 15, pp. 887–931), beads (Ch. 16, pp. 933–994), measuring tools (Ch. 17, pp. 995–1021), shell (Ch. 18, pp. 1023–1034), weaving (Ch. 19, pp. 1035–1051), other objects (Ch. 20–21, pp. 1053–1284) and cemetery (Ch. 22–25, pp. 1285–1487).
+- [ ] Add exact ASI page/plate/plan locators to every archaeological statement; text-level coverage now includes lithic tools (Ch. 11, pp. 723–765), metal (Ch. 12, pp. 767–807), ivory/bone (Ch. 13, pp. 809–835), kitchen tools (Ch. 14, pp. 837–885), bangles (Ch. 15, pp. 887–931), beads (Ch. 16, pp. 933–994), measuring tools (Ch. 17, pp. 995–1021), shell (Ch. 18, pp. 1023–1034), weaving (Ch. 19, pp. 1035–1051), other objects (Ch. 20–21, pp. 1053–1284) and cemetery (Ch. 22–25, pp. 1285–1487). Page-image/plate cross-check is still pending.
 - [ ] Verify all date ranges, mound identifiers, burial types, pottery fabrics and measurements independently.
 - [ ] Resolve or explicitly preserve source conflicts; do not hide them.
 - [ ] Check exact and semantic duplicates against the existing question-bank store.
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. This expanded pass now covers the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, metal/copper, beads, weights/measures, shell/bone/ivory, weaving tools and burial evidence, with two official ASI photographs. It is not yet an exhaustive scholarly review: the ASI Part I/early-Harappan report, detailed lithic typology, seal/sign corpus, craft-production and trade interpretations, full faunal record, figure/plate cross-checks, independent review and exam-specific syllabus mapping remain open. Do not mark this topic complete until those gaps are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 160 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI Part I / MASI 98 report, seal/sign corpus, full faunal record, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
