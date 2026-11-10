@@ -181,7 +181,7 @@
 | 1 | राजस्थान लोक सेवा आयोग — RPSC | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc` | 5 Q&A; NEEDS_REVIEW |
 | 2 | राज्य निर्वाचन आयोग — State Election Commission | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_election_commission` | मसौदा शुरू नहीं |
 | 3 | राज्य सूचना आयोग — State Information Commission | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_information_commission` | मसौदा शुरू नहीं |
-| 4 | लोकायुक्त — Lokayukta | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | मसौदा शुरू नहीं |
+| 4 | लोकायुक्त — Lokayukta | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta` | 10 Q&A; NEEDS_REVIEW |
 | 5 | राज्य मानवाधिकार आयोग — State Human Rights Commission | `catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_human_rights_commission` | मसौदा शुरू नहीं |
 
 #### 3. स्थानीय स्वशासन — Local Self-Government
