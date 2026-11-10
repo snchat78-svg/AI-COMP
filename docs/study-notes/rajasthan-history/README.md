@@ -9,7 +9,7 @@
 
 | # | Topic group | Topic / subtopic | Concept ID | Notes status |
 |---:|---|---|---|---|
-| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 177 primary AI-authored Q&A + 3 corroborative points + 2 ASI photos; coverage and independent review open |
+| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 178 primary AI-authored Q&A + 3 corroborative points + 2 ASI photos; coverage and independent review open |
 | 2 | Ancient History | Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | NOT STARTED |
 | 3 | Ancient History | Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | NOT STARTED |
 | 4 | Ancient History | Bairat | `catalog.rajasthan_history_ancient_history_bairat` | NOT STARTED |
@@ -63,4 +63,4 @@ Only after the notes are reviewed should the app derive practice MCQs and topic 
 
 ## First in-progress topic
 
-Kalibangan notes now contain 177 primary AI-authored Q&A drafts, 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. They remain NEEDS_REVIEW / NOT COMPLETE. Next inspect ASI Part I / Early Harappan excavation reports, remaining lithic plate/plan review, seals/sign corpus, complete faunal evidence, small finds and every relevant plate/plan; reconcile source conflicts and request independent review before moving to Ahar-Banas Culture.
+Kalibangan notes now contain 178 primary AI-authored Q&A drafts, 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. They remain NEEDS_REVIEW / NOT COMPLETE. Next inspect ASI Part I / Early Harappan excavation reports, remaining lithic plate/plan review, seals/sign corpus, complete faunal evidence, small finds and every relevant plate/plan; reconcile source conflicts and request independent review before moving to Ahar-Banas Culture.
