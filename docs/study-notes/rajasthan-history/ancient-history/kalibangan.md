@@ -352,6 +352,12 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 - **ASI Part I / MASI 98 review gate:** The official ASI catalogue lists *Excavations at Kalibangan: The Harappans (1960–1969), Part I* and *Excavations at Kalibangan: Early Harappans* (MASI No. 98). Their ASI download endpoints returned PDFs of about 17–19 MB, which this reader rejected for size. These reports have not been independently reviewed in this pass. Part II does contain a dedicated lithic-tools chapter (Ch. 11), now used for the Period I/II lithic draft items above; do not treat it as a substitute for complete Period I-specific report/plan/plate review or the detailed seal/sign corpus. The browser screenshot renderer also rejected the large Part II PDF, so page-image/plate inspection remains open.
 
+## Newly surfaced source lead — not yet reviewed / not used for answers
+
+- A specialist distributor's current catalogue lists Supriya Nandy, *Zooarchaeology of Faunal Remains of Kalibangan, Rajasthan: An Indus Valley Site*, ZSI Occasional Paper No. 430 (2026), ISBN 9788199884809. Its listed contents include domestic species, wild/free-living species, bone modification and bone measurements.
+- This is only a bibliographic lead from a bookseller listing, not a directly reviewed primary text or independently verified official ZSI digital record. The ZSI digital-archive page was not retrievable in this pass. No question or answer in KAL-001–KAL-178 relies on the monograph.
+- Next faunal research gate: locate an authorized readable copy of Occasional Paper No. 430 through ZSI's publication/archive or a library, then reconcile its species list, element counts, measurements, cut/chop/burn modification evidence and taphonomic discussion with the 2021–22 Annual Report before adding more Q&A.
+
 ## Review and publishing status
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
