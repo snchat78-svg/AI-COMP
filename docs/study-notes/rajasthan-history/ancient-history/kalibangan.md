@@ -270,6 +270,10 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 | KAL-213 | उसी लेख में MASCA/Clark corrections लगाने पर Period I और Period II के अनुमानित काल क्या दिए गए? | Period I लगभग 2900–2700 ईसा पूर्व और Period II लगभग 2500–2000 ईसा पूर्व। इन्हें 1979 के लेख की corrected estimates के रूप में ही पढ़ना चाहिए। | S16 — printed p. 94 |
 | KAL-214 | B. B. Lal ने Kalibangan की radiocarbon dates को बिना जाँच सीधे स्वीकार करने के प्रति क्या सावधानी दी? | उन्होंने चेताया कि ¹⁴C dates को blind acceptance देने से असंगत/विसंगत परिणाम निकल सकते हैं; सभी dates का विवेकपूर्ण सामूहिक आकलन जरूरी है। | S16 — printed pp. 93–94 |
 
+## Additional plan-label reconciliation item
+
+| KAL-215 | B. B. Lal के 1979 settlement plan में cemetery mound का कौन-सा code छपा है, और यह किन अन्य स्रोतों से अलग है? | Fig. 1 में KLB-4 छपा है; Hanumangarh Gazetteer तथा ASI Jodhpur Circle museum page इसे KLB-8 कहते हैं। इसे unresolved plan-label conflict मानें, जब तक मूल excavation plan से पुष्टि न हो। | S16 — Fig. 1, printed p. 66; S4 — printed p. 36; S7 — “Harappan Site Kalibangan” |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -336,6 +340,10 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 - **Fire altars and ritual:** the Gazetteer records seven fire altars on a platform and says some platforms seem ritual in use. Do not claim the exact ritual or deity without independent archaeological support.
 
 ## Source disagreements and editorial corrections
+
+- **Cemetery mound code:** B. B. Lal's 1979 Fig. 1 labels the cemetery KLB-4 (S16, printed p. 66), whereas the Hanumangarh District Gazetteer (S4, p. 36) and ASI Jodhpur Circle museum page (S7, “Harappan Site Kalibangan”) use KLB-8. Keep both labels attributed and do not silently harmonize them until the original excavation plan/object register is checked.
+- **Chronology ranges:** the Hanumangarh Gazetteer (S4, p. 36) gives approximate ranges for Early and Mature Harappan phases. B. B. Lal's 1979 synthesis (S16, p. 94) separately tabulates uncorrected radiocarbon values (Period I 2400–2250 BCE; Period II 2200–1700 BCE) and then MASCA/Clark-corrected values (Period I 2900–2700 BCE; Period II 2500–2000 BCE). These are source- and correction-method-specific historical estimates, not one reconciled modern chronology. Do not choose one without specialist review of the samples and correction method.
+
 
 - **Rice remains at Kalibangan:** ASI Jodhpur Circle's museum page mentions rice among crops, but the ASI *Indian Archaeology 1974–75 — A Review* (printed p. 79) records Vishnu-Mittre and R. Savithri's re-examination: plant remains from terracotta cakes and pai were identified as barley and, in a few cases, wheat; absence of rice epidermis and its characteristic chess-board pattern led them to reject the earlier rice identification as not soundly based. Keep the site-specific crop claim disputed; do not state rice as a confirmed Kalibangan crop without resolving the primary archaeobotanical evidence.
 
@@ -438,4 +446,4 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 214 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 215 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
