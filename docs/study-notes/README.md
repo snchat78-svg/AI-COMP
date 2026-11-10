@@ -47,7 +47,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - Subtopic: Kalibangan
 - Concept ID: `catalog.rajasthan_history_ancient_history_kalibangan`
 - Notes: [Kalibangan — one-liner Q&A notes](rajasthan-history/ancient-history/kalibangan.md)
-- Current state: `DRAFTING / NOT COMPLETE`; 240 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, all items remain `NEEDS_REVIEW`, and no exam-specific official-syllabus mapping is claimed.
+- Current state: `DRAFTING / NOT COMPLETE`; 240 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, and all items remain `NEEDS_REVIEW`. The ASI Part II figure register records KLB-8 cemetery plan/view locators at printed pp. 1288–1290; visual review and the KLB-4 label conflict remain open. No exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
