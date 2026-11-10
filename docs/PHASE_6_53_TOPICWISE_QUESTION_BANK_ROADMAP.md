@@ -6,6 +6,17 @@
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
 **Primary outcome:** A learner can choose an exam profile → subject → topic/subtopic and see source-backed previous-exam questions, important one-liners, practice and revision material for that topic.
 
+
+## User-directed priority — Study Notes first (2026-11-10)
+
+Before expanding MCQ generation, topic tests, mastery or revision, build the learner's study material as **subject → topic → subtopic → one-liner question + direct answer notes**. Notes are the primary study layer; MCQs and tests must be derived from the reviewed notes rather than replacing them.
+
+For each topic, create enough independent Q&A pairs to cover the entire syllabus-relevant knowledge-point set: definitions, identities, places, people, dates, facts, categories, lists, comparisons, causes/effects, sequences, rules, formulas, exceptions, diagrams/maps and applications where relevant. There is no fixed question-count ceiling and no topic is complete merely because it has five or ten items. Maintain a visible coverage checklist and unresolved-gap list.
+
+Every fact must have a source URL and an exact page/section/heading/evidence locator. New AI-assisted drafts remain `NEEDS_REVIEW` until a separate reviewer checks them. Keep generic reference notes distinct from exam-specific notes until an official syllabus is retrieved and its mapping is independently reviewed. Keep One-Liners, real previous-paper questions, and generated MCQs as separate content types.
+
+The subject sequence follows the current 14-category catalogue in `QUESTION_BANK_CONTENT_COVERAGE.csv`, beginning with Rajasthan History. The first content slice is Rajasthan History → Ancient History → Kalibangan, documented at [docs/study-notes/README.md](study-notes/README.md) and [Kalibangan Q&A notes](study-notes/rajasthan-history/ancient-history/kalibangan.md). Its current status is DRAFTING / NOT COMPLETE; the source and coverage review are still open. This content-first priority does not mark Phase 6.56 complete or unlock Phase 6.57.
+
 ## 1. User experience contract
 
 The question bank must be navigable without starting a test first:
