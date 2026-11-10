@@ -215,3 +215,5 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Next: primary MASI 98 / Part I review, sign corpus and seal distribution, finer faunal taxonomic inventory, archaeobotanical report cross-check, remaining small finds, and exact figure/plate/plan verification. Continue not to mark topic complete or advance to Ahar-Banas before these checks and independent review.
 
 - KAL-178 additionally records ZSI's explicit association of the faunal remains with both pre-Harappan and Harappan cultural phases (Annual Report 2021–22, printed p. 35).
+
+- **Faunal follow-up source lead:** A specialist distributor catalogue lists Supriya Nandy, ZSI *Zooarchaeology of Faunal Remains of Kalibangan* (Occasional Paper No. 430, 2026; ISBN 9788199884809), with domestic/wild species, bone modification and bone measurements chapters. The book itself has not yet been accessed or independently verified; use only as a research lead, not as Q&A evidence. Next research pass should obtain an authorized ZSI/library copy and inspect species tables and bone-modification/measurement chapters before expanding the faunal notes.
