@@ -96,7 +96,7 @@
 ### राजस्थान भूगोल — Rajasthan Geography
 
 **मुख्य topic groups:** 6 • **उपविषय:** 32  
-**मसौदा:** [14 हिंदी Q&A](rajasthan-geography/initial-source-review.md) — NEEDS_REVIEW। **पुराने seed candidates:** 7 प्रश्न—अरावली (1), थार (1), लूनी नदी (2), बनास नदी (1), राष्ट्रीय उद्यान एवं अभयारण्य (2); स्वतंत्र समीक्षा/duplicate audit लंबित। नए प्रश्न जोड़ने से पहले इन्हें पढ़कर duplicate हटाएँ।
+**मसौदा:** [29 हिंदी Q&A](rajasthan-geography/initial-source-review.md) — NEEDS_REVIEW। **पुराने seed candidates:** 7 प्रश्न—अरावली (1), थार (1), लूनी नदी (2), बनास नदी (1), राष्ट्रीय उद्यान एवं अभयारण्य (2); स्वतंत्र समीक्षा/duplicate audit लंबित। नए प्रश्न जोड़ने से पहले इन्हें पढ़कर duplicate हटाएँ।
 
 #### 1. स्थिति एवं भौतिक स्वरूप — Location and Physical Features
 
