@@ -68,6 +68,15 @@
 | KAL-055 | कालीबंगा संग्रहालय की galleries का विषय-विभाजन क्या है? | एक gallery Pre-Harappan सामग्री के लिए और दो Harappan artefacts के लिए। | S1 — “Kalibangan” section |
 | KAL-056 | राजस्थान पर्यटन विभाग कालीबंगा से किन पुरावशेषों का उल्लेख करता है? | Seals, stamps, copper bangles, beads, toys, terracotta वस्तुएँ और shells आदि। | S1 — “Kalibangan” section; object identities need ASI catalogue review |
 
+| KAL-057 | ASI की 2020 excavation report के Chapter 15 में “Kalibangan” नाम की उत्पत्ति किससे जोड़ी गई है? | mound पर बिखरी हुई बड़ी संख्या में मिली चूड़ियों (bangles) से; रिपोर्ट इसे नाम की व्युत्पत्ति बताती है। | S6 — Chapter 15 “Bangles, Kangans and Rings”, printed p. 887; author Madhu Bala. यह “काली चूड़ियाँ” नहीं कहता। |
+| KAL-058 | ASI report में कालीबंगा से किन पदार्थों की चूड़ियाँ मिलने का उल्लेख है? | Terracotta, shell, alabaster, copper और faience। | S6 — Ch. 15, printed pp. 887–888 |
+| KAL-059 | ASI report के अनुसार कालीबंगा की चूड़ियों में सबसे अधिक संख्या किस पदार्थ की थी? | Terracotta की; उसके बाद shell, alabaster, copper और faience का क्रम दिया गया है। | S6 — Ch. 15, printed p. 887 |
+| KAL-060 | ASI report में कालीबंगा की चूड़ियों का व्यास किस सीमा में दर्ज है? | लगभग 2 से 11 सेंटीमीटर। | S6 — Ch. 15, printed p. 887 |
+| KAL-061 | ASI report के अनुसार terracotta bangles में कितनी bands हो सकती थीं? | दो से पाँच bands; कुछ पर painting भी थी। | S6 — Ch. 15, printed p. 887 |
+| KAL-062 | ASI report faience bangles पर किस प्रकार के design बताती है? | Incised oblique lines और herring-bone designs। | S6 — Ch. 15, printed p. 887 |
+| KAL-063 | ASI report के अनुसार किस प्रकार की चूड़ी पर Harappan inscription भी मिला? | एक terracotta bangle पर। | S6 — Ch. 15, printed p. 887 |
+| KAL-064 | ASI की distribution table में terracotta bangles की कितनी entries दर्ज हैं? | 18,716; यह report की excavation distribution table का दर्ज count है, इसे पूरे स्थल की सभी चूड़ियों की कुल संख्या न समझें। | S6 — Ch. 15, printed p. 888 |
+
 ### Supporting classroom-reference points — corroboration only
 
 The following information appears in a Kerala SCERT Class VIII Social Science text, not in a Rajasthan official syllabus. Keep it as corroborative reference material until an archaeology reviewer checks it against ASI reports:
@@ -95,7 +104,8 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Pottery / technology / production | PARTIAL | Validate fabric names, production temperature and artefact context from primary report |
 | Religion / ritual interpretation | PARTIAL | Fire-altars and platforms require cautious wording; distinguish archaeological structure from inferred use |
 | Script, seals and inscriptions | PARTIAL | Add object/plate references and keep undeciphered status precise |
-| Crafts, diet, animal husbandry and trade | GAP / PARTIAL | Verify Kalibangan-specific evidence; do not copy generic Harappan facts into this topic |
+| Crafts, ornaments and material culture | PARTIAL | Bangles now have an ASI excavation-report draft slice; verify other crafts, beads, tools, trade and production contexts from primary chapters |
+| Diet and animal husbandry | GAP / PARTIAL | Verify Kalibangan-specific faunal evidence; do not copy generic Harappan facts into this topic |
 | Museum and artefact inventory | PARTIAL | Reconcile tourism summary with museum/ASI catalogue; remove unverified object identifications |
 | Comparison, cause/effect and common confusions | GAP | Build evidence-based comparison with other Harappan sites; preserve uncertainty about earthquake hypothesis |
 | Maps, diagrams and site plans | GAP | Add reviewed mounds/citadel/lower-town/field plan notes with scale and exact plate/page |
@@ -103,7 +113,7 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 
 ## Claims deliberately qualified or not included
 
-- **Name meaning “black bangles”:** not included as fact; a reliable primary/official etymology citation is still needed.
+- **Name meaning “black bangles”:** do not add the word “black” as an etymological fact. ASI Part II Chapter 15 (Madhu Bala) says the name is derived from numerous bangles scattered on the mounds, but does not support the “black” colour claim.
 - **“World's earliest ploughed field”:** not stated as an unqualified fact. The Gazetteer itself uses “perhaps”; NCERT confirms a ploughed field at Kalibangan and the cross-furrow inference.
 - **Earthquake around 2700 BCE:** only a possible explanation for abandonment; the Gazetteer says it is not conclusively proven.
 - **First discoverer:** do not collapse James Tod's recorded mention, Tessitori's visits, Aurel Stein's survey, Ghosh's 1952 highlighting, and the 1961–69 ASI excavation into one “discoverer” claim.
@@ -129,6 +139,11 @@ Locator: Chapter 2 “The River Valley Civilizations”, printed p. 28. Used onl
 URL: https://jankalyanfile.rajasthan.gov.in/Content/UploadFolder/DepartmentMaster/100/2023/Sep/30409/1002b8c1601-1f4b-47f8-95a7-c8eaebadc4a8.pdf  
 Exact locators: printed p. 34 (location, coordinates, highlighting, excavators, roads, houses and script); printed p. 36 (recorded mentions, earlier surveys, mound sequence, chronology and burials); printed p. 37 (fortification, field, pottery, earthquake caveat, citadel, fire altars and Lower Town).
 
+
+**S6 — Archaeological Survey of India (Government of India).** *Memoirs of the Archaeological Survey of India No. 110: Excavations at Kalibangan — The Harappans (1960–69), Part II* (2020), Chapter 15 “Bangles, Kangans and Rings” by Madhu Bala.  
+URL: https://asi.nic.in/pdf/Excavation-at-Kalibangan-Part-II-min-1-compressed_compressed.pdf  
+Locators: printed p. 887 (name explanation, types/materials, frequency order, dimensions, designs and inscription); printed p. 888 (distribution table and counts). The report's disclaimer says authors' object identifications/descriptions are presented under author responsibility; treat interpretations and object identifications with that attribution.
+
 **S5 — Archaeological Survey of India (ASI).** *Excavation Reports of Archaeological Survey of India (MASI)*.  
 URL: https://asi.nic.in/pages/Publications/excavationReports  
 Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960–1969), Part I and Part II” and “Excavations at Kalibangan: Early Harappans”. These primary reports remain the next required evidence layer for plate/plan-level review.
@@ -137,11 +152,11 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
 - [ ] Re-check each answer against the Gazetteer and the exact ASI report/plate where site-specific archaeology is involved.
-- [ ] Add exact ASI page/plate/plan locators to every archaeological statement.
+- [ ] Add exact ASI page/plate/plan locators to every archaeological statement; the bangles section now has Chapter 15 printed pp. 887–888 locators.
 - [ ] Verify all date ranges, mound identifiers, burial types, pottery fabrics and measurements independently.
 - [ ] Resolve or explicitly preserve source conflicts; do not hide them.
 - [ ] Check exact and semantic duplicates against the existing question-bank store.
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. This is a much broader first notes pass, but the primary ASI report/plate review, complete examinable-point checklist, independent verification and exam-specific syllabus mapping are still open. Continue researching gaps before declaring Kalibangan complete.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. This is a broader first notes pass, now including the ASI Part II bangle chapter, but other primary report chapters/plates, the complete examinable-point checklist, independent verification and exam-specific syllabus mapping are still open. Continue researching gaps before declaring Kalibangan complete.
