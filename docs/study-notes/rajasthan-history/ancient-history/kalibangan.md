@@ -234,6 +234,14 @@ These questions split short ASI Jodhpur Circle museum-page observations into ind
 | KAL-187 | ZSI की 2018–19 Annual Report में Kalibangan faunal project ने कितनी species की प्रारम्भिक पहचान दर्ज की? | 11 Mammalia, 1 Aves और 2 Reptilia species—कुल 14 species। उस रिपोर्ट में project अभी ongoing था। | S15 — Annual Report 2018–19, project 21, printed p. 039 |
 | KAL-188 | ZSI की 2020–21 Annual Report में Kalibangan से कितने faunal specimens और कितनी species दर्ज थीं? | 1,075 specimens, 19 species, 9 families और 6 orders; उस रिपोर्ट में project अभी ongoing था। | S15 — Annual Report 2020–21, project 19, printed p. 031 |
 
+## Further Kalibangan inscription-corpus object records
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-189 | Mahadevan के *The Indus Script* corpus में Kalibangan reference 8123 किस वस्तु के लिए दिया गया है? | मिट्टी के ढेले (terracotta lump) पर एक बची हुई stamp impression वाली sealing के लिए; इसे मूल वस्तु ASI 68.1.70 से copy किया गया था। | S14 — Introduction §16.2 “Notes on the additional texts”, printed p. 24 |
+| KAL-190 | Mahadevan के corpus में Kalibangan reference 8222 किस प्रकार की वस्तु है? | overlapping incisions वाला inscribed potsherd; इसे *Puratattva* 7 (1974), Plate VI-A से cross-reference किया गया है। | S14 — §16.2, printed p. 24 |
+| KAL-191 | Mahadevan के corpus में Kalibangan reference 8401 का आकार और inscription feature क्या है? | अंडाकार टेराकोटा वस्तु, जिसकी दोनों सपाट सतहों पर एक-एक बड़ा sign incised है। | S14 — §16.2, printed p. 24 |
+
 ## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
 
 The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
@@ -352,7 +360,7 @@ Exact locators: contents, “Kalibangan (K-1 to 122)” and printed pp. 298–32
 
 **S14 — Archaeological Survey of India.** Iravatham Mahadevan, *The Indus Script: Texts, Concordance and Tables*, Memoirs of the Archaeological Survey of India No. 77 (1977).  
 URL: https://kashmirasitis.com/wp-content/uploads/2020/10/Indus-scriptdarend.pdf  
-Exact locators: Introduction §§2.2–2.3 (1976 revision incorporating unpublished Lothal/Kalibangan texts) and §3.6 (original-source rule); Introduction, Note 7, printed p. 25 (Kalibangan seal 8011); Fig. 27, Plate II, printed p. 803 (raised-seal illustration). The PDF is a third-party hosted scan of an ASI publication; the text is used for research and no plates are redistributed.
+Exact locators: Introduction §§2.2–2.3 (1976 revision incorporating unpublished Lothal/Kalibangan texts) and §3.6 (original-source rule); Introduction, Note 7, printed p. 25 (Kalibangan seal 8011); §16.2 “Notes on the additional texts”, printed p. 24 (references 8123, 8222 and 8401); Fig. 27, Plate II, printed p. 803 (raised-seal illustration). The PDF is a third-party hosted scan of an ASI publication; the text is used for research and no plates are redistributed.
 
 **S15 — Zoological Survey of India (Government of India).** *Annual Report 2018–19* and *Annual Report 2020–21*.  
 URLs:  
@@ -398,4 +406,4 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 188 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 191 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
