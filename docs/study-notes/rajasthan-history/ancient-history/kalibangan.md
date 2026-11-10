@@ -63,7 +63,7 @@
 | KAL-050 | कालीबंगा के घरों में terracotta cakes का एक उपयोग क्या बताया गया है? | फर्श को पक्का करने (paving floors) में। | S4 — printed p. 34 |
 | KAL-051 | कालीबंगा के potsherds पर किस लिपि जैसे चिह्नों का उल्लेख है? | सिंधु लिपि (Indus script) जैसे अक्षर/चिह्न। | S4 — printed p. 34 |
 | KAL-052 | क्या कालीबंगा के potsherds पर मिले Indus-script जैसे चिह्न पढ़े जा चुके हैं? | नहीं; गज़ेटियर के अनुसार वे अब तक decipher नहीं किए जा सके हैं। | S4 — printed p. 34 |
-| KAL-053 | कालीबंगा का पुरातात्त्विक संग्रहालय किस वर्ष स्थापित हुआ? | 1983 में। | S1 — “Kalibangan” section |
+| KAL-053 | कालीबंगा संग्रहालय की स्थापना-वर्ष को लेकर दो आधिकारिक स्रोत क्या बताते हैं? | राजस्थान पर्यटन पृष्ठ 1983 बताता है, जबकि ASI Jodhpur Circle पृष्ठ 1985 बताता है; अभी इस अंतर का स्वतंत्र समाधान नहीं हुआ है। | S1 — “Kalibangan”; S7 — “Archaeological Museum Kalibangan” |
 | KAL-054 | कालीबंगा संग्रहालय में कुल कितनी galleries हैं? | तीन। | S1 — “Kalibangan” section |
 | KAL-055 | कालीबंगा संग्रहालय की galleries का विषय-विभाजन क्या है? | एक gallery Pre-Harappan सामग्री के लिए और दो Harappan artefacts के लिए। | S1 — “Kalibangan” section |
 | KAL-056 | राजस्थान पर्यटन विभाग कालीबंगा से किन पुरावशेषों का उल्लेख करता है? | Seals, stamps, copper bangles, beads, toys, terracotta वस्तुएँ और shells आदि। | S1 — “Kalibangan” section; object identities need ASI catalogue review |
@@ -76,6 +76,91 @@
 | KAL-062 | ASI report faience bangles पर किस प्रकार के design बताती है? | Incised oblique lines और herring-bone designs। | S6 — Ch. 15, printed p. 887 |
 | KAL-063 | ASI report के अनुसार किस प्रकार की चूड़ी पर Harappan inscription भी मिला? | एक terracotta bangle पर। | S6 — Ch. 15, printed p. 887 |
 | KAL-064 | ASI की distribution table में terracotta bangles की कितनी entries दर्ज हैं? | 18,716; यह report की excavation distribution table का दर्ज count है, इसे पूरे स्थल की सभी चूड़ियों की कुल संख्या न समझें। | S6 — Ch. 15, printed p. 888 |
+
+ 
+## Further source-based one-liner notes — research expansion
+
+**Important:** These are additional AI-authored Hindi question stems, written in my own words from the cited source material. They are not copied verbatim from a website, textbook, ASI report, or previous-year paper. The factual answers are source-derived paraphrases. None is represented as an actual PYQ. Every item remains `NEEDS_REVIEW`.
+
+| Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
+|---|---|---|---|
+| KAL-065 | बी. के. थापर के विवरण में “कालीबंगा” नाम का शाब्दिक अर्थ क्या बताया गया है? | “काली चूड़ियाँ” (black bangles); थापर इसे स्थल पर बिखरे मौसम से काले पड़े टेराकोटा चूड़ी-खंडों के दृश्य से जोड़ते हैं। | S8 — Part Two (B. K. Thapar), printed p. 267. ASI 2020 Ch. 15 केवल बिखरी चूड़ियों का उल्लेख करता है, रंग का नहीं। |
+| KAL-066 | कालीबंगा का पुरातात्त्विक संग्रहालय पीलीबंगा तहसील मुख्यालय से लगभग कितनी दूरी पर है? | लगभग 8 किलोमीटर दक्षिण में। | S7 — “Archaeological Museum Kalibangan” |
+| KAL-067 | कालीबंगा संग्रहालय को उन्नयन और पुनर्गठन के बाद कब दोबारा खोला गया? | 18 मई 2017 को, विश्व संग्रहालय दिवस के अवसर पर। | S7 — “Archaeological Museum Kalibangan” |
+| KAL-068 | ASI Jodhpur Circle संग्रहालय कालीबंगा की पुरावस्तुओं को किन दो सांस्कृतिक चरणों में बाँटता है? | प्रारम्भिक हड़प्पा और परिपक्व हड़प्पा चरणों में। | S7 — museum introduction |
+| KAL-069 | ASI संग्रहालय के अनुसार प्रारम्भिक हड़प्पा मृद्भांडों को कितने fabrics में वर्गीकृत किया गया है? | छह—Fabric A, B, C, D, E और F। | S7 — “The Early Harappan Pottery” |
+| KAL-070 | प्रारम्भिक हड़प्पा का Fabric A किस रंग और बनावट का बताया गया है? | हल्का और पतली दीवार वाला, लाल से गुलाबी रंग का; मंद लाल सतह पर प्रायः काले और कभी-कभी सफेद रंग से चित्रांकन। | S7 — “The Early Harappan Pottery”, Fabric A |
+| KAL-071 | Fabric A के चित्रांकन में कौन-कौन से प्रमुख रूपांकन मिलते हैं? | क्षैतिज पट्टियाँ, त्रिकोण, लंबवत श्रृंखला-जैसी रेखाएँ, चार-पंखुड़ी फूल, मछली, बतख, हिरण और बैल। | S7 — Fabric A |
+| KAL-072 | Fabric B के मृद्भांडों पर लाल slip सामान्यतः कहाँ तक लगाई जाती थी? | पात्र के कंधे (shoulder) तक; उस भाग पर अलग-अलग मोटाई की काली क्षैतिज पट्टियाँ बनाई जाती थीं। | S7 — Fabric B |
+| KAL-073 | Fabric B के प्राकृतिक शैली वाले चित्रांकन में किन आकृतियों का उल्लेख है? | फूलों के साथ बैल, बतख और stag जैसे पशु-पक्षी रूपांकन। | S7 — Fabric B |
+| KAL-074 | Fabric C की पहचान किन सतही विशेषताओं से होती है? | महीन बनावट और चिकनी slipped सतह, जिसका रंग लाल से बैंगनी-लाल तक होता है। | S7 — Fabric C |
+| KAL-075 | Fabric C पर किस प्रकार के काले डिज़ाइन दर्ज हैं? | क्षैतिज पट्टियाँ, loops, criss-cross तथा लहरदार लंबवत रेखाएँ। | S7 — Fabric C |
+| KAL-076 | Fabric D की मुख्य बनावट और सतह कैसी थी? | मोटी और मजबूत दीवार वाला पात्र, जिस पर लाल slip होती थी। | S7 — Fabric D |
+| KAL-077 | Fabric D के ring-base basin पर किस प्रकार की सजावट मिलती है? | अंदर की ओर तीखी उभरी धारियों/लहरदार pattern और बाहर cord-impression जैसी एकल या कई छापें। | S7 — Fabric D |
+| KAL-078 | Fabric E के मृद्भांडों की सतह और सामान्य आकार कैसे बताए गए हैं? | buff या reddish-buff slip; बड़े और मध्यम आकार के गोल rim वाले jar। | S7 — Fabric E |
+| KAL-079 | Fabric E के प्रमुख चित्रांकन में किन आकृतियों का उल्लेख है? | काले और सफेद रंग से cock, butterfly और लहरदार लंबवत रेखाएँ। | S7 — Fabric E |
+| KAL-080 | Fabric F की पहचान किस रंग और चित्रांकन से होती है? | धूसर (grey) मृद्भांड, जिन पर सफेद रंग से चित्रांकन किया गया है। | S7 — Fabric F |
+| KAL-081 | Fabric F में कौन-से मुख्य पात्र-रूप बताए गए हैं? | Dish-on-stand, कटोरे और फूलदान (vases)। | S7 — Fabric F |
+| KAL-082 | KLB-1 के प्रारम्भिक हड़प्पा आवास-क्षेत्र में निर्माण गतिविधि के कितने चरण पहचाने गए? | पाँच चरण। | S7 — “The Early Harappan Period” |
+| KAL-083 | प्रारम्भिक हड़प्पा बस्ती के एक सामान्य घर में कितने कमरे और कैसी आंतरिक योजना बताई गई है? | सामान्यतः तीन से चार कमरे, जिनके बीच में एक केंद्रीय आँगन था। | S7 — “The Early Harappan Period” |
+| KAL-084 | ASI Jodhpur Circle संग्रहालय की पहली gallery में किन कालों की वस्तुएँ प्रदर्शित हैं? | प्रारम्भिक हड़प्पा और परिपक्व हड़प्पा—दोनों चरणों की वस्तुएँ। | S7 — “First Gallery” |
+| KAL-085 | संग्रहालय की पहली gallery में कौन-से दैनिक/खेल से जुड़े टेराकोटा अवशेष दिखाए गए हैं? | खिलौना-गाड़ी, पहिए, feeding cups, whistles, rattles, hopscotch pieces, gamesmen और मानव-पशु आकृतियाँ आदि। | S7 — “First Gallery”; यह प्रदर्शनी-सूची है, संपूर्ण खुदाई-सूची नहीं। |
+| KAL-086 | संग्रहालय की दूसरी gallery मुख्यतः किस चरण की सामग्री को समर्पित है? | परिपक्व हड़प्पा चरण की सामग्री को। | S7 — “Second Gallery” |
+| KAL-087 | परिपक्व हड़प्पा pottery में कौन-से प्रमुख पात्र-रूप मिलते हैं? | S-shaped jar, dish-on-stand, ढक्कन, perforated vessel, बड़े storage jar, handi, बाहर की ओर मुड़े rim वाले कटोरे, goblet और beaker। | S7 — “The Mature Harappan Pottery (KLB-2)” |
+| KAL-088 | परिपक्व हड़प्पा के दैनिक उपयोग वाले मृद्भांडों पर चित्रांकन के लिए कौन-से रंग और आधार-सतह बताई गई है? | लाल slip वाली सतह पर काले या भूरे रंग से चित्रांकन। | S7 — “The Mature Harappan Pottery (KLB-2)” |
+| KAL-089 | परिपक्व हड़प्पा pottery के ज्यामितीय रूपांकनों में कौन-से pattern मिलते हैं? | वृत्त, concentric और intersecting circles, dots, क्षैतिज रेखाएँ, arches, त्रिकोण और lozenges। | S7 — “The Mature Harappan Pottery (KLB-2)” |
+| KAL-090 | परिपक्व हड़प्पा pottery के प्राकृतिक रूपांकनों में किन आकृतियों का उल्लेख है? | फूल, पत्तियाँ, केले/पंखुड़ी जैसी पत्तियाँ, मोर और stag आदि। | S7 — “The Mature Harappan Pottery (KLB-2)” |
+| KAL-091 | कालीबंगा के कुछ मृद्भांड-खंडों पर graffiti चिह्न कब अंकित किए गए थे? | कुछ पर पकाने से पहले और कुछ पर पकाने के बाद। | S7 — “The Mature Harappan Pottery (KLB-2)” |
+| KAL-092 | कालीबंगा की burial pottery के प्रमुख पात्र-रूप कौन-से हैं? | Dish-on-stand, कटोरे, dishes और handi आदि; संग्रहालय विवरण के अनुसार ये सामान्यतः सादे (plain) होते थे। | S7 — “Burial Pottery” |
+| KAL-093 | कालीबंगा की तीसरी museum gallery में किस प्रकार की माप-संबंधी वस्तुएँ प्रदर्शित हैं? | टेराकोटा hour-glass, measuring scale, pans और plumb-bob। | S7 — “Third Gallery”; ASI Vol. II, Ch. 17, pp. 995–1021 |
+| KAL-094 | ASI की Kalibangan excavation report में ताँबे की वस्तुओं के कितने कुल टुकड़ों का अनुमान दिया गया है? | लगभग 1,485 टुकड़े; इनमें कई छोटे, जंग लगे या पहचान में न आने वाले टुकड़े भी शामिल हैं। | S6 — Chapter 12 “Metal Objects”, printed p. 768 |
+| KAL-095 | उसी ASI अध्याय में कितनी ताँबे की वस्तुओं को पहचानकर typology में दर्ज किया गया? | 143 पहचानी जा सकने वाली वस्तुएँ। | S6 — Ch. 12, printed p. 768 |
+| KAL-096 | कालीबंगा में ताँबे का उपयोग किस सांस्कृतिक चरण से शुरू होने का उल्लेख है? | प्रारम्भिक हड़प्पा चरण से। | S6 — Ch. 12, printed p. 768 |
+| KAL-097 | कालीबंगा से मिली ताँबे की वस्तुओं में कौन-से औज़ार और आभूषण शामिल हैं? | कुल्हाड़ी/axe, arrowhead, spearhead, knife blade, chisel, hook, wire, nail, needle, ring, bangle, bead और hairpin आदि। | S6 — Ch. 12, “Incidence and Typology”; S7 — “Third Gallery” |
+| KAL-098 | कालीबंगा के ताँबे की आपूर्ति के संभावित स्रोत के रूप में ASI अध्याय किस क्षेत्र का उल्लेख करता है? | खेतड़ी (Khetri) क्षेत्र को एक संभावित स्रोत के रूप में चर्चा करता है; इसे लेखक की परिकल्पना समझें, अंतिम सिद्ध निष्कर्ष नहीं। | S6 — Ch. 12, “Source”, printed pp. 768–769 |
+| KAL-099 | ASI रिपोर्ट के अनुसार कालीबंगा के ताँबे के कुछ artefacts बनाने में कौन-सी casting technique प्रयुक्त हुई? | Lost-wax technique का उल्लेख है; रिपोर्ट विशेष रूप से ताँबे के बैल को एक कलात्मक वस्तु बताती है। | S6 — Ch. 12, “Incidence and Typology”; लेखक का विवरण |
+| KAL-100 | कालीबंगा के परिपक्व हड़प्पा चरण से किस प्रकार के कृषि/पालतू पशु के उपयोग का संकेत मिलता है? | Bos indicus (कूबड़ वाला भारतीय बैल) की हड्डियाँ मिलने से कृषि में बैलों के उपयोग का संकेत मिलता है। | S6 — Ch. 14 “Kitchen Equipments”, printed pp. 837–838 |
+| KAL-101 | ASI Part II के कालीबंगा संबंधी पाठ में किन प्रमुख अनाज/दलहनों के नाम दिए गए हैं? | गेहूँ, जौ, Pisum (मटर) और Cicer arietinum का उल्लेख है। अंतिम botanical पहचान की स्वतंत्र समीक्षा आवश्यक है। | S6 — Ch. 14, printed p. 837 |
+| KAL-102 | प्रारम्भिक हड़प्पा स्तर के एक potsherd में मिले gypsum के संभावित उपयोग के बारे में लेखक क्या अनुमान देता है? | संभवतः लवणीय मिट्टी की salinity घटाकर भूमि को कृषि योग्य बनाने के लिए; यह रिपोर्ट में एक संभावना के रूप में दिया गया है। | S6 — Ch. 14, printed pp. 843–844; hypothesis, not settled fact |
+| KAL-103 | ASI रिपोर्ट में saddle quern का संभावित उपयोग क्या बताया गया है? | कठोर पत्थर के quern पर अनाज पीसने के लिए; इसका निचला convex भाग उसे मिट्टी/फर्श में स्थिर रखने में सहायक था। | S6 — Ch. 14, printed p. 867 |
+| KAL-104 | कालीबंगा से मिले terracotta kitchen tools में किन वस्तुओं का उल्लेख है? | Chakla/pata, belan (rolling pin) और tawa के उदाहरण दर्ज हैं। | S6 — Ch. 14, printed pp. 839–860 |
+| KAL-105 | ASI excavation report में कालीबंगा के terracotta belan का उपयोग किस काम के लिए बताया गया है? | Chapati के लिए आटे को बेलने/आकार देने के लिए; कुछ उदाहरणों में लकड़ी का handle लगाने हेतु लंबवत छेद था। | S6 — Ch. 14, printed pp. 853–856 |
+| KAL-106 | कालीबंगा के एक terracotta chakla/pata की विशेषता क्या दर्ज है? | उसके ring-base के अंदर की ओर तल पर Harappan script वाला inscription दर्ज किया गया है। | S6 — Ch. 14, printed pp. 839–841 |
+| KAL-107 | ASI Part II में कालीबंगा के stone kitchen equipment के कौन-से प्रमुख प्रकार बताए गए हैं? | Saddle quern, rotary quern, pestle/pounder, sling ball और अन्य पत्थर की वस्तुएँ। | S6 — Ch. 14, printed pp. 867–885 |
+| KAL-108 | कालीबंगा के मनकों (beads) के लिए ASI रिपोर्ट में किन प्रमुख पदार्थों का उल्लेख है? | Terracotta, semi-precious stone, steatite, copper और faience आदि। | S6 — Ch. 16 “Beads”, printed pp. 933–994 |
+| KAL-109 | कालीबंगा के terracotta beads में कौन-से आकार/रूप दर्ज किए गए हैं? | Disc, bicone, truncated-cone, crescent, triangular, long-barrel और spacer beads जैसे रूप। | S6 — Ch. 16, figures 16.1–16.11, printed pp. 935–958 |
+| KAL-110 | कालीबंगा से मिले कुछ terracotta beads का विशेष उपयोग क्या बताया गया है? | कुछ beads पशुओं को सजाने के लिए प्रयुक्त होते थे। | S6 — Ch. 16, Figs. 16.24–16.25, printed pp. 992–994 |
+| KAL-111 | कालीबंगा के bead assemblage में कौन-से semi-precious stone beads विशेष रूप से दर्ज हैं? | Agate, carnelian और lapis lazuli सहित अन्य अर्ध-मूल्यवान पत्थरों के beads; steatite beads भी दर्ज हैं। | S6 — Ch. 16, printed pp. 960–978; S7 — “Third Gallery” |
+| KAL-112 | ASI Part II में कालीबंगा के मापन उपकरणों में कौन-सी वस्तुएँ दर्ज हैं? | Terracotta hour-glass, terracotta scale, plumb-bobs, cubical और conical weights तथा pan-balance। | S6 — Ch. 17 “Harappan Measuring Instruments from Kalibangan”, printed pp. 995–1021 |
+| KAL-113 | कालीबंगा के कुछ cubical weights किन पत्थरों से बने बताए गए हैं? | Chert और agate से। | S6 — Ch. 17, Figs. 17.9–17.10, printed pp. 1008–1011 |
+| KAL-114 | कालीबंगा के shell objects में कौन-सी उपयोगी और सजावटी वस्तुएँ दर्ज हैं? | Shell ladles, cups, bowls, dishes, buttons, tortoise-shaped pendant, inlays और conch-shell objects। | S6 — Ch. 18 “Shell Objects”, printed pp. 1023–1034 |
+| KAL-115 | कालीबंगा में कताई/बुनाई से संबंधित किन वस्तुओं का ASI रिपोर्ट में वर्णन है? | Terracotta spindle-whorls, spools, weaver’s tools और weights। | S6 — Ch. 19, printed pp. 1035–1051 |
+| KAL-116 | कालीबंगा की textile activity से संबंधित कौन-सा चिह्न pottery पर दर्ज किया गया है? | एक cloth impression (कपड़े की छाप) का उल्लेख है; यह textile-related activity का संकेत देता है। | S6 — Ch. 19, Fig. 19.8, printed p. 1051 |
+| KAL-117 | ASI Part II में कालीबंगा से किन अतिरिक्त terracotta/architectural objects का वर्णन है? | Terracotta pulleys, decorated tiles, pipes और stone door-devices। | S6 — Ch. 20, printed pp. 1053–1074 |
+| KAL-118 | ASI Jodhpur Circle संग्रहालय के अनुसार KLB-8 से मिले मानव-अवशेषों को कहाँ प्रदर्शित किया गया है? | संग्रहालय के courtyard में skeletal remains की replica के रूप में। | S7 — “Third Gallery” |
+| KAL-119 | कालीबंगा के cemetery में extended burial में शव की सामान्य दिशा क्या बताई गई है? | शव को उत्तर-दक्षिण दिशा में रखा जाता था और सिर उत्तर की ओर होता था। | S7 — “Burial Site (KLB-8)”; S6 — Ch. 22 “The Cemetery”, printed pp. 1285–1427 |
+
+## Photos from the Archaeological Survey of India (ASI) Jodhpur Circle
+
+The following two photographs are linked from the official ASI Jodhpur Circle museum page. They are included as visual study references, not as evidence for a factual claim by themselves.
+
+![ASI Jodhpur Circle archival photograph of the Kalibangan excavation trench](https://www.asijodhpurcircle.in/library/museum/17.jpeg)
+
+*Caption: Excavation remains at Kalibangan. Credit: Archaeological Survey of India, Jodhpur Circle; image linked from the official Archaeological Museum Kalibangan page.*
+
+![ASI Jodhpur Circle photograph labelled as the present view of Mature Harappan mound KLB-2](https://www.asijodhpurcircle.in/library/museum/21.jpeg)
+
+*Caption: Present-day view labelled by ASI Jodhpur Circle as Mature Harappan KLB-2. Credit: Archaeological Survey of India, Jodhpur Circle.*
+
+**Image-use condition:** These images are hot-linked to the ASI Jodhpur Circle website, not copied into this repository. Before embedding them in a distributed APK or rehosting them, confirm the applicable image-reuse/permission terms and retain attribution.
+
+## Question authorship and source-use disclosure
+
+- **Question wording:** I am writing the Hindi question stems myself in concise exam-note style. I am not copying full questions verbatim from websites, textbooks, ASI reports or previous-year papers.
+- **Factual basis:** The answers are researched from the source references listed below, then paraphrased into short direct answers. A source-derived answer is not the same as a copied question.
+- **PYQ distinction:** None of these notes is being presented as an actual previous-year question. Authentic PYQs remain a separate bank and must retain their original paper, exam, year, shift and official answer-key provenance.
+- **Independent review:** These are AI-authored draft notes. They remain `NEEDS_REVIEW` until a separate reviewer checks the exact source, page/section, wording, answer and any uncertainty. AI drafting is not self-verification.
+
 
 ### Supporting classroom-reference points — corroboration only
 
@@ -104,16 +189,16 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Pottery / technology / production | PARTIAL | Validate fabric names, production temperature and artefact context from primary report |
 | Religion / ritual interpretation | PARTIAL | Fire-altars and platforms require cautious wording; distinguish archaeological structure from inferred use |
 | Script, seals and inscriptions | PARTIAL | Add object/plate references and keep undeciphered status precise |
-| Crafts, ornaments and material culture | PARTIAL | Bangles now have an ASI excavation-report draft slice; verify other crafts, beads, tools, trade and production contexts from primary chapters |
-| Diet and animal husbandry | GAP / PARTIAL | Verify Kalibangan-specific faunal evidence; do not copy generic Harappan facts into this topic |
-| Museum and artefact inventory | PARTIAL | Reconcile tourism summary with museum/ASI catalogue; remove unverified object identifications |
+| Crafts, ornaments and material culture | PARTIAL | Added ASI-backed draft questions on bangles, beads, copper, shell, bone/ivory, stone tools and weaving implements; still review artefact identifications, craft production, provenance and trade interpretations |
+| Diet and animal husbandry | PARTIAL | Added ASI Vol. II crop and Bos indicus evidence; resolve botanical terminology in the report and add faunal detail from primary chapters |
+| Museum and artefact inventory | PARTIAL | Added ASI Jodhpur Circle gallery inventory and two ASI-hosted photos; establishment-year sources conflict (1983/1985), and image reuse permission must be confirmed before app distribution |
 | Comparison, cause/effect and common confusions | GAP | Build evidence-based comparison with other Harappan sites; preserve uncertainty about earthquake hypothesis |
 | Maps, diagrams and site plans | GAP | Add reviewed mounds/citadel/lower-town/field plan notes with scale and exact plate/page |
 | Exam-specific applicability | NOT MAPPED | Requires relevant official exam notification/syllabus and reviewer-approved mapping |
 
 ## Claims deliberately qualified or not included
 
-- **Name meaning “black bangles”:** do not add the word “black” as an etymological fact. ASI Part II Chapter 15 (Madhu Bala) says the name is derived from numerous bangles scattered on the mounds, but does not support the “black” colour claim.
+- **Name meaning “black bangles”:** this is included with attribution to B. K. Thapar's UNESCO-hosted chapter, which links the name to weather-stained terracotta bangle fragments. ASI Part II Chapter 15 (Madhu Bala) independently mentions thousands of scattered bangles but does not specify their colour. Keep the two descriptions distinct.
 - **“World's earliest ploughed field”:** not stated as an unqualified fact. The Gazetteer itself uses “perhaps”; NCERT confirms a ploughed field at Kalibangan and the cross-furrow inference.
 - **Earthquake around 2700 BCE:** only a possible explanation for abandonment; the Gazetteer says it is not conclusively proven.
 - **First discoverer:** do not collapse James Tod's recorded mention, Tessitori's visits, Aurel Stein's survey, Ghosh's 1952 highlighting, and the 1961–69 ASI excavation into one “discoverer” claim.
@@ -144,6 +229,16 @@ Exact locators: printed p. 34 (location, coordinates, highlighting, excavators, 
 URL: https://asi.nic.in/pdf/Excavation-at-Kalibangan-Part-II-min-1-compressed_compressed.pdf  
 Locators: printed p. 887 (name explanation, types/materials, frequency order, dimensions, designs and inscription); printed p. 888 (distribution table and counts). The report's disclaimer says authors' object identifications/descriptions are presented under author responsibility; treat interpretations and object identifications with that attribution.
 
+
+**S7 — Archaeological Survey of India, Jodhpur Circle.** “Archaeological Museum Kalibangan”.  
+URL: https://www.asijodhpurcircle.in/museum  
+Locators: museum introduction and “First Gallery” (establishment/reopening, two periods, six fabrics, display inventory); “Harappan Site Kalibangan” (location, excavators, chronology, mounds and burial types); “The Early Harappan Period” and “The Early Harappan Pottery” (settlement dimensions, fabrics A–F, agriculture); “The Mature Harappan Period” and “The Mature Harappan Pottery” (citadel/lower town, fire altars, pottery); “Third Gallery” and “Burial Site (KLB-8)” (tools, artefacts, cemetery/burial orientation). The page has a source discrepancy with Rajasthan Tourism about museum establishment year (1985 vs 1983); it is deliberately left unresolved.
+
+**S8 — B. K. Thapar, “Pre-Indus and Early Indus Cultures of Pakistan and India”, Part Two, in a UNESCO-hosted volume.**  
+URL: https://en.unesco.org/silkroad/sites/default/files/knowledge-bank-article/vol_I%20silk%20road_pre%20indus%20and%20early%20indus%20cultures%20of%20pakistan%20and%20india.pdf  
+Exact locator: printed p. 267, where Thapar explains the literal “black bangles” name through weather-stained terracotta bangle fragments. This is attributed to Thapar; the ASI 2020 bangle chapter gives a narrower description and does not state the colour in its name explanation.
+
+
 **S5 — Archaeological Survey of India (ASI).** *Excavation Reports of Archaeological Survey of India (MASI)*.  
 URL: https://asi.nic.in/pages/Publications/excavationReports  
 Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960–1969), Part I and Part II” and “Excavations at Kalibangan: Early Harappans”. These primary reports remain the next required evidence layer for plate/plan-level review.
@@ -152,11 +247,11 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
 - [ ] Re-check each answer against the Gazetteer and the exact ASI report/plate where site-specific archaeology is involved.
-- [ ] Add exact ASI page/plate/plan locators to every archaeological statement; the bangles section now has Chapter 15 printed pp. 887–888 locators.
+- [ ] Add exact ASI page/plate/plan locators to every archaeological statement; current added chapter coverage includes metal (Ch. 12, pp. 767–807), ivory/bone (Ch. 13, pp. 809–835), kitchen tools (Ch. 14, pp. 837–885), bangles (Ch. 15, pp. 887–931), beads (Ch. 16, pp. 933–994), measuring tools (Ch. 17, pp. 995–1021), shell (Ch. 18, pp. 1023–1034), weaving (Ch. 19, pp. 1035–1051), other objects (Ch. 20–21, pp. 1053–1284) and cemetery (Ch. 22–25, pp. 1285–1487).
 - [ ] Verify all date ranges, mound identifiers, burial types, pottery fabrics and measurements independently.
 - [ ] Resolve or explicitly preserve source conflicts; do not hide them.
 - [ ] Check exact and semantic duplicates against the existing question-bank store.
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. This is a broader first notes pass, now including the ASI Part II bangle chapter, but other primary report chapters/plates, the complete examinable-point checklist, independent verification and exam-specific syllabus mapping are still open. Continue researching gaps before declaring Kalibangan complete.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. This expanded pass now covers the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, metal/copper, beads, weights/measures, shell/bone/ivory, weaving tools and burial evidence, with two official ASI photographs. It is not yet an exhaustive scholarly review: the ASI Part I/early-Harappan report, detailed lithic typology, seal/sign corpus, craft-production and trade interpretations, full faunal record, figure/plate cross-checks, independent review and exam-specific syllabus mapping remain open. Do not mark this topic complete until those gaps are audited.
