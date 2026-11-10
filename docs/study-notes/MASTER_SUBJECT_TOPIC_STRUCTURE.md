@@ -163,7 +163,7 @@
 ### राजस्थान राजव्यवस्था एवं प्रशासन — Rajasthan Polity and Administration
 
 **मुख्य topic groups:** 5 • **उपविषय:** 21  
-**मसौदा:** [17 हिंदी Q&A](rajasthan-polity-administration/initial-source-review.md) — NEEDS_REVIEW; विधानसभा, RPSC, उच्च न्यायालय, पंचायती राज और राज्य वित्त आयोग। शेष विषयों का coverage जारी।
+**मसौदा:** [27 हिंदी Q&A](rajasthan-polity-administration/initial-source-review.md) — NEEDS_REVIEW; विधानसभा, RPSC, उच्च न्यायालय, पंचायती राज और राज्य वित्त आयोग। शेष विषयों का coverage जारी।
 
 #### 1. राज्य सरकार — State Government
 
