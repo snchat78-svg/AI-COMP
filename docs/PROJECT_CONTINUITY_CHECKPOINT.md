@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 191 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 214 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 191 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 214 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -611,7 +611,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 ## 2026-11-10 — Kalibangan faunal phase linkage addendum
 
 - Added KAL-178 from ZSI *Annual Report 2021–22*, printed p. 35: ZSI associates the studied faunal remains with both pre-Harappan and Harappan cultural phases.
-- Current Kalibangan branch count is **191 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
+- Current Kalibangan branch count is **214 primary AI-authored Q&A drafts (KAL-001–KAL-178)**, plus 3 corroborative items and 2 photos. All remain NEEDS_REVIEW / DRAFTING; no phase or application status changed.
 
 
 ## 2026-11-10 — ZSI faunal monograph lead (not yet reviewed)
@@ -630,7 +630,7 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 ## 2026-11-10 — Kalibangan corpus-level seals and staged faunal progress
 
-- Current notes branch `content/kalibangan-full-topic-coverage-asi`, PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), contains **191 primary AI-authored Q&A drafts (KAL-001–KAL-188)**, 3 separately labelled corroborative points and 2 ASI Jodhpur Circle photographs. Every candidate remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE.
+- Current notes branch `content/kalibangan-full-topic-coverage-asi`, PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), contains **214 primary AI-authored Q&A drafts (KAL-001–KAL-188)**, 3 separately labelled corroborative points and 2 ASI Jodhpur Circle photographs. Every candidate remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE.
 - New source S13: *Corpus of Indus Seals and Inscriptions*, Vol. 1, ASI Memoirs No. 86 (1987), edited by Jagat Pati Joshi and Asko Parpola. It lists Kalibangan catalogue references K-1 to K-122 on printed pp. 298–326. This is a corpus-reference range, not a count of seals; K-122 is specifically categorised as “Miscellaneous — copper objects” (p. 326).
 - New source S14: Iravatham Mahadevan, *The Indus Script: Texts, Concordance and Tables*, ASI Memoirs No. 77 (1977). It describes Kalibangan seal 8011 as pink terracotta with a boss on the reverse, two lines of text and a left-facing rhinoceros field symbol in relief; Mahadevan classifies it as a separate “raised seal” subtype. It also records his 1976 revision of sign lists after unpublished Lothal/Kalibangan texts became available and his rule of relying on original objects or mechanically reproduced originals.
 - New source S15: ZSI Annual Reports 2018–19 and 2020–21. The 2018–19 snapshot records 11 Mammalia, 1 Aves and 2 Reptilia species; the 2020–21 snapshot records 1,075 specimens, 19 species, 9 families and 6 orders. Both mark the project ongoing. The completed 2021–22 result (5,230 specimens, 36 species) remains separately recorded; these are date-specific project milestones.
@@ -649,3 +649,16 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 - Latest notes file audit: 191 rows, continuous unique IDs KAL-001–KAL-191, no malformed rows, no repeated or missing IDs.
 - Unicode NFKC + case-fold + punctuation/whitespace-normalized question and exact Q&A-pair scan: no duplicate questions or exact normalized pairs within this file. Live semantic database deduplication and independent human review remain outstanding.
+
+
+## 2026-11-10 — B. B. Lal 1979 synthesis: stratigraphy, trade, seals and dates
+
+- Current notes PR #113 working branch contains **214 primary AI-authored Q&A drafts (KAL-001–KAL-214)**, 3 corroborative points and 2 ASI Jodhpur Circle images. All remain `NEEDS_REVIEW`; Kalibangan is DRAFTING / NOT COMPLETE.
+- Added S16: B. B. Lal, “Kalibangan and the Indus Civilization”, in *Essays in Indian Protohistory* (1979), printed pp. 66–94. The PDF text is accessible through IGNCA/ASI Central Archaeological Library digitisation. The work is an author-attributed synthesis; interpretive content is not treated as certain institutional fact.
+- Added KAL-192–KAL-200: Period I's proposed Proto-/Early Harappan classification; site perimeter/mound height; wall dimensions and wall-width phases; north re-entrant entrance; cart evidence; structural sub-periods; headers/stretchers English-bond masonry.
+- Added KAL-201–KAL-210: reported absence of mother-goddess figurines; unusual terracotta human head and bull; copper/tin observations from about twenty specimens; cubical chert weights; graduated terracotta scale; clay sealings with reeds and knotted cord; reported seal motifs; speculative cylinder-seal/Mesopotamian-trader hypothesis; inscription beyond seals and sealings.
+- Added KAL-211–KAL-214: Lal's Ghaggar-drying hypothesis for Mature Harappan Kalibangan's abandonment; 1979 essay's uncorrected vs MASCA/Clark-corrected radiocarbon period ranges; and the author's warning against blind acceptance of single radiocarbon dates. This adds a source-specific chronological distinction; do not collapse it into the Gazetteer ranges. Independent review must reconcile sample IDs and correction conventions.
+- The ASI official Part I PDF remains too large for reader fetch, but the search-indexed official PDF table of contents identifies Chapter 9 as “The Inscribed Material” and Chapter 10 as “Crafts at Kalibangan”, with subtopics including seals, sealings, copper/bronze seals, copper tablets, terracotta drain-pipes, pottery inscriptions before/after firing/painted inscriptions, sign appendices, agriculture, house-building, carpentry, pottery, cobbler, ivory/bone, bead, lithic, shell and weaving crafts. The complete chapter text is not read, so no detailed question is drafted from that TOC alone.
+- The MASI 98 official PDF also remains beyond the document reader's size limit; its Google Books record confirms publication, chapter list and pagination but not the actual complete chapter text. Continue to distinguish TOC/bibliographic evidence from archaeological fact evidence.
+- Draft integrity must be rechecked after this increment; no semantic live-database scan, independent review or learner publication has been performed.
+- No app code, live database, migrations, secrets, APK or mobile screen changed. Phase statuses remain unchanged.
