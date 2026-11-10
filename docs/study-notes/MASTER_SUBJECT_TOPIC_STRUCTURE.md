@@ -96,7 +96,7 @@
 ### राजस्थान भूगोल — Rajasthan Geography
 
 **मुख्य topic groups:** 6 • **उपविषय:** 32  
-**पुराने seed candidates:** 7 प्रश्न—अरावली (1), थार (1), लूनी नदी (2), बनास नदी (1), राष्ट्रीय उद्यान एवं अभयारण्य (2); सभी स्वतंत्र समीक्षा लंबित। **नया स्रोत-मसौदा:** [14 हिंदी Q&A](rajasthan-geography/initial-source-review.md) — सभी NEEDS_REVIEW; seed candidates से विषयगत duplication से बचा गया। नए प्रश्न जोड़ने से पहले इन्हें पढ़कर duplicate हटाएँ।
+**मसौदा:** [14 हिंदी Q&A](rajasthan-geography/initial-source-review.md) — NEEDS_REVIEW। **पुराने seed candidates:** 7 प्रश्न—अरावली (1), थार (1), लूनी नदी (2), बनास नदी (1), राष्ट्रीय उद्यान एवं अभयारण्य (2); स्वतंत्र समीक्षा/duplicate audit लंबित। नए प्रश्न जोड़ने से पहले इन्हें पढ़कर duplicate हटाएँ।
 
 #### 1. स्थिति एवं भौतिक स्वरूप — Location and Physical Features
 
@@ -163,7 +163,7 @@
 ### राजस्थान राजव्यवस्था एवं प्रशासन — Rajasthan Polity and Administration
 
 **मुख्य topic groups:** 5 • **उपविषय:** 21  
-**वर्तमान स्थिति:** 21 उपविषय; catalogue में कोई seed candidate दर्ज नहीं।
+**मसौदा:** [17 हिंदी Q&A](rajasthan-polity-administration/initial-source-review.md) — NEEDS_REVIEW; विधानसभा, RPSC, उच्च न्यायालय, पंचायती राज और राज्य वित्त आयोग। शेष विषयों का coverage जारी।
 
 #### 1. राज्य सरकार — State Government
 
@@ -214,7 +214,7 @@
 ### हिंदी भाषा — Hindi
 
 **मुख्य topic groups:** 3 • **उपविषय:** 24  
-**वर्तमान स्थिति:** 24 उपविषय; catalogue में कोई seed candidate दर्ज नहीं।
+**मसौदा:** [12 हिंदी Q&A](hindi/initial-source-review.md) — केंद्रीय हिंदी निदेशालय की 2024 वर्णमाला/वर्तनी मानक पुस्तिका से; NEEDS_REVIEW। शेष व्याकरण, शब्द-भंडार और साहित्यिक उपविषय लंबित।
 
 #### 1. व्याकरण — Grammar
 
@@ -258,7 +258,7 @@
 ### अंग्रेज़ी भाषा — English
 
 **मुख्य topic groups:** 3 • **उपविषय:** 21  
-**वर्तमान स्थिति:** 21 उपविषय; catalogue में कोई seed candidate दर्ज नहीं। प्रश्न एवं उत्तर हिंदी में होंगे; मूल अंग्रेज़ी उदाहरण यथावत रहेंगे।
+**मसौदा:** [14 हिंदी Q&A](english/initial-source-review.md) — Cambridge Grammar से; प्रश्न/उत्तर हिंदी में, अंग्रेज़ी उदाहरण मूल रूप में; NEEDS_REVIEW। शेष English grammar/vocabulary/usage उपविषय लंबित। प्रश्न एवं उत्तर हिंदी में होंगे; मूल अंग्रेज़ी उदाहरण यथावत रहेंगे।
 
 #### 1. व्याकरण — Grammar
 
