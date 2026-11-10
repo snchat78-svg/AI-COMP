@@ -119,8 +119,8 @@
 | KAL-097 | कालीबंगा से मिली ताँबे की वस्तुओं में कौन-से औज़ार और आभूषण शामिल हैं? | कुल्हाड़ी/axe, arrowhead, spearhead, knife blade, chisel, hook, wire, nail, needle, ring, bangle, bead और hairpin आदि। | S6 — Ch. 12, “Incidence and Typology”; S7 — “Third Gallery” |
 | KAL-098 | कालीबंगा के ताँबे की आपूर्ति के संभावित स्रोत के रूप में ASI अध्याय किस क्षेत्र का उल्लेख करता है? | खेतड़ी (Khetri) क्षेत्र को एक संभावित स्रोत के रूप में चर्चा करता है; इसे लेखक की परिकल्पना समझें, अंतिम सिद्ध निष्कर्ष नहीं। | S6 — Ch. 12, “Source”, printed pp. 768–769 |
 | KAL-099 | ASI रिपोर्ट के अनुसार कालीबंगा के ताँबे के कुछ artefacts बनाने में कौन-सी casting technique प्रयुक्त हुई? | Lost-wax technique का उल्लेख है; रिपोर्ट विशेष रूप से ताँबे के बैल को एक कलात्मक वस्तु बताती है। | S6 — Ch. 12, “Incidence and Typology”; लेखक का विवरण |
-| KAL-100 | कालीबंगा के परिपक्व हड़प्पा चरण से किस प्रकार के कृषि/पालतू पशु के उपयोग का संकेत मिलता है? | Bos indicus (कूबड़ वाला भारतीय बैल) की हड्डियाँ मिलने से कृषि में बैलों के उपयोग का संकेत मिलता है। | S6 — Ch. 14 “Kitchen Equipments”, printed pp. 837–838 |
-| KAL-101 | ASI Part II के कालीबंगा संबंधी पाठ में किन प्रमुख अनाज/दलहनों के नाम दिए गए हैं? | गेहूँ, जौ, Pisum (मटर) और Cicer arietinum का उल्लेख है। अंतिम botanical पहचान की स्वतंत्र समीक्षा आवश्यक है। | S6 — Ch. 14, printed p. 837 |
+| KAL-100 | कालीबंगा में कृषि में बैलों के उपयोग का संकेत किस पशु की हड्डियों से मिलता है? | Bos indicus (कूबड़ वाला भारतीय बैल) की हड्डियों से। | S6 — Ch. 14 “Kitchen Equipments”, printed pp. 837–838 |
+| KAL-101 | ASI Part II के कालीबंगा संबंधी पाठ में किन प्रमुख अनाज/दलहनों के नाम दिए गए हैं? | गेहूँ, जौ, Pisum (मटर) और Cicer arietinum का उल्लेख है। भारत सरकार की crop nomenclature में Cicer arietinum को chickpea/chana कहा गया है, black gram नहीं। | S6 — Ch. 14, printed p. 837; S9 — PPV&FRA crop nomenclature |
 | KAL-102 | प्रारम्भिक हड़प्पा स्तर के एक potsherd में मिले gypsum के संभावित उपयोग के बारे में लेखक क्या अनुमान देता है? | संभवतः लवणीय मिट्टी की salinity घटाकर भूमि को कृषि योग्य बनाने के लिए; यह रिपोर्ट में एक संभावना के रूप में दिया गया है। | S6 — Ch. 14, printed pp. 843–844; hypothesis, not settled fact |
 | KAL-103 | ASI रिपोर्ट में saddle quern का संभावित उपयोग क्या बताया गया है? | कठोर पत्थर के quern पर अनाज पीसने के लिए; इसका निचला convex भाग उसे मिट्टी/फर्श में स्थिर रखने में सहायक था। | S6 — Ch. 14, printed p. 867 |
 | KAL-104 | कालीबंगा से मिले terracotta kitchen tools में किन वस्तुओं का उल्लेख है? | Chakla/pata, belan (rolling pin) और tawa के उदाहरण दर्ज हैं। | S6 — Ch. 14, printed pp. 839–860 |
@@ -205,6 +205,12 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 - **Coins:** excluded from Q&A for now. A tourism summary lists coins, but the precise object identity and context need verification against ASI excavation records; do not conflate a coin-like object with evidence of coin currency.
 - **Fire altars and ritual:** the Gazetteer records seven fire altars on a platform and says some platforms seem ritual in use. Do not claim the exact ritual or deity without independent archaeological support.
 
+## Source disagreements and editorial corrections
+
+
+- **Crop-name clarification:** ASI Part II Chapter 14 prints “Cicer arietinum (Chana, black gram)”. The botanical name conflicts with its parenthetical “black gram” gloss: the Government of India's PPV&FRA lists Cicer arietinum as chickpea/chana and Vigna mungo as black gram. The note therefore uses the botanical name and does not repeat “black gram” as its answer. A reviewer should check the original archaeobotanical identification.
+- **Rice / horse gram scope:** the ASI Jodhpur Circle museum webpage lists rice and horse gram among crops at Kalibangan, but the ASI Part II Chapter 14 passage discusses wheat, barley, pea and Cicer arietinum; its nearby footnote refers to rice and horse gram evidence from Kunal. Keep rice/horse gram as an unresolved site-specific source discrepancy until the excavation sample record is reviewed.
+
 ## Source register
 
 **S1 — Rajasthan Tourism, Government of Rajasthan.** “Hanumangarh Tourism” → “Kalibangan”.  
@@ -233,6 +239,11 @@ Locators: printed p. 887 (name explanation, types/materials, frequency order, di
 **S7 — Archaeological Survey of India, Jodhpur Circle.** “Archaeological Museum Kalibangan”.  
 URL: https://www.asijodhpurcircle.in/museum  
 Locators: museum introduction and “First Gallery” (establishment/reopening, two periods, six fabrics, display inventory); “Harappan Site Kalibangan” (location, excavators, chronology, mounds and burial types); “The Early Harappan Period” and “The Early Harappan Pottery” (settlement dimensions, fabrics A–F, agriculture); “The Mature Harappan Period” and “The Mature Harappan Pottery” (citadel/lower town, fire altars, pottery); “Third Gallery” and “Burial Site (KLB-8)” (tools, artefacts, cemetery/burial orientation). The page has a source discrepancy with Rajasthan Tourism about museum establishment year (1985 vs 1983); it is deliberately left unresolved.
+
+
+**S9 — Protection of Plant Varieties and Farmers’ Rights Authority (PPV&FRA), Government of India.** Crop DUS Guidelines / official crop botanical-name list.  
+URL: https://plantauthority.gov.in/crop-dus-guidelines  
+Locator: pulses and legume crops list; Chickpea — *Cicer arietinum*; Urdbean/Black Gram — *Vigna mungo*. Used only to flag the botanical-name/parenthetical-gloss issue in the ASI report, not as evidence that either crop was archaeobotanically recovered at Kalibangan.
 
 **S8 — B. K. Thapar, “Pre-Indus and Early Indus Cultures of Pakistan and India”, Part Two, in a UNESCO-hosted volume.**  
 URL: https://en.unesco.org/silkroad/sites/default/files/knowledge-bank-article/vol_I%20silk%20road_pre%20indus%20and%20early%20indus%20cultures%20of%20pakistan%20and%20india.pdf  
