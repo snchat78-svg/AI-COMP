@@ -721,3 +721,14 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 - Added KAL-238–KAL-240 from NMMA individual object entries: GM-KAM-RJ-1392979 (broken small spouted terracotta feeding cup, thin straight rim); GM-KAM-RJ-1391780 (terracotta scale with two sets of incised vertical marks and circular section); GM-KAM-RJ-770761 (round handmade terracotta fragment, catalogue says it may have been a net sinker; only one quarter survives).
 - Current Kalibangan draft count **240 primary Q&A (KAL-001–KAL-240)**, 3 corroborative points, 2 ASI photos. All remain NEEDS_REVIEW; all NMMA data remains provisional and under correction/validation.
+
+
+## 2026-11-10 — ASI report TOC-only chapter audit
+
+- The official ASI catalogue lists three distinct Kalibangan report entries: MASI 98 *The Early Harappans* (2003), Mature Harappan *The Harappans (1960–1969), Part I* (2015), and Part II (2020).
+- Added a TOC-only review matrix to the Kalibangan notes so the unreviewed reports have an exact reading queue:
+  - MASI 98: Ch. 8 agricultural field; Ch. 9 end of Early Harappan settlement; Ch. 10 pottery; Ch. 11 minor antiquities; Ch. 12 graffiti; Ch. 13 pottery/metals/animal remains/plants/seeds technical reports.
+  - Mature Part I: Ch. 5–7 KLB-1/KLB-2/KLB-3 stratigraphy and structures; Ch. 8 pottery; Ch. 9 inscribed material; Ch. 10 crafts.
+  - Part II: Ch. 11–25 text-level chapters already partly used for Q&A; plates/plans still need visual review.
+- These are chapter headings from report TOCs/catalogue metadata only. MASI 98 and Mature Part I full text were not read because the official PDFs exceed the current reader size limit; no factual Q&A was drafted from TOC headings. No claims of chapter review beyond actually read Part II text.
+- Current note total: **240 primary AI-authored Q&A**, 3 corroborative items, 2 ASI photos; all NEEDS_REVIEW. Topic not complete; Ahar-Banas stays NOT STARTED.
