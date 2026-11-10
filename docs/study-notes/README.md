@@ -36,6 +36,10 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 13. Reasoning — 23
 14. Computer Awareness — 20
 
+## Subject progress trackers
+
+- [Rajasthan History — all 34 catalogue topics](rajasthan-history/README.md). Work through the list in order and close each topic's coverage gaps before moving forward.
+
 ## First content slice
 
 - Subject: Rajasthan History
