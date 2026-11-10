@@ -47,7 +47,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - Subtopic: Kalibangan
 - Concept ID: `catalog.rajasthan_history_ancient_history_kalibangan`
 - Notes: [Kalibangan — one-liner Q&A notes](rajasthan-history/ancient-history/kalibangan.md)
-- Current state: `DRAFTING / NOT COMPLETE`; 178 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, all items remain `NEEDS_REVIEW`, and no exam-specific official-syllabus mapping is claimed.
+- Current state: `DRAFTING / NOT COMPLETE`; 188 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, all items remain `NEEDS_REVIEW`, and no exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
