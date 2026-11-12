@@ -16,19 +16,23 @@
 5. AI द्वारा लिखे गए सभी candidate `NEEDS_REVIEW` रहेंगे; अलग reviewer की स्वीकृति के बिना `VERIFIED` नहीं होंगे।
 6. हर प्रश्न अपने स्थायी `concept_id` के अंतर्गत ही जाएगा। इस master structure में नाम बदलने पर ID नहीं बदलेगी।
 7. प्रत्येक उपविषय को अलग coverage checklist मिलेगी: परिचय/परिभाषा, मुख्य तथ्य, उपप्रकार, उदाहरण, स्थान/मानचित्र, तिथियाँ/क्रम, तुलनात्मक अंतर, कारण/परिणाम, अपवाद, और विवाद/अद्यतन—सभी जहाँ लागू हों।
+8. एक मुख्य topic के सभी सम्बद्ध subtopics उसी parent topic के नीचे रहेंगे। किसी एक मुख्य टॉपिक को कई अलग-अलग असंबद्ध topics या फाइलों में नहीं बाँटना है।
+9. किसी राजवंश को एक उपविषय मानें; उस वंश के सभी शासकों का क्रम, जीवन, युद्ध, प्रशासन, उपलब्धियाँ और उत्तराधिकार उसी वंश के अंदर chronological subsections में रखें। प्रत्येक राजा को अलग top-level topic न बनाएँ।
+10. आभूषण जैसा व्यापक विषय हो तो “राजस्थान के आभूषण” एक मुख्य topic रहेगा; प्रकार, सामग्री, निर्माण-तकनीक, क्षेत्र/समुदाय और शरीर-भाग के आधार पर उसके subtopics उसी एक topic के अंदर रहेंगे। ये उदाहरण संगठन के नियम हैं; वास्तविक syllabus applicability और विषय-विस्तार स्रोतों से तय होगा।
+11. एक topic file में शुरुआत में subtopic index और question-ID references रखें। एक question की मूल entry केवल एक बार होगी; index में cross-reference duplicate question नहीं माना जाएगा।
 
 ## विषयवार संरचना
 
 ### राजस्थान इतिहास — Rajasthan History
 
 **मुख्य topic groups:** 7 • **उपविषय:** 34  
-**वर्तमान मसौदा:** कालीबंगा — 282 प्राथमिक Q&A, PR #113 में; सभी NEEDS_REVIEW। अन्य 33 उपविषय अभी अलग notes files में शुरू नहीं हुए हैं।
+**वर्तमान मसौदा:** कालीबंगा — 300 प्राथमिक हिंदी Q&A (KAL-001–KAL-300); सभी NEEDS_REVIEW। प्रश्न एक ही canonical Kalibanga topic file में रखे गए हैं और उसके अंदर 11 आंतरिक subtopic समूहों से index किए गए हैं। अन्य 33 उपविषय अभी अलग notes files में शुरू नहीं हुए हैं।
 
 #### 1. प्राचीन इतिहास — Ancient History
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [282 Q&A मसौदे; NEEDS_REVIEW](rajasthan-history/ancient-history/kalibangan.md) |
+| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [300 Q&A मसौदे; NEEDS_REVIEW](rajasthan-history/ancient-history/kalibangan.md) |
 | 2 | आहड़-बनास संस्कृति — Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | मसौदा शुरू नहीं |
 | 3 | गणेश्वर-जोधपुरा संस्कृति — Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | मसौदा शुरू नहीं |
 | 4 | बैराठ — Bairat | `catalog.rajasthan_history_ancient_history_bairat` | मसौदा शुरू नहीं |
@@ -348,3 +352,14 @@
 6. प्रत्येक विषय के बाद स्रोत/कवरेज सूची, exact/normalized duplicate audit, उपलब्ध होने पर semantic DB duplicate scan और स्वतंत्र समीक्षा करें। संबंधित भर्ती की नवीनतम आधिकारिक अधिसूचना के बिना exam-syllabus completion घोषित न करें।
 
 **सीमा:** इस संरचना में 132 canonical subtopics शामिल हैं; सम्भावित gap list अलग रखी गई है। इसे “सभी परीक्षाओं का पूरा syllabus” नहीं माना जाएगा। विषय/उपविषय catalogue में जोड़ने के लिए नया स्थायी concept ID और phase-registry/CSV update आवश्यक होगा।
+
+
+## एक विषय के अंदर उप-विषय रखने का अनिवार्य नियम
+
+इस master tree में “मुख्य topic group” parent होगा और उसके अंदर संबंधित topics/subtopics क्रम से रहेंगे। एक ही विषय को केवल इसलिए अलग-अलग शीर्षक/फाइलों में न बाँटें कि उसके तथ्य अनेक प्रकार के हैं। विस्तार को उसी topic के अंदर nested subtopics और छोटे internal headings से व्यवस्थित करें।
+
+**राजस्थान इतिहास का उदाहरण:** “प्रमुख राजवंश” parent topic group रहेगा। गुहिल-सिसोदिया, चौहान, राठौड़, कच्छवाहा, भाटी और हाड़ा उसके subtopics हैं। प्रत्येक वंश के अंदर उसके शासकों का क्रम और पूरा इतिहास (वंशावली, काल, युद्ध, प्रशासन, स्थापत्य, साहित्य, संधियाँ और उत्तराधिकार) उसी वंश-उपविषय में रहेगा; हर राजा को अलग main topic नहीं बनाया जाएगा।
+
+**राजस्थान कला-संस्कृति का उदाहरण:** “राजस्थान के आभूषण” को एक मुख्य topic की तरह व्यवस्थित किया जाएगा; उसके अंदर सामग्री, निर्माण-कला, पहनने के स्थान, प्रकार, क्षेत्रीय/समुदायगत विशेषताएँ और प्रमुख नाम subtopics होंगे। “कुंदन”, “मीनाकारी” या किसी एक आभूषण के नाम पर बिखरे हुए असंबद्ध main topics तब तक नहीं बनाए जाएँगे जब तक official syllabus या canonical concept ledger इसकी अलग आवश्यकता न दिखाए।
+
+**कालीबंगा का चालू उदाहरण:** Rajasthan History → Ancient History → Kalibangan एक canonical concept है; स्थान, कालक्रम, नगर-योजना, कृषि, मृद्भांड, लिपि, शिल्प, जीव-अवशेष और समाधि जैसे भाग इसी एक Kalibanga topic के internal subtopics हैं। Question IDs सूचक हैं, अलग विषय नहीं।
