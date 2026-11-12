@@ -46,7 +46,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 ## Existing drafts — queued, not being expanded in parallel
 
-- [Rajasthan History](rajasthan-history/README.md): Kalibangan — 300 primary Hindi Q&A drafts in the merged topic plus a new pending 13-question architecture continuation on a review branch; all NEEDS_REVIEW.
+- [Rajasthan History](rajasthan-history/README.md): Kalibangan — 304 primary Hindi Q&A drafts in the single canonical topic file on the current review branch; all NEEDS_REVIEW.
 - [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
 - [Rajasthan Polity & Administration](rajasthan-polity-administration/initial-source-review.md): 27 Hindi Q&A drafts; all NEEDS_REVIEW.
 - [Hindi](hindi/initial-source-review.md): 24 Hindi grammar Q&A drafts across वर्णमाला and संधि; all NEEDS_REVIEW.
@@ -60,7 +60,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - Subtopic: Kalibangan
 - Concept ID: `catalog.rajasthan_history_ancient_history_kalibangan`
 - Notes: [Kalibangan — one-liner Q&A notes](rajasthan-history/ancient-history/kalibangan.md)
-- Current state: `DRAFTING / NOT COMPLETE`; the merged mainline has 287 AI-authored question stems, and the pending hierarchy/content branch adds KAL-288–KAL-300 (13 more) for 300 total. Question wording is AI-authored Hindi and answers are source-paraphrases, not copied PYQs. The file has one canonical Kalibanga topic with an 11-subtopic internal index; 3 classroom-source items are separately labelled corroborative, 2 ASI-hosted images are linked, and all Q&A remain `NEEDS_REVIEW`. ASI Part II cemetery plan/view locators are pp. 1288–1290; visual review, KLB-4/KLB-8, group-count, Burial 13 urn and complete ASI MASI 98/Part I review remain open. No exam-specific official-syllabus mapping is claimed.
+- Current state: `DRAFTING / NOT COMPLETE`; the merged mainline has 287 AI-authored question stems, and the pending hierarchy/content branch adds KAL-288–KAL-304 (17 more) for 304 total. Question wording is AI-authored Hindi and answers are source-paraphrases, not copied PYQs. The file has one canonical Kalibanga topic with an 11-subtopic internal index; 3 classroom-source items are separately labelled corroborative, 2 ASI-hosted images are linked, and all Q&A remain `NEEDS_REVIEW`. ASI Part II cemetery plan/view locators are pp. 1288–1290; visual review, KLB-4/KLB-8, group-count, Burial 13 urn and complete ASI MASI 98/Part I review remain open. No exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
@@ -110,6 +110,9 @@ Do not create a fixed question-count ceiling. Add Q&As until all syllabus-releva
 ## 2026-11-12 — hierarchy-first continuation
 
 - Current review branch `content/kalibangan-single-topic-hierarchy-structure` keeps Kalibanga as one canonical topic and adds an 11-subtopic index inside that topic file.
-- KAL-288–KAL-300 add 13 Hindi One-Liners under the existing “नगर-योजना, किलेबंदी, आवास और जल-निकासी” subtopic. They are AI-authored, source-located drafts, not PYQs, and remain NEEDS_REVIEW.
+- KAL-288–KAL-304 add 17 Hindi One-Liners under the existing “नगर-योजना, किलेबंदी, आवास और जल-निकासी” subtopic. They are AI-authored, source-located drafts, not PYQs, and remain NEEDS_REVIEW.
 - The hierarchy examples are now permanent: dynasty histories stay under one dynasty subtopic; rulers are nested in chronological internal sections; a broad jewellery topic remains one parent topic with material/type/technique/region subtopics. No unrelated top-level topic proliferation.
 - The new branch is not merged yet. No app code, database, migration, learner-visible verified content or APK changed.
+
+
+- Latest subtopic extension: KAL-301–KAL-304 adds clay bonding-material colour and waterlogging, road reconstruction phases, incised floor tiles and street-side doors opening into courtyards. These remain within the same Kalibanga architecture subtopic. Review-branch total: 304 primary Q&A; all remain NEEDS_REVIEW.
