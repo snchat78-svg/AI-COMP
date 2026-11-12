@@ -9,7 +9,7 @@
 
 | # | Topic group | Topic / subtopic | Concept ID | Notes status |
 |---:|---|---|---|---|
-| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 282 primary AI-authored Q&A + 3 corroborative points + 2 ASI photos; selected ASI Part II Ch. 22–24 text added for cemetery/pot-burial and cemetery-pottery detail; KLB-4/KLB-8 conflict, group-count, Burial 13 urn discrepancy and visual review remain open |
+| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 300 primary AI-authored Hindi Q&A (KAL-001–KAL-300) + 3 corroborative points + 2 ASI photos; one canonical topic file now includes an 11-subtopic internal index; KAL-288–KAL-300 extend town planning, fortification, housing and drainage; all NEEDS_REVIEW; source/visual/reviewer gates remain open |
 | 2 | Ancient History | Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | NOT STARTED |
 | 3 | Ancient History | Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | NOT STARTED |
 | 4 | Ancient History | Bairat | `catalog.rajasthan_history_ancient_history_bairat` | NOT STARTED |
@@ -63,4 +63,12 @@ Only after the notes are reviewed should the app derive practice MCQs and topic 
 
 ## First in-progress topic
 
-Kalibangan notes now contain 287 primary AI-authored Hindi Q&A drafts, 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. They remain NEEDS_REVIEW / NOT COMPLETE. The ASI Part II figure register independently indexes the KLB-8 cemetery location plan (printed p. 1288) and cemetery view (p. 1290); selected Chapter 22–25 textual Q&A have been added, but the KLB-4 vs KLB-8 and 6–10 vs 8–10 group-count discrepancies and visual plate checks remain open. Chapter 25 small-finds continuation KAL-283–KAL-287 is added; all new items remain NEEDS_REVIEW. Next inspect the separate ASI MASI 98 Early Harappans report and mature-period Part I report, reconcile the K-series/sign corpus and remaining figures/plans, obtain the detailed ZSI faunal monograph, and request independent review before moving to Ahar-Banas Culture.
+Kalibanga notes now contain 300 primary AI-authored Hindi Q&A drafts (KAL-001–KAL-300), 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. All remain NEEDS_REVIEW / NOT COMPLETE. The single canonical Kalibanga topic file now has an internal 11-subtopic index; KAL-288–KAL-300 add 13 architecture/urban-planning One-Liners from ASI Part I, “General Features of Structures”, printed p. 130. The ASI Part II figure register indexes the KLB-8 cemetery plan/view at pp. 1288–1290; KLB-4/KLB-8, extended-burial group-count and Burial 13 urn discrepancies, full visual plate checks, complete MASI 98/Part I report review, live DB semantic deduplication, exam mapping, image rights and independent review remain open. Ahar-Banas remains NOT STARTED.
+
+
+## 2026-11-12 — single-topic hierarchy and architecture subtopic continuation
+
+- Kept Rajasthan History → Ancient History → Kalibangan under its existing canonical concept ID; did not create a new topic or start Ahar-Banas.
+- Added an internal index of 11 nested subtopics to the Kalibanga file. Question IDs are cross-references; each question must have exactly one canonical row in the source table.
+- Added KAL-288–KAL-300 (13 Hindi One-Liners) under the existing Kalibanga subtopic “नगर-योजना, किलेबंदी, आवास और जल-निकासी”, using ASI Part I printed p. 130 indexed text. All remain NEEDS_REVIEW; original page/image review is still required.
+- This continuation is on branch `content/kalibangan-single-topic-hierarchy-structure`; it is not yet merged to main. Existing review/source/exam mapping gates remain open.
