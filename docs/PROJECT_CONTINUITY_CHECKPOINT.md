@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-12 (PR #113 merged; current main head observed as `0ce169c79309932eefc80b101d29d94e9fd24bdb`. Kalibangan has 287 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos; all remain NEEDS_REVIEW. Static integrity audit: 287 rows, continuous unique IDs, no in-file normalized duplicate questions/Q&A pairs, no missing evidence cells or malformed rows. This is not independent factual review or a live DB semantic scan.)
+**Last updated:** 2026-11-12 (PR #113 is merged. On review branch `content/kalibangan-single-topic-hierarchy-structure`, Kalibanga has 300 primary AI-authored Hindi Q&A drafts KAL-001–KAL-300, 3 corroborative points and 2 ASI photos; all remain NEEDS_REVIEW. KAL-288–KAL-300 extend the existing urban-planning/architecture subtopic. The same canonical Kalibanga topic file has an 11-subtopic internal index. Static checks on this branch: 300 rows, continuous unique IDs, no normalized in-file duplicate questions/Q&A pairs and no missing question/answer/evidence cells; this is not independent factual review or a live DB semantic scan. This content branch is not yet merged to main.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged. The current canonical topic file contains 287 primary AI-authored Q&A drafts (KAL-001–KAL-287), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged and contributes KAL-001–KAL-287. The review branch `content/kalibangan-single-topic-hierarchy-structure` extends the same canonical topic file with KAL-288–KAL-300, bringing the branch total to 300 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -837,3 +837,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Mainline development phase remains Phase 6.56 IN_PROGRESS; Phase 2.2 BLOCKED; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Keep the live official-source/migration/reviewer-secret/mobile E2E gates. No app code, DB, migrations, APK or learner records changed in this audit.
 
 **PR #113 build evidence:** exact PR head `b0fd3873fddb72884c8329730735d15730a2aae3` passed backend CI run `42781714817` (645 tests, 14 warnings, API container build) and Flutter CI run `42781715151` (analyze, 19 tests, release-mode APK build, artifact verification/upload). APK artifact ID `13747255331`, ZIP SHA-256 `2ab38f35bcd9d094f70ac96587fcc5de54b7c9b74fc0ded7602cc8d508846d4f`, expires 2026-11-24. CI used a placeholder Firebase config because the secret was unavailable; do not interpret this as Firebase/device E2E. The APK is a debug-signed test artifact.
+
+## 2026-11-12 — hierarchy-first continuation handoff
+
+- Resume from review branch `content/kalibangan-single-topic-hierarchy-structure`, not from a new topic or a duplicate content branch.
+- Keep one subject → one main topic → nested subtopics. Kalibanga remains one canonical concept; its 11 internal subtopics group the 300 question IDs. KAL-288–KAL-300 are 13 new Hindi, source-located architecture/urban-planning drafts under the existing Kalibanga topic.
+- Static checks: 300 Q&A rows; IDs continuous/unique; 0 normalized duplicate question stems; 0 normalized duplicate Q&A pairs; 0 missing questions/answers/evidence. Existing rows use a four-column schema; KAL-288–KAL-300 use a five-column schema with a priority field. Both schemas must be validated.
+- Every draft remains NEEDS_REVIEW. The indexed official ASI Part I printed p. 130 text requires independent page/context verification. Do not call the content complete, do not mark any question VERIFIED and do not move to Ahar-Banas.
+- Next work within the same Kalibanga topic: finish source/coverage review of the current architecture subtopic; then continue the next still-partial subtopic, live-database semantic deduplication, independent review and full primary-report/visual-plan gates. Phase statuses remain Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED and Phase 6.58 BLOCKED.
