@@ -26,13 +26,13 @@
 ### राजस्थान इतिहास — Rajasthan History
 
 **मुख्य topic groups:** 7 • **उपविषय:** 34  
-**वर्तमान मसौदा:** कालीबंगा — 300 प्राथमिक हिंदी Q&A (KAL-001–KAL-300); सभी NEEDS_REVIEW। प्रश्न एक ही canonical Kalibanga topic file में रखे गए हैं और उसके अंदर 11 आंतरिक subtopic समूहों से index किए गए हैं। अन्य 33 उपविषय अभी अलग notes files में शुरू नहीं हुए हैं।
+**वर्तमान मसौदा:** कालीबंगा — 304 प्राथमिक हिंदी Q&A (KAL-001–KAL-304); सभी NEEDS_REVIEW। प्रश्न एक ही canonical Kalibanga topic file में रखे गए हैं और उसके अंदर 11 आंतरिक subtopic समूहों से index किए गए हैं। अन्य 33 उपविषय अभी अलग notes files में शुरू नहीं हुए हैं।
 
 #### 1. प्राचीन इतिहास — Ancient History
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [300 Q&A मसौदे; NEEDS_REVIEW](rajasthan-history/ancient-history/kalibangan.md) |
+| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [304 Q&A मसौदे; NEEDS_REVIEW](rajasthan-history/ancient-history/kalibangan.md) |
 | 2 | आहड़-बनास संस्कृति — Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | मसौदा शुरू नहीं |
 | 3 | गणेश्वर-जोधपुरा संस्कृति — Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | मसौदा शुरू नहीं |
 | 4 | बैराठ — Bairat | `catalog.rajasthan_history_ancient_history_bairat` | मसौदा शुरू नहीं |
@@ -363,3 +363,10 @@
 **राजस्थान कला-संस्कृति का उदाहरण:** “राजस्थान के आभूषण” को एक मुख्य topic की तरह व्यवस्थित किया जाएगा; उसके अंदर सामग्री, निर्माण-कला, पहनने के स्थान, प्रकार, क्षेत्रीय/समुदायगत विशेषताएँ और प्रमुख नाम subtopics होंगे। “कुंदन”, “मीनाकारी” या किसी एक आभूषण के नाम पर बिखरे हुए असंबद्ध main topics तब तक नहीं बनाए जाएँगे जब तक official syllabus या canonical concept ledger इसकी अलग आवश्यकता न दिखाए।
 
 **कालीबंगा का चालू उदाहरण:** Rajasthan History → Ancient History → Kalibangan एक canonical concept है; स्थान, कालक्रम, नगर-योजना, कृषि, मृद्भांड, लिपि, शिल्प, जीव-अवशेष और समाधि जैसे भाग इसी एक Kalibanga topic के internal subtopics हैं। Question IDs सूचक हैं, अलग विषय नहीं।
+
+
+## 2026-11-12 — Kalibanga architecture coverage update
+
+- The single Kalibanga topic now has 304 draft Hindi Q&A items (KAL-001–KAL-304) on the review branch. The 11-subtopic index remains the internal navigation model; KAL-301–KAL-304 are still inside the existing urban-planning/architecture subtopic.
+- These four additions are: brick-bond clay colour and its change in waterlogged areas; successive street construction/reconstruction phases; incised floor tiles; and street-side doorways leading into house courtyards.
+- No new topic or separate file was created; all remain NEEDS_REVIEW.
