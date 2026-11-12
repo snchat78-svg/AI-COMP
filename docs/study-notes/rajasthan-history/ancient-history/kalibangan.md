@@ -7,6 +7,29 @@
 **Exam mapping:** Not yet mapped to a verified, named official exam syllabus. These are general reference-note candidates, not a claim that Kalibangan is included in every Rajasthan recruitment examination.  
 **Candidate rule:** Every item below remains `NEEDS_REVIEW`; these notes must not be learner-labelled as verified until an independent reviewer approves the source, evidence and answer.
 
+
+## मुख्य विषय के अंदर उप-विषयों की व्यवस्थित संरचना
+
+**एक ही canonical विषय:** राजस्थान इतिहास → प्राचीन इतिहास → कालीबंगा (catalog.rajasthan_history_ancient_history_kalibangan)। कालीबंगा के प्रश्न किसी दूसरे विषय या अलग-अलग बिखरी फाइलों में नहीं बनाए जाएँगे। इसी एक विषय के अंदर नीचे दिए उप-विषयों में प्रश्न रखे जाएँगे। नीचे दिए KAL क्रमांक खोज-सूचक हैं; जहाँ कोई तथ्य दो उप-विषयों से जुड़ता है, उसका मूल प्रश्न एक ही बार रहेगा—प्रश्न की duplicate copy नहीं बनाई जाएगी।
+
+| मुख्य विषय के अंदर उप-विषय | इसमें शामिल सामग्री | मौजूदा प्रश्न-सूचक |
+|---|---|---|
+| 1. स्थान, पहचान, खोज और उत्खनन इतिहास | जिला/नदी/स्थान, पुरातात्त्विक पहचान, सर्वेक्षण, उत्खनन अवधि और पुरातत्वविद् | KAL-001–018 |
+| 2. सांस्कृतिक चरण, कालक्रम और टीले | प्रारम्भिक/परिपक्व हड़प्पा, Period I/II, KLB-1/2/3, समाधि-टीला, तिथि-संबंधी मतभेद | KAL-006–010, 019–025, 038–039, 192–196, 211–215 |
+| 3. नगर-योजना, किलेबंदी, आवास और जल-निकासी | दुर्ग, प्रवेश-द्वार, सड़कें, घर, कमरे, दीवारें, निर्माण-चरण, नालियाँ और स्थापत्य | KAL-026–029, 040–050, 082–083, 193–200, 288–300 |
+| 4. कृषि, पर्यावरण और फसल-साक्ष्य | जुता खेत, हल-रेखाएँ, फसलें, पौध-अवशेष और कृषि-व्याख्याएँ | KAL-030–033, 100–102, 175–177 |
+| 5. मृद्भांड, तकनीक, चित्रांकन और ग्रैफिटी | प्रारम्भिक/परिपक्व pottery, Fabric A–F, पात्र-रूप, सजावट और बर्तनों पर चिह्न | KAL-034–037, 069–092, 116, 266, 279–282 |
+| 6. धर्म और अनुष्ठानिक साक्ष्य | अग्नि-वेदियाँ, मंच, अनुष्ठानिक संरचनाएँ और उनसे जुड़ी सावधान व्याख्याएँ | KAL-042–044 तथा संबंधित स्रोत-टिप्पणियाँ |
+| 7. शिल्प, औज़ार, धातु, आभूषण और माप-तौल | चूड़ियाँ, मनके, ताँबा, शंख, अस्थि/हाथीदाँत, पत्थर के औज़ार, बाट और माप उपकरण | KAL-057–064, 094–117, 127–137, 143–160, 228–240, 253, 267–268, 283–287 |
+| 8. मुहरें, लिपि और अभिलेख | मुहरें, सीलिंग, potsherd inscriptions, चिह्न, sign corpus और लेखन-दिशा संबंधी शोध | KAL-051–052, 091, 132, 161–168, 179–191, 204–210, 216–225 |
+| 9. पशु-अवशेष, पशुपालन और प्राणी-अध्ययन | पालतू/जंगली पशु, हड्डियाँ, कट-चिह्न और ZSI की दिनांकित परियोजना-प्रगति | KAL-100–102, 169–174, 178, 187–188, 226–227 |
+| 10. कब्रिस्तान, दफन-पद्धति और मानव-अवशेष | KLB-8, extended burials, pot burials, grave inventories, osteological observations और cemetery small finds | KAL-023–025, 118–119, 138–142, 241–287 |
+| 11. संग्रहालय और सूचीबद्ध पुरावस्तुएँ | संग्रहालय की galleries, प्रदर्शित वस्तुएँ, accession numbers और catalogue की सीमाएँ | KAL-053–056, 066–068, 084–086, 093, 118, 120–137, 228–240 |
+
+**क्रम-नियम:** पहले एक उप-विषय की सभी स्रोत-आधारित ज्ञान-बिंदु सूचीबद्ध होंगे; फिर हिंदी One-Liner Q&A; फिर exact/normalized/semantic duplicate जाँच; फिर स्रोत और उत्तर की स्वतंत्र समीक्षा; फिर gap checklist बंद होगी। तभी उसी कालीबंगा विषय के अगले उप-विषय पर बढ़ेंगे। कालीबंगा का पूरा विषय स्वीकार होने से पहले आहड़-बनास या कोई दूसरा विषय शुरू नहीं होगा।
+
+
+
 ## One-liner question and answer notes
 
 | Draft ref | प्रश्न | संक्षिप्त उत्तर | Evidence |
@@ -418,8 +441,8 @@ A checkmark means a draft question exists; it does **not** mean independent revi
 | Excavation history and personnel | DRAFTED | Check ASI report title pages, campaign/season wording and field-season details |
 | Cultural sequence and chronology | PARTIAL | Gazetteer ranges and Lal 1979 uncorrected/corrected radiocarbon estimates differ; specialist review of sample IDs and correction conventions is still required |
 | Mound geography and identifiers | PARTIAL | Inspect original ASI plans; cemetery code conflict KLB-4 (Lal Fig. 1) vs KLB-8 (Gazetteer/ASI museum) remains unresolved |
-| Burials and mortuary practice | PARTIAL | Added selected Chapter 22–23 data: 88 extended burials/16 groups, 14 skeleton-free large pits, pit dimensions, selected individual burial inventories and cautious osteological observations; still verify every pit/plan context, visual plates and resolve KLB-4/KLB-8 |
-| Town planning, fortification and architecture | DRAFTED | Add visual plan/plate-level locators; distinguish Early vs Mature layouts and verify exact dimensions/masonry |
+| Burials and mortuary practice | PARTIAL | Added selected Chapter 22–25 data: extended-burial groups, skeleton-free large pits, selected individual burial inventories, cemetery pottery and small finds; still verify pit/plan context, visual plates, image permissions and resolve KLB-4/KLB-8 |
+| Town planning, fortification and architecture | PARTIAL | KAL-288–KAL-300 add source-based construction details from ASI Part I, “General Features of Structures”, printed p. 130 (gate guard-rooms, road materials, brick bond, house walls, doorways, room size, storeys and drainage); verify each against the complete report and relevant visual plans/plates |
 | Agriculture and field layout | PARTIAL | Cross-furrow ploughed-field evidence is drafted; rice vs barley/wheat and rice/horse-gram site attribution remain disputed; inspect original archaeobotanical samples/report |
 | Pottery / technology / production | PARTIAL | Fabric A–F and Mature pottery are drafted; validate temperatures, fabric labels and context against MASI 98 and Mature Harappan Part I plates |
 | Religion / ritual interpretation | PARTIAL | Fire-altars/platforms require cautious wording; distinguish excavated structure from inferred ritual and avoid naming an unsupported deity |
@@ -555,6 +578,11 @@ Locator: catalogue entries for “Excavations at Kalibangan: The Harappans (1960
 
 **S21 — Satarupa Bal.** “Harappan Burials of Kalibangan,” *Encyclopedia of Global Archaeology* (2020), pp. 4850–4856. DOI: https://doi.org/10.1007/978-3-030-30018-0_3479. Secondary overview used only to flag a difference in the reported number of extended burials per group; the primary ASI report S6 remains the source used for KAL-243.
 
+**S22 — Archaeological Survey of India (Government of India).** *Memoirs of the Archaeological Survey of India No. 110: Excavations at Kalibangan — The Harappans (1960–1969), Part I* (2015).  
+Official catalogue: https://asi.nic.in/pages/Publications/excavationReports  
+Official ASI e-publication PDF: https://asi.nic.in/admin/publications/ePublicationReportsDetails/download/60  
+Exact locator used for KAL-288–KAL-300: “General Features of Structures”, printed p. 130. The indexed official text records guard-rooms at fortification gateways; mud-bricks/terracotta cakes as road metal; restricted burnt-brick use in drains; header/stretcher bonding; house/street-wall arrangements and repairs; a 90 cm doorway; small square rooms; single/double-storeyed houses; timber and terracotta drains; common brick sizes; and road-level materials. Full page-image verification is still required; the PDF was too large for the current reader. Do not collapse its general brick-size statement into the separate KAL-029 Gazetteer statement without contextual review.
+
 ## Primary excavation-report chapter audit — contents-only, not fact evidence
 
 The ASI catalogue lists three distinct Kalibangan reports. The following chapter inventory is a **reading plan based on report contents / bibliographic TOC metadata**, not a claim that those chapters have been read or their archaeological contents verified.
@@ -619,6 +647,31 @@ The following five additions retain only details that were not already adequatel
 **Source / review caution:** ये प्रश्न AI द्वारा मूल हिंदी में लिखे गए हैं; उत्तर ASI रिपोर्ट के विवरण का संक्षिप्त हिंदी रूपांतरण हैं, वास्तविक परीक्षा के पूर्ववर्ती प्रश्न नहीं। अध्याय 25 का पाठ पहले उपलब्ध same-title Government of India PM Gati Shakti staging-domain text copy से text-extraction aid के रूप में पढ़ा गया था; उस प्रति का binary hash आधिकारिक ASI प्रति S6 से मिलाया नहीं गया। आधिकारिक ASI PDF को ही canonical source माना गया है। इस प्रयास में staging PDF की page-image screenshot retrieval भी 404 पर विफल हुई; अतः किसी चित्र/प्लेट को दृष्टिगत रूप से सत्यापित नहीं कहा जा रहा। सभी पाँच नए प्रश्न NEEDS_REVIEW हैं और पृष्ठ-संदर्भ, grave context, माप तथा भार की स्वतंत्र जाँच आवश्यक है। अध्याय 25 की selective text review का अर्थ पूरे अध्याय/सभी पुरावशेषों की पूर्ण समीक्षा नहीं है।
 
 
+
+
+
+## उप-विषय 3 — नगर-योजना, किलेबंदी, आवास और जल-निकासी: महत्त्वपूर्ण One-Liners
+
+**स्रोत-आधार:** ASI की *Excavations at Kalibangan: The Harappans (1960–1969), Part I*, “General Features of Structures”, printed p. 130 (S22)। नीचे के प्रश्न इसी एक उप-विषय के हैं; इन्हें अलग मुख्य टॉपिक नहीं बनाया गया है। सभी प्रश्न AI द्वारा हिंदी में नए रूप में लिखे गए हैं; ये वास्तविक पूर्व-वर्ष प्रश्न नहीं हैं।
+
+| Draft ref | हिंदी One-Liner प्रश्न | संक्षिप्त उत्तर | महत्त्व | Evidence |
+|---|---|---|---|---|
+| KAL-288 | कालीबंगा के किलेबंदी-द्वारों पर सुरक्षा के लिए कौन-सी व्यवस्था थी? | द्वारों के साथ प्रहरी-कक्ष बनाए गए थे। | महत्त्वपूर्ण | S22 — “General Features of Structures”, printed p. 130 |
+| KAL-289 | कालीबंगा की सड़कों की सतह/भराव को मजबूत करने के लिए किन वस्तुओं का उपयोग किया गया? | कच्ची ईंटों और टेराकोटा केक का सड़क-भराव सामग्री के रूप में उपयोग हुआ। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-290 | रिपोर्ट के अनुसार पकी ईंटों का सीमित उपयोग मुख्यतः कहाँ हुआ और इसका संभावित कारण क्या था? | पकी ईंटें नालियों में प्रयुक्त हुईं; रिपोर्ट इसका संभावित कारण उनकी अधिक लागत बताती है। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-291 | नालियों को छोड़कर सामान्य ईंट-चिनाई में ईंटों की पंक्तियों का कौन-सा क्रम मिलता है? | एक पंक्ति शीर्ष-दिशा में रखी ईंटों (headers) की और अगली पंक्ति लंबाई-दिशा में रखी ईंटों (stretchers) की होती थी। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-292 | कुछ क्षेत्रों में घर की सड़क की ओर वाली दीवार किस दोहरी भूमिका में काम करती थी? | वही सड़क-दीवार घर की मुख्य दीवार का काम भी करती थी। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-293 | कालीबंगा के कुछ आवासीय क्षेत्रों में सड़क-दीवार के अलावा कौन-सी अतिरिक्त दीवार-व्यवस्था मिली? | कुछ स्थानों पर घर की अलग दूसरी दीवार भी बनाई गई थी। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-294 | घरों और सड़क-दीवारों की क्षतिग्रस्त जगहों की मरम्मत में किन सामग्रियों का सहारा लिया जाता था? | खाली जगहों को मिट्टी से भरकर उसमें बर्तन-खंड, कोयला और बजरी मिलाई/लगाई जाती थी। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-295 | D-3 ग्रिड 3 के उत्खनित घर में दर्ज एक द्वार की चौड़ाई लगभग कितनी थी? | लगभग 90 सेंटीमीटर। | महत्त्वपूर्ण | S22 — printed p. 130; D-3, Grid 3 trench entry |
+| KAL-296 | उत्खनित कमरों में कौन-से आकार के कमरे अधिक मिले और उनका औसत क्षेत्रफल कितना था? | छोटे चौकोर कमरे अधिक थे; कई कमरों का क्षेत्रफल लगभग 5 वर्गमीटर या उससे कम था। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-297 | कालीबंगा के घरों में सीढ़ियों के अवशेष किस प्रकार की इमारतों का संकेत देते हैं? | कुछ घर एक या दो मंज़िल के थे; सीढ़ियाँ पहली मंज़िल तक जाने के लिए थीं। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-298 | ईंटों की नालियों के अतिरिक्त कालीबंगा में जल-निकासी के कौन-से साधन मिले? | लकड़ी को खोखला करके बनाई गई नालियाँ और टेराकोटा पाइप भी मिले। | महत्त्वपूर्ण | S22 — printed p. 130 |
+| KAL-299 | ASI Part I के “General Features of Structures” खंड में ईंटों के कौन-से दो सामान्य आकार दर्ज हैं? | 30 × 15 × 7.5 सेमी तथा 40 × 20 × 10 सेमी। | महत्त्वपूर्ण | S22 — printed p. 130; इसे KAL-029 के अलग Early-Harappan Gazetteer संदर्भ के साथ मिलाकर एक ही मान न मानें |
+| KAL-300 | कालीबंगा की क्रमिक सड़क-परतों को मजबूत बनाने के लिए किन सामग्रियों का उपयोग दर्ज है? | बजरी, बर्तन-खंड और कोयले आदि का उपयोग किया जाता था। | महत्त्वपूर्ण | S22 — printed p. 130 |
+
+**स्रोत-सावधानी:** ASI का Part I PDF इस सत्र में पूर्ण पृष्ठ-चित्र निरीक्षण के लिए उपलब्ध नहीं हुआ; प्रश्नों के तथ्य आधिकारिक ASI ई-प्रकाशन के indexed text extract से लिए गए हैं और printed p. 130 से locatable हैं। प्रश्न/उत्तर स्वतंत्र reviewer द्वारा मूल पृष्ठ और आसपास के संदर्भ से पुनः जाँचे जाएँ। KAL-299 में दिए गए सामान्य ईंट-आकारों को KAL-029 के जिला गज़ेटियर में दर्ज Early-Harappan fortification brick-size से बिना संदर्भ-जाँच के एक न मानें। सभी 13 प्रश्न NEEDS_REVIEW रहेंगे।
+
 ## Review and publishing status
 
 - [ ] Confirm applicability against the current official syllabus for the selected exam.
@@ -630,4 +683,4 @@ The following five additions retain only details that were not already adequatel
 - [ ] Submit candidates through the existing author workflow as `NEEDS_REVIEW`.
 - [ ] Obtain independent reviewer approval before any `VERIFIED` or learner-ready label.
 
-**Current topic decision:** `DRAFTING — NOT COMPLETE`. The current 282 primary Q&A drafts now cover the ASI museum's six Early Harappan pottery fabrics, Mature Harappan pottery, settlement layout, agriculture, food preparation, text-level lithic typology (ASI Part II Ch. 11), metal/copper, ivory/bone, beads, weights/measures, shell, weaving tools and burial evidence, with two official ASI photographs. Selected Chapter 22–24 text passages now add 42 further cemetery/pot-burial and cemetery-pottery Q&A drafts, but not a complete report or visual review. This remains a partial source pass, not an exhaustive scholarly review: the full ASI MASI 98 / mature-period Part I report and page-image review, complete seal/sign object reconciliation, full faunal monograph, remaining small-find/plan/plate comparisons, image-use permission, independent review, live-question-bank duplicate scan and exam-specific syllabus mapping remain open. Do not mark this topic complete or move to Ahar-Banas until the required gates are audited.
+**Current topic decision:** `DRAFTING — NOT COMPLETE`. The canonical file now contains 300 primary AI-authored Hindi Q&A drafts (KAL-001–KAL-300), including the 13-question structural/architecture increment KAL-288–KAL-300 under the single Kalibanga topic. The new batch covers gateway guard-rooms, road materials, brick bonding, house-wall layout/repairs, doorways, room dimensions, storeys and drainage using an indexed-text extract from the official ASI Part I, printed p. 130. Every item remains `NEEDS_REVIEW`; no independent reviewer approval or exam-specific syllabus mapping is claimed. The previous source gaps remain open: complete MASI 98 and Mature Harappan Part I chapter/plate review, full page-image verification, KLB-4/KLB-8 and other conflicts, full faunal monograph, remaining artefact/plan reconciliation, image-use permission, live-database semantic duplicate scan and official exam applicability. Do not mark Kalibanga complete or start Ahar-Banas until the topic checklist and independent-review gates are accepted.
