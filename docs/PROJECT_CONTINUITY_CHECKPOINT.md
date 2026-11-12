@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-10 (notes-first PR #112 merged to main as `949ee0baf4ba7cadf0abe75b1319348617d04d22`. Kalibangan expansion is open as draft [PR #113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`; 240 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos. All remain needs-review drafts.)
+**Last updated:** 2026-11-12 (PR #113 merged; current main head observed as `0ce169c79309932eefc80b101d29d94e9fd24bdb`. Kalibangan has 287 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos; all remain NEEDS_REVIEW. Static integrity audit: 287 rows, continuous unique IDs, no in-file normalized duplicate questions/Q&A pairs, no missing evidence cells or malformed rows. This is not independent factual review or a live DB semantic scan.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -26,7 +26,7 @@ The user has set the immediate content priority: before adding more MCQ generati
 - First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
 - Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- Draft PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113), branch `content/kalibangan-full-topic-coverage-asi`, expands the topic to 240 primary AI-authored Q&A drafts (KAL-001–KAL-240), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged. The current canonical topic file contains 287 primary AI-authored Q&A drafts (KAL-001–KAL-287), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
 - Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
@@ -826,3 +826,14 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - The docs-only workflow path was added to .github/workflows/flutter-mobile.yml; on the previous head f0d02f07083af300b72c198f02194bfc58296ce4, Flutter analyze/tests/release APK build and upload all passed. Artifact ID 13745678087 (ai-comp-mobile-android-apk) is available for 14 days. A second build is running for the current notes head 8793c41eb4b5fd8f08c55ee58ae58af9f6c5c278. Backend pytest and API container build passed on f0d02f07083af300b72c198f02194bfc58296ce4; current-head backend run is in progress.
 - APK tests the existing Flutter app only. The five new Chapter 25 note drafts are documentation-only and are not in the mobile app, live database or learner-facing verified content. No migrations, app source, production data or learner records changed. PR #113 remains OPEN / DRAFT / UNMERGED; no phase transition. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED.
 - Next exact work: complete Kalibanga coverage gaps (MASI 98 and Mature Part I chapters, page/plate check, remaining small finds, seal/faunal/archaeobotanical reconciliation), perform semantic duplicate and independent factual review, verify current exam syllabus applicability, then submit through the existing NEEDS_REVIEW author workflow. Do not start Ahar-Banas or another subject before Kalibanga's acceptance gates are reviewed.
+
+
+## 2026-11-12 — latest continuity handoff
+
+- Verified the actual mainline PR state: PR #113 is merged (latest observed main merge commit `0ce169c79309932eefc80b101d29d94e9fd24bdb`). Do not reopen or recreate its content branch.
+- Rechecked the canonical Kalibangan note file. Static structure audit passed: 287 rows, KAL-001–KAL-287 continuous/unique, no normalized duplicate question stems or Q&A pairs within the file, no missing evidence cells and no malformed rows. Blob SHA: `1237c3244a2e9340f1400651492ba98d56975e2b`.
+- All 287 items remain NEEDS_REVIEW. Live database semantic deduplication, independent factual/source review, complete ASI report/plate verification, official exam syllabus mapping and image reuse permission are not complete.
+- Resume the same in-progress topic, not Ahar-Banas: obtain an authorized readable copy/access path for ASI MASI 98 and Mature Harappan Part I, then review the defined chapter queues and reconcile source conflicts. Do not draft from TOC metadata or figure captions alone.
+- Mainline development phase remains Phase 6.56 IN_PROGRESS; Phase 2.2 BLOCKED; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Keep the live official-source/migration/reviewer-secret/mobile E2E gates. No app code, DB, migrations, APK or learner records changed in this audit.
+
+**PR #113 build evidence:** exact PR head `b0fd3873fddb72884c8329730735d15730a2aae3` passed backend CI run `42781714817` (645 tests, 14 warnings, API container build) and Flutter CI run `42781715151` (analyze, 19 tests, release-mode APK build, artifact verification/upload). APK artifact ID `13747255331`, ZIP SHA-256 `2ab38f35bcd9d094f70ac96587fcc5de54b7c9b74fc0ded7602cc8d508846d4f`, expires 2026-11-24. CI used a placeholder Firebase config because the secret was unavailable; do not interpret this as Firebase/device E2E. The APK is a debug-signed test artifact.
