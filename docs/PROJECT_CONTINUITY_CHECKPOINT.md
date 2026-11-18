@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-12 (PR #113 is merged. On review branch `content/kalibangan-single-topic-hierarchy-structure`, Kalibanga has 304 primary AI-authored Hindi Q&A drafts KAL-001–KAL-304, 3 corroborative points and 2 ASI photos; all remain NEEDS_REVIEW. KAL-288–KAL-304 extend the existing urban-planning/architecture subtopic. The single canonical Kalibanga topic file has an 11-subtopic internal index assigning all 304 IDs exactly once. Static checks: 304 rows, continuous unique IDs, no normalized in-file duplicate questions/Q&A pairs and no missing question/answer/evidence cells; this is not independent factual review or a live DB semantic scan. This content branch is not yet merged to main.)
+**Last updated:** 2026-11-18 (review branch `content/kalibangan-single-topic-hierarchy-structure`, PR #115 open/unmerged. User's supplied ToC resets the main unit to book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” (p.145; exercise p.148; Chapter 3 p.150). The new canonical parent file contains 311 Kalibanga + 20 Ahar-Banas Hindi Q&A drafts; all NEEDS_REVIEW. The 11 Kalibanga internal headings and the Ahar site questions are nested under one chapter. Ganeshwar-Jodhpura and Bairat remain in-scope child-sites. Static structure checks passed; independent review and live DB semantic dedupe remain open.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -23,11 +23,12 @@
 The user has set the immediate content priority: before adding more MCQ generation, topic tests, mastery or revision features, build concise **Subject → Topic → Subtopic → One-Liner Question + Direct Answer notes** that cover the full set of examinable points.
 
 - Follow the 14 existing subject categories and concept order in `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; do not create a parallel taxonomy.
-- First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
-- Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
+- First slice: Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”.
+- Canonical notes file: `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`.
+- Child-sites retain the concept IDs from `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; Kalibanga and Ahar-Banas are not separate main book chapters.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
 - PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged and contributes KAL-001–KAL-287. Review branch `content/kalibangan-single-topic-hierarchy-structure` extends the same canonical topic file with KAL-288–KAL-304, bringing the branch total to 304 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
-- Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
+- Every item remains `NEEDS_REVIEW`; parent Chapter 2 remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
 - Do not start Phase 6.57 early. Phase 6.56, Phase 2.2 and Phase 6.58 retain their existing acceptance gates.
@@ -857,3 +858,15 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - All items remain NEEDS_REVIEW; no independent scholarly review, official-exam mapping, or live PostgreSQL semantic dedupe is claimed. Do not mark Kalibanga complete.
 - CI failure root cause identified: flutter-mobile.yml floated to Flutter 3.50.0; the analyzer then treated ten material.dart deprecations as issues. The previously green run used Flutter 3.47.9. Pin the CI SDK to 3.47.9 and require full analyze/test/APK rerun before calling mobile validation green.
 - Phase state remains unchanged: 2.2 BLOCKED; 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED.
+
+
+## 2026-11-18 — current chapter-level handoff (supersedes site-by-site sequencing)
+
+- Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” is the active parent topic. ToC photo: start p.145, chapter exercise p.148, next chapter starts p.150.
+- Canonical parent notes: `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`.
+- Child-site 1 Kalibanga: KAL-001–KAL-311 (311 Q&A drafts), with its 11 internal coverage headings.
+- Child-site 2 Ahar-Banas: AHB-001–AHB-020 (20 high-yield drafts), in the same parent file.
+- Next child-sites inside the same parent: Ganeshwar-Jodhpura, Bairat, and any further settlement confirmed by the book chapter. Matsya Janapada placement must be checked against pages 145–149 before inclusion as a site.
+- Do not start book Chapter 3 until the important-question coverage of Chapter 2's relevant sites, source checks and duplicate audit are done. Keep the workflow bounded: high-yield facts first; no endless micro-subtopics/obscure inventory.
+- The previous rule “do not start Ahar-Banas until Kalibanga is complete” is superseded; Ahar-Banas is now child-site 2 of the same parent chapter, not a new main topic.
+- Latest CI commit c2ff0607a19ca1bef2ec23d006838edbaf97d3de: backend 645 tests + API container succeeded; Flutter 3.47.9 analyze + 19 tests + release APK build/verify/upload succeeded. Artifact ID 14401031754, SHA-256 cbbd170efaf5efa5895a89b90e73e707883db2c7eb72d6ba854c6fa12d3e46af, expiry 2026-12-02. CI artifact is for testing; no live Firebase/device/API E2E claim.

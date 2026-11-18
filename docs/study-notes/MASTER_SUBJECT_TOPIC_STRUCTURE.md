@@ -26,14 +26,39 @@
 ### राजस्थान इतिहास — Rajasthan History
 
 **मुख्य topic groups:** 7 • **उपविषय:** 34  
-**वर्तमान मसौदा:** कालीबंगा — 304 प्राथमिक हिंदी Q&A (KAL-001–KAL-304); सभी NEEDS_REVIEW। प्रश्न एक ही canonical Kalibanga topic file में रखे गए हैं और उसके अंदर 11 आंतरिक subtopic समूहों से index किए गए हैं। अन्य 33 उपविषय अभी अलग notes files में शुरू नहीं हुए हैं।
+**वर्तमान मसौदा:** पुस्तक-अध्याय 2 “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है। इसके अंदर कालीबंगा (311 KAL drafts) और आहड़-बनास (20 AHB drafts) एक ही canonical parent file में हैं; दोनों के सभी प्रश्न NEEDS_REVIEW हैं। गणेश्वर-जोधपुरा और बैराठ अगले child-sites हैं। 34 स्थायी catalogue concept IDs बदले नहीं गए हैं।
+
+
+#### पुस्तक-संरचना के अनुसार राजस्थान इतिहास का मुख्य अध्याय क्रम
+
+**स्रोत:** उपयोगकर्ता द्वारा साझा की गई Topper’s “राजस्थान सार संग्रह” की विषय-सूची तस्वीर। यह पुस्तक का navigation order है; इससे किसी भर्ती का आधिकारिक syllabus अपने-आप सिद्ध नहीं होता।
+
+| क्रम | मुख्य पुस्तक-अध्याय | विषय-सूची में प्रारम्भ पृष्ठ | पुस्तक में प्रश्न-अभ्यास पृष्ठ |
+|---:|---|---:|---:|
+| 1 | राजस्थान के इतिहास के महत्त्वपूर्ण स्रोत | 138 | 143 |
+| 2 | राजस्थान के प्राचीन सभ्यता स्थल | 145 | 148 |
+| 3 | राजस्थान का इतिहास–I (प्रतिहार, गुहिल एवं राठौड़ राजवंश) | 150 | 157 |
+| 4 | राजस्थान का इतिहास–II (चौहान, कच्छवाहा व अन्य राजवंश) | 159 | 164 |
+| 5 | राजस्थान में स्थापत्य: दुर्ग और महल | 166 | 171 |
+| 6 | 1857 की क्रांति एवं राजस्थान | 173 | 175 |
+| 7 | किसान और जनजाति आंदोलन | 177 | 181 |
+| 8 | प्रजामंडल आंदोलन | 183 | 187 |
+| 9 | राजस्थान का एकीकरण | 189 | 191 |
+| 10 | राजस्थान के स्वतंत्रता सेनानी | 193 | — |
+
+**भाग-D में तस्वीर पर दिखने वाले अध्याय:** राजस्थान के लोक संत एवं सम्प्रदाय (202), राजस्थान के लोकदेवता एवं देवियाँ (208), राजस्थान में हस्तकलाएँ (216), राजस्थान में लोक संगीत (222)। आगे की विषय-सूची तस्वीर मिलने पर ही शेष क्रम जोड़ा जाएगा।
+
+**अध्याय 2 का उपविषय नियम:** Kalibangan, Ahar-Banas, Ganeshwar-Jodhpura, Bairat और पृष्ठ 145–149 में पुष्टि होने वाले अन्य सभ्यता-स्थल एक parent chapter के child-sites होंगे। अलग-अलग child-site को अलग main book chapter न दिखाएँ। Matsya Janapada जैसे cross-reference को पृष्ठ-जाँच के बिना स्थल-सूची में न मिलाएँ।
+
+**तेज़ कवरेज नियम:** हर मुख्य अध्याय में पहले high-yield परीक्षा-तथ्य, छोटे हिंदी उत्तर, source locators और duplicate audit पूरे करें। दुर्लभ संग्रहालय accession/हर वस्तु की माप जैसे सूक्ष्म विवरण तभी जोड़ें जब परीक्षा-संगति स्पष्ट हो। प्रश्न-संख्या completion का लक्ष्य नहीं होगी; अध्याय की महत्त्वपूर्ण coverage होगी।
+
 
 #### 1. प्राचीन इतिहास — Ancient History
 
 | क्रम | उपविषय (हिंदी — मूल नाम) | स्थायी Concept ID | स्थिति |
 |---:|---|---|---|
-| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [304 Q&A मसौदे; NEEDS_REVIEW](rajasthan-history/ancient-history/kalibangan.md) |
-| 2 | आहड़-बनास संस्कृति — Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | मसौदा शुरू नहीं |
+| 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [311 Q&A; parent chapter 2 के उपविषय 1 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
+| 2 | आहड़-बनास संस्कृति — Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | [20 Q&A; parent chapter 2 के उपविषय 2 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति — Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | मसौदा शुरू नहीं |
 | 4 | बैराठ — Bairat | `catalog.rajasthan_history_ancient_history_bairat` | मसौदा शुरू नहीं |
 | 5 | मत्स्य जनपद — Matsya Janapada | `catalog.rajasthan_history_ancient_history_matsya_janapada` | मसौदा शुरू नहीं |
@@ -344,8 +369,8 @@
 
 ## अगला no-skip कार्य क्रम
 
-1. पहले कालीबंगा विषय को पूरा करें: शेष ASI रिपोर्ट, स्रोत-विवाद, चित्र/प्लेट, छोटे पुरावशेष, मुहर/लिपि, जीव-अवशेष और वनस्पति-अवशेष की जाँच करें। फिर तथ्य, exact/normalized व semantic duplicate और स्वतंत्र समीक्षा पूरी करें।
-2. कालीबंगा की स्वीकृति के बाद ही राजस्थान इतिहास का अगला विषय आहड़-बनास शुरू करें; राजस्थान इतिहास सूची के शेष विषय क्रम से लें।
+1. पहले पुस्तक-अध्याय 2 “राजस्थान के प्राचीन सभ्यता स्थल” पूरा करें। कालीबंगा और आहड़-बनास अब एक ही parent topic के दो child-sites हैं; इसके बाद गणेश्वर-जोधपुरा, बैराठ और पुस्तक के पृष्ठ 145–149 में मिलने वाले अन्य स्थलों की high-yield कवरेज करें।
+2. अध्याय 2 के सभी child-sites की महत्वपूर्ण प्रश्न-कवरेज, स्रोत-चेक और duplicate audit के बाद ही पुस्तक-अध्याय 3 “राजस्थान का इतिहास–I” (प्रतिहार, गुहिल, राठौड़) शुरू करें।
 3. राजस्थान इतिहास के सभी निर्धारित विषयों के बाद ही राजस्थान भूगोल के मौजूदा 7 पुराने seed candidates तथा शेष उपविषयों की जाँच शुरू करें।
 4. उसके बाद राजस्थान राजव्यवस्था के 21 उपविषय, फिर हिंदी और अंग्रेज़ी के उपविषय क्रम से पूरे करें; बीच में नए समानांतर प्रश्न-बैच न बनाएँ।
 5. हर विषय में प्रश्न और उत्तर हिंदी में लिखें। अंग्रेज़ी विषय में अंग्रेज़ी उदाहरण केवल प्रश्न का लक्ष्य होने पर रखें और उसकी व्याख्या हिंदी में करें।
@@ -362,7 +387,7 @@
 
 **राजस्थान कला-संस्कृति का उदाहरण:** “राजस्थान के आभूषण” को एक मुख्य topic की तरह व्यवस्थित किया जाएगा; उसके अंदर सामग्री, निर्माण-कला, पहनने के स्थान, प्रकार, क्षेत्रीय/समुदायगत विशेषताएँ और प्रमुख नाम subtopics होंगे। “कुंदन”, “मीनाकारी” या किसी एक आभूषण के नाम पर बिखरे हुए असंबद्ध main topics तब तक नहीं बनाए जाएँगे जब तक official syllabus या canonical concept ledger इसकी अलग आवश्यकता न दिखाए।
 
-**कालीबंगा का चालू उदाहरण:** Rajasthan History → Ancient History → Kalibangan एक canonical concept है; स्थान, कालक्रम, नगर-योजना, कृषि, मृद्भांड, लिपि, शिल्प, जीव-अवशेष और समाधि जैसे भाग इसी एक Kalibanga topic के internal subtopics हैं। Question IDs सूचक हैं, अलग विषय नहीं।
+**प्राचीन सभ्यता स्थल का चालू उदाहरण:** Rajasthan History → पुस्तक-अध्याय 2 “राजस्थान के प्राचीन सभ्यता स्थल” parent topic है; Kalibangan, Ahar-Banas, Ganeshwar-Jodhpura और Bairat उसके child-sites हैं। हर स्थल के आंतरिक अध्ययन-बिंदु उन्हीं के अंदर रहेंगे; हर स्थल को अलग मुख्य पुस्तक-अध्याय नहीं बनाया जाएगा। Canonical concept IDs केवल child mapping के लिए सुरक्षित हैं।
 
 
 ## 2026-11-12 — Kalibanga architecture coverage update
@@ -375,3 +400,10 @@
 ## 2026-11-18 — Kalibanga architecture coverage note
 
 The single Kalibanga topic's architecture subtopic now indexes KAL-001–KAL-311 through its internal ID list; the review branch holds 311 primary Hindi Q&A drafts. KAL-305–KAL-311 add source-located facts from ASI Part I printed pp. 130–131. They remain NEEDS_REVIEW; the PDF page/figure image could not be visually inspected, and Ahar-Banas remains NOT STARTED.
+
+
+## 2026-11-18 — user-provided book hierarchy correction
+
+- Replaced the site-by-site main-topic sequence with the book's visible Chapter 2 parent: “राजस्थान के प्राचीन सभ्यता स्थल” (starts p.145; chapter exercise p.148; Chapter 3 starts p.150).
+- Consolidated KAL-001–KAL-311 and AHB-001–AHB-020 under one parent file. Existing child concept IDs remain unchanged. Ahar-Banas is a child-site in the same chapter, not the next main chapter.
+- Important-question policy is high-yield and bounded: no endless catalogue/measurement minutiae or count-driven drafting. Chapter 3 starts only after Chapter 2's relevant child-sites are covered.

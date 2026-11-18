@@ -2,15 +2,15 @@
 
 **Subject concept count in current catalogue:** 34  
 **Subject status:** IN PROGRESS — not exam-complete  
-**Sequence:** Finish one topic's complete examinable-point notes and independent review before moving to the next. MCQs/tests are downstream of reviewed notes.  
+**Sequence:** Finish one full book chapter (with all its internal site/dynasty/etc. subtopics) before moving to the next book chapter. MCQs/tests are downstream of reviewed notes.  
 **Canonical concept inventory:** [QUESTION_BANK_CONTENT_COVERAGE.csv](../../QUESTION_BANK_CONTENT_COVERAGE.csv)
 
 ## Notes coverage tracker
 
 | # | Topic group | Topic / subtopic | Concept ID | Notes status |
 |---:|---|---|---|---|
-| 1 | Ancient History | [Kalibangan](ancient-history/kalibangan.md) | `catalog.rajasthan_history_ancient_history_kalibangan` | DRAFTING — 304 primary AI-authored Hindi Q&A (KAL-001–KAL-304) + 3 corroborative points + 2 ASI photos; one canonical topic file now includes an 11-subtopic internal index; KAL-288–KAL-304 extend town planning, fortification, housing and drainage; all NEEDS_REVIEW; source/visual/reviewer gates remain open |
-| 2 | Ancient History | Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | NOT STARTED |
+| 1 | Book Chapter 2 — Ancient Civilization Sites | [Parent chapter file](ancient-history/ancient-civilization-sites.md) → Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311 (311 drafts) under child-site 1; 11 internal study headings; all NEEDS_REVIEW |
+| 2 | Book Chapter 2 — Ancient Civilization Sites | Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-020 (20 drafts) under child-site 2 in the same parent file; all NEEDS_REVIEW |
 | 3 | Ancient History | Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | NOT STARTED |
 | 4 | Ancient History | Bairat | `catalog.rajasthan_history_ancient_history_bairat` | NOT STARTED |
 | 5 | Ancient History | Matsya Janapada | `catalog.rajasthan_history_ancient_history_matsya_janapada` | NOT STARTED |
@@ -61,9 +61,9 @@ A topic cannot be marked complete based on a fixed number of questions. For ever
 
 Only after the notes are reviewed should the app derive practice MCQs and topic tests. Actual previous-year questions remain a separate, answer-key-verified data type.
 
-## First in-progress topic
+## First in-progress main topic — Book Chapter 2
 
-Kalibanga notes now contain 311 primary AI-authored Hindi Q&A drafts (KAL-001–KAL-311), 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. All remain NEEDS_REVIEW / NOT COMPLETE. The single canonical Kalibanga topic file has an 11-subtopic index; KAL-288–KAL-304 add 17 architecture/urban-planning One-Liners from ASI Part I, “General Features of Structures”, printed p. 130. The four latest additions cover clay bonding material colour, successive street reconstruction phases, incised floor tiles and street-facing courtyard entry. The ASI Part II figure register indexes the KLB-8 cemetery plan/view at pp. 1288–1290; KLB-4/KLB-8, extended-burial group-count and Burial 13 urn discrepancies, full visual plate checks, complete MASI 98/Part I report review, live DB semantic deduplication, exam mapping, image rights and independent review remain open. Ahar-Banas remains NOT STARTED.
+The active parent topic is “राजस्थान के प्राचीन सभ्यता स्थल” (starts p.145; question exercise p.148; next chapter begins p.150). Its canonical notes file is [ancient-civilization-sites.md](ancient-history/ancient-civilization-sites.md). Kalibanga is child-site 1 with KAL-001–KAL-311 (311 AI-authored Hindi drafts and 11 internal study headings); Ahar-Banas is child-site 2 with AHB-001–AHB-020 (20 AI-authored Hindi drafts). All remain NEEDS_REVIEW. Both child-sites share one parent chapter file; their existing concept IDs remain unchanged. Next child-sites: Ganeshwar-Jodhpura, then Bairat and any additional site verified in the book chapter. Only after the parent chapter is covered will Book Chapter 3 “राजस्थान का इतिहास–I” begin. KLB-4/KLB-8, cemetery and chronology conflicts, MASI 98/Part I page/plate checks, live DB semantic dedupe, exam mapping, image rights and independent review remain open.
 
 
 ## 2026-11-12 — single-topic hierarchy and architecture subtopic continuation
@@ -81,3 +81,10 @@ Kalibanga notes now contain 311 primary AI-authored Hindi Q&A drafts (KAL-001–
 
 - Review branch content/kalibangan-single-topic-hierarchy-structure now has 311 primary Hindi Q&A drafts. KAL-305–KAL-311 extend the same architecture subtopic from ASI Part I printed pp. 130–131; all remain NEEDS_REVIEW.
 - Source text indexing was checked; page-image/figure visual review was blocked by the PDF size limit. Ahar-Banas remains NOT STARTED.
+
+
+## 2026-11-18 — book chapter hierarchy update
+
+- Replaced the previous “finish Kalibanga, then start Ahar as a new topic” interpretation.
+- Parent book chapter 2 is “राजस्थान के प्राचीन सभ्यता स्थल”; Kalibanga and Ahar-Banas are child-sites within it. The parent file contains 311 KAL and 20 AHB draft One-Liners.
+- Ganeshwar-Jodhpura and Bairat remain the next child-sites in the same parent chapter. Do not move to book chapter 3 until the chapter-2 site coverage checklist is complete.
