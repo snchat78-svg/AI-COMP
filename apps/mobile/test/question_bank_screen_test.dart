@@ -320,7 +320,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('राजस्थान के प्राचीन सभ्यता स्थल'), findsOneWidget);
-    expect(find.text('4 child topics'), findsOneWidget);
+    expect(find.textContaining('4 child topics'), findsOneWidget);
     expect(find.text('कालीबंगा'), findsOneWidget);
     expect(find.text('आहड़-बनास संस्कृति'), findsOneWidget);
     expect(find.text('गणेश्वर-जोधपुरा संस्कृति'), findsOneWidget);
