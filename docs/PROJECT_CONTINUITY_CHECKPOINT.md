@@ -848,3 +848,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 
 
 - Latest same-subtopic extension: KAL-301–KAL-304 adds clay bonding-material colour/waterlogging, road reconstruction phases, incised floor tiles and street-side doors opening into house courtyards. Review-branch total is now 304 Hindi Q&A; all remain NEEDS_REVIEW. No new topic was started.
+
+## 2026-11-18 — same-topic architecture continuation
+
+- Continue from PR #115 branch content/kalibangan-single-topic-hierarchy-structure; do not recreate the branch or start Ahar-Banas.
+- Kalibanga now has 311 primary Hindi Q&A drafts (KAL-001–KAL-311) on the review branch. KAL-305–KAL-311 add seven items from ASI Part I printed pp. 130–131, all inside the existing architecture subtopic. The 11-subtopic index must map all 311 IDs once.
+- Source is the official ASI PDF, Excavations at Kalibangan — The Harappans (1960–1969), Part I, “General Features of Structures”. Text indexing supports the locators; page-image rendering and binary download failed due file-size limits. Original page/figure visual review is still outstanding.
+- All items remain NEEDS_REVIEW; no independent scholarly review, official-exam mapping, or live PostgreSQL semantic dedupe is claimed. Do not mark Kalibanga complete.
+- CI failure root cause identified: flutter-mobile.yml floated to Flutter 3.50.0; the analyzer then treated ten material.dart deprecations as issues. The previously green run used Flutter 3.47.9. Pin the CI SDK to 3.47.9 and require full analyze/test/APK rerun before calling mobile validation green.
+- Phase state remains unchanged: 2.2 BLOCKED; 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED.

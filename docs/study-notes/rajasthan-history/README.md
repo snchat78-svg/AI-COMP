@@ -63,7 +63,7 @@ Only after the notes are reviewed should the app derive practice MCQs and topic 
 
 ## First in-progress topic
 
-Kalibanga notes now contain 304 primary AI-authored Hindi Q&A drafts (KAL-001–KAL-304), 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. All remain NEEDS_REVIEW / NOT COMPLETE. The single canonical Kalibanga topic file has an 11-subtopic index; KAL-288–KAL-304 add 17 architecture/urban-planning One-Liners from ASI Part I, “General Features of Structures”, printed p. 130. The four latest additions cover clay bonding material colour, successive street reconstruction phases, incised floor tiles and street-facing courtyard entry. The ASI Part II figure register indexes the KLB-8 cemetery plan/view at pp. 1288–1290; KLB-4/KLB-8, extended-burial group-count and Burial 13 urn discrepancies, full visual plate checks, complete MASI 98/Part I report review, live DB semantic deduplication, exam mapping, image rights and independent review remain open. Ahar-Banas remains NOT STARTED.
+Kalibanga notes now contain 311 primary AI-authored Hindi Q&A drafts (KAL-001–KAL-311), 3 separate corroborative points, two ASI Jodhpur Circle site photographs and a source-authorship disclosure. All remain NEEDS_REVIEW / NOT COMPLETE. The single canonical Kalibanga topic file has an 11-subtopic index; KAL-288–KAL-304 add 17 architecture/urban-planning One-Liners from ASI Part I, “General Features of Structures”, printed p. 130. The four latest additions cover clay bonding material colour, successive street reconstruction phases, incised floor tiles and street-facing courtyard entry. The ASI Part II figure register indexes the KLB-8 cemetery plan/view at pp. 1288–1290; KLB-4/KLB-8, extended-burial group-count and Burial 13 urn discrepancies, full visual plate checks, complete MASI 98/Part I report review, live DB semantic deduplication, exam mapping, image rights and independent review remain open. Ahar-Banas remains NOT STARTED.
 
 
 ## 2026-11-12 — single-topic hierarchy and architecture subtopic continuation
@@ -75,3 +75,9 @@ Kalibanga notes now contain 304 primary AI-authored Hindi Q&A drafts (KAL-001–
 
 
 - 2026-11-12 follow-up: KAL-301–KAL-304 add four more questions to the existing architecture subtopic from ASI Part I printed p. 130. The review branch now totals 304 questions; all remain NEEDS_REVIEW. The official page-image and independent context review remain pending.
+
+
+## 2026-11-18 — Kalibanga architecture increment
+
+- Review branch content/kalibangan-single-topic-hierarchy-structure now has 311 primary Hindi Q&A drafts. KAL-305–KAL-311 extend the same architecture subtopic from ASI Part I printed pp. 130–131; all remain NEEDS_REVIEW.
+- Source text indexing was checked; page-image/figure visual review was blocked by the PDF size limit. Ahar-Banas remains NOT STARTED.

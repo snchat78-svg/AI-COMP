@@ -116,3 +116,10 @@ Do not create a fixed question-count ceiling. Add Q&As until all syllabus-releva
 
 
 - Latest subtopic extension: KAL-301–KAL-304 adds clay bonding-material colour and waterlogging, road reconstruction phases, incised floor tiles and street-side doors opening into courtyards. These remain within the same Kalibanga architecture subtopic. Review-branch total: 304 primary Q&A; all remain NEEDS_REVIEW.
+
+
+## 2026-11-18 — hierarchy-first continuation
+
+- Kalibanga review branch count is now 311 primary Hindi Q&A drafts (KAL-001–KAL-311), with KAL-305–KAL-311 added under the existing architecture subtopic from official ASI Part I printed pp. 130–131. All remain NEEDS_REVIEW; the page-image and figure checks are open.
+- PR #115 remains an open review branch until all required checks pass. Flutter workflow SDK drift from 3.47.9 to 3.50.0 was the cause of the analyzer failure; the workflow is being pinned to the known-green 3.47.9 environment pending rerun.
+- No Ahar-Banas, second subject, live DB publication, or phase transition is started by this update.

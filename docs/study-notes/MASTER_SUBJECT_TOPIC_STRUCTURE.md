@@ -370,3 +370,8 @@
 - The single Kalibanga topic now has 304 draft Hindi Q&A items (KAL-001–KAL-304) on the review branch. The 11-subtopic index remains the internal navigation model; KAL-301–KAL-304 are still inside the existing urban-planning/architecture subtopic.
 - These four additions are: brick-bond clay colour and its change in waterlogged areas; successive street construction/reconstruction phases; incised floor tiles; and street-side doorways leading into house courtyards.
 - No new topic or separate file was created; all remain NEEDS_REVIEW.
+
+
+## 2026-11-18 — Kalibanga architecture coverage note
+
+The single Kalibanga topic's architecture subtopic now indexes KAL-001–KAL-311 through its internal ID list; the review branch holds 311 primary Hindi Q&A drafts. KAL-305–KAL-311 add source-located facts from ASI Part I printed pp. 130–131. They remain NEEDS_REVIEW; the PDF page/figure image could not be visually inspected, and Ahar-Banas remains NOT STARTED.

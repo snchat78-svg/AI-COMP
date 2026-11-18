@@ -395,3 +395,11 @@ This roadmap records required work and observed caveats; it does not claim compl
 
 
 - Latest same-subtopic extension KAL-301–KAL-304 covers brick-bond clay colour/waterlogging, successive road reconstruction phases, incised floor tiles and street-facing doors that led into house courtyards. Branch count is now 304; these four additions remain in the existing architecture subtopic and do not create a new topic.
+
+## 2026-11-18 — Kalibanga architecture continuation and CI root-cause fix
+
+- Branch content/kalibangan-single-topic-hierarchy-structure continues the single canonical Kalibanga topic. Review-branch total: 311 AI-authored Hindi Q&A drafts, KAL-001–KAL-311; Ahar-Banas remains NOT STARTED.
+- KAL-305–KAL-311 extend only “नगर-योजना, किलेबंदी, आवास और जल-निकासी” using ASI Part I printed pp. 130–131. The seven points cover brick quality/finish, probable roof material, Phase-IX road levels, earlier unpaved roads, fender posts, a qualified large-house interpretation and the report's low-rainfall inference.
+- The PDF text is indexed at the official ASI publication endpoint, but page-image rendering and binary download did not succeed; all new items remain NEEDS_REVIEW pending original page/figure inspection.
+- The Flutter CI regression is environmental/toolchain drift: stable-channel auto-selection moved from 3.47.9 (last green run) to 3.50.0 (failed run). Pin exact flutter-version 3.47.9; rerun the entire Flutter job and backend job before accepting PR #115.
+- No Phase 6.56/6.57 or official-source research blocker status changes are authorized by this content-only batch.
