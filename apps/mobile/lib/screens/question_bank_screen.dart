@@ -165,7 +165,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                       child: Text(
                         '${filtered.length} of ${topics.length} child topics • '
                         '${groups.length} main topics • '
-                        '${visibleVerifiedCount} verified one-liner Q&A available',
+                        '$visibleVerifiedCount verified one-liner Q&A available',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
@@ -209,7 +209,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                 title: Text(group.key),
                                 subtitle: Text(
                                   '${childTopics.length} child topics • '
-                                  '${groupVerifiedCount} verified one-liner Q&A',
+                                  '$groupVerifiedCount verified one-liner Q&A',
                                 ),
                                 children: [
                                   for (final topic in childTopics)
