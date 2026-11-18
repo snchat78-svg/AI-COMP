@@ -12,8 +12,8 @@
 |---:|---|---|---|
 | 1 | कालीबंगा | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311; 311 draft Q&A; NEEDS_REVIEW |
 | 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-020; 20 draft Q&A; NEEDS_REVIEW |
-| 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | अगला site-subtopic; मसौदा शेष |
-| 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | अगला site-subtopic; मसौदा शेष |
+| 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
+| 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-009; 9 draft Q&A; NEEDS_REVIEW |
 | 5 | अन्य प्राचीन स्थल / जनपद-संदर्भ | मौजूदा concept ledger के अनुसार | पुस्तक के पृष्ठ 145–149 और चुने हुए exam syllabus से scope की पुष्टि के बाद शामिल करें; Matsya Janapada को स्थल-सूची में बिना जाँच न मिलाएँ |
 
 ## तेज, परीक्षा-उन्मुख प्रश्न-चयन नियम
@@ -762,14 +762,83 @@ The following five additions retain only details that were not already adequatel
 - S23 में Ahar की अवस्थिति, R.C. Agrawal (1954–55), Tambamati, विशिष्ट pottery और अलग chronology proposals दर्ज हैं। S24 में क्षेत्रीय विस्तार, प्रमुख स्थल, Balathal chronology, settlement, economy और pottery groups का संक्षिप्त शैक्षिक संश्लेषण है।
 - S23 और S24 की हर entry अभी स्वतंत्र reviewer द्वारा जाँची जानी है। AHB-001–AHB-020 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावे नहीं।
 
+
+
+
+## उपविषय 3 — गणेश्वर-जोधपुरा संस्कृति
+
+**स्थायी concept ID:** `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture`  
+**स्थिति:** DRAFTING — 18 महत्त्वपूर्ण हिंदी One-Liners; सभी `NEEDS_REVIEW`।  
+**मुख्य स्रोत:** ASI, *Indian Archaeology 1981–82 — A Review*, “Excavation at Ganeshwar, District Sikar”, printed pp. 61–62 (S25). यह रिपोर्ट 1981–82 में राज्य पुरातत्व विभाग के उत्खनन का विवरण देती है। स्रोत की भाषा में संभावित व्याख्याओं को निश्चित निष्कर्ष न मानें।
+
+### महत्त्वपूर्ण One-Liner प्रश्नोत्तर
+
+| Draft ref | हिंदी प्रश्न | संक्षिप्त उत्तर | प्राथमिकता | Evidence |
+|---|---|---|---|---|
+| GJ-001 | ASI की 1981–82 की रिपोर्ट में गणेश्वर का स्थान किस जिले और किन निर्देशांकों पर दर्ज है? | सीकर जिला; लगभग 27°40′ उत्तरी अक्षांश और 75°51′30″ पूर्वी देशांतर। | महत्त्वपूर्ण | S25 — *Indian Archaeology 1981–82 — A Review*, printed p. 61 |
+| GJ-002 | ASI रिपोर्ट के अनुसार गणेश्वर किस नदी के उद्गम के पास स्थित है? | कांटली नदी के उद्गम के पास; रिपोर्ट में कांटली के उत्तर में सोथी-भाद्रा के निकट प्राचीन दृशद्वती से मिलने का उल्लेख है। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-003 | गणेश्वर के उत्खनन में किस काल की संस्कृति और कितने संरचनात्मक चरण दर्ज किए गए? | ताम्रयुगीन संस्कृति की एक सांस्कृतिक परत, जिसमें तीन संरचनात्मक चरण थे। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-004 | ASI रिपोर्ट के अनुसार गणेश्वर का कुल आवासीय सांस्कृतिक जमाव लगभग कितना मोटा था? | लगभग 3.65 मीटर। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-005 | गणेश्वर के सांस्कृतिक जमाव में किन तीन प्रमुख प्रकार की पुरावस्तुओं के प्रमाण मिले? | ताँबे की वस्तुएँ, लघु पाषाण उपकरण (microliths) और मृद्भांड। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-006 | गणेश्वर के ताँबे के पुरावशेषों में हथियार, औज़ार और आभूषण के कौन-से उदाहरण मिले? | तीराग्र व भालाग्र; छेनी व मछली पकड़ने के काँटे; छल्ले, केश-पिन और चूड़ियाँ। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-007 | ASI रिपोर्ट में गणेश्वर से पहले प्राप्त ताँबे की सपाट कुल्हाड़ियों और काँटेदार तीराग्रों की संख्या कितनी दी गई है? | 58 बिना socket वाली सपाट ताँबे की कुल्हाड़ियाँ और 2 काँटेदार तीराग्र। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-008 | गणेश्वर में स्थानीय ताँबा-उद्योग के लिए अयस्क मिलने की दूरी और प्रमुख अयस्क किस रूप में बताए गए हैं? | रिपोर्ट के अनुसार 20–30 किमी के दायरे में; व्यापक chalcopyrite (ताम्र-पाइराइट) निक्षेप संभावित स्रोत थे। यह रिपोर्ट की व्याख्या है। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-009 | ASI रिपोर्ट ने गणेश्वर में बाढ़ से बचाव के लिए कौन-सा निर्माण-उपाय दर्ज किया? | बाढ़ से क्षति के बाद लोगों ने लगातार तीन चरणों में तीन पत्थर के चबूतरे/प्लेटफॉर्म बनाए। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-010 | गणेश्वर के ज्यामितीय microlith उद्योग में प्रमुख उपकरण-प्रकार कौन-से बताए गए हैं? | blunted-back और obliquely-blunted blades, lunates, triangles, trapezes और points। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-011 | गणेश्वर के microlith बनाने में किन प्रमुख पत्थरों का उपयोग किया गया? | क्वार्ट्ज, चर्ट, गार्नेट, कैल्सेडोनी और कभी-कभी जैस्पर। | महत्त्वपूर्ण | S25 — printed p. 61 |
+| GJ-012 | ASI रिपोर्ट में गणेश्वर-जोधपुरा OCP मृद्भांडों के पात्र-रूप कितने समूहों में बाँटे गए हैं? | छह—भंडारण-पात्र, फूलदान, बेसिन, कटोरे, ढक्कन और लघु पात्र। | महत्त्वपूर्ण | S25 — printed pp. 61–62 |
+| GJ-013 | गणेश्वर के OCP फूलदानों की विशिष्ट पकड़/हैंडल व्यवस्था क्या बताई गई है? | ऊर्ध्वाधर हैंडल, जो पात्र के rim और shoulder के बीच जोड़े गए थे। | महत्त्वपूर्ण | S25 — printed p. 62 |
+| GJ-014 | गणेश्वर के चित्रित OCP मृद्भांडों पर चित्रांकन सामान्यतः किन भागों पर मिलता था? | मुख्यतः rim, neck और shoulder पर; कुछ पात्रों में चित्र पेट के नीचे तक भी जाते थे। | महत्त्वपूर्ण | S25 — printed p. 62 |
+| GJ-015 | गणेश्वर के चित्रित OCP मृद्भांडों पर कौन-से प्रमुख अलंकरण-मोटिफ दर्ज हैं? | मोटी गर्दन-पट्टी, कंधे पर पतली समानांतर रेखाएँ, लहरदार रेखाओं के बीच क्षैतिज पट्टी, तिरछी रेखाएँ और crescentic-comb pattern। | महत्त्वपूर्ण | S25 — printed p. 62 |
+| GJ-016 | ASI रिपोर्ट में गणेश्वर के मृद्भांडों पर मिले graffiti के कौन-से प्रतीक उदाहरण दिए गए हैं? | त्रिशूल, hatched quadrangle (रेखांकित चतुर्भुज) और सीढ़ी-जैसा चिह्न। | महत्त्वपूर्ण | S25 — printed p. 62 |
+| GJ-017 | ASI रिपोर्ट में गणेश्वर के OCP और जोधपुरा के मृद्भांडों के बीच क्या संबंध बताया गया है? | दोनों की ceramic सामग्री में निकट समानता बताई गई है। | महत्त्वपूर्ण | S25 — printed p. 62 |
+| GJ-018 | ASI की 1981–82 रिपोर्ट में गणेश्वर के OCP की रेडियोकार्बन-आधारित तिथि-सीमा क्या दी गई है? | लगभग 2500–2200 ईसा पूर्व; यह उसी रिपोर्ट में उद्धृत C-14 निर्धारण है। | महत्त्वपूर्ण | S25 — printed p. 62 |
+
+### स्रोत-सावधानी
+
+- **S25:** Archaeological Survey of India, *Indian Archaeology 1981–82 — A Review*, प्रकाशित 1984, “70. Excavation at Ganeshwar, District Sikar”, printed pp. 61–62: https://nmma.nic.in/nmma/NAS1/nmma_doc/IAR/Indian%20Archaeology%201981-82%20A%20Review.pdf
+- 2500–2200 ईसा पूर्व को ASI रिपोर्ट में उद्धृत C-14 तिथि-निर्धारण के रूप में ही लें; इसे सम्पूर्ण Ganeshwar-Jodhpura सांस्कृतिक परिसर की एकमात्र सर्वमान्य काल-सीमा न मानें।
+- ताँबे के अयस्क का 20–30 किमी दायरे में होना और flood-protection platforms का कारण रिपोर्ट के लेखक की व्याख्या है।
+- PDF के पृष्ठ-चित्र screenshot प्रयास में timeout आया; indexed text उपलब्ध था। मूल printed page image की स्वतंत्र जाँच शेष है। सभी 18 प्रश्न NEEDS_REVIEW हैं।
+
+
+
+## उपविषय 4 — बैराठ / विराटनगर
+
+**स्थायी concept ID:** `catalog.rajasthan_history_ancient_history_bairat`  
+**स्थिति:** DRAFTING — 9 महत्त्वपूर्ण हिंदी One-Liners; सभी `NEEDS_REVIEW`।  
+**मुख्य स्रोत:** ASI, *Inventory of Monuments and Sites of National Importance*, Vol. II, Part 1, Jaipur Circle, entry 107, printed p. 143 (S26); तथा PMML का अशोक-अभिलेख अध्ययन (S27).
+
+### महत्त्वपूर्ण One-Liner प्रश्नोत्तर
+
+| Draft ref | हिंदी प्रश्न | संक्षिप्त उत्तर | प्राथमिकता | Evidence |
+|---|---|---|---|---|
+| BRT-001 | ASI की Jaipur Circle सूची में बैराठ/विराटनगर किस जिले और तहसील में दर्ज है? | जयपुर जिले की विराटनगर तहसील में। | महत्त्वपूर्ण | S26 — *Inventory of Monuments and Sites of National Importance*, Vol. II, Part 1, entry 107, printed p. 143 |
+| BRT-002 | ASI सूची में बैराठ/विराटनगर के लगभग निर्देशांक क्या दिए गए हैं? | 27°25′ उत्तरी अक्षांश और 76°10′ पूर्वी देशांतर। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-003 | ASI सूची बैराठ अथवा प्राचीन विराटनगर को किस जनपद की राजधानी बताती है? | मत्स्यदेश की राजधानी। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-004 | ASI के अनुसार बैराठ किस दो प्रकार के प्रमुख प्राचीन साक्ष्यों के लिए प्रसिद्ध है? | दो अशोक-कालीन अभिलेखों और प्राचीन बौद्ध अवशेषों के लिए। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-005 | बैराठ के बिजक-की-पहाड़ी पर उत्खनन से किस काल का कौन-सा प्रमुख धार्मिक स्थापत्य मिला? | मौर्यकालीन वृत्ताकार स्तूप-मंदिर (circular stupa-shrine)। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-006 | बैराठ के वृत्ताकार स्तूप-मंदिर में ईंट-निर्माण के साथ कितने अष्टकोणीय लकड़ी के स्तंभ बताए गए हैं? | 26 अष्टकोणीय लकड़ी के स्तंभ, जिनके बीच ईंट-चिनाई थी। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-007 | बैराठ के स्तूप-मंदिर से पहले मिले मठीय अवशेषों की योजना कैसी थी? | खुले वर्गाकार आँगन के चारों ओर दोहरी पंक्ति में कक्ष बने थे। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+| BRT-008 | बैराठ के दो अशोक-कालीन अभिलेखों के नाम PMML के अध्ययन में कौन-से दिए गए हैं? | Calcutta-Bairat Rock Edict और Minor Rock Edict I। | महत्त्वपूर्ण | S27 — PMML, “Understanding the Ashokan Inscriptions and the Archaeological Landscape of Bairat” |
+| BRT-009 | बैराठ के उत्खनित स्थल को ASI inventory में किस अधिसूचना से जोड़ा गया है? | Act No. LXXI of 1951, दिनांक 28 नवम्बर 1951। | महत्त्वपूर्ण | S26 — entry 107, printed p. 143 |
+
+### स्रोत-सावधानी
+
+- **S26:** Archaeological Survey of India, *Inventory of Monuments and Sites of National Importance*, Vol. II, Part 1, Jaipur Circle (2006), entry 107 “Excavated Site (Bairat/Viratnagar)”, printed p. 143: https://ignca.gov.in/Asi_data/88329.pdf
+- **S27:** Prime Ministers’ Museum & Library, Meenakshi Vashisth, “Understanding the Ashokan Inscriptions and the Archaeological Landscape of Bairat”: https://pmml.nic.in/downloadSeries/342
+- S26 बैराठ को मत्स्यदेश की राजधानी कहता है; इसे ASI inventory का अभिलेखित परिचय मानें, स्वतंत्र रूप से सिद्ध प्राचीन राजधानी का पूर्ण इतिहास नहीं।
+- S26 में बिजक-की-पहाड़ी का स्तूप-मंदिर और मठीय अवशेष दिए हैं। PDF page-image screenshot प्रयास में timeout आया; मूल page/plan image की स्वतंत्र जाँच शेष है।
+- BRT-001–BRT-009 सभी NEEDS_REVIEW हैं; कोई learner VERIFIED या PYQ दावा नहीं।
+
 ## अध्याय 2 की समग्र प्रगति और अगला क्रम
 
 | Child-site | मसौदा स्थिति | शेष उच्च-प्राथमिकता कार्य |
 |---|---|---|
 | कालीबंगा | 311 Q&A drafts | primary report page/plate cross-check, unresolved source conflicts, exam mapping और independent review |
 | आहड़-बनास | 20 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
-| गणेश्वर-जोधपुरा | शुरू नहीं | मुख्य location, chronology, copper artefacts, site relationship और source-supported exam facts |
-| बैराठ / विराटनगर | शुरू नहीं | location, Matsya connection, inscriptions, Buddhist remains और important archaeological evidence |
+| गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
+| बैराठ / विराटनगर | 9 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
 | अन्य स्थल | scope confirmation pending | user book chapter 2 और selected official syllabus से ही जोड़ें |
 
-**अगला वास्तविक काम:** इसी parent chapter के भीतर गणेश्वर-जोधपुरा और बैराठ के लिए संक्षिप्त, महत्वपूर्ण प्रश्नोत्तर तैयार करना; अन्य पुस्तक-सूची में दिखने वाले स्थलों को पृष्ठ 145–149 से पुष्टि के बाद जोड़ना। इसके बाद chapter-level review करके पुस्तक-अध्याय 3 पर जाना है। Ahar-Banas को अलग main topic या next book chapter न बनाएं।
+**अगला वास्तविक काम:** पुस्तक-अध्याय 2 के भीतर पुस्तक की शेष सूची से अन्य स्थल/जनपद पृष्ठ 145–149 पर जाँचकर शामिल करना, फिर एक संयुक्त chapter-level important-fact review और duplicate audit करना। इसके बाद ही पुस्तक-अध्याय 3 पर जाएँ।

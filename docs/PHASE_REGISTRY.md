@@ -656,3 +656,10 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - All 331 Q&A remain NEEDS_REVIEW. The original ASI page/plate image review and independent factual review remain outstanding.
 - Current-head CI for commit c2ff0607a19ca1bef2ec23d006838edbaf97d3de: backend 645 tests and API container build passed; Flutter analyze, 19 mobile tests, release APK build, verification and artifact upload passed using pinned Flutter 3.47.9. Artifact ID 14401031754, SHA-256 cbbd170efaf5efa5895a89b90e73e707883db2c7eb72d6ba854c6fa12d3e46af, expiry 2026-12-02. This is a CI test APK, not live Firebase/device/API E2E evidence.
 - Phase states unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## 2026-11-18 — Chapter 2 Ganeshwar and Bairat high-yield drafts
+
+- Added 18 GJ and 9 BRT Hindi study-note drafts to the single parent chapter 2 file. Chapter total now 358 Q&A: KAL 311 + AHB 20 + GJ 18 + BRT 9. All remain NEEDS_REVIEW.
+- S25: ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation, printed pp.61–62. S26: ASI Jaipur Circle Inventory (2006), Bairat entry 107, printed p.143. S27: PMML Ashokan-inscription study.
+- Page-image screenshot attempts timed out; independent visual review remains open. Phase statuses unchanged.

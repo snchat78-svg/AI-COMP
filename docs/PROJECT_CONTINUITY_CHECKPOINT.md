@@ -870,3 +870,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Do not start book Chapter 3 until the important-question coverage of Chapter 2's relevant sites, source checks and duplicate audit are done. Keep the workflow bounded: high-yield facts first; no endless micro-subtopics/obscure inventory.
 - The previous rule “do not start Ahar-Banas until Kalibanga is complete” is superseded; Ahar-Banas is now child-site 2 of the same parent chapter, not a new main topic.
 - Latest CI commit c2ff0607a19ca1bef2ec23d006838edbaf97d3de: backend 645 tests + API container succeeded; Flutter 3.47.9 analyze + 19 tests + release APK build/verify/upload succeeded. Artifact ID 14401031754, SHA-256 cbbd170efaf5efa5895a89b90e73e707883db2c7eb72d6ba854c6fa12d3e46af, expiry 2026-12-02. CI artifact is for testing; no live Firebase/device/API E2E claim.
+
+
+## 2026-11-18 — Chapter 2 child-site content continuation
+
+- Chapter 2 parent file now contains 358 primary AI-authored Hindi Q&A drafts: KAL 311 + AHB 20 + GJ 18 + BRT 9. All question sets remain NEEDS_REVIEW.
+- Ganeshwar GJ-001–GJ-018 is based on ASI *Indian Archaeology 1981–82 — A Review*, printed pp.61–62. Bairat BRT-001–BRT-009 is based on ASI Jaipur Circle Inventory entry 107, printed p.143, and PMML for the Ashokan inscription names.
+- PDF page/plan screenshot requests timed out. Original page visuals remain to be checked. Further ancient sites must be confirmed from the user's book pp.145–149 before creating another child-site.
+- Do not start book chapter 3 yet. Continue within parent chapter 2 and keep the high-yield question scope bounded.

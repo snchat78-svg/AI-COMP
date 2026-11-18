@@ -26,7 +26,7 @@
 ### राजस्थान इतिहास — Rajasthan History
 
 **मुख्य topic groups:** 7 • **उपविषय:** 34  
-**वर्तमान मसौदा:** पुस्तक-अध्याय 2 “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है। इसके अंदर कालीबंगा (311 KAL drafts) और आहड़-बनास (20 AHB drafts) एक ही canonical parent file में हैं; दोनों के सभी प्रश्न NEEDS_REVIEW हैं। गणेश्वर-जोधपुरा और बैराठ अगले child-sites हैं। 34 स्थायी catalogue concept IDs बदले नहीं गए हैं।
+**वर्तमान मसौदा:** पुस्तक-अध्याय 2 “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है। इसके अंदर कालीबंगा (311 KAL drafts), आहड़-बनास (20 AHB drafts), गणेश्वर-जोधपुरा (18 GJ drafts) और बैराठ/विराटनगर (9 BRT drafts) एक ही canonical parent file में हैं; सभी प्रश्न NEEDS_REVIEW हैं। 34 स्थायी catalogue concept IDs बदले नहीं गए हैं।
 
 
 #### पुस्तक-संरचना के अनुसार राजस्थान इतिहास का मुख्य अध्याय क्रम
@@ -59,8 +59,8 @@
 |---:|---|---|---|
 | 1 | कालीबंगा — Kalibangan | `catalog.rajasthan_history_ancient_history_kalibangan` | [311 Q&A; parent chapter 2 के उपविषय 1 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
 | 2 | आहड़-बनास संस्कृति — Ahar-Banas Culture | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | [20 Q&A; parent chapter 2 के उपविषय 2 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
-| 3 | गणेश्वर-जोधपुरा संस्कृति — Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | मसौदा शुरू नहीं |
-| 4 | बैराठ — Bairat | `catalog.rajasthan_history_ancient_history_bairat` | मसौदा शुरू नहीं |
+| 3 | गणेश्वर-जोधपुरा संस्कृति — Ganeshwar-Jodhpura Culture | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | [18 Q&A; parent chapter 2 के उपविषय 3 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
+| 4 | बैराठ — Bairat | `catalog.rajasthan_history_ancient_history_bairat` | [9 Q&A; parent chapter 2 के उपविषय 4 में](rajasthan-history/ancient-history/ancient-civilization-sites.md) — NEEDS_REVIEW |
 | 5 | मत्स्य जनपद — Matsya Janapada | `catalog.rajasthan_history_ancient_history_matsya_janapada` | मसौदा शुरू नहीं |
 
 #### 2. प्रमुख राजवंश — Major Dynasties
@@ -407,3 +407,8 @@ The single Kalibanga topic's architecture subtopic now indexes KAL-001–KAL-311
 - Replaced the site-by-site main-topic sequence with the book's visible Chapter 2 parent: “राजस्थान के प्राचीन सभ्यता स्थल” (starts p.145; chapter exercise p.148; Chapter 3 starts p.150).
 - Consolidated KAL-001–KAL-311 and AHB-001–AHB-020 under one parent file. Existing child concept IDs remain unchanged. Ahar-Banas is a child-site in the same chapter, not the next main chapter.
 - Important-question policy is high-yield and bounded: no endless catalogue/measurement minutiae or count-driven drafting. Chapter 3 starts only after Chapter 2's relevant child-sites are covered.
+
+
+## 2026-11-18 — chapter 2 child-site coverage extension
+
+Book Chapter 2 now holds 358 primary Hindi Q&A drafts in one parent file: Kalibanga 311, Ahar-Banas 20, Ganeshwar-Jodhpura 18, Bairat/Viratnagar 9. Existing concept IDs remain as child references. All are NEEDS_REVIEW; PDF page-image/plan verification and independent review remain open.

@@ -46,7 +46,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 ## Existing drafts — queued, not being expanded in parallel
 
-- [Rajasthan History](rajasthan-history/README.md): Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” — 311 Kalibanga + 20 Ahar-Banas primary Hindi Q&A drafts in one canonical parent chapter file; all NEEDS_REVIEW.
+- [Rajasthan History](rajasthan-history/README.md): Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” — 311 Kalibanga + 20 Ahar-Banas + 18 Ganeshwar-Jodhpura + 9 Bairat primary Hindi Q&A drafts in one canonical parent chapter file; all NEEDS_REVIEW.
 - [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
 - [Rajasthan Polity & Administration](rajasthan-polity-administration/initial-source-review.md): 27 Hindi Q&A drafts; all NEEDS_REVIEW.
 - [Hindi](hindi/initial-source-review.md): 24 Hindi grammar Q&A drafts across वर्णमाला and संधि; all NEEDS_REVIEW.
@@ -61,7 +61,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 - Notes: [Combined chapter-2 notes](rajasthan-history/ancient-history/ancient-civilization-sites.md)
 - Child-site 1: Kalibanga — `catalog.rajasthan_history_ancient_history_kalibangan`, 311 KAL drafts (11 internal headings).
 - Child-site 2: Ahar-Banas — `catalog.rajasthan_history_ancient_history_ahar_banas_culture`, 20 AHB drafts.
-- Current state: `DRAFTING / NOT COMPLETE`; all 331 draft Q&A remain `NEEDS_REVIEW`. Ganeshwar-Jodhpura and Bairat remain to be covered within this same parent chapter. The book TOC image shows the Chapter 2 start at p.145, chapter questions at p.148 and next chapter at p.150. No exam-specific official-syllabus mapping is claimed.
+- Current state: `DRAFTING / NOT COMPLETE`; all 358 draft Q&A remain `NEEDS_REVIEW`. Ganeshwar-Jodhpura and Bairat have now been added within this same parent chapter; further child-sites require ToC/page scope confirmation. The book TOC image shows the Chapter 2 start at p.145, chapter questions at p.148 and next chapter at p.150. No exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
@@ -129,3 +129,8 @@ Do not create a fixed question-count ceiling. Add Q&As until all syllabus-releva
 ## 2026-11-18 — parent chapter workflow
 
 Book chapters, not every internal site/subheading, are the main topic units. All relevant sites for a chapter must be nested below the same parent topic. For Rajasthan History Chapter 2, use [the combined ancient-civilization-sites file](rajasthan-history/ancient-history/ancient-civilization-sites.md); do not split Kalibanga and Ahar-Banas into separate main topics.
+
+
+## 2026-11-18 — chapter 2 child-site question batches
+
+The shared parent chapter now contains 358 primary Hindi drafts (KAL 311 + AHB 20 + GJ 18 + BRT 9); all remain NEEDS_REVIEW. New source locators are ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation pp.61–62, and ASI Jaipur Circle Inventory entry 107, Bairat p.143, with PMML support for the two inscription names. No new main topic was created.
