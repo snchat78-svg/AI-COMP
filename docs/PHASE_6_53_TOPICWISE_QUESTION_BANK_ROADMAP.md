@@ -420,3 +420,11 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Added 9 Hindi One-Liner drafts (BRT-001–BRT-009) under child-site 4, using ASI Jaipur Circle Inventory (2006), entry 107, printed p.143, plus PMML for the two inscription titles. Coverage: district/tehsil/coordinates, Matsya association, Ashokan/Buddhist remains, Bijak-ki-Pahari circular stupa-shrine, 26 wooden octagonal pillars, monastery plan and notification date.
 - Chapter 2 now contains 358 primary drafts in the same parent file (KAL311 + AHB20 + GJ18 + BRT9); all remain NEEDS_REVIEW. No fifth child-site was inferred without inspecting the user's book pages 145–149.
 - ASI PDF screenshot attempts for the relevant Ganeshwar and Bairat pages timed out. Indexed official text and locators were checked; original page/plan image review remains open.
+
+
+## 2026-11-18 — mobile topic hierarchy implementation
+
+- Phase 6.56 mobile question bank now renders parent main chapters as expandable groups and child sites/themes beneath them, using the existing concept topic/subtopic metadata and API route.
+- Migration 0028 maps only four ToC-confirmed ancient-site concept IDs to Hindi Chapter-2 labels; IDs remain stable. CSV follows the same grouping.
+- Search auto-expands the matching parent; one-liner and previous-year detail content is unchanged. Tests cover the four child-sites grouped beneath one book chapter.
+- No live DB migration has been applied. Phase 6.56 remains in progress pending exact-head CI and mobile E2E checks.

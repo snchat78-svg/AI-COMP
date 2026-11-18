@@ -74,6 +74,19 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
     return searchable.contains(_searchQuery);
   }
 
+  Map<String, List<QuestionBankTopic>> _groupTopicsByMainTopic(
+    List<QuestionBankTopic> topics,
+  ) {
+    final groups = <String, List<QuestionBankTopic>>{};
+    for (final topic in topics) {
+      final mainTopic = topic.topic?.trim().isNotEmpty == true
+          ? topic.topic!.trim()
+          : topic.subject;
+      groups.putIfAbsent(mainTopic, () => <QuestionBankTopic>[]).add(topic);
+    }
+    return groups;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +152,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                   );
                 }
                 final filtered = topics.where(_matchesSearch).toList(growable: false);
+                final groups = _groupTopicsByMainTopic(filtered);
                 final visibleVerifiedCount = filtered.fold<int>(
                   0,
                   (sum, topic) => sum + topic.verifiedOneLinerCount,
@@ -149,15 +163,16 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                       child: Text(
-                        '${filtered.length} of ${topics.length} topics • '
-                        '$visibleVerifiedCount verified one-liner Q&A available',
+                        '${filtered.length} of ${topics.length} child topics • '
+                        '${groups.length} main topics • '
+                        '${visibleVerifiedCount} verified one-liner Q&A available',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        'Topic-list presence is not proof of full syllabus or question coverage. Only source-reviewed Q&A count as verified.',
+                        'Select a main chapter to expand its sites/topics. Topic-list presence is not proof of full coverage; only source-reviewed Q&A count as verified.',
                       ),
                     ),
                     if (filtered.isEmpty)
@@ -165,42 +180,63 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                         child: _QuestionBankMessage(
                           icon: Icons.search_off,
                           title: 'No matching topics',
-                          message: 'Try another topic, subtopic or keyword.',
+                          message: 'Try another chapter, site, subtopic or keyword.',
                         ),
                       )
                     else
                       Expanded(
                         child: ListView.separated(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                          itemCount: filtered.length,
+                          itemCount: groups.length,
                           separatorBuilder: (_, __) => const SizedBox(height: 8),
                           itemBuilder: (context, index) {
-                            final topic = filtered[index];
-                            final path = <String>[
-                              if (topic.topic != null && topic.topic!.isNotEmpty) topic.topic!,
-                              if (topic.subtopic != null && topic.subtopic!.isNotEmpty)
-                                topic.subtopic!,
-                            ].join(' • ');
+                            final group = groups.entries.elementAt(index);
+                            final childTopics = group.value;
+                            final groupVerifiedCount = childTopics.fold<int>(
+                              0,
+                              (sum, topic) => sum + topic.verifiedOneLinerCount,
+                            );
                             return Card(
-                              child: ListTile(
-                                leading: const CircleAvatar(child: Icon(Icons.topic_outlined)),
-                                title: Text(topic.label),
-                                subtitle: Text(
-                                  '${path.isEmpty ? topic.subject : path}\n'
-                                  '${topic.verifiedOneLinerCount} verified one-liner Q&A',
+                              child: ExpansionTile(
+                                key: PageStorageKey<String>(
+                                  'question-bank-main-topic-${group.key}',
                                 ),
-                                isThreeLine: true,
-                                trailing: const Icon(Icons.chevron_right),
-                                onTap: () {
-                                  Navigator.of(context).push<void>(
-                                    MaterialPageRoute(
-                                      builder: (_) => TopicQuestionBankDetailScreen(
-                                        api: widget.api,
-                                        topic: topic,
+                                initiallyExpanded:
+                                    _searchQuery.isNotEmpty || groups.length == 1,
+                                leading: const CircleAvatar(
+                                  child: Icon(Icons.menu_book_outlined),
+                                ),
+                                title: Text(group.key),
+                                subtitle: Text(
+                                  '${childTopics.length} child topics • '
+                                  '${groupVerifiedCount} verified one-liner Q&A',
+                                ),
+                                children: [
+                                  for (final topic in childTopics)
+                                    ListTile(
+                                      contentPadding: const EdgeInsets.only(
+                                        left: 24,
+                                        right: 16,
                                       ),
+                                      leading: const Icon(Icons.account_tree_outlined),
+                                      title: Text(topic.subtopic ?? topic.label),
+                                      subtitle: Text(
+                                        '${topic.label} • '
+                                        '${topic.verifiedOneLinerCount} verified Q&A',
+                                      ),
+                                      trailing: const Icon(Icons.chevron_right),
+                                      onTap: () {
+                                        Navigator.of(context).push<void>(
+                                          MaterialPageRoute(
+                                            builder: (_) => TopicQuestionBankDetailScreen(
+                                              api: widget.api,
+                                              topic: topic,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
+                                ],
                               ),
                             );
                           },

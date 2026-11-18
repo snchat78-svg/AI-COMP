@@ -878,3 +878,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Ganeshwar GJ-001–GJ-018 is based on ASI *Indian Archaeology 1981–82 — A Review*, printed pp.61–62. Bairat BRT-001–BRT-009 is based on ASI Jaipur Circle Inventory entry 107, printed p.143, and PMML for the Ashokan inscription names.
 - PDF page/plan screenshot requests timed out. Original page visuals remain to be checked. Further ancient sites must be confirmed from the user's book pp.145–149 before creating another child-site.
 - Do not start book chapter 3 yet. Continue within parent chapter 2 and keep the high-yield question scope bounded.
+
+
+## 2026-11-18 — mobile chapter-parent navigation
+
+- Current mobile UI previously rendered each concept as a flat list. It now groups by the existing `topic` field and expands child concepts by `subtopic`, with search auto-expanding matching child rows.
+- Migration 0028 sets the four confirmed ancient-site concept rows to the book Chapter-2 parent “राजस्थान के प्राचीन सभ्यता स्थल”. Stable concept IDs are not changed; Q&A/previous-paper detail routes remain unchanged.
+- Flutter widget test added for the four site groups and existing tests retained for detail tabs. This is the intended mobile user navigation: Rajasthan History → राजस्थान के प्राचीन सभ्यता स्थल → कालीबंगा/आहड़-बनास/गणेश्वर-जोधपुरा/बैराठ.
+- Migration is not applied live. Await exact-head backend and Flutter CI before merge.

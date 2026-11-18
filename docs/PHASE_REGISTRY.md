@@ -663,3 +663,11 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Added 18 GJ and 9 BRT Hindi study-note drafts to the single parent chapter 2 file. Chapter total now 358 Q&A: KAL 311 + AHB 20 + GJ 18 + BRT 9. All remain NEEDS_REVIEW.
 - S25: ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation, printed pp.61–62. S26: ASI Jaipur Circle Inventory (2006), Bairat entry 107, printed p.143. S27: PMML Ashokan-inscription study.
 - Page-image screenshot attempts timed out; independent visual review remains open. Phase statuses unchanged.
+
+
+## 2026-11-18 — Phase 6.56 parent-chapter mobile navigation increment
+
+- Added Flutter parent grouping: main chapter uses the concept `topic` label; expandable children use `subtopic` labels. Child taps preserve canonical concept IDs and open the existing topic detail (verified One-Liner / Previous Year tabs).
+- Added idempotent migration 0028 to group the four Chapter-2 ancient-site concepts under “राजस्थान के प्राचीन सभ्यता स्थल” with Hindi child labels; updated the coverage CSV rows while retaining exam-syllabus review status and live DB counts as NOT_QUERIED.
+- Added widget test coverage for KAL/AHB/GJ/BRT as four children of one parent and adjusted topic search count assertion. Existing detail tabs and API calls remain unchanged.
+- Migration is repository-only and not applied to production. Phase 6.56 remains IN_PROGRESS pending CI, exact-host mobile verification and separate official exam-syllabus gates.

@@ -9,7 +9,7 @@
 ## Existing code to extend
 
 - Dashboard's existing subject selection in PreparationHomeScreen.
-- Existing QuestionBankScreen subject → topic page list.
+- Existing QuestionBankScreen groups the existing concept catalogue by the `topic` field (main chapter) and expands matching `subtopic` concepts (sites/themes). Each child retains its canonical concept_id and opens the existing detail screen.
 - Existing topic detail screen with separate One-Liner Q&A and Previous Year tabs.
 - Existing authenticated endpoints/client methods for topic listing, verified one-liners and filtered previous papers.
 - Existing current-session/test/result flows must remain untouched.
@@ -20,7 +20,7 @@ Do not create a parallel topic taxonomy, duplicate content APIs, a new question 
 
 - Fetch the topic list through bounded API pages, stopping on the first partial/empty page and enforcing a client-side safety bound.
 - Add search across topic label, topic group, subtopic, subject and canonical concept ID.
-- Display current topic-list totals and verified one-liner counts without treating catalogue presence as complete coverage.
+- Display main-chapter and child-topic totals plus verified one-liner counts without treating catalogue presence as complete coverage.
 - Keep One-Liner Q&A and Previous Year Papers as separate tabs, each with independent loading, error/retry and honest empty states.
 - Load each content section with separate bounded 100-item requests and separate offsets/loading/error state; provide an explicit Load More action rather than assuming the first page is the complete bank.
 - Preserve question source/evidence and official paper/answer-key provenance.
@@ -55,3 +55,11 @@ A first implementation slice is now on `phase-6-56-exam-syllabus-mapping`: migra
 **Still open:** the official RSSB CET Graduation Level 2026 PDF URL is identified but direct file retrieval/content/SHA-256 has not been independently confirmed. The seed deliberately stays `REVIEW_PENDING`; all 340 generic concepts currently remain unmapped to that exam and no exam-scoped subjects should be shown. Next retrieve/hash/review the actual official document, extract its complete unit/subtopic inventory and exact evidence locators, add any concepts missing from the current catalogue, review every applicable/out-of-scope concept, and only then enable the profile selector. Do not infer official coverage from secondary syllabi.
 
 Keep Phase 6.55's live migration/reviewer-secret gates visible. Continue Q&A authoring from `QUESTION_BANK_CONTENT_COVERAGE.csv` only after official profile scope is established; each topic needs full examinable-point coverage, not merely a fixed count, and draft candidates must remain `NEEDS_REVIEW` until independent review.
+
+## 2026-11-18 — book-chapter grouped mobile navigation
+
+- Mobile navigation is parent chapter → expandable child site/topic → existing content detail. It uses the existing `concepts.topic` and `concepts.subtopic` fields returned by the same topics API; no duplicate navigation API or question store is introduced.
+- Migration `0028_book_chapter_hierarchy_for_question_bank.sql` updates only four confirmed Rajasthan History ancient-site concept labels/topic/subtopic values to the user's Chapter 2 parent. Canonical concept IDs are unchanged.
+- Search filters child rows and opens the matching parent group automatically. A single group is expanded by default; multiple groups stay collapsed by default. One-Liner Q&A and Previous Year tabs, their paging and evidence display remain unchanged.
+- Widget tests cover the four Chapter-2 child sites under one parent. Other book chapters remain on their existing catalogue topic values until the user's ToC confirms their grouping.
+- The migration is in Git only; it has not been applied to any live database. Fresh backend and Flutter CI must pass on the exact commit before merging.
