@@ -85,7 +85,8 @@ void main() {
 
     expect(find.text('Thar Desert'), findsOneWidget);
     expect(find.text('Topic 0'), findsNothing);
-    expect(find.textContaining('1 of 101 topics'), findsOneWidget);
+    expect(find.textContaining('1 of 101 child topics'), findsOneWidget);
+    expect(find.text('Rivers and Drainage'), findsOneWidget);
   });
 
   testWidgets('keeps one-liner and previous-paper empty states independent', (tester) async {
@@ -253,5 +254,77 @@ void main() {
     expect(find.text('No topics are mapped yet'), findsOneWidget);
   });
 
+
+  testWidgets('groups child sites under one book chapter without changing concept IDs',
+      (tester) async {
+    final mock = MockClient((request) async {
+      if (request.url.path.endsWith('/question-bank/topics')) {
+        return jsonResponse({
+          'items': [
+            {
+              'concept_id': 'catalog.rajasthan_history_ancient_history_kalibangan',
+              'label': 'कालीबंगा',
+              'subject': 'Rajasthan History',
+              'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
+              'subtopic': 'कालीबंगा',
+              'verified_one_liner_count': 0,
+            },
+            {
+              'concept_id': 'catalog.rajasthan_history_ancient_history_ahar_banas_culture',
+              'label': 'आहड़-बनास संस्कृति',
+              'subject': 'Rajasthan History',
+              'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
+              'subtopic': 'आहड़-बनास संस्कृति',
+              'verified_one_liner_count': 0,
+            },
+            {
+              'concept_id': 'catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture',
+              'label': 'गणेश्वर-जोधपुरा संस्कृति',
+              'subject': 'Rajasthan History',
+              'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
+              'subtopic': 'गणेश्वर-जोधपुरा संस्कृति',
+              'verified_one_liner_count': 0,
+            },
+            {
+              'concept_id': 'catalog.rajasthan_history_ancient_history_bairat',
+              'label': 'बैराठ / विराटनगर',
+              'subject': 'Rajasthan History',
+              'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
+              'subtopic': 'बैराठ / विराटनगर',
+              'verified_one_liner_count': 0,
+            },
+          ],
+          'pagination': {
+            'limit': 100,
+            'offset': 0,
+            'returned': 4,
+            'has_more': false,
+          },
+        });
+      }
+      return jsonResponse({'items': [], 'pagination': {
+        'limit': 100,
+        'offset': 0,
+        'returned': 0,
+        'total_count': 0,
+        'has_more': false,
+      }});
+    });
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+
+    await tester.pumpWidget(MaterialApp(
+      home: QuestionBankScreen(api: api, subjectId: 'Rajasthan History'),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('राजस्थान के प्राचीन सभ्यता स्थल'), findsOneWidget);
+    expect(find.text('4 child topics • 0 verified one-liner Q&A'), findsOneWidget);
+    expect(find.text('कालीबंगा'), findsOneWidget);
+    expect(find.text('आहड़-बनास संस्कृति'), findsOneWidget);
+    expect(find.text('गणेश्वर-जोधपुरा संस्कृति'), findsOneWidget);
+    expect(find.text('बैराठ / विराटनगर'), findsOneWidget);
+  });
 
 }

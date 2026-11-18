@@ -1,6 +1,6 @@
 # AI-COMP Subject-wise Study Notes
 
-**Purpose:** Build a complete, source-backed Q&A notes collection subject → topic → subtopic before generating MCQ practice and tests from that content.
+**Purpose:** Build source-backed Q&A as subject → book main chapter/topic → internal site/dynasty/theme subtopics before generating MCQ practice and tests. The learner UI should show the book chapter as the main topic, not every site or small subtopic as a separate main topic.
 
 **Canonical coverage policy:** [Question Bank Content Coverage](../QUESTION_BANK_CONTENT_COVERAGE.md)  
 **Canonical concept ledger:** [QUESTION_BANK_CONTENT_COVERAGE.csv](../QUESTION_BANK_CONTENT_COVERAGE.csv)  
@@ -46,7 +46,7 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 ## Existing drafts — queued, not being expanded in parallel
 
-- [Rajasthan History](rajasthan-history/README.md): Kalibangan — 282 primary Q&A drafts in PR #113; all NEEDS_REVIEW.
+- [Rajasthan History](rajasthan-history/README.md): Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” — 311 Kalibanga + 20 Ahar-Banas + 18 Ganeshwar-Jodhpura + 9 Bairat primary Hindi Q&A drafts in one canonical parent chapter file; all NEEDS_REVIEW.
 - [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
 - [Rajasthan Polity & Administration](rajasthan-polity-administration/initial-source-review.md): 27 Hindi Q&A drafts; all NEEDS_REVIEW.
 - [Hindi](hindi/initial-source-review.md): 24 Hindi grammar Q&A drafts across वर्णमाला and संधि; all NEEDS_REVIEW.
@@ -57,10 +57,11 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 - Subject: Rajasthan History
 - Topic: Ancient History
-- Subtopic: Kalibangan
-- Concept ID: `catalog.rajasthan_history_ancient_history_kalibangan`
-- Notes: [Kalibangan — one-liner Q&A notes](rajasthan-history/ancient-history/kalibangan.md)
-- Current state: `DRAFTING / NOT COMPLETE`; 287 main Q&A stems are AI-authored question wording with source-paraphrased answers (not copied PYQs), 3 classroom-source items are labelled corroborative, 2 ASI-hosted images are linked, and all items remain `NEEDS_REVIEW`. The ASI Part II figure register records KLB-8 cemetery plan/view locators at printed pp. 1288–1290; visual review, KLB-4/KLB-8 label conflict and Ch.22 group-count and Ch.23 Burial 13 urn discrepancy remain open. No exam-specific official-syllabus mapping is claimed.
+- Main topic: Book Chapter 2 — राजस्थान के प्राचीन सभ्यता स्थल
+- Notes: [Combined chapter-2 notes](rajasthan-history/ancient-history/ancient-civilization-sites.md)
+- Child-site 1: Kalibanga — `catalog.rajasthan_history_ancient_history_kalibangan`, 311 KAL drafts (11 internal headings).
+- Child-site 2: Ahar-Banas — `catalog.rajasthan_history_ancient_history_ahar_banas_culture`, 20 AHB drafts.
+- Current state: `DRAFTING / NOT COMPLETE`; all 358 draft Q&A remain `NEEDS_REVIEW`. Ganeshwar-Jodhpura and Bairat have now been added within this same parent chapter; further child-sites require ToC/page scope confirmation. The book TOC image shows the Chapter 2 start at p.145, chapter questions at p.148 and next chapter at p.150. No exam-specific official-syllabus mapping is claimed.
 
 ## Standard for every notes file
 
@@ -105,3 +106,31 @@ Do not create a fixed question-count ceiling. Add Q&As until all syllabus-releva
 - Kalibanga now contains 287 AI-authored Hindi Q&A drafts (KAL-001–KAL-287), 3 separately labelled corroborative items and 2 ASI photographs. All Q&A remain NEEDS_REVIEW; the topic is not complete.
 - User-directed workflow: finish Kalibanga first. Other subject drafts are parked; do not create fresh parallel question batches until the active topic passes its source, coverage, duplicate and independent-review gates.
 - APK CI now also runs on documentation-note pull requests. Its APK represents the existing mobile app; documentation drafts are not automatically included in the app or live database.
+
+
+## 2026-11-12 — hierarchy-first continuation
+
+- Current review branch `content/kalibangan-single-topic-hierarchy-structure` keeps Kalibanga as one canonical topic and adds an 11-subtopic index inside that topic file.
+- KAL-288–KAL-304 add 17 Hindi One-Liners under the existing “नगर-योजना, किलेबंदी, आवास और जल-निकासी” subtopic. They are AI-authored, source-located drafts, not PYQs, and remain NEEDS_REVIEW.
+- The hierarchy examples are now permanent: dynasty histories stay under one dynasty subtopic; rulers are nested in chronological internal sections; a broad jewellery topic remains one parent topic with material/type/technique/region subtopics. No unrelated top-level topic proliferation.
+- The new branch is not merged yet. No app code, database, migration, learner-visible verified content or APK changed.
+
+
+- Latest subtopic extension: KAL-301–KAL-304 adds clay bonding-material colour and waterlogging, road reconstruction phases, incised floor tiles and street-side doors opening into courtyards. These remain within the same Kalibanga architecture subtopic. Review-branch total: 304 primary Q&A; all remain NEEDS_REVIEW.
+
+
+## 2026-11-18 — hierarchy-first continuation
+
+- Kalibanga review branch count is now 311 primary Hindi Q&A drafts (KAL-001–KAL-311), with KAL-305–KAL-311 added under the existing architecture subtopic from official ASI Part I printed pp. 130–131. All remain NEEDS_REVIEW; the page-image and figure checks are open.
+- PR #115 remains an open review branch until all required checks pass. Flutter workflow SDK drift from 3.47.9 to 3.50.0 was the cause of the analyzer failure; the workflow is being pinned to the known-green 3.47.9 environment pending rerun.
+- No Ahar-Banas, second subject, live DB publication, or phase transition is started by this update.
+
+
+## 2026-11-18 — parent chapter workflow
+
+Book chapters, not every internal site/subheading, are the main topic units. All relevant sites for a chapter must be nested below the same parent topic. For Rajasthan History Chapter 2, use [the combined ancient-civilization-sites file](rajasthan-history/ancient-history/ancient-civilization-sites.md); do not split Kalibanga and Ahar-Banas into separate main topics.
+
+
+## 2026-11-18 — chapter 2 child-site question batches
+
+The shared parent chapter now contains 358 primary Hindi drafts (KAL 311 + AHB 20 + GJ 18 + BRT 9); all remain NEEDS_REVIEW. New source locators are ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation pp.61–62, and ASI Jaipur Circle Inventory entry 107, Bairat p.143, with PMML support for the two inscription names. No new main topic was created.

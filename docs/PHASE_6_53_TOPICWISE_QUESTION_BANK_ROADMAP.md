@@ -1,6 +1,6 @@
 # Phase 6.53–6.58 — Topic-wise Question Bank and Complete Preparation
 
-**Strict sequencing rule:** this is a dependency chain, not a menu of parallel phases. Finish and record each phase's exit gates before starting the next numbered phase. A merged PR or green CI is not proof that official content/live data is ready. A phase blocked by an external prerequisite stays open/blocked; never manufacture evidence, silently skip it, or mark it complete to advance. The canonical status is always in [PHASE_REGISTRY.md](PHASE_REGISTRY.md).
+**Strict sequencing rule:** this is a dependency chain, not a menu of parallel phases. For content, the main unit is the book's complete chapter/topic; all internal sites/dynasties/subsections must stay nested inside it. Finish the full main chapter before starting the next book chapter. A merged PR or green CI is not proof that official content/live data is ready. A phase blocked by an external prerequisite stays open/blocked; never manufacture evidence, silently skip it, or mark it complete to advance. The canonical status is always in [PHASE_REGISTRY.md](PHASE_REGISTRY.md).
 
 **Phase/status source of truth:** [AI-COMP Phase Registry](PHASE_REGISTRY.md). Phase 6.53 application code is merged (PR #36 plus follow-up PR #39); the repository CI checks passed on the PR #39 head before merge. This does **not** mean the question content is complete: one-liners and verified historical questions still depend on reviewed/source-backed records, controlled migration application, and server-side secret configuration. The starter topic list is not a substitute for each exam's official syllabus.  
 **Base checkpoint:** Phase 6.52 is merged on `main` (commit `ff21194`, checkpoint commit `f7490fb`).  
@@ -11,11 +11,11 @@
 
 Before expanding MCQ generation, topic tests, mastery or revision, build the learner's study material as **subject → topic → subtopic → one-liner question + direct answer notes**. Notes are the primary study layer; MCQs and tests must be derived from the reviewed notes rather than replacing them.
 
-For each topic, create enough independent Q&A pairs to cover the entire syllabus-relevant knowledge-point set: definitions, identities, places, people, dates, facts, categories, lists, comparisons, causes/effects, sequences, rules, formulas, exceptions, diagrams/maps and applications where relevant. There is no fixed question-count ceiling and no topic is complete merely because it has five or ten items. Maintain a visible coverage checklist and unresolved-gap list.
+For each main book chapter, create a focused set of important independent Q&A pairs: identity, location, people, dates, signature finds/features, categories, comparisons, causes/effects and other syllabus-relevant facts. Do not create endless micro-subtopic batches, count-driven questions or obscure object-catalogue minutiae unless they have clear exam value. There is no fixed question-count target; stop the first pass when the high-yield chapter checklist is covered, then run source and duplicate checks and record only material gaps.
 
 Every fact must have a source URL and an exact page/section/heading/evidence locator. New AI-assisted drafts remain `NEEDS_REVIEW` until a separate reviewer checks them. Keep generic reference notes distinct from exam-specific notes until an official syllabus is retrieved and its mapping is independently reviewed. Keep One-Liners, real previous-paper questions, and generated MCQs as separate content types.
 
-The subject sequence follows the current 14-category catalogue in `QUESTION_BANK_CONTENT_COVERAGE.csv`, beginning with Rajasthan History. The first content slice is Rajasthan History → Ancient History → Kalibangan, documented at [docs/study-notes/README.md](study-notes/README.md) and [Kalibangan Q&A notes](study-notes/rajasthan-history/ancient-history/kalibangan.md). Its current status is DRAFTING / NOT COMPLETE. PR #113 is merged; as of 12 November 2026, the canonical notes contain 287 primary AI-authored Q&A drafts, 3 separately labelled corroborative points and 2 ASI-hosted photographs. Question wording is authored in new Hindi phrasing; facts are source-paraphrased, not verbatim website/PYQ copies. All content remains NEEDS_REVIEW and the source/coverage review is open. This content-first priority does not mark Phase 6.56 complete or unlock Phase 6.57.
+The subject sequence still uses the 14-category canonical ledger, but book chapters now define the learner-facing main topic grouping. The active content slice is Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”, consolidated in [ancient-civilization-sites.md](study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md). It contains Kalibanga as child-site 1 (KAL-001–KAL-311; 311 drafts), Ahar-Banas as child-site 2 (AHB-001–AHB-020; 20 drafts), Ganeshwar-Jodhpura as child-site 3 (GJ-001–GJ-018; 18 drafts), and Bairat/Viratnagar as child-site 4 (BRT-001–BRT-009; 9 drafts). Existing canonical concept IDs are retained as child references; all 358 items remain NEEDS_REVIEW. Do not start Book Chapter 3 until the important coverage for every chapter-2 site has been completed.
 
 ### Kalibangan notes progress — 10 November 2026
 
@@ -384,3 +384,47 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 2.2 BLOCKED; Phase 6.58 BLOCKED. No application code, DB, migrations, APK or learner data changed in this content integrity audit.
 
 **PR #113 CI/APK evidence (2026-11-10):** exact head `b0fd3873fddb72884c8329730735d15730a2aae3` passed backend run `42781714817` (645 tests, 14 warnings, API container build) and Flutter run `42781715151` (analyze, 19 tests, release-mode APK build, artifact check/upload). Artifact ID `13747255331`; ZIP SHA-256 `2ab38f35bcd9d094f70ac96587fcc5de54b7c9b74fc0ded7602cc8d508846d4f`; expires 2026-11-24. CI compiled with a CI-only Firebase placeholder due unavailable secret; this is not live Firebase login or mobile API E2E. The artifact is a debug-signed test APK.
+
+## 2026-11-12 — hierarchy-first topic continuation
+
+- New review branch `content/kalibangan-single-topic-hierarchy-structure` keeps Rajasthan History → Ancient History → Kalibanga under its existing canonical concept. It contains 304 primary Q&A drafts (KAL-001–KAL-304), all assigned exactly once to the 11 internal subtopics. Do not create separate main topics for these sections.
+- KAL-288–KAL-304 add seventeen important Hindi One-Liners under “नगर-योजना, किलेबंदी, आवास और जल-निकासी”, based on the official ASI Part I indexed text, “General Features of Structures”, printed p. 130 (S22). They are AI-authored notes, not PYQs; independent page/image review remains open.
+- Branch total: 304 Q&A drafts (KAL-001–KAL-304), all NEEDS_REVIEW. Static file checks show continuous unique IDs, no normalized in-file duplicate questions/Q&A pairs, no missing question/answer/evidence fields and no malformed rows across the two supported table schemas. The subtopic index maps all IDs exactly once. A live DB semantic scan and independent review are still required.
+- Permanent hierarchy rule: one main topic holds its nested subtopics. A dynasty is a subtopic whose rulers' chronology, biographies, battles, administration and succession remain inside that dynasty; jewellery is one parent topic with subtopics for type, material, craft, region/community and body placement. Do not scatter a single topic into unrelated main topics.
+- No topic transition: Ahar-Banas remains NOT STARTED; Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 2.2 and Phase 6.58 BLOCKED.
+
+
+- Latest same-subtopic extension KAL-301–KAL-304 covers brick-bond clay colour/waterlogging, successive road reconstruction phases, incised floor tiles and street-facing doors that led into house courtyards. Branch count is now 304; these four additions remain in the existing architecture subtopic and do not create a new topic.
+
+## 2026-11-18 — Kalibanga architecture continuation and CI root-cause fix
+
+- Branch content/kalibangan-single-topic-hierarchy-structure continues the single canonical Kalibanga topic. Review-branch total: 311 AI-authored Hindi Q&A drafts, KAL-001–KAL-311; Ahar-Banas remains NOT STARTED.
+- KAL-305–KAL-311 extend only “नगर-योजना, किलेबंदी, आवास और जल-निकासी” using ASI Part I printed pp. 130–131. The seven points cover brick quality/finish, probable roof material, Phase-IX road levels, earlier unpaved roads, fender posts, a qualified large-house interpretation and the report's low-rainfall inference.
+- The PDF text is indexed at the official ASI publication endpoint, but page-image rendering and binary download did not succeed; all new items remain NEEDS_REVIEW pending original page/figure inspection.
+- The Flutter CI regression is environmental/toolchain drift: stable-channel auto-selection moved from 3.47.9 (last green run) to 3.50.0 (failed run). Pin exact flutter-version 3.47.9; rerun the entire Flutter job and backend job before accepting PR #115.
+- No Phase 6.56/6.57 or official-source research blocker status changes are authorized by this content-only batch.
+
+
+## 2026-11-18 — book-aligned chapter workflow correction (supersedes earlier site-by-site main-topic instruction)
+
+- User supplied the book's Table of Contents. Rajasthan History Chapter 2 is “राजस्थान के प्राचीन सभ्यता स्थल” (starts p.145; chapter question section p.148; Chapter 3 begins p.150). Its child-sites must be nested under one parent chapter.
+- Consolidated KAL-001–KAL-311 (Kalibanga) and AHB-001–AHB-020 (Ahar-Banas) into one canonical parent file. Existing child concept IDs are preserved; no new per-site main topic has been introduced.
+- Next work remains inside Chapter 2: Ganeshwar-Jodhpura, Bairat and any further sites confirmed by the chapter's pages. Only after this parent chapter's high-yield coverage and source/duplicate checks should Chapter 3 “राजस्थान का इतिहास–I” begin.
+- New content workflow is bounded: important exam-oriented facts first, no endless obscure measurement/catalogue Q&A, no arbitrary target question count. Preserve source disagreements and NEEDS_REVIEW status.
+- Latest CI on the same review branch: backend 645 tests + API container build passed; Flutter 3.47.9 analyze + 19 tests + release APK build/verification/upload passed. APK artifact ID 14401031754, expires 2026-12-02. This APK is a CI test artifact; it is not a claim of real Firebase/device/API end-to-end.
+
+
+## 2026-11-18 — Ganeshwar-Jodhpura and Bairat high-yield pass
+
+- Added 18 Hindi One-Liner drafts (GJ-001–GJ-018) under Chapter 2 child-site 3, using ASI *Indian Archaeology 1981–82 — A Review*, printed pp. 61–62. Coverage: location/river, Copper Age phases/deposit, copper objects, local ore interpretation, flood platforms, microliths, Jodhpura OCP pottery, painted/incised motifs and graffiti, and report-attributed C14 range.
+- Added 9 Hindi One-Liner drafts (BRT-001–BRT-009) under child-site 4, using ASI Jaipur Circle Inventory (2006), entry 107, printed p.143, plus PMML for the two inscription titles. Coverage: district/tehsil/coordinates, Matsya association, Ashokan/Buddhist remains, Bijak-ki-Pahari circular stupa-shrine, 26 wooden octagonal pillars, monastery plan and notification date.
+- Chapter 2 now contains 358 primary drafts in the same parent file (KAL311 + AHB20 + GJ18 + BRT9); all remain NEEDS_REVIEW. No fifth child-site was inferred without inspecting the user's book pages 145–149.
+- ASI PDF screenshot attempts for the relevant Ganeshwar and Bairat pages timed out. Indexed official text and locators were checked; original page/plan image review remains open.
+
+
+## 2026-11-18 — mobile topic hierarchy implementation
+
+- Phase 6.56 mobile question bank now renders parent main chapters as expandable groups and child sites/themes beneath them, using the existing concept topic/subtopic metadata and API route.
+- Migration 0028 maps only four ToC-confirmed ancient-site concept IDs to Hindi Chapter-2 labels; IDs remain stable. CSV follows the same grouping.
+- Search auto-expands the matching parent; one-liner and previous-year detail content is unchanged. Tests cover the four child-sites grouped beneath one book chapter.
+- No live DB migration has been applied. Phase 6.56 remains in progress pending exact-head CI and mobile E2E checks.

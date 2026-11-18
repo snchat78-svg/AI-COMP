@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-12 (PR #113 merged; current main head observed as `0ce169c79309932eefc80b101d29d94e9fd24bdb`. Kalibangan has 287 primary AI-authored Q&A drafts, 3 corroborative points and 2 ASI photos; all remain NEEDS_REVIEW. Static integrity audit: 287 rows, continuous unique IDs, no in-file normalized duplicate questions/Q&A pairs, no missing evidence cells or malformed rows. This is not independent factual review or a live DB semantic scan.)
+**Last updated:** 2026-11-18 (review branch `content/kalibangan-single-topic-hierarchy-structure`, PR #115 open/unmerged. User's supplied ToC resets the main unit to book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” (p.145; exercise p.148; Chapter 3 p.150). The new canonical parent file contains 311 Kalibanga + 20 Ahar-Banas Hindi Q&A drafts; all NEEDS_REVIEW. The 11 Kalibanga internal headings and the Ahar site questions are nested under one chapter. Ganeshwar-Jodhpura and Bairat remain in-scope child-sites. Static structure checks passed; independent review and live DB semantic dedupe remain open.)
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -23,11 +23,12 @@
 The user has set the immediate content priority: before adding more MCQ generation, topic tests, mastery or revision features, build concise **Subject → Topic → Subtopic → One-Liner Question + Direct Answer notes** that cover the full set of examinable points.
 
 - Follow the 14 existing subject categories and concept order in `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; do not create a parallel taxonomy.
-- First slice: Rajasthan History → Ancient History → Kalibangan, concept `catalog.rajasthan_history_ancient_history_kalibangan`.
-- Notes file: `docs/study-notes/rajasthan-history/ancient-history/kalibangan.md`.
+- First slice: Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”.
+- Canonical notes file: `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`.
+- Child-sites retain the concept IDs from `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`; Kalibanga and Ahar-Banas are not separate main book chapters.
 - PR #112 merged at `949ee0baf4ba7cadf0abe75b1319348617d04d22`, adding notes-first workflow and 34-topic Rajasthan History index.
-- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged. The current canonical topic file contains 287 primary AI-authored Q&A drafts (KAL-001–KAL-287), 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
-- Every item remains `NEEDS_REVIEW`; Kalibangan remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
+- PR [#113](https://github.com/snchat78-svg/AI-COMP/pull/113) is merged and contributes KAL-001–KAL-287. Review branch `content/kalibangan-single-topic-hierarchy-structure` extends the same canonical topic file with KAL-288–KAL-304, bringing the branch total to 304 primary AI-authored Q&A drafts, 3 separately labelled corroborative items and 2 ASI Jodhpur Circle site photographs.
+- Every item remains `NEEDS_REVIEW`; parent Chapter 2 remains DRAFTING / NOT COMPLETE. No exam-specific official syllabus mapping is claimed.
 - Every note needs a reliable source URL and precise evidence locator. Keep disputed facts visible/excluded. Only independent review can approve a factual candidate.
 - Generate practice MCQs from reviewed notes afterward. Keep real past-paper questions and generated practice questions separate.
 - Do not start Phase 6.57 early. Phase 6.56, Phase 2.2 and Phase 6.58 retain their existing acceptance gates.
@@ -837,3 +838,51 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Mainline development phase remains Phase 6.56 IN_PROGRESS; Phase 2.2 BLOCKED; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Keep the live official-source/migration/reviewer-secret/mobile E2E gates. No app code, DB, migrations, APK or learner records changed in this audit.
 
 **PR #113 build evidence:** exact PR head `b0fd3873fddb72884c8329730735d15730a2aae3` passed backend CI run `42781714817` (645 tests, 14 warnings, API container build) and Flutter CI run `42781715151` (analyze, 19 tests, release-mode APK build, artifact verification/upload). APK artifact ID `13747255331`, ZIP SHA-256 `2ab38f35bcd9d094f70ac96587fcc5de54b7c9b74fc0ded7602cc8d508846d4f`, expires 2026-11-24. CI used a placeholder Firebase config because the secret was unavailable; do not interpret this as Firebase/device E2E. The APK is a debug-signed test artifact.
+
+## 2026-11-12 — hierarchy-first continuation handoff
+
+- Resume from review branch `content/kalibangan-single-topic-hierarchy-structure`, not from a new topic or a duplicate content branch.
+- Keep one subject → one main topic → nested subtopics. Kalibanga remains one canonical concept; its 11 internal subtopics group KAL-001–KAL-304 exactly once. KAL-288–KAL-304 are 17 new Hindi, source-located architecture/urban-planning drafts under the existing Kalibanga topic.
+- Static checks: 304 Q&A rows; IDs continuous/unique; 0 normalized duplicate question stems; 0 normalized duplicate Q&A pairs; 0 missing questions/answers/evidence. The internal index maps all 304 IDs once, with 0 missing/0 repeated IDs. Existing rows use a four-column schema; KAL-288–KAL-304 use a five-column schema with a priority field. Both schemas were validated.
+- Every draft remains NEEDS_REVIEW. The indexed official ASI Part I printed p. 130 text requires independent page/context verification. Do not call the content complete, do not mark any question VERIFIED and do not move to Ahar-Banas.
+- Next work within the same Kalibanga topic: finish source/coverage review of the current architecture subtopic; then continue the next still-partial subtopic, live-database semantic deduplication, independent review and full primary-report/visual-plan gates. Phase statuses remain Phase 2.2 BLOCKED, Phase 6.56 IN_PROGRESS, Phase 6.57 PLANNED and Phase 6.58 BLOCKED.
+
+
+- Latest same-subtopic extension: KAL-301–KAL-304 adds clay bonding-material colour/waterlogging, road reconstruction phases, incised floor tiles and street-side doors opening into house courtyards. Review-branch total is now 304 Hindi Q&A; all remain NEEDS_REVIEW. No new topic was started.
+
+## 2026-11-18 — same-topic architecture continuation
+
+- Continue from PR #115 branch content/kalibangan-single-topic-hierarchy-structure; do not recreate the branch or start Ahar-Banas.
+- Kalibanga now has 311 primary Hindi Q&A drafts (KAL-001–KAL-311) on the review branch. KAL-305–KAL-311 add seven items from ASI Part I printed pp. 130–131, all inside the existing architecture subtopic. The 11-subtopic index must map all 311 IDs once.
+- Source is the official ASI PDF, Excavations at Kalibangan — The Harappans (1960–1969), Part I, “General Features of Structures”. Text indexing supports the locators; page-image rendering and binary download failed due file-size limits. Original page/figure visual review is still outstanding.
+- All items remain NEEDS_REVIEW; no independent scholarly review, official-exam mapping, or live PostgreSQL semantic dedupe is claimed. Do not mark Kalibanga complete.
+- CI failure root cause identified: flutter-mobile.yml floated to Flutter 3.50.0; the analyzer then treated ten material.dart deprecations as issues. The previously green run used Flutter 3.47.9. Pin the CI SDK to 3.47.9 and require full analyze/test/APK rerun before calling mobile validation green.
+- Phase state remains unchanged: 2.2 BLOCKED; 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED.
+
+
+## 2026-11-18 — current chapter-level handoff (supersedes site-by-site sequencing)
+
+- Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” is the active parent topic. ToC photo: start p.145, chapter exercise p.148, next chapter starts p.150.
+- Canonical parent notes: `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`.
+- Child-site 1 Kalibanga: KAL-001–KAL-311 (311 Q&A drafts), with its 11 internal coverage headings.
+- Child-site 2 Ahar-Banas: AHB-001–AHB-020 (20 high-yield drafts), in the same parent file.
+- Next child-sites inside the same parent: Ganeshwar-Jodhpura, Bairat, and any further settlement confirmed by the book chapter. Matsya Janapada placement must be checked against pages 145–149 before inclusion as a site.
+- Do not start book Chapter 3 until the important-question coverage of Chapter 2's relevant sites, source checks and duplicate audit are done. Keep the workflow bounded: high-yield facts first; no endless micro-subtopics/obscure inventory.
+- The previous rule “do not start Ahar-Banas until Kalibanga is complete” is superseded; Ahar-Banas is now child-site 2 of the same parent chapter, not a new main topic.
+- Latest CI commit c2ff0607a19ca1bef2ec23d006838edbaf97d3de: backend 645 tests + API container succeeded; Flutter 3.47.9 analyze + 19 tests + release APK build/verify/upload succeeded. Artifact ID 14401031754, SHA-256 cbbd170efaf5efa5895a89b90e73e707883db2c7eb72d6ba854c6fa12d3e46af, expiry 2026-12-02. CI artifact is for testing; no live Firebase/device/API E2E claim.
+
+
+## 2026-11-18 — Chapter 2 child-site content continuation
+
+- Chapter 2 parent file now contains 358 primary AI-authored Hindi Q&A drafts: KAL 311 + AHB 20 + GJ 18 + BRT 9. All question sets remain NEEDS_REVIEW.
+- Ganeshwar GJ-001–GJ-018 is based on ASI *Indian Archaeology 1981–82 — A Review*, printed pp.61–62. Bairat BRT-001–BRT-009 is based on ASI Jaipur Circle Inventory entry 107, printed p.143, and PMML for the Ashokan inscription names.
+- PDF page/plan screenshot requests timed out. Original page visuals remain to be checked. Further ancient sites must be confirmed from the user's book pp.145–149 before creating another child-site.
+- Do not start book chapter 3 yet. Continue within parent chapter 2 and keep the high-yield question scope bounded.
+
+
+## 2026-11-18 — mobile chapter-parent navigation
+
+- Current mobile UI previously rendered each concept as a flat list. It now groups by the existing `topic` field and expands child concepts by `subtopic`, with search auto-expanding matching child rows.
+- Migration 0028 sets the four confirmed ancient-site concept rows to the book Chapter-2 parent “राजस्थान के प्राचीन सभ्यता स्थल”. Stable concept IDs are not changed; Q&A/previous-paper detail routes remain unchanged.
+- Flutter widget test added for the four site groups and existing tests retained for detail tabs. This is the intended mobile user navigation: Rajasthan History → राजस्थान के प्राचीन सभ्यता स्थल → कालीबंगा/आहड़-बनास/गणेश्वर-जोधपुरा/बैराठ.
+- Migration is not applied live. Await exact-head backend and Flutter CI before merge.

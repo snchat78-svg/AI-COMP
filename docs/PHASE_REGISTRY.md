@@ -626,3 +626,48 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Phase statuses unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not start Phase 6.57 or Ahar-Banas before the current topic and prerequisite gates are independently accepted.
 
 **PR #113 exact-head validation evidence (2026-11-10):** Backend workflow [42781714817](https://github.com/snchat78-svg/AI-COMP/actions/runs/42781714817) passed **645 tests, 14 warnings**, and the API container build. Flutter workflow [42781715151](https://github.com/snchat78-svg/AI-COMP/actions/runs/42781715151) passed `flutter analyze`, **19 Flutter tests**, release-mode APK build, artifact verification and upload. Artifact `ai-comp-mobile-android-apk`, ID `13747255331`, ZIP SHA-256 `2ab38f35bcd9d094f70ac96587fcc5de54b7c9b74fc0ded7602cc8d508846d4f`; expiry 2026-11-24. CI used a CI-only Firebase placeholder because the Firebase secret was unavailable; this proves build/test packaging, not live Firebase authentication or device/API E2E. APK remains a debug-signed test build, not a production release.
+
+## 2026-11-12 — single-topic hierarchy and Kalibanga architecture continuation (content branch)
+
+- Review branch: `content/kalibangan-single-topic-hierarchy-structure`; based on the latest observed mainline after PR #114. This work is not merged yet and does not change the canonical mainline phase status.
+- The Kalibanga file now contains 304 primary Hindi Q&A drafts (KAL-001–KAL-304): 287 merged in PR #113 plus 17 architecture/urban-planning candidates KAL-288–KAL-304. An internal index groups all questions under 11 subtopics while keeping one canonical topic ID, `catalog.rajasthan_history_ancient_history_kalibangan`.
+- The initial 17-question batch is under “नगर-योजना, किलेबंदी, आवास और जल-निकासी” and use ASI Part I “General Features of Structures”, printed p. 130 (S22). The PDF page image has not been independently verified; all new entries remain NEEDS_REVIEW.
+- Organization policy is recorded in `docs/study-notes/MASTER_SUBJECT_TOPIC_STRUCTURE.md`: do not split one main topic into scattered main topics; dynasty subtopics contain the rulers' complete chronological histories; jewellery remains one parent topic with nested types/materials/techniques/region subtopics. Question rows are not duplicated for cross-references.
+- Static note-file integrity checks on the branch: 304 Q&A rows, KAL-001–KAL-304 continuous and unique, no normalized in-file duplicate question stems or Q&A pairs, and no empty question/answer/evidence cells. The internal 11-subtopic index references all 304 IDs exactly once (0 missing, 0 repeated). Table shape has two supported schemas (287 existing four-column rows and 17 five-column priority rows); schema-aware validation found no malformed rows. No live PostgreSQL semantic duplicate scan or independent factual review is claimed.
+- Phase states remain unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Ahar-Banas remains NOT STARTED. No app code, migrations, live DB, learner-visible VERIFIED data or APK changed.
+
+
+- **2026-11-12 latest subtopic increment:** KAL-301–KAL-304 adds four Hindi One-Liners from the same ASI Part I printed p. 130: brick-bond clay colour/waterlogging, successive road-level reconstruction phases, incised floor tiles and street-side doorways opening into courtyards. These remain inside the existing Kalibanga architecture subtopic; no new topic was created. Branch total is now 304 (KAL-001–KAL-304), all NEEDS_REVIEW. No phase transition or application/database changes.
+
+## 2026-11-18 — ASI Part I architecture coverage extension and Flutter CI reproducibility
+
+- Continued only the existing Kalibanga architecture/urban-planning subtopic; no new main topic or Ahar-Banas content was started.
+- Added KAL-305–KAL-311 (7 Hindi One-Liners) from ASI Part I “General Features of Structures”, printed pp. 130–131: brickwork uniformity/finish, probable flat timber wattle-and-daub roofs, four Phase-IX road levels, unpaved earlier-phase roads, fender posts protecting house walls, a cautiously attributed large-house interpretation, and the report's low-rainfall inference from the absence of elaborate street drainage.
+- Review-branch total: 311 primary Q&A (KAL-001–KAL-311). All are AI-authored study-note drafts and remain NEEDS_REVIEW. The internal 11-subtopic index assigns each ID once. No PYQ status or learner VERIFIED status is claimed.
+- Official ASI PDF text was checked; page-image screenshot rendering and binary download failed due the PDF size exceeding the available inspection limit. Original page/figure visual review remains outstanding.
+- CI diagnosis: PR #115's Flutter job installed Flutter 3.50.0 because the workflow used an unpinned stable channel. Ten deprecated_member_use infos for package:flutter/material.dart caused flutter analyze to exit 1 before tests/APK. The previous green run used Flutter 3.47.9. Pin CI to that known-green SDK for reproducibility; plan a separate Flutter 3.50+ migration before upgrading the pinned toolchain. No app Dart source changes are made in this content branch.
+- Phase states unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No live DB, migration, learner record or APK changed in this content increment.
+
+
+## 2026-11-18 — book-aligned topic hierarchy and APK evidence
+
+- User's supplied Table of Contents establishes book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” (p.145; question exercise p.148; Chapter 3 starts p.150) as the current parent topic.
+- Kalibanga (311 KAL drafts) and Ahar-Banas (20 AHB drafts) are child-sites in one parent file, not separate main chapters. Ganeshwar-Jodhpura and Bairat remain to be covered inside that same parent. This supersedes earlier site-by-site instruction not to start Ahar-Banas before independent Kalibanga completion.
+- All 331 Q&A remain NEEDS_REVIEW. The original ASI page/plate image review and independent factual review remain outstanding.
+- Current-head CI for commit c2ff0607a19ca1bef2ec23d006838edbaf97d3de: backend 645 tests and API container build passed; Flutter analyze, 19 mobile tests, release APK build, verification and artifact upload passed using pinned Flutter 3.47.9. Artifact ID 14401031754, SHA-256 cbbd170efaf5efa5895a89b90e73e707883db2c7eb72d6ba854c6fa12d3e46af, expiry 2026-12-02. This is a CI test APK, not live Firebase/device/API E2E evidence.
+- Phase states unchanged: Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+
+
+## 2026-11-18 — Chapter 2 Ganeshwar and Bairat high-yield drafts
+
+- Added 18 GJ and 9 BRT Hindi study-note drafts to the single parent chapter 2 file. Chapter total now 358 Q&A: KAL 311 + AHB 20 + GJ 18 + BRT 9. All remain NEEDS_REVIEW.
+- S25: ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation, printed pp.61–62. S26: ASI Jaipur Circle Inventory (2006), Bairat entry 107, printed p.143. S27: PMML Ashokan-inscription study.
+- Page-image screenshot attempts timed out; independent visual review remains open. Phase statuses unchanged.
+
+
+## 2026-11-18 — Phase 6.56 parent-chapter mobile navigation increment
+
+- Added Flutter parent grouping: main chapter uses the concept `topic` label; expandable children use `subtopic` labels. Child taps preserve canonical concept IDs and open the existing topic detail (verified One-Liner / Previous Year tabs).
+- Added idempotent migration 0028 to group the four Chapter-2 ancient-site concepts under “राजस्थान के प्राचीन सभ्यता स्थल” with Hindi child labels; updated the coverage CSV rows while retaining exam-syllabus review status and live DB counts as NOT_QUERIED.
+- Added widget test coverage for KAL/AHB/GJ/BRT as four children of one parent and adjusted topic search count assertion. Existing detail tabs and API calls remain unchanged.
+- Migration is repository-only and not applied to production. Phase 6.56 remains IN_PROGRESS pending CI, exact-host mobile verification and separate official exam-syllabus gates.
