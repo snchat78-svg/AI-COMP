@@ -886,3 +886,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Migration 0028 sets the four confirmed ancient-site concept rows to the book Chapter-2 parent “राजस्थान के प्राचीन सभ्यता स्थल”. Stable concept IDs are not changed; Q&A/previous-paper detail routes remain unchanged.
 - Flutter widget test added for the four site groups and existing tests retained for detail tabs. This is the intended mobile user navigation: Rajasthan History → राजस्थान के प्राचीन सभ्यता स्थल → कालीबंगा/आहड़-बनास/गणेश्वर-जोधपुरा/बैराठ.
 - Migration is not applied live. Await exact-head backend and Flutter CI before merge.
+
+
+## 2026-11-19 — current AI-COMP dashboard work handoff
+
+- PR #115 was merged to main at merge commit `23aef276d5382c2213e7350417db679c2ae253be`. Its Flutter and backend checks passed; artifact 14403452830 was verified and uploaded (SHA-256 `4bd78fcb608a9b64cd815201b10648496409687150cb901354a892b6f971dd68`, expires 2026-12-02).
+- Current task continues Phase 6.56 on branch `feature/phase-6-59-dashboard-study-library-ux`; do not skip to a new phase while the current navigation/dashboard exit gates remain open.
+- Dashboard visual work: welcome/status hero; prominent Study Library card; single Subject selector shared with Practice Test; parent chapter → child topic → existing One-Liner Q&A/Previous Year detail; progress and recent test panels; responsive touch-friendly cards.
+- API settings are expandable, initially open while disconnected and collapsed after connection. Token must remain memory-only. Do not break Firebase verified-email gate, sign-out, resume session, test submission or results.
+- Current widget tests cover the disconnected dashboard, new hero and Study Library entry. Exact-head CI and release APK verification/upload are still required before calling this increment complete.
+- Phase states remain Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. APK must be built for every phase that passes its complete exit checks; store the exact commit, APK artifact ID and SHA-256 in this checkpoint.
