@@ -12,20 +12,20 @@ void main() {
     expect(find.textContaining('Main chapter'), findsOneWidget);
     expect(find.text('Explore study library'), findsOneWidget);
     expect(find.text('Choose a subject to continue'), findsOneWidget);
-    expect(find.text('API base URL'), findsOneWidget);
-    expect(find.text('Learner ID'), findsOneWidget);
-    expect(find.text('Access token'), findsOneWidget);
-    expect(find.text('Connect & load progress'), findsOneWidget);
-    expect(find.text('Connect to create test'), findsOneWidget);
-
-    final testButton = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Connect to create test'),
-    );
-    expect(testButton.onPressed, isNull);
-
     final libraryButton = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, 'Explore study library'),
     );
     expect(libraryButton.onPressed, isNull);
+
+    await tester.scrollUntilVisible(find.text('API base URL'), 220);
+    expect(find.text('Learner ID'), findsOneWidget);
+    expect(find.text('Access token'), findsOneWidget);
+    expect(find.text('Connect & load progress'), findsOneWidget);
+
+    await tester.scrollUntilVisible(find.text('Connect to create test'), 260);
+    final testButton = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'Connect to create test'),
+    );
+    expect(testButton.onPressed, isNull);
   });
 }
