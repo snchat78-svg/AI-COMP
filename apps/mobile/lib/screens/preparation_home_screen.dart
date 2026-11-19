@@ -495,44 +495,45 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FC),
       appBar: AppBar(
-        title: const Text('AI-COMP Preparation'),
+        backgroundColor: const Color(0xFFF5F7FC),
+        surfaceTintColor: Colors.transparent,
+        title: const Text(
+          'AI-COMP Preparation',
+          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+        ),
         actions: [
           IconButton(
             tooltip: 'Refresh progress',
             onPressed: _loading || !_connected ? null : _refreshDashboard,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
           ),
           if (widget.firebaseUser != null)
             IconButton(
               tooltip: 'Sign out',
               onPressed: _loading ? null : _signOut,
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.logout_rounded),
             ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
           children: [
-            Text(
-              'Your preparation, guided by your progress',
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Build your next practice test around weak topics and previous mistakes.',
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 20),
+            _buildDashboardHero(theme),
+            const SizedBox(height: 16),
             _buildConnectionCard(theme),
-            if (_connected) ...[
-              const SizedBox(height: 16),
-              _buildExamSyllabusCard(theme),
-            ],
             if (_error != null) ...[
               const SizedBox(height: 12),
               _ErrorPanel(message: _error!),
+            ],
+            const SizedBox(height: 16),
+            _buildStudyLibraryCard(theme),
+            if (_connected && _examProfiles.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              _buildExamSyllabusCard(theme),
             ],
             if (_connected &&
                 (_questionBankReadiness != null || _questionBankReadinessError != null)) ...[
@@ -540,17 +541,325 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               _buildQuestionBankReadinessCard(theme),
             ],
             const SizedBox(height: 16),
-            _buildAdaptiveTestCard(theme),
-            const SizedBox(height: 16),
             _buildProgressCard(theme),
+            const SizedBox(height: 16),
+            _buildAdaptiveTestCard(theme),
             const SizedBox(height: 16),
             _buildWeakTopics(theme),
             const SizedBox(height: 16),
             _buildRecentSessions(theme),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Text(
-              'Security: the access token is kept only in memory on this screen and is not saved to disk.',
-              style: theme.textTheme.bodySmall,
+              'Security: your access token stays in memory on this screen and is never saved to disk.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardHero(ThemeData theme) {
+    final canBrowse = _connected && _selectedSubjectId != null && !_loading;
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF172554),
+            Color(0xFF3730A3),
+            Color(0xFF6D28D9),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF4338CA).withOpacity(0.20),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.14),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 23,
+                ),
+              ),
+              const SizedBox(width: 11),
+              const Expanded(
+                child: Text(
+                  'YOUR SMART STUDY SPACE',
+                  style: TextStyle(
+                    color: Color(0xFFE0E7FF),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.white.withOpacity(0.16)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _connected ? Icons.check_circle : Icons.circle_outlined,
+                      size: 13,
+                      color: _connected
+                          ? const Color(0xFF86EFAC)
+                          : const Color(0xFFFDE68A),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      _connected ? 'Connected' : 'Not connected',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          const Text(
+            'Prepare smarter.\nLearn with clarity.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 27,
+              height: 1.12,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.8,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Open your subjects, follow each chapter and reach every One-Liner Q&A with fewer steps.',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.82),
+              fontSize: 13,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              const Icon(
+                Icons.account_tree_rounded,
+                color: Color(0xFFC4B5FD),
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Subject  →  Chapter  →  Subtopic  →  Q&A',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.94),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: canBrowse ? _browseQuestionBank : null,
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF312E81),
+                disabledBackgroundColor: Colors.white.withOpacity(0.55),
+                disabledForegroundColor: const Color(0xFF312E81).withOpacity(0.55),
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              icon: const Icon(Icons.menu_book_rounded),
+              label: const Text(
+                'Explore study library',
+                style: TextStyle(fontWeight: FontWeight.w800),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStudyLibraryCard(ThemeData theme) {
+    final selectedSubject = _subjects.where(
+      (item) => item.subjectId == _selectedSubjectId,
+    );
+    final currentSubject = selectedSubject.isEmpty ? null : selectedSubject.first;
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEF2FF),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Icon(
+                    Icons.menu_book_rounded,
+                    color: Color(0xFF4338CA),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Study library',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Browse every subject in order',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFECFDF5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'LEARN',
+                    style: TextStyle(
+                      color: Color(0xFF047857),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Text(
+              'Subject  →  Main chapter  →  Subtopic  →  Hindi One-Liner Q&A',
+              style: TextStyle(
+                color: Color(0xFF475569),
+                fontSize: 12,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('study-library-subject-selector'),
+              initialValue: _subjects.any((item) => item.subjectId == _selectedSubjectId)
+                  ? _selectedSubjectId
+                  : null,
+              decoration: const InputDecoration(
+                labelText: 'Choose subject',
+                prefixIcon: Icon(Icons.school_outlined),
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 15),
+              ),
+              items: _subjects.map((subject) {
+                return DropdownMenuItem<String>(
+                  value: subject.subjectId,
+                  child: Text(
+                    '${subject.subjectLabel} · ${subject.conceptCount} topics',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(growable: false),
+              onChanged: _loading || _subjects.isEmpty
+                  ? null
+                  : _selectQuestionBankSubject,
+            ),
+            if (_subjectError != null) ...[
+              const SizedBox(height: 7),
+              Text(
+                _subjectError!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ],
+            if (!_connected) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Connect to the study service below to unlock subjects and questions.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _loading || !_connected || _selectedSubjectId == null
+                    ? null
+                    : _browseQuestionBank,
+                icon: const Icon(Icons.arrow_forward_rounded),
+                label: Text(
+                  currentSubject == null
+                      ? 'Choose a subject to continue'
+                      : 'Open ${currentSubject.subjectLabel}',
+                  overflow: TextOverflow.ellipsis,
+                ),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -676,72 +985,110 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
 
   Widget _buildConnectionCard(ThemeData theme) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('API connection', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
+      child: ExpansionTile(
+        key: ValueKey<bool>(_connected),
+        initiallyExpanded: !_connected,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+        leading: Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: _connected
+                ? const Color(0xFFECFDF5)
+                : const Color(0xFFFFF7ED),
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: Icon(
+            _connected ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+            color: _connected
+                ? const Color(0xFF047857)
+                : const Color(0xFFB45309),
+          ),
+        ),
+        title: Text(
+          _connected ? 'Study service connected' : 'Connect study service',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        subtitle: Text(
+          _connected
+              ? 'Connection settings · tap to manage'
+              : 'Required to load subjects, questions and progress',
+          style: theme.textTheme.bodySmall,
+        ),
+        children: [
+          TextField(
+            controller: _baseUrlController,
+            keyboardType: TextInputType.url,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              labelText: 'API base URL',
+              hintText: 'https://your-api.example.com',
+              prefixIcon: Icon(Icons.link_rounded),
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (widget.firebaseUser != null)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.verified_user_outlined),
+              title: const Text('Firebase account'),
+              subtitle: Text(widget.firebaseUser!.email ?? widget.firebaseUser!.uid),
+            ),
+          if (widget.firebaseUser == null) ...[
             TextField(
-              controller: _baseUrlController,
-              keyboardType: TextInputType.url,
+              controller: _learnerIdController,
               autocorrect: false,
               decoration: const InputDecoration(
-                labelText: 'API base URL',
-                hintText: 'https://your-api.example.com',
-                prefixIcon: Icon(Icons.link),
+                labelText: 'Learner ID',
+                prefixIcon: Icon(Icons.person_outline),
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
-            if (widget.firebaseUser != null)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.verified_user_outlined),
-                title: const Text('Firebase account'),
-                subtitle: Text(widget.firebaseUser!.email ?? widget.firebaseUser!.uid),
-              ),
-            if (widget.firebaseUser == null) ...[
-              TextField(
-                controller: _learnerIdController,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  labelText: 'Learner ID',
-                  prefixIcon: Icon(Icons.person_outline),
-                  border: OutlineInputBorder(),
+            TextField(
+              controller: _tokenController,
+              obscureText: _hideToken,
+              autocorrect: false,
+              enableSuggestions: false,
+              decoration: InputDecoration(
+                labelText: 'Access token',
+                helperText: 'Enter a token accepted by this API server.',
+                prefixIcon: const Icon(Icons.key_outlined),
+                suffixIcon: IconButton(
+                  tooltip: _hideToken ? 'Show token' : 'Hide token',
+                  onPressed: () => setState(() => _hideToken = !_hideToken),
+                  icon: Icon(_hideToken ? Icons.visibility : Icons.visibility_off),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _tokenController,
-                obscureText: _hideToken,
-                autocorrect: false,
-                enableSuggestions: false,
-                decoration: InputDecoration(
-                  labelText: 'Access token',
-                  helperText: 'Enter a token accepted by this API server.',
-                  prefixIcon: const Icon(Icons.key_outlined),
-                  suffixIcon: IconButton(
-                    tooltip: _hideToken ? 'Show token' : 'Hide token',
-                    onPressed: () => setState(() => _hideToken = !_hideToken),
-                    icon: Icon(_hideToken ? Icons.visibility : Icons.visibility_off),
-                  ),
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _loading ? null : _connectAndRefresh,
-                icon: const Icon(Icons.cloud_done_outlined),
-                label: Text(_connected ? 'Reconnect and refresh' : 'Connect & load progress'),
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
-        ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _loading ? null : _connectAndRefresh,
+              icon: const Icon(Icons.cloud_sync_rounded),
+              label: Text(_connected ? 'Reconnect and refresh' : 'Connect & load progress'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -822,56 +1169,96 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
   }
 
   Widget _buildAdaptiveTestCard(ThemeData theme) {
+    final selectedSubject = _subjects.where(
+      (item) => item.subjectId == _selectedSubjectId,
+    );
+    final currentSubject = selectedSubject.isEmpty ? null : selectedSubject.first;
     return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Practice test', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
-            const Text('Choose a subject first, set the question count and time, then start a test. Questions are taken only from the selected subject and the existing verified/accepted four-option MCQ pool.'),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: _subjects.any((item) => item.subjectId == _selectedSubjectId)
-                  ? _selectedSubjectId
-                  : null,
-              decoration: const InputDecoration(
-                labelText: 'Subject',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.menu_book_outlined),
-              ),
-              items: _subjects
-                  .map(
-                    (subject) => DropdownMenuItem<String>(
-                      value: subject.subjectId,
-                      child: Text(
-                        '${subject.subjectLabel} (${subject.conceptCount} topics)',
-                        overflow: TextOverflow.ellipsis,
-                      ),
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF7ED),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.edit_note_rounded,
+                    color: Color(0xFFB45309),
+                  ),
+                ),
+                const SizedBox(width: 11),
+                Expanded(
+                  child: Text(
+                    'Practice test',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
-                  )
-                  .toList(growable: false),
-              onChanged: _loading || _subjects.isEmpty
-                  ? null
-                  : _selectQuestionBankSubject,
+                  ),
+                ),
+              ],
             ),
-            if (_subjectError != null) ...[
-              const SizedBox(height: 6),
-              Text(_subjectError!, style: theme.textTheme.bodySmall),
-            ],
-            const SizedBox(height: 8),
-            SizedBox(
+            const SizedBox(height: 10),
+            const Text(
+              'Create a timed test from the selected subject and its eligible verified MCQ pool.',
+            ),
+            const SizedBox(height: 14),
+            Container(
               width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _loading || !_connected || _selectedSubjectId == null
-                    ? null
-                    : _browseQuestionBank,
-                icon: const Icon(Icons.menu_book_outlined),
-                label: const Text('Browse topics, One-Liners & Previous Papers'),
+              padding: const EdgeInsets.all(13),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.school_outlined, color: Color(0xFF475569)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Selected subject',
+                          style: TextStyle(
+                            color: Color(0xFF64748B),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          currentSubject?.subjectLabel ?? 'Choose a subject in Study Library',
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (currentSubject != null)
+                    TextButton(
+                      onPressed: _loading ? null : _browseQuestionBank,
+                      child: const Text('Change'),
+                    ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
@@ -880,6 +1267,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Questions',
+                      prefixIcon: Icon(Icons.numbers_rounded),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -891,13 +1279,14 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Minutes',
+                      prefixIcon: Icon(Icons.timer_outlined),
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             if (_loading) const LinearProgressIndicator(),
             const SizedBox(height: 8),
             SizedBox(
@@ -909,7 +1298,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                         _subjects.isEmpty
                     ? null
                     : _startAdaptivePractice,
-                icon: const Icon(Icons.play_arrow),
+                icon: const Icon(Icons.play_arrow_rounded),
                 label: Text(
                   !_connected
                       ? 'Connect to create test'
@@ -918,6 +1307,12 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                           : _selectedSubjectId == null
                               ? 'Select a subject'
                               : 'Generate MCQs and start test',
+                ),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
               ),
             ),
@@ -1041,12 +1436,33 @@ class _Metric extends StatelessWidget {
   final String value;
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          Text(value, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 4),
-          Text(label, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
-        ],
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF312E81),
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF475569),
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+        ),
       );
 }
 
