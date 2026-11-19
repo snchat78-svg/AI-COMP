@@ -14,7 +14,8 @@
 | 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-020; 20 draft Q&A; NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
 | 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-009; 9 draft Q&A; NEEDS_REVIEW |
-| 5 | अन्य प्राचीन स्थल / जनपद-संदर्भ | मौजूदा concept ledger के अनुसार | पुस्तक के पृष्ठ 145–149 और चुने हुए exam syllabus से scope की पुष्टि के बाद शामिल करें; Matsya Janapada को स्थल-सूची में बिना जाँच न मिलाएँ |
+| 5 | मत्स्य जनपद | `catalog.rajasthan_history_ancient_history_matsya_janapada` | MTS-001–MTS-010; 10 draft Q&A; NEEDS_REVIEW |
+| 6 | अन्य प्राचीन स्थल / जनपद-संदर्भ | मौजूदा concept ledger के अनुसार | पुस्तक के पृष्ठ 145–149 और चुने हुए exam syllabus से scope की पुष्टि के बाद ही जोड़ें |
 
 ## तेज, परीक्षा-उन्मुख प्रश्न-चयन नियम
 
@@ -23,6 +24,14 @@
 - प्रत्येक प्रश्न का उत्तर एक-दो पंक्तियों में हिंदी में रखें। प्रश्न मौलिक AI-authored study-note drafts हैं; इन्हें PYQ न कहें।
 - किसी पूरे site-subtopic पर अनावश्यक रूप से महीनों का विस्तार न करें। पहले एक पूर्ण high-yield pass, फिर exact/normalized duplicate और प्रमुख तथ्य-सत्यापन; शेष दुर्लभ शोध-विवरण को अलग “अतिरिक्त संदर्भ” में रखें।
 - parent chapter पूरा तभी माना जाएगा जब उसके सभी relevant child-sites की महत्त्वपूर्ण कवरेज हो; फिर पुस्तक-अध्याय 3 “राजस्थान का इतिहास–I” पर जाएँ। ऐप का topic UI इसी parent → child-site संरचना को दिखाए।
+
+**S28 — Board of Secondary Education, Rajasthan.** *History and Culture of Rajasthan*, Class X, Chapter 1, “Janapadas of Rajasthan” and “Matsya Janapada”, printed p. 7.  
+URL: https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf  
+Locators: Matsya's inclusion in the Anguttara Nikaya list, Rigvedic and later textual references, textbook's regional description, Viratanagar, and the Mauryan-period note. This is a Rajasthan Board textbook; its narrative statements about epic events are treated as literary tradition, not independent archaeological proof.
+
+**S29 — S. M. Ali.** *The Geography of the Purāṇas*. People's Publishing House, July 1966, Chapter X “Bhāratavarṣa: Janapadas or Communities”, printed p. 137, section “Matsya”.  
+ASI Central Archaeological Library catalogue copy: https://ignca.gov.in/Asi_data/73689.pdf  
+Locators: Matsya/Vairāta regional identification, approximate physical boundaries and the location of Vairāta/Bairāta near the headwaters of the Sabi and Banganga. These are the author's geographical reconstruction and should remain attributed to S. M. Ali, not presented as a universally settled boundary.
 
 ## उपविषय 1 — कालीबंगा
 
@@ -831,6 +840,35 @@ The following five additions retain only details that were not already adequatel
 - S26 में बिजक-की-पहाड़ी का स्तूप-मंदिर और मठीय अवशेष दिए हैं। PDF page-image screenshot प्रयास में timeout आया; मूल page/plan image की स्वतंत्र जाँच शेष है।
 - BRT-001–BRT-009 सभी NEEDS_REVIEW हैं; कोई learner VERIFIED या PYQ दावा नहीं।
 
+## उपविषय 5 — मत्स्य जनपद
+
+**स्थायी concept ID:** `catalog.rajasthan_history_ancient_history_matsya_janapada`  
+**स्थिति:** DRAFTING — 10 महत्त्वपूर्ण हिंदी One-Liners; सभी `NEEDS_REVIEW`।  
+**मुख्य स्रोत:** राजस्थान माध्यमिक शिक्षा बोर्ड, *History and Culture of Rajasthan*, कक्षा 10, अध्याय 1, मुद्रित पृ. 7 (S28); S. M. Ali, *The Geography of the Purāṇas*, अध्याय X, “Matsya”, मुद्रित पृ. 137 (S29).
+
+### महत्त्वपूर्ण One-Liner प्रश्नोत्तर
+
+| Draft ref | हिंदी प्रश्न | संक्षिप्त उत्तर | प्राथमिकता | Evidence |
+|---|---|---|---|---|
+| MTS-001 | राजस्थान बोर्ड की पाठ्यपुस्तक के अनुसार मत्स्य जनपद का उल्लेख किस बौद्ध ग्रंथ की 16 जनपदों की सूची में है? | अंगुत्तर निकाय की 16 जनपदों की सूची में। | महत्त्वपूर्ण | S28 — अध्याय 1, “Janapadas of Rajasthan”, मुद्रित पृ. 7 |
+| MTS-002 | राजस्थान बोर्ड की पाठ्यपुस्तक के अनुसार मत्स्य जनजाति का प्रारंभिक उल्लेख किस वेद में मिलता है? | ऋग्वेद में। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+| MTS-003 | ऋग्वेद के अतिरिक्त S28 में मत्स्य जनजाति का उल्लेख किन दो वैदिक ग्रंथों में बताया गया है? | शतपथ ब्राह्मण और कौषीतकि उपनिषद में। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+| MTS-004 | महाभारत में मत्स्य को किस रूप में वर्णित किया गया है? | एक प्रमुख जनपद/राज्य के रूप में। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+| MTS-005 | राजस्थान बोर्ड की पाठ्यपुस्तक के अनुसार मत्स्य राज्य की राजधानी क्या थी? | विराटनगर (बैराठ)। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+| MTS-006 | S28 के अनुसार आधुनिक राजस्थान के किन जिलों के कुछ भाग मत्स्य जनपद में शामिल थे? | जयपुर, अलवर और भरतपुर के कुछ भाग। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+| MTS-007 | S. M. Ali ने मत्स्य जनपद की राजधानी वैराट/बैराट को किस भौगोलिक क्षेत्र में स्थित बताया है? | अलवर की पहाड़ियों में। | महत्त्वपूर्ण | S29 — अध्याय X, “Matsya”, मुद्रित पृ. 137 |
+| MTS-008 | S. M. Ali के अनुसार वैराट की स्थिति किन दो नदियों के उद्गम-क्षेत्रों के निकट थी? | साबी और बाणगंगा के उद्गम-क्षेत्रों के निकट। | महत्त्वपूर्ण | S29 — अध्याय X, “Matsya”, मुद्रित पृ. 137 |
+| MTS-009 | S. M. Ali के भौगोलिक पुनर्निर्माण में मत्स्य जनपद की दक्षिणी सीमा लगभग किसके अक्ष के साथ मानी गई है? | मध्य बनास नदी के लगभग अक्ष के साथ। | महत्त्वपूर्ण | S29 — अध्याय X, “Matsya”, मुद्रित पृ. 137 |
+| MTS-010 | S28 में वर्णित परंपरा के अनुसार मत्स्य राज्य का शासक कौन था, जिसके नाम से विराटनगर जुड़ा है? | राजा विराट। | महत्त्वपूर्ण | S28 — “Matsya Janapada”, मुद्रित पृ. 7 |
+
+### स्रोत-सावधानी और ऐतिहासिक सीमा
+
+- **S28:** Board of Secondary Education, Rajasthan, *History and Culture of Rajasthan*, Class X, Chapter 1, “Janapadas of Rajasthan” और “Matsya Janapada”, printed p. 7. URL: https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf
+- **S29:** S. M. Ali, *The Geography of the Purāṇas*, People's Publishing House, July 1966, Chapter X “Bhāratavarṣa: Janapadas or Communities”, “Matsya”, printed p. 137. ASI Central Archaeological Library catalogue copy: https://ignca.gov.in/Asi_data/73689.pdf
+- सीमाओं के वर्णन में स्रोत-भेद है: S28 मत्स्य की दक्षिणी सीमा चम्बल की पहाड़ियों और उत्तरी विस्तार को पंजाब की सरस्वती नदी के वनों तक बताता है; S29 भौगोलिक पुनर्निर्माण में उत्तर में उत्तरी अलवर/गुड़गाँव की अरावली पहाड़ियों और दक्षिण में मध्य बनास के लगभग अक्ष का उल्लेख करता है। इन्हें एक निश्चित सीमा मानकर न मिलाएँ; उत्तर में दोनों स्रोतों का अलग-अलग attribution रखें।
+- महाभारत में पांडवों के अज्ञातवास और राजा विराट से जुड़ी बातें साहित्यिक/महाकाव्य परंपरा के रूप में ही लिखें; उन्हें स्वतंत्र पुरातात्त्विक प्रमाण न कहें।
+- MTS-001–MTS-010 AI-authored study-note drafts हैं; ये किसी परीक्षा के वास्तविक PYQ नहीं हैं और सभी NEEDS_REVIEW हैं।
+
 ## अध्याय 2 की समग्र प्रगति और अगला क्रम
 
 | Child-site | मसौदा स्थिति | शेष उच्च-प्राथमिकता कार्य |
@@ -839,6 +877,7 @@ The following five additions retain only details that were not already adequatel
 | आहड़-बनास | 20 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
 | बैराठ / विराटनगर | 9 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
+| मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
 | अन्य स्थल | scope confirmation pending | user book chapter 2 और selected official syllabus से ही जोड़ें |
 
 **अगला वास्तविक काम:** पुस्तक-अध्याय 2 के भीतर पुस्तक की शेष सूची से अन्य स्थल/जनपद पृष्ठ 145–149 पर जाँचकर शामिल करना, फिर एक संयुक्त chapter-level important-fact review और duplicate audit करना। इसके बाद ही पुस्तक-अध्याय 3 पर जाएँ।

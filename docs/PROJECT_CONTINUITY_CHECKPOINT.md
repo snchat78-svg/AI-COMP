@@ -896,3 +896,15 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - API settings are expandable, initially open while disconnected and collapsed after connection. Token must remain memory-only. Do not break Firebase verified-email gate, sign-out, resume session, test submission or results.
 - Current widget tests cover the disconnected dashboard, new hero and Study Library entry. Exact-head CI and release APK verification/upload are still required before calling this increment complete.
 - Phase states remain Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. APK must be built for every phase that passes its complete exit checks; store the exact commit, APK artifact ID and SHA-256 in this checkpoint.
+
+
+## 2026-11-19 — latest handoff after PR #116 merge
+
+- Dashboard PR #116 merged to main at `0b443c4fe23e9a02c30caba5b3e2a024ab8a76cc`; tested head `60d9e005270a3680a55d90e75d784b015ef327cc`.
+- Exact-head CI: backend 645 tests + API container success; Flutter analyze + mobile tests + Android release APK build/verification/upload success. Artifact ID `14509430730`; SHA-256 `74344b7faf0b2895df17de7293156984c2708379278244eb70d59323ec937908`; expiry 2026-12-03. Test artifact only, not live-device/Firebase/API E2E.
+- New dashboard: Study Library is visible near the top; Subject selection is shared with Practice Test; API connection settings are expandable and token remains memory-only. Preserve Firebase verified-email gating and existing question detail/session flows.
+- Phase 6.56 remains IN_PROGRESS. Do not start Phase 6.57 before official syllabus/source bytes and digest, complete unit/topic/subtopic inventory, reviewed mappings, controlled live migration and authentic-data mobile E2E are accepted.
+- Content priority proceeds in parallel within book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”. Current chapter has 368 AI-authored drafts: KAL 311 + AHB 20 + GJ 18 + BRT 9 + MTS 10. New Matsya Janapada child uses canonical ID `catalog.rajasthan_history_ancient_history_matsya_janapada`; MTS-001–MTS-010 all NEEDS_REVIEW.
+- Matsya sources: Rajasthan Board *History and Culture of Rajasthan*, Class X, Chapter 1, printed p.7 (S28); S. M. Ali, *The Geography of the Purāṇas*, Chapter X, printed p.137 (S29). The two sources differ in their approximate boundary descriptions; keep attributions separate and do not synthesize one definitive boundary. Epic events remain labelled as literary tradition.
+- Current branch `content/chapter-2-matsya-janapada-high-yield`; proposed content + CSV + roadmap updates are not yet merged. No live DB rows, exam approval, or verified learner content are claimed.
+- Next content action: validate all five Chapter-2 children against the user's book pages 145–149 and selected exam syllabus; do a bounded chapter-level duplicate/coverage audit, then begin the next book chapter only after acceptance.
