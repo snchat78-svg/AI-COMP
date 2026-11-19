@@ -428,3 +428,11 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Migration 0028 maps only four ToC-confirmed ancient-site concept IDs to Hindi Chapter-2 labels; IDs remain stable. CSV follows the same grouping.
 - Search auto-expands the matching parent; one-liner and previous-year detail content is unchanged. Tests cover the four child-sites grouped beneath one book chapter.
 - No live DB migration has been applied. Phase 6.56 remains in progress pending exact-head CI and mobile E2E checks.
+
+
+## 2026-11-19 — dashboard UX and per-phase APK rule
+
+- User requires a polished, attractive dashboard and easy access to every available One-Liner Q&A through Subject → main book chapter → child site/subtopic → Q&A.
+- Dashboard now gives Study Library a prominent entry point, uses one shared subject selection for browsing and practice tests, and keeps API settings in an expandable panel.
+- A release APK is required at the end of each completed development phase. Do not mark a phase complete until backend tests, Flutter analyze/tests, release APK build, APK verification and artifact upload pass on the same commit. Record the commit SHA, artifact ID, SHA-256 and expiry date.
+- Keep draft Q&A honest: only independently reviewed/verified bank entries can appear in verified learner content. Drafts remain NEEDS_REVIEW until approved. Existing Q&A and Previous Year screens remain easy to open from each child topic.
