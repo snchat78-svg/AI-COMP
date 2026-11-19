@@ -881,3 +881,12 @@ The following five additions retain only details that were not already adequatel
 | अन्य स्थल | scope confirmation pending | user book chapter 2 और selected official syllabus से ही जोड़ें |
 
 **अगला वास्तविक काम:** पुस्तक-अध्याय 2 के भीतर पुस्तक की शेष सूची से अन्य स्थल/जनपद पृष्ठ 145–149 पर जाँचकर शामिल करना, फिर एक संयुक्त chapter-level important-fact review और duplicate audit करना। इसके बाद ही पुस्तक-अध्याय 3 पर जाएँ।
+
+
+## 2026-11-19 — Chapter 2 static integrity audit and Matsya source-text check
+
+- Parsed all question tables in this parent file: 368 rows, 368 unique sequential IDs, no blank question/answer, no missing/non-standard evidence locators and zero exact normalized question-stem duplicate groups. Counts remain KAL 311 + AHB 20 + GJ 18 + BRT 9 + MTS 10.
+- Similar-stem triage flags KAL-007/008 (Kalibanga-I/II), KAL-009/010 (early/mature Harappan chronology), and KAL-021/022 (KLB-2/KLB-3) for human review. These are different named facts, not automatic duplicate deletions.
+- S28 searchable text supports MTS-001–006 and MTS-010; S29 printed p.137 supports MTS-007–009. Source-specific boundary descriptions must remain separate. Epic references remain literary tradition.
+- PDF page-image inspection could not be completed (timeouts/size limit). The user's exact printed pp.145–149 were not available; therefore Matsya's placement under this specific book Chapter 2 remains pending confirmation. Do not treat the child list as complete or start Chapter 3 yet.
+- All 368 questions remain NEEDS_REVIEW; this audit does not prove semantic uniqueness, full historical correctness, exam applicability or PYQ status. Detailed method/results: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
