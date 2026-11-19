@@ -63,3 +63,14 @@ Keep Phase 6.55's live migration/reviewer-secret gates visible. Continue Q&A aut
 - Search filters child rows and opens the matching parent group automatically. A single group is expanded by default; multiple groups stay collapsed by default. One-Liner Q&A and Previous Year tabs, their paging and evidence display remain unchanged.
 - Widget tests cover the four Chapter-2 child sites under one parent. Other book chapters remain on their existing catalogue topic values until the user's ToC confirms their grouping.
 - The migration is in Git only; it has not been applied to any live database. Fresh backend and Flutter CI must pass on the exact commit before merging.
+
+
+## 2026-11-19 — dashboard refresh and one-tap study entry
+
+- Continued Phase 6.56 rather than creating a parallel dashboard flow.
+- Dashboard order is now: welcome/status hero → study library → exam syllabus (when available) → verified-pool status → progress → practice test → focus topics → recent tests.
+- A clear Study Library card selects a subject and opens the existing question-bank screen. That screen continues to show book chapters as expandable parent groups and sites/themes as child topics; selecting a child opens its One-Liner Q&A and Previous Year tabs.
+- Practice Test reuses the same selected subject from Study Library; duplicate subject selectors and duplicate browse controls were removed.
+- API connection settings remain accessible in an expandable panel. They are expanded until the first successful connection and collapsed after connection, without storing the access token.
+- Dashboard uses responsive cards, a high-contrast welcome panel, clearer progress metrics and large touch targets. Existing Firebase auth, API authentication, session resume, results and adaptive-test logic remain unchanged.
+- Phase exit requirement: Flutter analyze, all mobile widget/client tests, backend regression tests, Android release APK build, APK verification and artifact upload must all pass on the same commit. A phase is not completed by code merge alone.
