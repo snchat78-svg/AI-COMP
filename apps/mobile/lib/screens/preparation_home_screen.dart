@@ -579,7 +579,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF4338CA).withOpacity(0.20),
+            color: const Color(0xFF4338CA).withValues(alpha: 0.20),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -594,7 +594,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.14),
+                  color: Colors.white.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
@@ -618,9 +618,9 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.13),
+                  color: Colors.white.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withOpacity(0.16)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -661,7 +661,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           Text(
             'Open your subjects, follow each chapter and reach every One-Liner Q&A with fewer steps.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.82),
+              color: Colors.white.withValues(alpha: 0.82),
               fontSize: 13,
               height: 1.45,
             ),
@@ -679,7 +679,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 child: Text(
                   'Subject  →  Chapter  →  Subtopic  →  Q&A',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.94),
+                    color: Colors.white.withValues(alpha: 0.94),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -695,8 +695,8 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF312E81),
-                disabledBackgroundColor: Colors.white.withOpacity(0.55),
-                disabledForegroundColor: const Color(0xFF312E81).withOpacity(0.55),
+                disabledBackgroundColor: Colors.white.withValues(alpha: 0.55),
+                disabledForegroundColor: const Color(0xFF312E81).withValues(alpha: 0.55),
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -1250,11 +1250,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                       ],
                     ),
                   ),
-                  if (currentSubject != null)
-                    TextButton(
-                      onPressed: _loading ? null : _browseQuestionBank,
-                      child: const Text('Change'),
-                    ),
+
                 ],
               ),
             ),
