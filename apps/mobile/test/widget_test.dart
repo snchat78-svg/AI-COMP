@@ -7,7 +7,7 @@ void main() {
     await tester.pumpWidget(const AiCompMobileApp(firebaseEnabled: false));
 
     expect(find.text('AI-COMP Preparation'), findsOneWidget);
-    expect(find.text('Prepare smarter.\\nLearn with clarity.'), findsOneWidget);
+    expect(find.text('Prepare smarter.\nLearn with clarity.'), findsOneWidget);
     expect(find.text('Study library'), findsOneWidget);
     expect(find.textContaining('Main chapter'), findsOneWidget);
     expect(find.text('Explore study library'), findsOneWidget);
