@@ -682,3 +682,14 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - API settings move into an expandable panel: open before connection, collapsed after successful connection. Access token remains memory-only.
 - Tests are being extended for the dashboard structure and disabled/offline actions. Current branch must pass complete backend + Flutter checks and produce a verified release APK before Phase 6.56 can be marked complete.
 - No live database migration or production deployment is performed by this dashboard-only increment.
+
+
+## 2026-11-19 — PR #116 dashboard UX merged; Chapter 2 content continues
+
+- PR [#116](https://github.com/snchat78-svg/AI-COMP/pull/116) merged to `main` at merge commit `0b443c4fe23e9a02c30caba5b3e2a024ab8a76cc`; tested head `60d9e005270a3680a55d90e75d784b015ef327cc`.
+- Exact-head backend workflow [44481603479](https://github.com/snchat78-svg/AI-COMP/actions/runs/44481603479) passed 645 tests and API container build. Flutter workflow [44481603497](https://github.com/snchat78-svg/AI-COMP/actions/runs/44481603497) passed Flutter analyze, mobile tests, release APK build, artifact verification and upload.
+- Android test APK artifact [14509430730](https://github.com/snchat78-svg/AI-COMP/actions/runs/44481603497/artifacts/14509430730), SHA-256 `74344b7faf0b2895df17de7293156984c2708379278244eb70d59323ec937908`, expires 2026-12-03. CI artifact only; no live Firebase/device/API E2E claim.
+- Dashboard UX now has a prominent Study Library entry, shared subject selection with Practice Test, parent-chapter → child-site navigation and expandable API settings. The access token remains memory-only.
+- This closes the dashboard UI slice, not Phase 6.56 overall. Phase 6.56 remains IN_PROGRESS because official source bytes/hash, full reviewed exam syllabus inventory, complete concept applicability review, controlled production migrations, and authentic-data mobile E2E remain outstanding. Phase 6.57 remains PLANNED and must not be represented as started until those gates pass.
+- In parallel, the next content slice remains inside the same book Chapter 2 parent “राजस्थान के प्राचीन सभ्यता स्थल”; Matsya Janapada has been added as child 5 with 10 Hindi AI-authored drafts MTS-001–MTS-010. All are NEEDS_REVIEW; no official syllabus applicability or live DB count is claimed.
+- Current content branch: `content/chapter-2-matsya-janapada-high-yield`; proposed changes are subject to PR review and exact-head CI. Do not start book Chapter 3 until Chapter 2's confirmed children receive bounded high-yield coverage, source review and duplicate audit.
