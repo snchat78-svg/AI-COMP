@@ -25,6 +25,14 @@
 - किसी पूरे site-subtopic पर अनावश्यक रूप से महीनों का विस्तार न करें। पहले एक पूर्ण high-yield pass, फिर exact/normalized duplicate और प्रमुख तथ्य-सत्यापन; शेष दुर्लभ शोध-विवरण को अलग “अतिरिक्त संदर्भ” में रखें।
 - parent chapter पूरा तभी माना जाएगा जब उसके सभी relevant child-sites की महत्त्वपूर्ण कवरेज हो; फिर पुस्तक-अध्याय 3 “राजस्थान का इतिहास–I” पर जाएँ। ऐप का topic UI इसी parent → child-site संरचना को दिखाए।
 
+**S28 — Board of Secondary Education, Rajasthan.** *History and Culture of Rajasthan*, Class X, Chapter 1, “Janapadas of Rajasthan” and “Matsya Janapada”, printed p. 7.  
+URL: https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf  
+Locators: Matsya's inclusion in the Anguttara Nikaya list, Rigvedic and later textual references, textbook's regional description, Viratanagar, and the Mauryan-period note. This is a Rajasthan Board textbook; its narrative statements about epic events are treated as literary tradition, not independent archaeological proof.
+
+**S29 — S. M. Ali.** *The Geography of the Purāṇas*. People's Publishing House, July 1966, Chapter X “Bhāratavarṣa: Janapadas or Communities”, printed p. 137, section “Matsya”.  
+ASI Central Archaeological Library catalogue copy: https://ignca.gov.in/Asi_data/73689.pdf  
+Locators: Matsya/Vairāta regional identification, approximate physical boundaries and the location of Vairāta/Bairāta near the headwaters of the Sabi and Banganga. These are the author's geographical reconstruction and should remain attributed to S. M. Ali, not presented as a universally settled boundary.
+
 ## उपविषय 1 — कालीबंगा
 
 <small>AI-COMP content draft • 10 November 2026 • Status: **DRAFTING — NOT COMPLETE — NEEDS INDEPENDENT REVIEW**</small>
@@ -869,6 +877,7 @@ The following five additions retain only details that were not already adequatel
 | आहड़-बनास | 20 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
 | बैराठ / विराटनगर | 9 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
+| मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
 | अन्य स्थल | scope confirmation pending | user book chapter 2 और selected official syllabus से ही जोड़ें |
 
 **अगला वास्तविक काम:** पुस्तक-अध्याय 2 के भीतर पुस्तक की शेष सूची से अन्य स्थल/जनपद पृष्ठ 145–149 पर जाँचकर शामिल करना, फिर एक संयुक्त chapter-level important-fact review और duplicate audit करना। इसके बाद ही पुस्तक-अध्याय 3 पर जाएँ।
