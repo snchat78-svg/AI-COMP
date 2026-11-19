@@ -524,13 +524,13 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           children: [
             _buildDashboardHero(theme),
             const SizedBox(height: 16),
+            _buildStudyLibraryCard(theme),
+            const SizedBox(height: 16),
             _buildConnectionCard(theme),
             if (_error != null) ...[
               const SizedBox(height: 12),
               _ErrorPanel(message: _error!),
             ],
-            const SizedBox(height: 16),
-            _buildStudyLibraryCard(theme),
             if (_connected && _examProfiles.isNotEmpty) ...[
               const SizedBox(height: 16),
               _buildExamSyllabusCard(theme),
