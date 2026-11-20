@@ -123,6 +123,14 @@ void main() {
           },
         });
       }
+      if (request.url.path.endsWith('/question-bank/pending-one-liners')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 0, 'has_more': false,
+          },
+        });
+      }
       if (request.url.path.endsWith('/question-bank/previous-papers')) {
         return jsonResponse({
           'items': [],
