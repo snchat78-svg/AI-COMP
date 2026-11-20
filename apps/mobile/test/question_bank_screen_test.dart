@@ -10,6 +10,18 @@ import 'package:ai_comp_mobile/localization/question_bank_labels.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
+Future<void> pumpUntilFound(
+  WidgetTester tester,
+  Finder finder, {
+  int maxPumps = 60,
+}) async {
+  for (var attempt = 0; attempt < maxPumps; attempt++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) return;
+  }
+  await tester.pump();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -154,14 +166,14 @@ void main() {
     ));
     await tester.pumpAndSettle();
     await tester.tap(find.text('लूणी नदी'));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'));
 
     expect(find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'), findsOneWidget);
     expect(requests.any((path) => path.endsWith('/question-bank/one-liners')), isTrue);
     expect(requests.any((path) => path.endsWith('/question-bank/previous-papers')), isTrue);
 
     await tester.tap(find.text('पिछले वर्षों के प्रश्न'));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'));
 
     expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
     expect(find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'), findsNothing);
@@ -229,14 +241,14 @@ void main() {
         ),
       ),
     ));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.textContaining('लूणी नदी किस दिशा में बहती है?'));
 
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsOneWidget);
     expect(find.text('उत्तर: दक्षिण-पश्चिम दिशा में।'), findsOneWidget);
     expect(find.textContaining('सत्यापित स्रोत-साक्ष्य'), findsOneWidget);
 
     await tester.tap(find.text('पिछले वर्षों के प्रश्न'));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'));
     expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsNothing);
   });
@@ -492,7 +504,7 @@ void main() {
         ),
       ),
     ));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.text('AI मसौदा — समीक्षा बाकी'));
 
     expect(find.text('AI मसौदा — समीक्षा बाकी'), findsOneWidget);
     expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
@@ -548,7 +560,7 @@ void main() {
         ),
       ),
     ));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'));
 
     expect(find.text('AI मसौदा — समीक्षा बाकी'), findsWidgets);
     expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
