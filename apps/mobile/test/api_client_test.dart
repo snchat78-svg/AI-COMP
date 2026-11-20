@@ -429,4 +429,61 @@ void main() {
   });
 
 
+
+  test('pending one-liner client requests only the separate draft lane', () async {
+    late http.Request received;
+    final mock = MockClient((request) async {
+      received = request;
+      return http.Response(
+        jsonEncode({
+          'items': [
+            {
+              'one_liner_id': 'ch2_KAL-001',
+              'concept_id': 'catalog.rajasthan_history_ancient_history_kalibangan',
+              'question_text': 'कालीबंगा राजस्थान के किस जिले में स्थित है?',
+              'answer_text': 'हनुमानगढ़ जिले में।',
+              'language_code': 'hi',
+              'source_url': 'https://example.gov.in/kalibanga.pdf',
+              'source_evidence': 'S4 — मुद्रित पृष्ठ 34 — समीक्षा बाकी।',
+              'verification_status': 'NEEDS_REVIEW',
+              'importance_score': 0.8,
+            },
+          ],
+          'pagination': {
+            'limit': 20, 'offset': 0, 'returned': 1, 'has_more': false,
+          },
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    addTearDown(mock.close);
+    final api = AiCompApiClient(
+      baseUrl: 'https://api.example.test/',
+      learnerId: 'learner-1',
+      accessToken: 'test-token',
+      httpClient: mock,
+    );
+
+    final items = await api.getPendingTopicOneLiners(
+      'catalog.rajasthan_history_ancient_history_kalibangan',
+      limit: 20,
+      offset: 0,
+      languageCode: 'hi',
+    );
+
+    expect(received.method, 'GET');
+    expect(
+      received.url.path,
+      '/api/v1/learners/learner-1/question-bank/pending-one-liners',
+    );
+    expect(received.headers['authorization'], 'Bearer test-token');
+    expect(received.url.queryParameters['concept_id'],
+        'catalog.rajasthan_history_ancient_history_kalibangan');
+    expect(received.url.queryParameters['language_code'], 'hi');
+    expect(items.single.verificationStatus, 'NEEDS_REVIEW');
+    expect(items.single.questionText, startsWith('कालीबंगा'));
+  });
+
+
 }

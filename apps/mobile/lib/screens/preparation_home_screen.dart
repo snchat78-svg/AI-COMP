@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../api/ai_comp_api_client.dart';
+import '../localization/question_bank_labels.dart';
 import '../models/preparation_models.dart';
 import 'test_session_screen.dart';
 import 'question_bank_screen.dart';
@@ -397,7 +398,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         SnackBar(
           content: Text(
             'Generated ${generation.generatedAlternativeCount} verified alternative MCQs. '
-            'Starting a ${session.questionCount}-question test for $subjectId.',
+            '${session.questionCount} प्रश्नों की ${questionBankHindiLabel(subjectId)} अभ्यास परीक्षा शुरू हो रही है।',
           ),
         ),
       );
@@ -406,7 +407,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           builder: (_) => TestSessionScreen(
             api: api,
             initialSession: session,
-            title: '$subjectId practice test',
+            title: '${questionBankHindiLabel(subjectId)} अभ्यास परीक्षा',
             focusConceptIds: const <String>[],
           ),
         ),
@@ -812,7 +813,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 return DropdownMenuItem<String>(
                   value: subject.subjectId,
                   child: Text(
-                    '${subject.subjectLabel} · ${subject.conceptCount} topics',
+                    '${questionBankHindiLabel(subject.subjectLabel)} · ${subject.conceptCount} विषय',
                     overflow: TextOverflow.ellipsis,
                   ),
                 );
@@ -850,7 +851,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 label: Text(
                   currentSubject == null
                       ? 'Choose a subject to continue'
-                      : 'Open ${currentSubject.subjectLabel}',
+                      : '${questionBankHindiLabel(currentSubject.subjectLabel)} खोलें',
                   overflow: TextOverflow.ellipsis,
                 ),
                 style: FilledButton.styleFrom(
@@ -947,7 +948,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                 items: _examSubjects.map((item) => DropdownMenuItem<String>(
                   value: item.subjectId,
                   child: Text(
-                    '${item.subjectLabel} (${item.conceptCount} topics)',
+                    '${questionBankHindiLabel(item.subjectLabel)} (${item.conceptCount} विषय)',
                     overflow: TextOverflow.ellipsis,
                   ),
                 )).toList(growable: false),
@@ -1118,7 +1119,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     final empty = available == 0;
     final scopeLabel = readiness.subjectId == null
         ? ''
-        : ' for ${readiness.subjectId}';
+        : ' — ${questionBankHindiLabel(readiness.subjectId ?? '')} के लिए';
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1241,7 +1242,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          currentSubject?.subjectLabel ?? 'Choose a subject in Study Library',
+                          currentSubject == null ? 'अध्ययन लाइब्रेरी में विषय चुनें' : questionBankHindiLabel(currentSubject.subjectLabel),
                           style: const TextStyle(
                             color: Color(0xFF0F172A),
                             fontWeight: FontWeight.w700,

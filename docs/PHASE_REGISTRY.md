@@ -713,3 +713,27 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - PDF page-image inspection failed due timeout/size constraints. The user's exact textbook pp.145–149 were not available, so the placement of Matsya under this specific book Chapter 2 is still unconfirmed. Do not add/remove child sites or start Chapter 3 until those pages are checked.
 - This is a static integrity/source-text audit only: all 368 items remain NEEDS_REVIEW; no PYQ, exam-approved, live DB or learner VERIFIED claim is made. Full audit: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
 - Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No Phase 6.57 transition is claimed.
+
+
+## 2026-11-20 — हिंदी प्रश्न-बैंक और शून्य One-Liner की जाँच
+
+- Learner API केवल `verification_status='VERIFIED'` प्रश्न लौटाती है। अध्याय 2 के 368 हिंदी Q&A Git notes में हैं, database में अपने-आप seed नहीं होते; मौजूदा migration 0022 केवल 10 `NEEDS_REVIEW` candidates डालती है।
+- Render workspace में API सेवा live है; उसी workspace में Render-managed PostgreSQL नहीं मिला। External DB संभव है; live counts/migration status सत्यापित नहीं हैं।
+- Migration 0029 सभी 14 subjects, 61 parent topic groups और catalogue के सभी English child-topic labels को हिंदी में बदलती है, canonical concept IDs स्थिर रखती है और पाँच Chapter-2 children को “राजस्थान के प्राचीन सभ्यता स्थल” में रखती है।
+- Mobile Question Bank navigation, search, empty/error states, Q&A labels और previous-paper UI labels हिंदी किए गए हैं।
+- कोई draft VERIFIED नहीं किया गया। Independent source-by-source reviewer audit अभी आवश्यक है।
+- Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED` ही रहेंगे।
+
+
+## 2026-11-20 — APK zero-count remediation: Chapter 2 drafts imported into a separate review lane
+
+- User's APK screenshot showed the Rajasthan History subject catalogue loading (34/34 child topics, 7 parent groups) but 0 **VERIFIED** One-Liners.
+- Confirmed root cause: the learner One-Liner endpoint was deliberately hard-coded to `verified_only=True`; the 368 AI-authored Chapter-2 rows were only in the Git study-note file and had not been inserted into PostgreSQL.
+- Re-parsed the source-of-record `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`: 368 complete Q&A rows, 368 unique draft references, no blank question/answer/evidence fields: KAL 311, AHB 20, GJ 18, BRT 9, MTS 10.
+- Added migration `0030_import_chapter_2_hindi_draft_one_liners.sql` with all 368 rows mapped to their existing canonical concept IDs. IDs retain their draft references (`ch2_KAL-001` etc.); each row uses Hindi, source URL/evidence locator, `NEEDS_REVIEW`, NULL reviewed_at and conflict-safe insertion. The content hashes were checked against the established `TopicOneLinerQA.content_hash` separator convention and the existing seed's known hash.
+- Added a pending-only query mode in the Postgres repository and a separately authenticated learner endpoint `GET /api/v1/learners/{learner_id}/question-bank/pending-one-liners`. The original `/one-liners` endpoint still returns only `VERIFIED` items. Topic counts now expose verified and pending quantities separately.
+- Flutter now loads verified and pending lists separately; the One-Liner tab visibly labels pending rows **AI मसौदा — समीक्षा बाकी**, shows their source locator as unchecked evidence, and keeps previous-paper questions in their independent tab. Parent/child subject summaries show pending counts separately.
+- Added backend repository/API tests and Flutter API/widget tests for the pending lane and status label. CI and live database apply are still pending on the current PR head.
+- No row is automatically marked `VERIFIED`; all 368 remain review-pending until an independent reviewer checks the exact cited source and answer and writes a review audit.
+- Render workspace inspection previously found the API web service but no Render-managed PostgreSQL; external PostgreSQL remains possible. The controlled manual migration workflow must run against the actual configured DB before claiming live import.
+- Phase 6.56 remains `IN_PROGRESS`; Phase 6.57 remains `PLANNED`; Phase 6.58 remains `BLOCKED`. Next: pass backend/Flutter CI, merge and deploy, apply migrations 0029/0030 through the controlled workflow, then verify pending/verified counts in the authenticated APK.

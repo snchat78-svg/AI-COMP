@@ -50,11 +50,15 @@ class PostgresTopicQuestionBankRepository:
             rows = self._connection.execute(
                 """
                 SELECT c.concept_id, c.label, btrim(c.subject), c.topic, c.subtopic,
-                       COUNT(DISTINCT ol.one_liner_id)::INTEGER AS verified_one_liner_count
+                       COUNT(DISTINCT ol.one_liner_id) FILTER (
+                           WHERE ol.verification_status = 'VERIFIED'
+                       )::INTEGER AS verified_one_liner_count,
+                       COUNT(DISTINCT ol.one_liner_id) FILTER (
+                           WHERE ol.verification_status IN ('DRAFT', 'NEEDS_REVIEW')
+                       )::INTEGER AS pending_one_liner_count
                 FROM concepts AS c
                 LEFT JOIN question_bank_one_liners AS ol
                   ON ol.concept_id = c.concept_id
-                 AND ol.verification_status = 'VERIFIED'
                 WHERE lower(btrim(c.subject)) = lower(%s)
                 GROUP BY c.concept_id, c.label, c.subject, c.topic, c.subtopic
                 ORDER BY lower(COALESCE(c.topic, '')),
@@ -74,6 +78,7 @@ class PostgresTopicQuestionBankRepository:
                 topic=None if row[3] is None else str(row[3]),
                 subtopic=None if row[4] is None else str(row[4]),
                 verified_one_liner_count=int(row[5]),
+                pending_one_liner_count=int(row[6]),
             )
             for row in rows
         )
@@ -85,6 +90,7 @@ class PostgresTopicQuestionBankRepository:
         limit: int = 100,
         offset: int = 0,
         verified_only: bool = True,
+        pending_only: bool = False,
         language_code: str | None = None,
     ) -> tuple[TopicOneLinerQA, ...]:
         self._validate_page(limit, offset)
@@ -95,10 +101,14 @@ class PostgresTopicQuestionBankRepository:
         ):
             raise ValueError("language_code must be a non-empty trimmed string when supplied")
 
+        if verified_only and pending_only:
+            raise ValueError("verified_only and pending_only cannot both be true")
         conditions = ["concept_id = %s"]
         params: list[object] = [concept_id]
         if verified_only:
             conditions.append("verification_status = 'VERIFIED'")
+        elif pending_only:
+            conditions.append("verification_status IN ('DRAFT', 'NEEDS_REVIEW')")
         if language_code is not None:
             conditions.append("language_code = %s")
             params.append(language_code)

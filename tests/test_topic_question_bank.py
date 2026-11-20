@@ -4,6 +4,9 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 
 import pytest
+from fastapi.testclient import TestClient
+
+from ai_comp.api.app import create_app
 
 from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
 from ai_comp.domain.topic_question_bank import (
@@ -74,6 +77,9 @@ class _Connection:
             raise AssertionError("unexpected database query")
         return _Rows(self._results.pop(0))
 
+    def close(self):
+        self.closed = True
+
 
 def test_subject_list_comes_from_existing_concept_taxonomy() -> None:
     connection = _Connection([("Rajasthan History", 12), ("Science", 8)])
@@ -88,7 +94,7 @@ def test_subject_list_comes_from_existing_concept_taxonomy() -> None:
 
 def test_topic_list_includes_verified_one_liner_count() -> None:
     connection = _Connection([
-        ("concept-rivers", "Luni River", "Rajasthan Geography", "Rivers", "Luni", 4)
+        ("concept-rivers", "Luni River", "Rajasthan Geography", "Rivers", "Luni", 4, 7)
     ])
     items = PostgresTopicQuestionBankRepository(connection).list_topics(
         "Rajasthan Geography",
@@ -104,6 +110,7 @@ def test_topic_list_includes_verified_one_liner_count() -> None:
             topic="Rivers",
             subtopic="Luni",
             verified_one_liner_count=4,
+            pending_one_liner_count=7,
         ),
     )
     assert connection.calls[0][1] == ("Rajasthan Geography", 20, 0)
@@ -140,6 +147,101 @@ def test_one_liner_read_defaults_to_verified_content_only() -> None:
     query, params = connection.calls[0]
     assert "verification_status = 'VERIFIED'" in query
     assert params == ("concept-rivers", 10, 0)
+
+
+
+def test_one_liner_read_can_request_pending_review_content_only() -> None:
+    reviewed_at = datetime(2026, 10, 22, tzinfo=timezone.utc)
+    connection = _Connection([
+        (
+            "ol-draft-1",
+            "concept-rivers",
+            "लूणी नदी किस दिशा में बहती है?",
+            "दक्षिण-पश्चिम दिशा में।",
+            "hi",
+            "https://example.gov.in/river-facts",
+            "S4 — printed p. 34",
+            "NEEDS_REVIEW",
+            0.8,
+            None,
+            reviewed_at,
+            reviewed_at,
+        )
+    ])
+    items = PostgresTopicQuestionBankRepository(connection).list_one_liners(
+        "concept-rivers",
+        limit=10,
+        offset=0,
+        verified_only=False,
+        pending_only=True,
+        language_code="hi",
+    )
+
+    assert len(items) == 1
+    assert items[0].verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+    query, params = connection.calls[0]
+    assert "verification_status IN ('DRAFT', 'NEEDS_REVIEW')" in query
+    assert "verification_status = 'VERIFIED'" not in query
+    assert params == ("concept-rivers", "hi", 10, 0)
+
+
+def test_verified_and_pending_only_filters_cannot_be_combined() -> None:
+    connection = _Connection()
+    with pytest.raises(ValueError, match="cannot both be true"):
+        PostgresTopicQuestionBankRepository(connection).list_one_liners(
+            "concept-rivers",
+            verified_only=True,
+            pending_only=True,
+        )
+    assert connection.calls == []
+
+
+
+def test_authenticated_learner_can_load_explicitly_pending_ai_drafts() -> None:
+    now = datetime(2026, 11, 20, tzinfo=timezone.utc)
+    connection = _Connection([
+        (
+            "ch2_KAL-001",
+                "catalog.rajasthan_history_ancient_history_kalibangan",
+                "कालीबंगा राजस्थान के किस जिले में स्थित है?",
+                "हनुमानगढ़ जिले में।",
+                "hi",
+                "https://example.gov.in/kalibanga.pdf",
+                "KAL-001 — S4, printed p. 34 — स्वतंत्र स्रोत-समीक्षा लंबित।",
+                "NEEDS_REVIEW",
+                0.8,
+                None,
+            now,
+            now,
+        )
+    ])
+    app = create_app(learner_identity_provider=lambda request: "learner-1")
+    app.state.question_bank_connection_factory = lambda: connection
+    client = TestClient(app)
+
+    response = client.get(
+        "/api/v1/learners/learner-1/question-bank/pending-one-liners",
+        params={
+            "concept_id": "catalog.rajasthan_history_ancient_history_kalibangan",
+            "language_code": "hi",
+            "limit": 20,
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["items"][0]["one_liner_id"] == "ch2_KAL-001"
+    assert payload["items"][0]["verification_status"] == "NEEDS_REVIEW"
+    assert payload["items"][0]["question_text"].startswith("कालीबंगा")
+    query, params = connection.calls[0]
+    assert "verification_status IN ('DRAFT', 'NEEDS_REVIEW')" in query
+    assert params == (
+        "catalog.rajasthan_history_ancient_history_kalibangan",
+        "hi",
+        21,
+        0,
+    )
+    assert connection.closed is True
 
 
 def test_invalid_pagination_is_rejected_before_query() -> None:

@@ -23,12 +23,15 @@ class QuestionBankTopic:
     topic: str | None
     subtopic: str | None
     verified_one_liner_count: int = 0
+    pending_one_liner_count: int = 0
 
     def __post_init__(self) -> None:
         if not self.concept_id.strip() or not self.label.strip() or not self.subject.strip():
             raise ValueError("topic identity, label, and subject are required")
         if self.verified_one_liner_count < 0:
             raise ValueError("verified_one_liner_count must be non-negative")
+        if self.pending_one_liner_count < 0:
+            raise ValueError("pending_one_liner_count must be non-negative")
 
 
 @dataclass(frozen=True)

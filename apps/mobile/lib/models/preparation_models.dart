@@ -165,6 +165,7 @@ class QuestionBankTopic {
     required this.topic,
     required this.subtopic,
     required this.verifiedOneLinerCount,
+    this.pendingOneLinerCount = 0,
   });
 
   final String conceptId;
@@ -173,6 +174,7 @@ class QuestionBankTopic {
   final String? topic;
   final String? subtopic;
   final int verifiedOneLinerCount;
+  final int pendingOneLinerCount;
 
   factory QuestionBankTopic.fromJson(Map<String, dynamic> json) {
     return QuestionBankTopic(
@@ -182,6 +184,7 @@ class QuestionBankTopic {
       topic: _optionalString(json['topic']),
       subtopic: _optionalString(json['subtopic']),
       verifiedOneLinerCount: _integer(json['verified_one_liner_count'], 0),
+      pendingOneLinerCount: _integer(json['pending_one_liner_count'], 0),
     );
   }
 }

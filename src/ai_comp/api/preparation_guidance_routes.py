@@ -2220,6 +2220,7 @@ def list_question_bank_topics(
                     "topic": item.topic,
                     "subtopic": item.subtopic,
                     "verified_one_liner_count": item.verified_one_liner_count,
+                    "pending_one_liner_count": item.pending_one_liner_count,
                 }
                 for item in selected
             ],
@@ -2329,6 +2330,100 @@ def list_topic_one_liners(
             "error": {
                 "code": "QUESTION_BANK_ONE_LINERS_UNAVAILABLE",
                 "message": "Verified one-liners for this topic could not be loaded.",
+            }
+        })
+    finally:
+        close = getattr(connection, "close", None)
+        if callable(close):
+            close()
+
+
+@router.get(
+    "/{learner_id}/question-bank/pending-one-liners",
+    name="list_topic_pending_one_liners",
+    responses={
+        **COMMON_API_ERROR_RESPONSES,
+        200: {"model": TopicOneLinerListResponse, "description": "AI-authored topic Q&A that is explicitly marked as awaiting independent source review."},
+    },
+)
+def list_topic_pending_one_liners(
+    learner_id: str,
+    request: Request,
+    concept_id: str,
+    language_code: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Response:
+    """List draft Q&A separately from the verified learner question bank."""
+    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    if error is not None:
+        return error
+    if not concept_id.strip() or concept_id != concept_id.strip() or len(concept_id) > 128:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_CONCEPT_ID", "message": "concept_id must be trimmed and 1-128 characters."}
+        })
+    if language_code is not None and (
+        not language_code.strip() or language_code != language_code.strip() or len(language_code) > 20
+    ):
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_LANGUAGE_CODE", "message": "language_code must be a trimmed language code."}
+        })
+    if not 1 <= limit <= 100 or not 0 <= offset <= 100000:
+        return _json_response(HTTPStatus.BAD_REQUEST, {
+            "error": {"code": "INVALID_PAGINATION", "message": "limit must be 1-100 and offset 0-100000."}
+        })
+    connection_factory = getattr(request.app.state, "question_bank_connection_factory", None)
+    if not callable(connection_factory):
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_NOT_CONFIGURED",
+                "message": "The topic question bank is not configured for this server.",
+            }
+        })
+    connection = None
+    try:
+        connection = connection_factory()
+        repository = PostgresTopicQuestionBankRepository(connection)
+        rows = repository.list_one_liners(
+            concept_id,
+            limit=limit + 1,
+            offset=offset,
+            verified_only=False,
+            pending_only=True,
+            language_code=language_code,
+        )
+        selected = rows[:limit]
+        payload = TopicOneLinerListResponse.model_validate({
+            "items": [
+                {
+                    "one_liner_id": item.one_liner_id,
+                    "concept_id": item.concept_id,
+                    "question_text": item.question_text,
+                    "answer_text": item.answer_text,
+                    "language_code": item.language_code,
+                    "source_url": item.source_url,
+                    "source_evidence": item.source_evidence,
+                    "verification_status": item.verification_status.value,
+                    "importance_score": item.importance_score,
+                    "reviewed_at": item.reviewed_at,
+                    "created_at": item.created_at,
+                    "updated_at": item.updated_at,
+                }
+                for item in selected
+            ],
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "returned": len(selected),
+                "has_more": len(rows) > limit,
+            },
+        }).model_dump(mode="json")
+        return _json_response(HTTPStatus.OK, payload)
+    except Exception:
+        return _json_response(HTTPStatus.SERVICE_UNAVAILABLE, {
+            "error": {
+                "code": "QUESTION_BANK_PENDING_ONE_LINERS_UNAVAILABLE",
+                "message": "Review-pending AI draft questions for this topic could not be loaded.",
             }
         })
     finally:
