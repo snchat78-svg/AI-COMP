@@ -70,6 +70,10 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
       topic.subject,
       if (topic.topic != null) topic.topic!,
       if (topic.subtopic != null) topic.subtopic!,
+      questionBankHindiLabel(topic.label),
+      questionBankHindiLabel(topic.subject),
+      if (topic.topic != null) questionBankHindiLabel(topic.topic!),
+      if (topic.subtopic != null) questionBankHindiLabel(topic.subtopic!),
       topic.conceptId,
     ].join(' ').toLowerCase();
     return searchable.contains(_searchQuery);
@@ -94,7 +98,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
       appBar: AppBar(
         title: Text(widget.examId == null
             ? '${questionBankHindiLabel(widget.subjectId)} — विषय'
-            : '${widget.subjectId} — विषय · ${widget.examId}'),
+            : '${questionBankHindiLabel(widget.subjectId)} — विषय · ${widget.examId}'),
         actions: [
           IconButton(
             tooltip: 'विषय ताज़ा करें',
