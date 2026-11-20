@@ -456,3 +456,17 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. No phase transition is claimed. The RSSB official PDF candidate URL still requires actual byte retrieval, issuer/version confirmation, SHA-256 and complete syllabus inventory/review. No named RSSB profile is seeded.
 - Current dashboard increment PR #116 is already merged with backend 645 tests, Flutter analyze/tests and APK artifact evidence recorded above.
 - Next bounded work: close the Matsya draft review gap using primary/official source checks and the user's exact book pages 145–149, then run Chapter 2-wide duplicate/coverage review. Do not add an unconfirmed sixth child-site or move to Chapter 3 until those checks pass. In parallel, continue Phase 6.56 only through approved source retrieval and reviewed syllabus inventory; do not use a secondary transcription as official evidence.
+
+
+## 2026-11-20 — हिंदी प्रश्न-बैंक और शून्य One-Liner समस्या
+
+- कोड जाँच से कारण पुष्ट: learner API केवल `verification_status='VERIFIED'` वाले प्रश्न लौटाती है। मोबाइल उसी endpoint को उपयोग करता है। इसलिए GitHub के Markdown/CSV में मौजूद drafts API में अपने-आप नहीं आते और शून्य verified count दिख सकता है।
+- अध्याय 2 में Git पर 368 हिंदी Q&A drafts हैं (कालीबंगा 311, आहड़-बनास 20, गणेश्वर-जोधपुरा 18, बैराठ 9, मत्स्य जनपद 10)। सभी `NEEDS_REVIEW` हैं। Migration 0022 केवल 10 अतिरिक्त starter candidates डालती है और वे भी `NEEDS_REVIEW` हैं।
+- Render workspace में API सेवा `ai-comp-api` live है; उसी workspace में Render-managed PostgreSQL instance नहीं मिला। बाहरी PostgreSQL संभव है; इस जाँच में live DB counts और migration state सत्यापित नहीं हुए।
+- नई migration `0029_hindi_question_bank_catalogue.sql` विषय, मुख्य अध्याय और उप-विषय नामों को हिंदी में बदलती है; स्थायी `concept_id` नहीं बदलते। अध्याय 2 के पाँचों उप-विषय “राजस्थान के प्राचीन सभ्यता स्थल” के नीचे रखे जाते हैं।
+- मोबाइल Question Bank स्क्रीन के खोज, नेविगेशन, खाली/error संदेश, प्रश्न/उत्तर labels और पुराने प्रश्न lane के UI labels हिंदी किए गए।
+- किसी draft को `VERIFIED` नहीं किया गया। स्वतंत्र reviewer स्रोत, प्रश्न, उत्तर, भाषा, topic mapping और duplicate जाँचकर मौजूदा review endpoint से audit note के साथ publish करेगा।
+- Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED` रहेंगे। यह increment official syllabus gates या live database migration को complete नहीं बताता।
+- शाखा: `fix/question-bank-hindi-catalogue-zero-count-diagnosis`. अगला क्रम: बाहरी DB की सुरक्षित पहचान, migration लागू करना, 368 drafts को existing author flow से `NEEDS_REVIEW` के रूप में load करना, independent review और authenticated APK में live count जाँचना।
+
+See [zero One-Liner diagnosis](PHASE_6_56_ZERO_ONE_LINER_DIAGNOSIS_HINDI.md).
