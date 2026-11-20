@@ -5,6 +5,8 @@ import 'package:ai_comp_mobile/models/preparation_models.dart';
 import 'package:ai_comp_mobile/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../lib/localization/question_bank_labels.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
@@ -354,7 +356,51 @@ void main() {
   
     expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
     expect(find.text('विषय और उप-विषय खोजें'), findsOneWidget);
-    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
     expect(find.text('लूणी नदी'), findsOneWidget);
   });
+
+  test('translates legacy English catalogue values for display', () {
+    expect(questionBankHindiLabel('Rajasthan History'), 'राजस्थान इतिहास');
+    expect(questionBankHindiLabel('Rivers and Drainage'), 'नदियाँ एवं अपवाह तंत्र');
+    expect(questionBankHindiLabel('Luni River'), 'लूणी नदी');
+    expect(questionBankHindiLabel('मत्स्य जनपद'), 'मत्स्य जनपद');
+  });
+
+  testWidgets('search finds a Hindi alias from an English API catalogue', (tester) async {
+    String? requestedSubject;
+    final mock = MockClient((request) async {
+      requestedSubject = request.url.queryParameters['subject'];
+      return jsonResponse({
+        'items': [
+          {
+            'concept_id': 'catalog.rajasthan_geography_luni_river',
+            'label': 'Luni River',
+            'subject': 'Rajasthan Geography',
+            'topic': 'Rivers and Drainage',
+            'subtopic': 'Luni River',
+            'verified_one_liner_count': 0,
+          },
+        ],
+        'pagination': {
+          'limit': 100, 'offset': 0, 'returned': 1, 'has_more': false,
+        },
+      });
+    });
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+
+    await tester.pumpWidget(MaterialApp(
+      home: QuestionBankScreen(api: api, subjectId: 'Rajasthan Geography'),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
+    expect(find.text('नदियाँ एवं अपवाह तंत्र'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'लूणी नदी');
+    await tester.pumpAndSettle();
+    expect(find.text('लूणी नदी'), findsOneWidget);
+    expect(requestedSubject, 'Rajasthan Geography');
+  });
+
 }
