@@ -6,7 +6,7 @@ import 'package:ai_comp_mobile/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/localization/question_bank_labels.dart';
+import 'package:ai_comp_mobile/localization/question_bank_labels.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
