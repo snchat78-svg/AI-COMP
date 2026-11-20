@@ -4,6 +4,9 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 
 import pytest
+from fastapi.testclient import TestClient
+
+from ai_comp.api.app import create_app
 
 from ai_comp.database.postgres_topic_question_bank import PostgresTopicQuestionBankRepository
 from ai_comp.domain.topic_question_bank import (
@@ -73,6 +76,9 @@ class _Connection:
         if not self._results:
             raise AssertionError("unexpected database query")
         return _Rows(self._results.pop(0))
+
+    def close(self):
+        self.closed = True
 
 
 def test_subject_list_comes_from_existing_concept_taxonomy() -> None:
@@ -188,6 +194,56 @@ def test_verified_and_pending_only_filters_cannot_be_combined() -> None:
             pending_only=True,
         )
     assert connection.calls == []
+
+
+
+def test_authenticated_learner_can_load_explicitly_pending_ai_drafts() -> None:
+    now = datetime(2026, 11, 20, tzinfo=timezone.utc)
+    connection = _Connection([
+        [
+            (
+                "ch2_KAL-001",
+                "catalog.rajasthan_history_ancient_history_kalibangan",
+                "कालीबंगा राजस्थान के किस जिले में स्थित है?",
+                "हनुमानगढ़ जिले में।",
+                "hi",
+                "https://example.gov.in/kalibanga.pdf",
+                "KAL-001 — S4, printed p. 34 — स्वतंत्र स्रोत-समीक्षा लंबित।",
+                "NEEDS_REVIEW",
+                0.8,
+                None,
+                now,
+                now,
+            )
+        ]
+    ])
+    app = create_app(learner_identity_provider=lambda request: "learner-1")
+    app.state.question_bank_connection_factory = lambda: connection
+    client = TestClient(app)
+
+    response = client.get(
+        "/api/v1/learners/learner-1/question-bank/pending-one-liners",
+        params={
+            "concept_id": "catalog.rajasthan_history_ancient_history_kalibangan",
+            "language_code": "hi",
+            "limit": 20,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["items"][0]["one_liner_id"] == "ch2_KAL-001"
+    assert payload["items"][0]["verification_status"] == "NEEDS_REVIEW"
+    assert payload["items"][0]["question_text"].startswith("कालीबंगा")
+    query, params = connection.calls[0]
+    assert "verification_status IN ('DRAFT', 'NEEDS_REVIEW')" in query
+    assert params == (
+        "catalog.rajasthan_history_ancient_history_kalibangan",
+        "hi",
+        21,
+        0,
+    )
+    assert connection.closed is True
 
 
 def test_invalid_pagination_is_rejected_before_query() -> None:
