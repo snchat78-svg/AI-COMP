@@ -162,6 +162,10 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                   0,
                   (sum, topic) => sum + topic.verifiedOneLinerCount,
                 );
+                final visiblePendingCount = filtered.fold<int>(
+                  0,
+                  (sum, topic) => sum + topic.pendingOneLinerCount,
+                );
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -278,16 +282,22 @@ class _TopicQuestionBankDetailScreenState
   static const int _pageSize = 100;
 
   List<TopicOneLinerItem> _oneLiners = const [];
+  List<TopicOneLinerItem> _pendingOneLiners = const [];
   List<PreviousYearQuestion> _previousQuestions = const [];
   int _oneLinerOffset = 0;
+  int _pendingOneLinerOffset = 0;
   int _previousOffset = 0;
   bool _oneLinersLoading = false;
+  bool _pendingOneLinersLoading = false;
   bool _previousLoading = false;
   bool _oneLinersLoaded = false;
+  bool _pendingOneLinersLoaded = false;
   bool _previousLoaded = false;
   bool _oneLinersHasMore = false;
+  bool _pendingOneLinersHasMore = false;
   bool _previousHasMore = false;
   String? _oneLinersError;
+  String? _pendingOneLinersError;
   String? _previousError;
 
   @override
@@ -295,6 +305,7 @@ class _TopicQuestionBankDetailScreenState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadOneLiners(reset: true);
+      _loadPendingOneLiners(reset: true);
       _loadPreviousQuestions(reset: true);
     });
   }
@@ -302,6 +313,7 @@ class _TopicQuestionBankDetailScreenState
   Future<void> _reload() async {
     await Future.wait([
       _loadOneLiners(reset: true),
+      _loadPendingOneLiners(reset: true),
       _loadPreviousQuestions(reset: true),
     ]);
   }
@@ -347,6 +359,53 @@ class _TopicQuestionBankDetailScreenState
         _oneLinersLoading = false;
         _oneLinersLoaded = _oneLiners.isNotEmpty;
         _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।';
+      });
+    }
+  }
+
+  Future<void> _loadPendingOneLiners({bool reset = false}) async {
+    if (_pendingOneLinersLoading) return;
+    final offset = reset ? 0 : _pendingOneLinerOffset;
+    setState(() {
+      _pendingOneLinersLoading = true;
+      if (reset) {
+        _pendingOneLiners = const [];
+        _pendingOneLinerOffset = 0;
+        _pendingOneLinersLoaded = false;
+        _pendingOneLinersHasMore = false;
+        _pendingOneLinersError = null;
+      }
+    });
+    try {
+      final page = await widget.api.getPendingTopicOneLiners(
+        widget.topic.conceptId,
+        limit: _pageSize,
+        offset: offset,
+        languageCode: 'hi',
+      );
+      if (!mounted) return;
+      setState(() {
+        _pendingOneLiners =
+            reset ? page : [..._pendingOneLiners, ...page];
+        _pendingOneLinerOffset = offset + page.length;
+        _pendingOneLinersHasMore = page.length == _pageSize;
+        _pendingOneLinersLoading = false;
+        _pendingOneLinersLoaded = true;
+        _pendingOneLinersError = null;
+      });
+    } on ApiException {
+      if (!mounted) return;
+      setState(() {
+        _pendingOneLinersLoading = false;
+        _pendingOneLinersLoaded = true;
+        _pendingOneLinersError = 'समीक्षा बाकी AI मसौदे लोड नहीं हो सके। पुनः प्रयास करें।';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _pendingOneLinersLoading = false;
+        _pendingOneLinersLoaded = true;
+        _pendingOneLinersError = 'समीक्षा बाकी AI मसौदे लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचें।';
       });
     }
   }
@@ -430,23 +489,26 @@ class _TopicQuestionBankDetailScreenState
   }
 
   Widget _buildOneLiners() {
-    if (!_oneLinersLoaded && _oneLinersLoading) {
+    final hasAnyLoaded = _oneLinersLoaded || _pendingOneLinersLoaded;
+    final hasAnyItems = _oneLiners.isNotEmpty || _pendingOneLiners.isNotEmpty;
+    if (!hasAnyLoaded && (_oneLinersLoading || _pendingOneLinersLoading)) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (_oneLinersError != null && _oneLiners.isEmpty) {
+    if (!hasAnyItems && _oneLinersError != null && _pendingOneLinersError != null) {
       return _QuestionBankMessage(
         icon: Icons.cloud_off_outlined,
         title: 'एक-पंक्ति प्रश्न उपलब्ध नहीं हैं',
-        message: _oneLinersError!,
+        message: 'सत्यापित प्रश्न और AI मसौदे लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।',
         actionLabel: 'पुनः प्रयास करें',
-        onAction: () => _loadOneLiners(reset: true),
+        onAction: _reload,
       );
     }
-    if (_oneLinersLoaded && _oneLiners.isEmpty) {
+    if (hasAnyLoaded && !hasAnyItems &&
+        _oneLinersLoaded && _pendingOneLinersLoaded) {
       return const _QuestionBankMessage(
         icon: Icons.sticky_note_2_outlined,
-        title: 'अभी कोई सत्यापित एक-पंक्ति प्रश्न उपलब्ध नहीं है',
-        message: 'इस उप-विषय के लिए अभी कोई सत्यापित प्रश्न-उत्तर उपलब्ध नहीं है। इसका अर्थ यह नहीं है कि विषय पूरी तरह कवर हो गया है।',
+        title: 'अभी कोई एक-पंक्ति प्रश्न उपलब्ध नहीं है',
+        message: 'इस उप-विषय में न सत्यापित प्रश्न हैं, न समीक्षा के लिए AI मसौदे।',
       );
     }
     return Column(
@@ -456,29 +518,66 @@ class _TopicQuestionBankDetailScreenState
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '${_oneLiners.length} सत्यापित प्रश्नोत्तर लोड हुए',
+              '${_oneLiners.length} सत्यापित प्रश्न • '
+              '${_pendingOneLiners.length} AI मसौदे (समीक्षा बाकी)',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ),
+        if (_pendingOneLiners.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'नीचे दिए गए AI मसौदे पढ़ने के लिए उपलब्ध हैं। इनकी स्वतंत्र स्रोत-जाँच बाकी है; इन्हें सत्यापित प्रश्न या पुराने वर्षों के प्रश्न न समझें।',
+              ),
+            ),
+          ),
         if (_oneLinersError != null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Text(_oneLinersError!),
+          ),
+        if (_pendingOneLinersError != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Text(_pendingOneLinersError!),
           ),
         Expanded(
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: _oneLiners.length,
+            itemCount: _oneLiners.length + _pendingOneLiners.length,
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
-              final item = _oneLiners[index];
+              final isPending = index >= _oneLiners.length;
+              final item = isPending
+                  ? _pendingOneLiners[index - _oneLiners.length]
+                  : _oneLiners[index];
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Chip(
+                          avatar: Icon(
+                            isPending ? Icons.pending_actions : Icons.verified_outlined,
+                            size: 18,
+                          ),
+                          label: Text(
+                            isPending ? 'AI मसौदा — समीक्षा बाकी' : 'सत्यापित प्रश्न',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         'प्रश्न ${index + 1}. ${item.questionText}',
                         style: Theme.of(context).textTheme.titleMedium,
@@ -487,7 +586,9 @@ class _TopicQuestionBankDetailScreenState
                       Text('उत्तर: ${item.answerText}'),
                       const SizedBox(height: 8),
                       Text(
-                        'सत्यापित स्रोत-साक्ष्य: ${item.sourceEvidence}',
+                        isPending
+                            ? 'स्रोत-सूचक (जाँच बाकी): ${item.sourceEvidence}'
+                            : 'सत्यापित स्रोत-साक्ष्य: ${item.sourceEvidence}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       if (item.sourceUrl != null) ...[
@@ -506,13 +607,24 @@ class _TopicQuestionBankDetailScreenState
         ),
         if (_oneLinersHasMore || _oneLinersLoading)
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: _oneLinersLoading
                 ? const CircularProgressIndicator()
                 : OutlinedButton.icon(
                     onPressed: () => _loadOneLiners(),
                     icon: const Icon(Icons.expand_more),
-                    label: const Text('और एक-पंक्ति प्रश्न देखें'),
+                    label: const Text('और सत्यापित प्रश्न देखें'),
+                  ),
+          ),
+        if (_pendingOneLinersHasMore || _pendingOneLinersLoading)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: _pendingOneLinersLoading
+                ? const CircularProgressIndicator()
+                : OutlinedButton.icon(
+                    onPressed: () => _loadPendingOneLiners(),
+                    icon: const Icon(Icons.expand_more),
+                    label: const Text('और AI मसौदे देखें'),
                   ),
           ),
       ],
