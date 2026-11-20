@@ -564,7 +564,7 @@ void main() {
     final api = apiFor(mock);
     addTearDown(api.close);
 
-    await tester.runAsync(() => LocalQuestionBankDrafts.loadAll());
+    LocalQuestionBankDrafts.primeForTests([chapterTwoKalibangaDraft()]);
 
     await tester.pumpWidget(MaterialApp(
       home: TopicQuestionBankDetailScreen(
