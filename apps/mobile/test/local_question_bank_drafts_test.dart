@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 
+
+
 import 'package:ai_comp_mobile/data/local_question_bank_drafts.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   test('bundled Chapter 2 Hindi drafts include all five child sites', () async {
     final items = await LocalQuestionBankDrafts.loadAll();
     expect(items.length, 368);
