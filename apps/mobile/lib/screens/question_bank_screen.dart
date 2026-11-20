@@ -215,7 +215,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                             );
                             final groupPendingCount = childTopics.fold<int>(
                               0,
-                              (sum, topic) => sum + topic.pendingOneLinerCount,
+                              (sum, topic) => sum + _pendingCount(topic),
                             );
                             return Card(
                               child: ExpansionTile(
