@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/ai_comp_api_client.dart';
+import '../data/local_question_bank_drafts.dart';
 import '../localization/question_bank_labels.dart';
 import '../models/preparation_models.dart';
 
@@ -61,6 +62,13 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
     setState(() {
       _topicsFuture = _loadAllTopics();
     });
+  }
+
+  int _pendingCount(QuestionBankTopic topic) {
+    final localCount = LocalQuestionBankDrafts.countForConcept(topic.conceptId);
+    return topic.pendingOneLinerCount > localCount
+        ? topic.pendingOneLinerCount
+        : localCount;
   }
 
   bool _matchesSearch(QuestionBankTopic topic) {
@@ -164,7 +172,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                 );
                 final visiblePendingCount = filtered.fold<int>(
                   0,
-                  (sum, topic) => sum + topic.pendingOneLinerCount,
+                  (sum, topic) => sum + _pendingCount(topic),
                 );
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,7 +243,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                       title: Text(questionBankHindiLabel(topic.subtopic ?? topic.label)),
                                       subtitle: Text(
                                         '${questionBankHindiLabel(topic.label)} • '
-                                        '${topic.verifiedOneLinerCount} सत्यापित • ${topic.pendingOneLinerCount} समीक्षा बाकी',
+                                        '${topic.verifiedOneLinerCount} सत्यापित • ${_pendingCount(topic)} समीक्षा बाकी',
                                       ),
                                       trailing: const Icon(Icons.chevron_right),
                                       onTap: () {
@@ -287,6 +295,7 @@ class _TopicQuestionBankDetailScreenState
 
   List<TopicOneLinerItem> _oneLiners = const [];
   List<TopicOneLinerItem> _pendingOneLiners = const [];
+  List<TopicOneLinerItem> _allPendingOneLiners = const [];
   List<PreviousYearQuestion> _previousQuestions = const [];
   int _oneLinerOffset = 0;
   int _pendingOneLinerOffset = 0;
@@ -299,6 +308,7 @@ class _TopicQuestionBankDetailScreenState
   bool _previousLoaded = false;
   bool _oneLinersHasMore = false;
   bool _pendingOneLinersHasMore = false;
+  bool _pendingUsingLocalFallback = false;
   bool _previousHasMore = false;
   String? _oneLinersError;
   String? _pendingOneLinersError;
@@ -369,47 +379,96 @@ class _TopicQuestionBankDetailScreenState
 
   Future<void> _loadPendingOneLiners({bool reset = false}) async {
     if (_pendingOneLinersLoading) return;
-    final offset = reset ? 0 : _pendingOneLinerOffset;
+
+    if (!reset) {
+      final page = _allPendingOneLiners
+          .skip(_pendingOneLinerOffset)
+          .take(_pageSize)
+          .toList(growable: false);
+      if (!mounted) return;
+      setState(() {
+        _pendingOneLiners = [..._pendingOneLiners, ...page];
+        _pendingOneLinerOffset += page.length;
+        _pendingOneLinersHasMore =
+            _pendingOneLinerOffset < _allPendingOneLiners.length;
+      });
+      return;
+    }
+
     setState(() {
       _pendingOneLinersLoading = true;
-      if (reset) {
-        _pendingOneLiners = const [];
-        _pendingOneLinerOffset = 0;
-        _pendingOneLinersLoaded = false;
-        _pendingOneLinersHasMore = false;
-        _pendingOneLinersError = null;
-      }
+      _pendingOneLiners = const [];
+      _allPendingOneLiners = const [];
+      _pendingOneLinerOffset = 0;
+      _pendingOneLinersLoaded = false;
+      _pendingOneLinersHasMore = false;
+      _pendingUsingLocalFallback = false;
+      _pendingOneLinersError = null;
     });
+
     try {
-      final page = await widget.api.getPendingTopicOneLiners(
+      // Bundled local drafts keep Chapter 2 readable even before migration
+      // 0030 has been applied to the live PostgreSQL database.
+      final localItems = await LocalQuestionBankDrafts.loadForConcept(
         widget.topic.conceptId,
-        limit: _pageSize,
-        offset: offset,
-        languageCode: 'hi',
       );
+
+      final remoteItems = <TopicOneLinerItem>[];
+      var remoteFailed = false;
+      var remoteOffset = 0;
+      try {
+        while (remoteOffset <= 10000) {
+          final page = await widget.api.getPendingTopicOneLiners(
+            widget.topic.conceptId,
+            limit: _pageSize,
+            offset: remoteOffset,
+            languageCode: 'hi',
+          );
+          remoteItems.addAll(page);
+          remoteOffset += page.length;
+          if (page.length < _pageSize) break;
+        }
+      } catch (_) {
+        // Fall back to the APK's bundled NEEDS_REVIEW copy below.
+        remoteFailed = true;
+      }
+
+      // The server copy wins for an identical draft ID. The local copy fills
+      // gaps until migration 0030 has been applied to the live database.
+      final mergedById = <String, TopicOneLinerItem>{};
+      for (final item in localItems) {
+        mergedById[item.oneLinerId] = item;
+      }
+      for (final item in remoteItems) {
+        mergedById[item.oneLinerId] = item;
+      }
+      final mergedItems = mergedById.values.toList()
+        ..sort((a, b) => a.oneLinerId.compareTo(b.oneLinerId));
+      final firstPage = mergedItems.take(_pageSize).toList(growable: false);
+      final remoteIds = remoteItems.map((item) => item.oneLinerId).toSet();
+      final usedLocalFallback =
+          localItems.any((item) => !remoteIds.contains(item.oneLinerId));
+
       if (!mounted) return;
       setState(() {
-        _pendingOneLiners =
-            reset ? page : [..._pendingOneLiners, ...page];
-        _pendingOneLinerOffset = offset + page.length;
-        _pendingOneLinersHasMore = page.length == _pageSize;
+        _allPendingOneLiners = mergedItems;
+        _pendingOneLiners = firstPage;
+        _pendingOneLinerOffset = firstPage.length;
+        _pendingOneLinersHasMore = firstPage.length < mergedItems.length;
+        _pendingUsingLocalFallback = usedLocalFallback;
         _pendingOneLinersLoading = false;
         _pendingOneLinersLoaded = true;
-        _pendingOneLinersError = null;
-      });
-    } on ApiException {
-      if (!mounted) return;
-      setState(() {
-        _pendingOneLinersLoading = false;
-        _pendingOneLinersLoaded = true;
-        _pendingOneLinersError = 'समीक्षा बाकी AI मसौदे लोड नहीं हो सके। पुनः प्रयास करें।';
+        _pendingOneLinersError = mergedItems.isEmpty && remoteFailed
+            ? 'सर्वर और स्थानीय प्रश्न-सूची दोनों लोड नहीं हो सके। पुनः प्रयास करें।'
+            : null;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _pendingOneLinersLoading = false;
         _pendingOneLinersLoaded = true;
-        _pendingOneLinersError = 'समीक्षा बाकी AI मसौदे लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचें।';
+        _pendingOneLinersError =
+            'स्थानीय हिंदी प्रश्न-सूची लोड नहीं हो सकी। ऐप अपडेट करके पुनः प्रयास करें।';
       });
     }
   }
@@ -524,11 +583,26 @@ class _TopicQuestionBankDetailScreenState
             alignment: Alignment.centerLeft,
             child: Text(
               '${_oneLiners.length} सत्यापित प्रश्न • '
-              '${_pendingOneLiners.length} AI मसौदे (समीक्षा बाकी)',
+              '${_allPendingOneLiners.length} AI मसौदे (समीक्षा बाकी)',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ),
+        if (_pendingUsingLocalFallback)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'ये प्रश्न APK में सुरक्षित स्थानीय प्रति से दिखाए जा रहे हैं। सर्वर डेटाबेस में आयात होने तक भी आप इन्हें पढ़ सकते हैं; स्वतंत्र समीक्षा अभी बाकी है।',
+              ),
+            ),
+          ),
         if (_pendingOneLiners.isNotEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
