@@ -34,3 +34,13 @@
 - Exact-head backend/Flutter CI और release APK build + verification।
 
 **साफ सीमा:** इस documentation या migration को GitHub में जोड़ने से live DB नहीं बदलता। समीक्षा से पहले drafts publish करना उचित नहीं है।
+
+
+## 2026-11-20 — समाधान: 368 AI drafts अलग pending lane में
+
+- Chapter 2 source-of-record से 368 Hindi Q&A rows निकाली गईं: KAL 311, AHB 20, GJ 18, BRT 9, MTS 10। हर row में प्रश्न, उत्तर और evidence locator है।
+- Migration `0030_import_chapter_2_hindi_draft_one_liners.sql` इनको existing concept IDs और stable draft references के साथ `NEEDS_REVIEW` में insert करती है। `ON CONFLICT DO NOTHING` re-run safety देती है। Hash convention को migration 0022 की existing known content hash से मिलाया गया।
+- नया learner route `GET /api/v1/learners/{learner_id}/question-bank/pending-one-liners` सिर्फ `DRAFT/NEEDS_REVIEW` लौटाता है। पुराना `/one-liners` route अभी भी सिर्फ `VERIFIED` लौटाता है।
+- Flutter verified और pending lists अलग-अलग load करता है। Pending card पर “AI मसौदा — समीक्षा बाकी” chip, unverified source locator और स्पष्ट note दिखेगा। Previous-year questions अलग lane में रहेंगे।
+- Subject/main-topic/subtopic catalogue अब pending counts भी दिखाता है; verified count नहीं बढ़ता।
+- Live database migration अभी applied/verified नहीं है; सही DB पर controlled workflow के बाद ही APK में imported drafts दिखाई देंगे। सभी rows independent reviewer तक NEEDS_REVIEW रहेंगी।
