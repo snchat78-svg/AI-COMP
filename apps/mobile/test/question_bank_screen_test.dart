@@ -399,7 +399,7 @@ void main() {
     expect(find.text('नदियाँ एवं अपवाह तंत्र'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'लूणी नदी');
     await tester.pumpAndSettle();
-    expect(find.text('लूणी नदी'), findsOneWidget);
+    expect(find.text('लूणी नदी'), findsNWidgets(2));
     expect(requestedSubject, 'Rajasthan Geography');
   });
 
