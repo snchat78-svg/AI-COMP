@@ -20,3 +20,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/question_bank/rajasthan_history_chapter_2_drafts.json
