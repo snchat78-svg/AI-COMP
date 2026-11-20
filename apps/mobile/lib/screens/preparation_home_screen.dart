@@ -398,7 +398,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
         SnackBar(
           content: Text(
             'Generated ${generation.generatedAlternativeCount} verified alternative MCQs. '
-            'Starting a ${session.questionCount}-question test for $subjectId.',
+            '${session.questionCount} प्रश्नों की ${questionBankHindiLabel(subjectId)} अभ्यास परीक्षा शुरू हो रही है।',
           ),
         ),
       );
@@ -407,7 +407,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
           builder: (_) => TestSessionScreen(
             api: api,
             initialSession: session,
-            title: '$subjectId practice test',
+            title: '${questionBankHindiLabel(subjectId)} अभ्यास परीक्षा',
             focusConceptIds: const <String>[],
           ),
         ),
@@ -1119,7 +1119,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
     final empty = available == 0;
     final scopeLabel = readiness.subjectId == null
         ? ''
-        : ' — ${questionBankHindiLabel(readiness.subjectId)} के लिए';
+        : ' — ${questionBankHindiLabel(readiness.subjectId ?? '')} के लिए';
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
