@@ -571,11 +571,21 @@ class _TopicQuestionBankDetailScreenState
     if (!hasAnyLoaded && (_oneLinersLoading || _pendingOneLinersLoading)) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (!hasAnyItems && _oneLinersError != null && _pendingOneLinersError != null) {
+    if (!hasAnyItems && _oneLinersError != null) {
       return _QuestionBankMessage(
         icon: Icons.cloud_off_outlined,
-        title: 'एक-पंक्ति प्रश्न उपलब्ध नहीं हैं',
-        message: 'सत्यापित प्रश्न और AI मसौदे लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।',
+        title: 'सत्यापित प्रश्न लोड नहीं हो सके',
+        message: _pendingOneLinersError ??
+            'सत्यापित प्रश्न उपलब्ध नहीं हैं। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।',
+        actionLabel: 'पुनः प्रयास करें',
+        onAction: _reload,
+      );
+    }
+    if (!hasAnyItems && _pendingOneLinersError != null) {
+      return _QuestionBankMessage(
+        icon: Icons.cloud_off_outlined,
+        title: 'AI मसौदे लोड नहीं हो सके',
+        message: _pendingOneLinersError!,
         actionLabel: 'पुनः प्रयास करें',
         onAction: _reload,
       );
@@ -658,16 +668,33 @@ class _TopicQuestionBankDetailScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Chip(
-                          avatar: Icon(
-                            isPending ? Icons.pending_actions : Icons.verified_outlined,
-                            size: 18,
-                          ),
-                          label: Text(
-                            isPending ? 'AI मसौदा — समीक्षा बाकी' : 'सत्यापित प्रश्न',
-                          ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isPending
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isPending
+                                  ? Icons.pending_actions
+                                  : Icons.verified_outlined,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isPending
+                                  ? 'AI मसौदा — समीक्षा बाकी'
+                                  : 'सत्यापित प्रश्न',
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 6),
