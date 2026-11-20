@@ -51,6 +51,20 @@ void main() {
         httpClient: client,
       );
 
+  TopicOneLinerItem chapterTwoKalibangaDraft() =>
+      TopicOneLinerItem.fromJson({
+        'one_liner_id': 'ch2_KAL-001',
+        'concept_id': 'catalog.rajasthan_history_ancient_history_kalibangan',
+        'question_text': 'कालीबंगा राजस्थान के किस जिले में स्थित है?',
+        'answer_text': 'हनुमानगढ़ जिले में।',
+        'language_code': 'hi',
+        'source_url': 'https://example.gov.in/kalibanga.pdf',
+        'source_evidence': 'KAL-001 — S4, मुद्रित पृष्ठ 34 — स्वतंत्र स्रोत-समीक्षा लंबित।',
+        'verification_status': 'NEEDS_REVIEW',
+        'importance_score': 0.8,
+      });
+
+
   testWidgets('loads bounded topic pages and filters by topic/subtopic', (tester) async {
     final topicOffsets = <int>[];
     final mock = MockClient((request) async {
@@ -492,7 +506,7 @@ void main() {
     final api = apiFor(mock);
     addTearDown(api.close);
 
-    await tester.runAsync(() => LocalQuestionBankDrafts.loadAll());
+    LocalQuestionBankDrafts.primeForTests([chapterTwoKalibangaDraft()]);
 
     await tester.pumpWidget(MaterialApp(
       home: TopicQuestionBankDetailScreen(
