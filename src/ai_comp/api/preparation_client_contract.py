@@ -312,6 +312,7 @@ class QuestionBankTopicItem(ContractModel):
     topic: str | None
     subtopic: str | None
     verified_one_liner_count: int = Field(ge=0)
+    pending_one_liner_count: int = Field(default=0, ge=0)
 
 
 class QuestionBankTopicsResponse(ContractModel):
