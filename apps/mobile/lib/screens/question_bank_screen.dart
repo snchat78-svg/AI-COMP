@@ -470,7 +470,9 @@ class _TopicQuestionBankDetailScreenState
     setState(() {
       // Keep already visible rows if the user paged while the server request
       // was running; stable IDs keep page boundaries deterministic.
-      final visibleCount = _pendingOneLinerOffset;
+      final visibleCount = _pendingOneLinerOffset > 0
+          ? _pendingOneLinerOffset
+          : _pageSize;
       _allPendingOneLiners = mergedItems;
       _pendingOneLiners = mergedItems
           .take(visibleCount)
