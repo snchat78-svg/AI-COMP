@@ -406,71 +406,85 @@ class _TopicQuestionBankDetailScreenState
       _pendingOneLinersError = null;
     });
 
+    List<TopicOneLinerItem> localItems = const [];
     try {
-      // Bundled local drafts keep Chapter 2 readable even before migration
-      // 0030 has been applied to the live PostgreSQL database.
-      final localItems = await LocalQuestionBankDrafts.loadForConcept(
+      localItems = await LocalQuestionBankDrafts.loadForConcept(
         widget.topic.conceptId,
       );
-
-      final remoteItems = <TopicOneLinerItem>[];
-      var remoteFailed = false;
-      var remoteOffset = 0;
-      try {
-        while (remoteOffset <= 10000) {
-          final page = await widget.api.getPendingTopicOneLiners(
-            widget.topic.conceptId,
-            limit: _pageSize,
-            offset: remoteOffset,
-            languageCode: 'hi',
-          );
-          remoteItems.addAll(page);
-          remoteOffset += page.length;
-          if (page.length < _pageSize) break;
-        }
-      } catch (_) {
-        // Fall back to the APK's bundled NEEDS_REVIEW copy below.
-        remoteFailed = true;
-      }
-
-      // The server copy wins for an identical draft ID. The local copy fills
-      // gaps until migration 0030 has been applied to the live database.
-      final mergedById = <String, TopicOneLinerItem>{};
-      for (final item in localItems) {
-        mergedById[item.oneLinerId] = item;
-      }
-      for (final item in remoteItems) {
-        mergedById[item.oneLinerId] = item;
-      }
-      final mergedItems = mergedById.values.toList()
-        ..sort((a, b) => a.oneLinerId.compareTo(b.oneLinerId));
-      final firstPage = mergedItems.take(_pageSize).toList(growable: false);
-      final remoteIds = remoteItems.map((item) => item.oneLinerId).toSet();
-      final usedLocalFallback =
-          localItems.any((item) => !remoteIds.contains(item.oneLinerId));
-
-      if (!mounted) return;
-      setState(() {
-        _allPendingOneLiners = mergedItems;
-        _pendingOneLiners = firstPage;
-        _pendingOneLinerOffset = firstPage.length;
-        _pendingOneLinersHasMore = firstPage.length < mergedItems.length;
-        _pendingUsingLocalFallback = usedLocalFallback;
-        _pendingOneLinersLoading = false;
-        _pendingOneLinersLoaded = true;
-        _pendingOneLinersError = mergedItems.isEmpty && remoteFailed
-            ? 'सर्वर और स्थानीय प्रश्न-सूची दोनों लोड नहीं हो सके। पुनः प्रयास करें।'
-            : null;
-      });
     } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _pendingOneLinersLoading = false;
-        _pendingOneLinersLoaded = true;
-        _pendingOneLinersError =
-            'स्थानीय हिंदी प्रश्न-सूची लोड नहीं हो सकी। ऐप अपडेट करके पुनः प्रयास करें।';
-      });
+      // The server can still provide the review-pending records.
     }
+    localItems = localItems.toList()
+      ..sort((a, b) => a.oneLinerId.compareTo(b.oneLinerId));
+
+    // Make the APK-bundled copy visible before waiting on any network request.
+    // This keeps the screen usable when migration 0030 is not live yet.
+    if (!mounted) return;
+    setState(() {
+      _allPendingOneLiners = localItems;
+      _pendingOneLiners = localItems.take(_pageSize).toList(growable: false);
+      _pendingOneLinerOffset = _pendingOneLiners.length;
+      _pendingOneLinersHasMore =
+          _pendingOneLinerOffset < _allPendingOneLiners.length;
+      _pendingUsingLocalFallback = localItems.isNotEmpty;
+      _pendingOneLinersLoading = false;
+      _pendingOneLinersLoaded = true;
+      _pendingOneLinersError = null;
+    });
+
+    // Fetch all server pages after the local copy is already readable.
+    // The server copy wins for duplicate IDs; the asset fills any DB gaps.
+    final remoteItems = <TopicOneLinerItem>[];
+    var remoteFailed = false;
+    var remoteOffset = 0;
+    try {
+      while (remoteOffset <= 10000) {
+        final page = await widget.api.getPendingTopicOneLiners(
+          widget.topic.conceptId,
+          limit: _pageSize,
+          offset: remoteOffset,
+          languageCode: 'hi',
+        );
+        remoteItems.addAll(page);
+        remoteOffset += page.length;
+        if (page.length < _pageSize) break;
+      }
+    } catch (_) {
+      remoteFailed = true;
+    }
+
+    final mergedById = <String, TopicOneLinerItem>{};
+    for (final item in localItems) {
+      mergedById[item.oneLinerId] = item;
+    }
+    for (final item in remoteItems) {
+      mergedById[item.oneLinerId] = item;
+    }
+    final mergedItems = mergedById.values.toList()
+      ..sort((a, b) => a.oneLinerId.compareTo(b.oneLinerId));
+    final remoteIds = remoteItems.map((item) => item.oneLinerId).toSet();
+    final usedLocalFallback =
+        localItems.any((item) => !remoteIds.contains(item.oneLinerId));
+
+    if (!mounted) return;
+    setState(() {
+      // Keep already visible rows if the user paged while the server request
+      // was running; stable IDs keep page boundaries deterministic.
+      final visibleCount = _pendingOneLinerOffset;
+      _allPendingOneLiners = mergedItems;
+      _pendingOneLiners = mergedItems
+          .take(visibleCount)
+          .toList(growable: false);
+      _pendingOneLinerOffset = _pendingOneLiners.length;
+      _pendingOneLinersHasMore =
+          _pendingOneLinerOffset < _allPendingOneLiners.length;
+      _pendingUsingLocalFallback = usedLocalFallback;
+      _pendingOneLinersLoaded = true;
+      _pendingOneLinersError =
+          mergedItems.isEmpty && remoteFailed && localItems.isEmpty
+              ? 'सर्वर और स्थानीय प्रश्न-सूची दोनों लोड नहीं हो सके। पुनः प्रयास करें।'
+              : null;
+    });
   }
 
   Future<void> _loadPreviousQuestions({bool reset = false}) async {
