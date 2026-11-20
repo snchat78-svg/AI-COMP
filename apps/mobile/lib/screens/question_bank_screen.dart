@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/ai_comp_api_client.dart';
+import '../localization/question_bank_labels.dart';
 import '../models/preparation_models.dart';
 
 class QuestionBankScreen extends StatefulWidget {
@@ -92,7 +93,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.examId == null
-            ? '${widget.subjectId} — विषय'
+            ? '${questionBankHindiLabel(widget.subjectId)} — विषय'
             : '${widget.subjectId} — विषय · ${widget.examId}'),
         actions: [
           IconButton(
@@ -206,7 +207,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                 leading: const CircleAvatar(
                                   child: Icon(Icons.menu_book_outlined),
                                 ),
-                                title: Text(group.key),
+                                title: Text(questionBankHindiLabel(group.key)),
                                 subtitle: Text(
                                   '${childTopics.length} उप-विषय • '
                                   '$groupVerifiedCount सत्यापित प्रश्नोत्तर',
@@ -219,9 +220,9 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                         right: 16,
                                       ),
                                       leading: const Icon(Icons.account_tree_outlined),
-                                      title: Text(topic.subtopic ?? topic.label),
+                                      title: Text(questionBankHindiLabel(topic.subtopic ?? topic.label)),
                                       subtitle: Text(
-                                        '${topic.label} • '
+                                        '${questionBankHindiLabel(topic.label)} • '
                                         '${topic.verifiedOneLinerCount} सत्यापित प्रश्नोत्तर',
                                       ),
                                       trailing: const Icon(Icons.chevron_right),
@@ -399,7 +400,7 @@ class _TopicQuestionBankDetailScreenState
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.topic.subtopic ?? widget.topic.label),
+          title: Text(questionBankHindiLabel(widget.topic.subtopic ?? widget.topic.label)),
           actions: [
             IconButton(
               tooltip: 'प्रश्न ताज़ा करें',
