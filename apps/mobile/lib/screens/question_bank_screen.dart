@@ -612,6 +612,19 @@ class _TopicQuestionBankDetailScreenState
             ),
           ),
         ),
+        if (_pendingOneLiners.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'AI मसौदा — समीक्षा बाकी',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+          ),
         if (_pendingUsingLocalFallback)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
