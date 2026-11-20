@@ -200,9 +200,8 @@ def test_verified_and_pending_only_filters_cannot_be_combined() -> None:
 def test_authenticated_learner_can_load_explicitly_pending_ai_drafts() -> None:
     now = datetime(2026, 11, 20, tzinfo=timezone.utc)
     connection = _Connection([
-        [
-            (
-                "ch2_KAL-001",
+        (
+            "ch2_KAL-001",
                 "catalog.rajasthan_history_ancient_history_kalibangan",
                 "कालीबंगा राजस्थान के किस जिले में स्थित है?",
                 "हनुमानगढ़ जिले में।",
@@ -212,10 +211,9 @@ def test_authenticated_learner_can_load_explicitly_pending_ai_drafts() -> None:
                 "NEEDS_REVIEW",
                 0.8,
                 None,
-                now,
-                now,
-            )
-        ]
+            now,
+            now,
+        )
     ])
     app = create_app(learner_identity_provider=lambda request: "learner-1")
     app.state.question_bank_connection_factory = lambda: connection
@@ -230,7 +228,7 @@ def test_authenticated_learner_can_load_explicitly_pending_ai_drafts() -> None:
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.text
     payload = response.json()
     assert payload["items"][0]["one_liner_id"] == "ch2_KAL-001"
     assert payload["items"][0]["verification_status"] == "NEEDS_REVIEW"
