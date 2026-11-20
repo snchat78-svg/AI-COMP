@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ai_comp_mobile/api/ai_comp_api_client.dart';
 import 'package:ai_comp_mobile/models/preparation_models.dart';
 import 'package:ai_comp_mobile/screens/question_bank_screen.dart';
+import 'package:ai_comp_mobile/data/local_question_bank_drafts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -491,6 +492,8 @@ void main() {
     final api = apiFor(mock);
     addTearDown(api.close);
 
+    await tester.runAsync(() => LocalQuestionBankDrafts.loadAll());
+
     await tester.pumpWidget(MaterialApp(
       home: TopicQuestionBankDetailScreen(
         api: api,
@@ -546,6 +549,8 @@ void main() {
     addTearDown(mock.close);
     final api = apiFor(mock);
     addTearDown(api.close);
+
+    await tester.runAsync(() => LocalQuestionBankDrafts.loadAll());
 
     await tester.pumpWidget(MaterialApp(
       home: TopicQuestionBankDetailScreen(
