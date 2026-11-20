@@ -364,7 +364,7 @@ class _TopicQuestionBankDetailScreenState
       if (!mounted) return;
       setState(() {
         _oneLinersLoading = false;
-        _oneLinersLoaded = _oneLiners.isNotEmpty;
+        _oneLinersLoaded = true;
         _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। पुनः प्रयास करें।';
       });
     } catch (_) {
@@ -658,10 +658,10 @@ class _TopicQuestionBankDetailScreenState
             itemCount: _oneLiners.length + _pendingOneLiners.length,
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
-              final isPending = index >= _oneLiners.length;
-              final item = isPending
-                  ? _pendingOneLiners[index - _oneLiners.length]
-                  : _oneLiners[index];
+              final item = index < _oneLiners.length
+                  ? _oneLiners[index]
+                  : _pendingOneLiners[index - _oneLiners.length];
+              final isPending = item.verificationStatus != 'VERIFIED';
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
