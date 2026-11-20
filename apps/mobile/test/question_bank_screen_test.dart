@@ -249,6 +249,8 @@ void main() {
 
     await tester.tap(find.text('पिछले वर्षों के प्रश्न'));
     await pumpUntilFound(tester, find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
     expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsNothing);
   });
