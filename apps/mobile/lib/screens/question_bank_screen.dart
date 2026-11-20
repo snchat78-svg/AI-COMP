@@ -117,7 +117,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                 suffixIcon: _searchQuery.isEmpty
                     ? null
                     : IconButton(
-                        tooltip: 'Clear search',
+                        tooltip: 'खोज हटाएँ',
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchQuery = '');
@@ -139,7 +139,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                     icon: Icons.cloud_off_outlined,
                     title: 'विषय लोड नहीं हो सके',
                     message: 'बाद में पुनः प्रयास करें। सर्वर पर विषय-सूची और आवश्यक डेटाबेस परिवर्तन लागू होने चाहिए।',
-                    actionLabel: 'Retry',
+                    actionLabel: 'पुनः प्रयास करें',
                     onAction: _refreshTopics,
                   );
                 }
@@ -172,7 +172,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        'Select a main chapter to expand its sites/topics. Topic-list presence is not proof / full coverage; only source-reviewed Q&A count as verified.',
+                        'मुख्य अध्याय खोलकर उसके सभी उप-विषय देखें। केवल स्वतंत्र स्रोत-समीक्षा से स्वीकृत प्रश्न ही सत्यापित माने जाते हैं; विषय-सूची में नाम होना पूर्ण कवरेज का प्रमाण नहीं है।',
                       ),
                     ),
                     if (filtered.isEmpty)
@@ -334,14 +334,14 @@ class _TopicQuestionBankDetailScreenState
       setState(() {
         _oneLinersLoading = false;
         _oneLinersLoaded = _oneLiners.isNotEmpty;
-        _oneLinersError = 'Verified one-liners could not be loaded. Try again.';
+        _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। पुनः प्रयास करें।';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _oneLinersLoading = false;
         _oneLinersLoaded = _oneLiners.isNotEmpty;
-        _oneLinersError = 'Verified one-liners could not be loaded. Check the connection and retry.';
+        _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।';
       });
     }
   }
@@ -381,14 +381,14 @@ class _TopicQuestionBankDetailScreenState
       setState(() {
         _previousLoading = false;
         _previousLoaded = _previousQuestions.isNotEmpty;
-        _previousError = 'Verified historical questions could not be loaded. Try again.';
+        _previousError = 'पिछले वर्षों के सत्यापित प्रश्न लोड नहीं हो सके। पुनः प्रयास करें।';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _previousLoading = false;
         _previousLoaded = _previousQuestions.isNotEmpty;
-        _previousError = 'Verified historical questions could not be loaded. Check the connection and retry.';
+        _previousError = 'पिछले वर्षों के सत्यापित प्रश्न लोड नहीं हो सके। कनेक्शन जाँचकर पुनः प्रयास करें।';
       });
     }
   }
@@ -433,7 +433,7 @@ class _TopicQuestionBankDetailScreenState
         icon: Icons.cloud_off_outlined,
         title: 'एक-पंक्ति प्रश्न उपलब्ध नहीं हैं',
         message: _oneLinersError!,
-        actionLabel: 'Retry',
+        actionLabel: 'पुनः प्रयास करें',
         onAction: () => _loadOneLiners(reset: true),
       );
     }
@@ -451,7 +451,7 @@ class _TopicQuestionBankDetailScreenState
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '${_oneLiners.length} सत्यापित प्रश्नोत्तर loaded',
+              '${_oneLiners.length} सत्यापित प्रश्नोत्तर लोड हुए',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -523,7 +523,7 @@ class _TopicQuestionBankDetailScreenState
         icon: Icons.cloud_off_outlined,
         title: 'पिछले वर्षों के प्रश्न उपलब्ध नहीं हैं',
         message: _previousError!,
-        actionLabel: 'Retry',
+        actionLabel: 'पुनः प्रयास करें',
         onAction: () => _loadPreviousQuestions(reset: true),
       );
     }
