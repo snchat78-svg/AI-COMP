@@ -558,7 +558,7 @@ class _TopicQuestionBankDetailScreenState
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final item = _previousQuestions[index];
-              final shiftText = item.examपारी == null || item.examShift!.isEmpty
+              final shiftText = item.examShift == null || item.examShift!.isEmpty
                   ? ''
                   : ' • पारी ${item.examShift}';
               return Card(
