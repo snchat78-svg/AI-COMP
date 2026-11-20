@@ -174,7 +174,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                       child: Text(
                         '${filtered.length} / ${topics.length} उप-विषय • '
                         '${groups.length} मुख्य अध्याय • '
-                        '$visibleVerifiedCount सत्यापित एक-पंक्ति प्रश्नोत्तर उपलब्ध',
+                        '$visibleVerifiedCount सत्यापित • $visiblePendingCount समीक्षा बाकी',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
@@ -205,6 +205,10 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                               0,
                               (sum, topic) => sum + topic.verifiedOneLinerCount,
                             );
+                            final groupPendingCount = childTopics.fold<int>(
+                              0,
+                              (sum, topic) => sum + topic.pendingOneLinerCount,
+                            );
                             return Card(
                               child: ExpansionTile(
                                 key: PageStorageKey<String>(
@@ -218,7 +222,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                 title: Text(questionBankHindiLabel(group.key)),
                                 subtitle: Text(
                                   '${childTopics.length} उप-विषय • '
-                                  '$groupVerifiedCount सत्यापित प्रश्नोत्तर',
+                                  '$groupVerifiedCount सत्यापित • $groupPendingCount समीक्षा बाकी',
                                 ),
                                 children: [
                                   for (final topic in childTopics)
@@ -231,7 +235,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                       title: Text(questionBankHindiLabel(topic.subtopic ?? topic.label)),
                                       subtitle: Text(
                                         '${questionBankHindiLabel(topic.label)} • '
-                                        '${topic.verifiedOneLinerCount} सत्यापित प्रश्नोत्तर',
+                                        '${topic.verifiedOneLinerCount} सत्यापित • ${topic.pendingOneLinerCount} समीक्षा बाकी',
                                       ),
                                       trailing: const Icon(Icons.chevron_right),
                                       onTap: () {
