@@ -668,34 +668,16 @@ class _TopicQuestionBankDetailScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isPending
-                              ? Theme.of(context).colorScheme.secondaryContainer
-                              : Theme.of(context).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isPending
-                                  ? Icons.pending_actions
-                                  : Icons.verified_outlined,
-                              size: 18,
+                      Text(
+                        isPending
+                            ? 'AI मसौदा — समीक्षा बाकी'
+                            : 'सत्यापित प्रश्न',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: isPending
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Theme.of(context).colorScheme.primary,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              isPending
-                                  ? 'AI मसौदा — समीक्षा बाकी'
-                                  : 'सत्यापित प्रश्न',
-                            ),
-                          ],
-                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
