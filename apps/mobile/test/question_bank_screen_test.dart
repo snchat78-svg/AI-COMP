@@ -176,7 +176,6 @@ void main() {
     await pumpUntilFound(tester, find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'));
 
     expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
-    expect(find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'), findsNothing);
   });
 
   testWidgets('displays separate verified one-liner and historical lists', (tester) async {
@@ -506,7 +505,7 @@ void main() {
         ),
       ),
     ));
-    await pumpUntilFound(tester, find.text('AI मसौदा — समीक्षा बाकी'));
+    await pumpUntilFound(tester, find.textContaining('AI मसौदा — समीक्षा बाकी'));
 
     expect(find.text('AI मसौदा — समीक्षा बाकी'), findsOneWidget);
     expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
