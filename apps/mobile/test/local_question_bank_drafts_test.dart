@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/data/local_question_bank_drafts.dart';
+import 'package:ai_comp_mobile/data/local_question_bank_drafts.dart';
 
 void main() {
   test('bundled Chapter 2 Hindi drafts include all five child sites', () async {
