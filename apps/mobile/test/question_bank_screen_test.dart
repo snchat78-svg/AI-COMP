@@ -290,7 +290,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'कालीबंगा',
               'verified_one_liner_count': 0,
-              'pending_one_liner_count': 311,
+              'pending_one_liner_count': 0,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ahar_banas_culture',
@@ -299,7 +299,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'आहड़-बनास संस्कृति',
               'verified_one_liner_count': 0,
-              'pending_one_liner_count': 20,
+              'pending_one_liner_count': 0,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture',
@@ -308,7 +308,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'गणेश्वर-जोधपुरा संस्कृति',
               'verified_one_liner_count': 0,
-              'pending_one_liner_count': 18,
+              'pending_one_liner_count': 0,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_bairat',
@@ -317,7 +317,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'बैराठ / विराटनगर',
               'verified_one_liner_count': 0,
-              'pending_one_liner_count': 9,
+              'pending_one_liner_count': 0,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_matsya_janapada',
@@ -326,7 +326,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'मत्स्य जनपद',
               'verified_one_liner_count': 0,
-              'pending_one_liner_count': 10,
+              'pending_one_liner_count': 0,
             },
           ],
           'pagination': {
