@@ -918,3 +918,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED. No phase transition is claimed. The RSSB official PDF candidate URL still requires actual byte retrieval, issuer/version confirmation, SHA-256 and complete syllabus inventory/review. No named RSSB profile is seeded.
 - Current dashboard increment PR #116 is already merged with backend 645 tests, Flutter analyze/tests and APK artifact evidence recorded above.
 - Next bounded work: close the Matsya draft review gap using primary/official source checks and the user's exact book pages 145–149, then run Chapter 2-wide duplicate/coverage review. Do not add an unconfirmed sixth child-site or move to Chapter 3 until those checks pass. In parallel, continue Phase 6.56 only through approved source retrieval and reviewed syllabus inventory; do not use a secondary transcription as official evidence.
+
+
+## 2026-11-19 — Chapter 2 integrity audit and Matsya source-text cross-check
+
+- Static parse of the parent Chapter-2 notes found 368 question rows across five current children: KAL 311, AHB 20, GJ 18, BRT 9 and MTS 10. All 368 IDs are unique and sequential within their child; no blank question/answer or missing/non-standard evidence locator was found; exact normalized-stem duplicate groups: 0.
+- A token-similarity triage produced three human-review pairs (KAL-007/008, KAL-009/010, KAL-021/022). They differ by cultural phase/period or mound identity and are not auto-labelled duplicates. Semantic duplication remains a human-review task.
+- The 10 Matsya drafts were cross-checked against searchable text of S28 (official RBSE Class X *History and Culture of Rajasthan*) and S29 (S. M. Ali, *The Geography of the Purāṇas*, printed p.137). The source-attributed facts in MTS-001–010 are represented in those cited passages. Preserve differing boundary reconstructions; epic references remain literary tradition.
+- PDF page-image inspection failed due timeout/size constraints. The user's exact textbook pp.145–149 were not available, so the placement of Matsya under this specific book Chapter 2 is still unconfirmed. Do not add/remove child sites or start Chapter 3 until those pages are checked.
+- This is a static integrity/source-text audit only: all 368 items remain NEEDS_REVIEW; no PYQ, exam-approved, live DB or learner VERIFIED claim is made. Full audit: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
+- Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No Phase 6.57 transition is claimed.
