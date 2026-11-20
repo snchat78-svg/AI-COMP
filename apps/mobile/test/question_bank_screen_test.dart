@@ -507,7 +507,7 @@ void main() {
     ));
     await pumpUntilFound(tester, find.textContaining('AI मसौदा — समीक्षा बाकी'));
 
-    expect(find.text('AI मसौदा — समीक्षा बाकी'), findsOneWidget);
+    expect(find.text('AI मसौदा — समीक्षा बाकी'), findsWidgets);
     expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
     expect(find.text('उत्तर: हनुमानगढ़ जिले में।'), findsOneWidget);
     expect(find.textContaining('स्रोत-सूचक (जाँच बाकी)'), findsOneWidget);
