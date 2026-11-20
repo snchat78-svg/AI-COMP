@@ -88,7 +88,7 @@ def test_subject_list_comes_from_existing_concept_taxonomy() -> None:
 
 def test_topic_list_includes_verified_one_liner_count() -> None:
     connection = _Connection([
-        ("concept-rivers", "Luni River", "Rajasthan Geography", "Rivers", "Luni", 4)
+        ("concept-rivers", "Luni River", "Rajasthan Geography", "Rivers", "Luni", 4, 7)
     ])
     items = PostgresTopicQuestionBankRepository(connection).list_topics(
         "Rajasthan Geography",
@@ -104,6 +104,7 @@ def test_topic_list_includes_verified_one_liner_count() -> None:
             topic="Rivers",
             subtopic="Luni",
             verified_one_liner_count=4,
+            pending_one_liner_count=7,
         ),
     )
     assert connection.calls[0][1] == ("Rajasthan Geography", 20, 0)
@@ -140,6 +141,53 @@ def test_one_liner_read_defaults_to_verified_content_only() -> None:
     query, params = connection.calls[0]
     assert "verification_status = 'VERIFIED'" in query
     assert params == ("concept-rivers", 10, 0)
+
+
+
+def test_one_liner_read_can_request_pending_review_content_only() -> None:
+    reviewed_at = datetime(2026, 10, 22, tzinfo=timezone.utc)
+    connection = _Connection([
+        (
+            "ol-draft-1",
+            "concept-rivers",
+            "लूणी नदी किस दिशा में बहती है?",
+            "दक्षिण-पश्चिम दिशा में।",
+            "hi",
+            "https://example.gov.in/river-facts",
+            "S4 — printed p. 34",
+            "NEEDS_REVIEW",
+            0.8,
+            None,
+            reviewed_at,
+            reviewed_at,
+        )
+    ])
+    items = PostgresTopicQuestionBankRepository(connection).list_one_liners(
+        "concept-rivers",
+        limit=10,
+        offset=0,
+        verified_only=False,
+        pending_only=True,
+        language_code="hi",
+    )
+
+    assert len(items) == 1
+    assert items[0].verification_status is OneLinerVerificationStatus.NEEDS_REVIEW
+    query, params = connection.calls[0]
+    assert "verification_status IN ('DRAFT', 'NEEDS_REVIEW')" in query
+    assert "verification_status = 'VERIFIED'" not in query
+    assert params == ("concept-rivers", "hi", 10, 0)
+
+
+def test_verified_and_pending_only_filters_cannot_be_combined() -> None:
+    connection = _Connection()
+    with pytest.raises(ValueError, match="cannot both be true"):
+        PostgresTopicQuestionBankRepository(connection).list_one_liners(
+            "concept-rivers",
+            verified_only=True,
+            pending_only=True,
+        )
+    assert connection.calls == []
 
 
 def test_invalid_pagination_is_rejected_before_query() -> None:
