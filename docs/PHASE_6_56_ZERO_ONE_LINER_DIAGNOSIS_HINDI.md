@@ -16,6 +16,7 @@
 
 - Migration 0029 सभी starter subjects, parent topics और child labels को हिंदी में रखेगी; canonical concept IDs स्थिर रहेंगे।
 - अध्याय 2 के पाँचों child topics एक ही parent “राजस्थान के प्राचीन सभ्यता स्थल” में होंगे।
+- मोबाइल में हिंदी display-label fallback map भी है: पुराना API/database अभी अंग्रेज़ी नाम लौटाए तब भी विषय, मुख्य अध्याय और उप-विषय हिंदी दिखेंगे; API को भेजे जाने वाले वास्तविक subject IDs अपरिवर्तित रहेंगे। नवीन migration 0029 DB स्तर पर भी यही labels हिंदी करती है।
 - मोबाइल Question Bank के navigation, खोज, empty/error states, Q&A labels और source labels हिंदी होंगे।
 - किसी unreviewed candidate को VERIFIED नहीं किया जाएगा।
 
