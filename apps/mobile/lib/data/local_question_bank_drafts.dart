@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../models/preparation_models.dart';
@@ -30,6 +31,16 @@ class LocalQuestionBankDrafts {
 
   static int get totalCount =>
       _countsByConcept.values.fold<int>(0, (sum, count) => sum + count);
+
+  @visibleForTesting
+  static void primeForTests(List<TopicOneLinerItem> items) {
+    _cachedAll = Future.value(List.unmodifiable(items));
+  }
+
+  @visibleForTesting
+  static void resetForTests() {
+    _cachedAll = null;
+  }
 
   static Future<List<TopicOneLinerItem>> loadAll() {
     return _cachedAll ??= _readAsset();
