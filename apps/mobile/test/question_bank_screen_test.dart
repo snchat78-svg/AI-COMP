@@ -336,27 +336,25 @@ void main() {
     expect(find.text('मत्स्य जनपद'), findsOneWidget);
   });
 
+  testWidgets('question bank navigation uses Hindi labels', (tester) async {
+    final mock = MockClient((request) async => jsonResponse({
+      'items': [topicRow('topic-hindi', 'लूणी नदी')],
+      'pagination': {
+        'limit': 100, 'offset': 0, 'returned': 1, 'has_more': false,
+      },
+    }));
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+  
+    await tester.pumpWidget(MaterialApp(
+      home: QuestionBankScreen(api: api, subjectId: 'राजस्थान भूगोल'),
+    ));
+    await tester.pumpAndSettle();
+  
+    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
+    expect(find.text('विषय और उप-विषय खोजें'), findsOneWidget);
+    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
+    expect(find.text('लूणी नदी'), findsOneWidget);
+  });
 }
-
-
-testWidgets('question bank navigation uses Hindi labels', (tester) async {
-  final mock = MockClient((request) async => jsonResponse({
-    'items': [topicRow('topic-hindi', 'लूणी नदी')],
-    'pagination': {
-      'limit': 100, 'offset': 0, 'returned': 1, 'has_more': false,
-    },
-  }));
-  addTearDown(mock.close);
-  final api = apiFor(mock);
-  addTearDown(api.close);
-
-  await tester.pumpWidget(MaterialApp(
-    home: QuestionBankScreen(api: api, subjectId: 'राजस्थान भूगोल'),
-  ));
-  await tester.pumpAndSettle();
-
-  expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
-  expect(find.text('विषय और उप-विषय खोजें'), findsOneWidget);
-  expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
-  expect(find.text('लूणी नदी'), findsOneWidget);
-});
