@@ -502,4 +502,62 @@ void main() {
     expect(requests, contains('/api/v1/learners/learner-1/question-bank/pending-one-liners'));
   });
 
+  testWidgets('shows bundled Chapter 2 questions when the server draft API is unavailable', (tester) async {
+    final requests = <String>[];
+    final mock = MockClient((request) async {
+      requests.add(request.url.path);
+      if (request.url.path.endsWith('/question-bank/one-liners')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 0, 'has_more': false,
+          },
+        });
+      }
+      if (request.url.path.endsWith('/question-bank/pending-one-liners')) {
+        return jsonResponse({
+          'error': {'code': 'QUESTION_BANK_PENDING_ONE_LINERS_UNAVAILABLE', 'message': 'Database import pending.'},
+        }, 503);
+      }
+      if (request.url.path.endsWith('/question-bank/previous-papers')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 0,
+            'total_count': 0, 'has_more': false,
+          },
+        });
+      }
+      return jsonResponse({'error': {'code': 'UNEXPECTED', 'message': 'Unexpected request.'}}, 500);
+    });
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+
+    await tester.pumpWidget(MaterialApp(
+      home: TopicQuestionBankDetailScreen(
+        api: api,
+        topic: const QuestionBankTopic(
+          conceptId: 'catalog.rajasthan_history_ancient_history_kalibangan',
+          label: 'कालीबंगा',
+          subject: 'राजस्थान इतिहास',
+          topic: 'राजस्थान के प्राचीन सभ्यता स्थल',
+          subtopic: 'कालीबंगा',
+          verifiedOneLinerCount: 0,
+          pendingOneLinerCount: 0,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('AI मसौदा — समीक्षा बाकी'), findsWidgets);
+    expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
+    expect(find.text('उत्तर: हनुमानगढ़ जिले में।'), findsOneWidget);
+    expect(find.textContaining('KAL-001'), findsOneWidget);
+    expect(find.textContaining('APK में सुरक्षित स्थानीय प्रति'), findsOneWidget);
+    expect(find.text('सत्यापित प्रश्न'), findsNothing);
+    expect(requests, contains('/api/v1/learners/learner-1/question-bank/pending-one-liners'));
+  });
+
+
 }
