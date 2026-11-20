@@ -22,8 +22,8 @@ void main() {
   Map<String, dynamic> topicRow(String id, String label) => {
         'concept_id': id,
         'label': label,
-        'subject': 'Rajasthan Geography',
-        'topic': 'Rivers and Drainage',
+        'subject': 'राजस्थान भूगोल',
+        'topic': 'नदियाँ एवं अपवाह तंत्र',
         'subtopic': label,
         'verified_one_liner_count': 0,
       };
@@ -45,7 +45,7 @@ void main() {
           return jsonResponse({
             'items': List.generate(
               100,
-              (index) => topicRow('topic-$index', 'Topic $index'),
+              (index) => topicRow('topic-$index', 'विषय $index'),
             ),
             'pagination': {
               'limit': 100,
@@ -57,7 +57,7 @@ void main() {
         }
         if (offset == 100) {
           return jsonResponse({
-            'items': [topicRow('topic-thar', 'Thar Desert')],
+            'items': [topicRow('topic-thar', 'थार मरुस्थल')],
             'pagination': {
               'limit': 100,
               'offset': 100,
@@ -74,19 +74,19 @@ void main() {
     addTearDown(api.close);
 
     await tester.pumpWidget(MaterialApp(
-      home: QuestionBankScreen(api: api, subjectId: 'Rajasthan Geography'),
+      home: QuestionBankScreen(api: api, subjectId: 'राजस्थान भूगोल'),
     ));
     await tester.pumpAndSettle();
 
     expect(topicOffsets, [0, 100]);
 
-    await tester.enterText(find.byType(TextField), 'Thar');
+    await tester.enterText(find.byType(TextField), 'थार');
     await tester.pumpAndSettle();
 
-    expect(find.text('Thar Desert'), findsOneWidget);
-    expect(find.text('Topic 0'), findsNothing);
-    expect(find.textContaining('1 of 101 child topics'), findsOneWidget);
-    expect(find.text('Rivers and Drainage'), findsOneWidget);
+    expect(find.text('थार मरुस्थल'), findsOneWidget);
+    expect(find.text('विषय 0'), findsNothing);
+    expect(find.textContaining('1 / 101 उप-विषय'), findsOneWidget);
+    expect(find.text('नदियाँ एवं अपवाह तंत्र'), findsOneWidget);
   });
 
   testWidgets('keeps one-liner and previous-paper empty states independent', (tester) async {
@@ -95,7 +95,7 @@ void main() {
       requests.add(request.url.path);
       if (request.url.path.endsWith('/question-bank/topics')) {
         return jsonResponse({
-          'items': [topicRow('topic-luni', 'Luni River')],
+          'items': [topicRow('topic-luni', 'लूणी नदी')],
           'pagination': {
             'limit': 100,
             'offset': 0,
@@ -128,28 +128,28 @@ void main() {
     addTearDown(api.close);
 
     await tester.pumpWidget(MaterialApp(
-      home: QuestionBankScreen(api: api, subjectId: 'Rajasthan Geography'),
+      home: QuestionBankScreen(api: api, subjectId: 'राजस्थान भूगोल'),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Luni River'));
+    await tester.tap(find.text('लूणी नदी'));
     await tester.pumpAndSettle();
 
-    expect(find.text('One-liners unavailable'), findsOneWidget);
+    expect(find.text('एक-पंक्ति प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
     expect(requests.any((path) => path.endsWith('/question-bank/one-liners')), isTrue);
     expect(requests.any((path) => path.endsWith('/question-bank/previous-papers')), isTrue);
 
-    await tester.tap(find.text('Previous Year'));
+    await tester.tap(find.text('पिछले वर्षों के प्रश्न'));
     await tester.pumpAndSettle();
 
-    expect(find.text('No verified previous-paper questions yet'), findsOneWidget);
-    expect(find.text('One-liners unavailable'), findsNothing);
+    expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
+    expect(find.text('एक-पंक्ति प्रश्न उपलब्ध नहीं हैं'), findsNothing);
   });
 
   testWidgets('displays separate verified one-liner and historical lists', (tester) async {
     final mock = MockClient((request) async {
       if (request.url.path.endsWith('/question-bank/topics')) {
         return jsonResponse({
-          'items': [topicRow('topic-luni', 'Luni River')],
+          'items': [topicRow('topic-luni', 'लूणी नदी')],
           'pagination': {
             'limit': 100,
             'offset': 0,
@@ -199,10 +199,10 @@ void main() {
         api: api,
         topic: QuestionBankTopic(
           conceptId: 'topic-luni',
-          label: 'Luni River',
-          subject: 'Rajasthan Geography',
-          topic: 'Rivers and Drainage',
-          subtopic: 'Luni River',
+          label: 'लूणी नदी',
+          subject: 'राजस्थान भूगोल',
+          topic: 'नदियाँ एवं अपवाह तंत्र',
+          subtopic: 'लूणी नदी',
           verifiedOneLinerCount: 1,
         ),
       ),
@@ -210,12 +210,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsOneWidget);
-    expect(find.text('Answer: दक्षिण-पश्चिम दिशा में।'), findsOneWidget);
-    expect(find.textContaining('Verified source evidence'), findsOneWidget);
+    expect(find.text('उत्तर: दक्षिण-पश्चिम दिशा में।'), findsOneWidget);
+    expect(find.textContaining('सत्यापित स्रोत-साक्ष्य'), findsOneWidget);
 
-    await tester.tap(find.text('Previous Year'));
+    await tester.tap(find.text('पिछले वर्षों के प्रश्न'));
     await tester.pumpAndSettle();
-    expect(find.text('No verified previous-paper questions yet'), findsOneWidget);
+    expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
     expect(find.textContaining('लूणी नदी किस दिशा में बहती है?'), findsNothing);
   });
   testWidgets('exam-scoped topic browsing does not drop the selected exam ID', (tester) async {
@@ -239,7 +239,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: QuestionBankScreen(
         api: api,
-        subjectId: 'Rajasthan Geography',
+        subjectId: 'राजस्थान भूगोल',
         examId: 'RSSB_CET_GRADUATION_2026',
       ),
     ));
@@ -249,9 +249,9 @@ void main() {
       received.url.queryParameters['exam_id'],
       'RSSB_CET_GRADUATION_2026',
     );
-    expect(received.url.queryParameters['subject'], 'Rajasthan Geography');
+    expect(received.url.queryParameters['subject'], 'राजस्थान भूगोल');
     expect(find.textContaining('RSSB_CET_GRADUATION_2026'), findsOneWidget);
-    expect(find.text('No topics are mapped yet'), findsOneWidget);
+    expect(find.text('अभी कोई विषय सूचीबद्ध नहीं है'), findsOneWidget);
   });
 
 
@@ -264,7 +264,7 @@ void main() {
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_kalibangan',
               'label': 'कालीबंगा',
-              'subject': 'Rajasthan History',
+              'subject': 'राजस्थान इतिहास',
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'कालीबंगा',
               'verified_one_liner_count': 0,
@@ -272,7 +272,7 @@ void main() {
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ahar_banas_culture',
               'label': 'आहड़-बनास संस्कृति',
-              'subject': 'Rajasthan History',
+              'subject': 'राजस्थान इतिहास',
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'आहड़-बनास संस्कृति',
               'verified_one_liner_count': 0,
@@ -280,7 +280,7 @@ void main() {
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture',
               'label': 'गणेश्वर-जोधपुरा संस्कृति',
-              'subject': 'Rajasthan History',
+              'subject': 'राजस्थान इतिहास',
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'गणेश्वर-जोधपुरा संस्कृति',
               'verified_one_liner_count': 0,
@@ -288,9 +288,17 @@ void main() {
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_bairat',
               'label': 'बैराठ / विराटनगर',
-              'subject': 'Rajasthan History',
+              'subject': 'राजस्थान इतिहास',
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'बैराठ / विराटनगर',
+              'verified_one_liner_count': 0,
+            },
+            {
+              'concept_id': 'catalog.rajasthan_history_ancient_history_matsya_janapada',
+              'label': 'मत्स्य जनपद',
+              'subject': 'राजस्थान इतिहास',
+              'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
+              'subtopic': 'मत्स्य जनपद',
               'verified_one_liner_count': 0,
             },
           ],
@@ -315,16 +323,38 @@ void main() {
     addTearDown(api.close);
 
     await tester.pumpWidget(MaterialApp(
-      home: QuestionBankScreen(api: api, subjectId: 'Rajasthan History'),
+      home: QuestionBankScreen(api: api, subjectId: 'राजस्थान इतिहास'),
     ));
     await tester.pumpAndSettle();
 
     expect(find.text('राजस्थान के प्राचीन सभ्यता स्थल'), findsOneWidget);
-    expect(find.text('4 child topics • 0 verified one-liner Q&A'), findsOneWidget);
+    expect(find.text('5 उप-विषय • 0 सत्यापित प्रश्नोत्तर'), findsOneWidget);
     expect(find.text('कालीबंगा'), findsOneWidget);
     expect(find.text('आहड़-बनास संस्कृति'), findsOneWidget);
     expect(find.text('गणेश्वर-जोधपुरा संस्कृति'), findsOneWidget);
     expect(find.text('बैराठ / विराटनगर'), findsOneWidget);
+    expect(find.text('मत्स्य जनपद'), findsOneWidget);
   });
 
+  testWidgets('question bank navigation uses Hindi labels', (tester) async {
+    final mock = MockClient((request) async => jsonResponse({
+      'items': [topicRow('topic-hindi', 'लूणी नदी')],
+      'pagination': {
+        'limit': 100, 'offset': 0, 'returned': 1, 'has_more': false,
+      },
+    }));
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+  
+    await tester.pumpWidget(MaterialApp(
+      home: QuestionBankScreen(api: api, subjectId: 'राजस्थान भूगोल'),
+    ));
+    await tester.pumpAndSettle();
+  
+    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
+    expect(find.text('विषय और उप-विषय खोजें'), findsOneWidget);
+    expect(find.text('राजस्थान भूगोल — विषय'), findsOneWidget);
+    expect(find.text('लूणी नदी'), findsOneWidget);
+  });
 }

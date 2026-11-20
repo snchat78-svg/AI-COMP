@@ -713,3 +713,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - PDF page-image inspection failed due timeout/size constraints. The user's exact textbook pp.145–149 were not available, so the placement of Matsya under this specific book Chapter 2 is still unconfirmed. Do not add/remove child sites or start Chapter 3 until those pages are checked.
 - This is a static integrity/source-text audit only: all 368 items remain NEEDS_REVIEW; no PYQ, exam-approved, live DB or learner VERIFIED claim is made. Full audit: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
 - Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No Phase 6.57 transition is claimed.
+
+
+## 2026-11-20 — हिंदी प्रश्न-बैंक और शून्य One-Liner की जाँच
+
+- Learner API केवल `verification_status='VERIFIED'` प्रश्न लौटाती है। अध्याय 2 के 368 हिंदी Q&A Git notes में हैं, database में अपने-आप seed नहीं होते; मौजूदा migration 0022 केवल 10 `NEEDS_REVIEW` candidates डालती है।
+- Render workspace में API सेवा live है; उसी workspace में Render-managed PostgreSQL नहीं मिला। External DB संभव है; live counts/migration status सत्यापित नहीं हैं।
+- Migration 0029 सभी 14 subjects, 61 parent topic groups और catalogue के सभी English child-topic labels को हिंदी में बदलती है, canonical concept IDs स्थिर रखती है और पाँच Chapter-2 children को “राजस्थान के प्राचीन सभ्यता स्थल” में रखती है।
+- Mobile Question Bank navigation, search, empty/error states, Q&A labels और previous-paper UI labels हिंदी किए गए हैं।
+- कोई draft VERIFIED नहीं किया गया। Independent source-by-source reviewer audit अभी आवश्यक है।
+- Phase 6.56 `IN_PROGRESS`; Phase 6.57 `PLANNED`; Phase 6.58 `BLOCKED` ही रहेंगे।

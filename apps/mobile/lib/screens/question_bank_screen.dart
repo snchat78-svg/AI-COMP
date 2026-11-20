@@ -92,11 +92,11 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.examId == null
-            ? '${widget.subjectId} — Topics'
-            : '${widget.subjectId} — Topics · ${widget.examId}'),
+            ? '${widget.subjectId} — विषय'
+            : '${widget.subjectId} — विषय · ${widget.examId}'),
         actions: [
           IconButton(
-            tooltip: 'Refresh topics',
+            tooltip: 'विषय ताज़ा करें',
             onPressed: _refreshTopics,
             icon: const Icon(Icons.refresh),
           ),
@@ -111,13 +111,13 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
               onChanged: (value) => setState(() => _searchQuery = value.trim().toLowerCase()),
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                labelText: 'Search topics and subtopics',
-                hintText: 'For example, Luni River or Sandhi',
+                labelText: 'विषय और उप-विषय खोजें',
+                hintText: 'जैसे लूणी नदी या संधि',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isEmpty
                     ? null
                     : IconButton(
-                        tooltip: 'Clear search',
+                        tooltip: 'खोज हटाएँ',
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchQuery = '');
@@ -137,9 +137,9 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                 if (snapshot.hasError) {
                   return _QuestionBankMessage(
                     icon: Icons.cloud_off_outlined,
-                    title: 'Topics could not be loaded',
-                    message: 'Refresh later or check whether the server has the topic catalogue and migration installed.',
-                    actionLabel: 'Retry',
+                    title: 'विषय लोड नहीं हो सके',
+                    message: 'बाद में पुनः प्रयास करें। सर्वर पर विषय-सूची और आवश्यक डेटाबेस परिवर्तन लागू होने चाहिए।',
+                    actionLabel: 'पुनः प्रयास करें',
                     onAction: _refreshTopics,
                   );
                 }
@@ -147,8 +147,8 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                 if (topics.isEmpty) {
                   return const _QuestionBankMessage(
                     icon: Icons.menu_book_outlined,
-                    title: 'No topics are mapped yet',
-                    message: 'This subject exists in the catalogue, but its topic mapping has not been populated yet.',
+                    title: 'अभी कोई विषय सूचीबद्ध नहीं है',
+                    message: 'यह विषय सूची में है, लेकिन इसके अध्याय और उप-विषय अभी उपलब्ध नहीं कराए गए हैं।',
                   );
                 }
                 final filtered = topics.where(_matchesSearch).toList(growable: false);
@@ -163,24 +163,24 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                       child: Text(
-                        '${filtered.length} of ${topics.length} child topics • '
-                        '${groups.length} main topics • '
-                        '$visibleVerifiedCount verified one-liner Q&A available',
+                        '${filtered.length} / ${topics.length} उप-विषय • '
+                        '${groups.length} मुख्य अध्याय • '
+                        '$visibleVerifiedCount सत्यापित एक-पंक्ति प्रश्नोत्तर उपलब्ध',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        'Select a main chapter to expand its sites/topics. Topic-list presence is not proof of full coverage; only source-reviewed Q&A count as verified.',
+                        'मुख्य अध्याय खोलकर उसके सभी उप-विषय देखें। केवल स्वतंत्र स्रोत-समीक्षा से स्वीकृत प्रश्न ही सत्यापित माने जाते हैं; विषय-सूची में नाम होना पूर्ण कवरेज का प्रमाण नहीं है।',
                       ),
                     ),
                     if (filtered.isEmpty)
                       const Expanded(
                         child: _QuestionBankMessage(
                           icon: Icons.search_off,
-                          title: 'No matching topics',
-                          message: 'Try another chapter, site, subtopic or keyword.',
+                          title: 'कोई मिलता-जुलता विषय नहीं मिला',
+                          message: 'दूसरा अध्याय, स्थल, उप-विषय या शब्द खोजें।',
                         ),
                       )
                     else
@@ -208,8 +208,8 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                 ),
                                 title: Text(group.key),
                                 subtitle: Text(
-                                  '${childTopics.length} child topics • '
-                                  '$groupVerifiedCount verified one-liner Q&A',
+                                  '${childTopics.length} उप-विषय • '
+                                  '$groupVerifiedCount सत्यापित प्रश्नोत्तर',
                                 ),
                                 children: [
                                   for (final topic in childTopics)
@@ -222,7 +222,7 @@ class _QuestionBankScreenState extends State<QuestionBankScreen> {
                                       title: Text(topic.subtopic ?? topic.label),
                                       subtitle: Text(
                                         '${topic.label} • '
-                                        '${topic.verifiedOneLinerCount} verified Q&A',
+                                        '${topic.verifiedOneLinerCount} सत्यापित प्रश्नोत्तर',
                                       ),
                                       trailing: const Icon(Icons.chevron_right),
                                       onTap: () {
@@ -334,14 +334,14 @@ class _TopicQuestionBankDetailScreenState
       setState(() {
         _oneLinersLoading = false;
         _oneLinersLoaded = _oneLiners.isNotEmpty;
-        _oneLinersError = 'Verified one-liners could not be loaded. Try again.';
+        _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। पुनः प्रयास करें।';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _oneLinersLoading = false;
         _oneLinersLoaded = _oneLiners.isNotEmpty;
-        _oneLinersError = 'Verified one-liners could not be loaded. Check the connection and retry.';
+        _oneLinersError = 'सत्यापित प्रश्न लोड नहीं हो सके। इंटरनेट कनेक्शन जाँचकर पुनः प्रयास करें।';
       });
     }
   }
@@ -381,14 +381,14 @@ class _TopicQuestionBankDetailScreenState
       setState(() {
         _previousLoading = false;
         _previousLoaded = _previousQuestions.isNotEmpty;
-        _previousError = 'Verified historical questions could not be loaded. Try again.';
+        _previousError = 'पिछले वर्षों के सत्यापित प्रश्न लोड नहीं हो सके। पुनः प्रयास करें।';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _previousLoading = false;
         _previousLoaded = _previousQuestions.isNotEmpty;
-        _previousError = 'Verified historical questions could not be loaded. Check the connection and retry.';
+        _previousError = 'पिछले वर्षों के सत्यापित प्रश्न लोड नहीं हो सके। कनेक्शन जाँचकर पुनः प्रयास करें।';
       });
     }
   }
@@ -399,18 +399,18 @@ class _TopicQuestionBankDetailScreenState
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.topic.label),
+          title: Text(widget.topic.subtopic ?? widget.topic.label),
           actions: [
             IconButton(
-              tooltip: 'Refresh topic content',
+              tooltip: 'प्रश्न ताज़ा करें',
               onPressed: _reload,
               icon: const Icon(Icons.refresh),
             ),
           ],
           bottom: const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.short_text), text: 'One-Liner Q&A'),
-              Tab(icon: Icon(Icons.history_edu), text: 'Previous Year'),
+              Tab(icon: Icon(Icons.short_text), text: 'एक-पंक्ति प्रश्नोत्तर'),
+              Tab(icon: Icon(Icons.history_edu), text: 'पिछले वर्षों के प्रश्न'),
             ],
           ),
         ),
@@ -431,17 +431,17 @@ class _TopicQuestionBankDetailScreenState
     if (_oneLinersError != null && _oneLiners.isEmpty) {
       return _QuestionBankMessage(
         icon: Icons.cloud_off_outlined,
-        title: 'One-liners unavailable',
+        title: 'एक-पंक्ति प्रश्न उपलब्ध नहीं हैं',
         message: _oneLinersError!,
-        actionLabel: 'Retry',
+        actionLabel: 'पुनः प्रयास करें',
         onAction: () => _loadOneLiners(reset: true),
       );
     }
     if (_oneLinersLoaded && _oneLiners.isEmpty) {
       return const _QuestionBankMessage(
         icon: Icons.sticky_note_2_outlined,
-        title: 'One-liners are not populated yet',
-        message: 'No verified direct question-and-answer items have been added for this topic. This does not mean the topic is fully covered.',
+        title: 'अभी कोई सत्यापित एक-पंक्ति प्रश्न उपलब्ध नहीं है',
+        message: 'इस उप-विषय के लिए अभी कोई सत्यापित प्रश्न-उत्तर उपलब्ध नहीं है। इसका अर्थ यह नहीं है कि विषय पूरी तरह कवर हो गया है।',
       );
     }
     return Column(
@@ -451,7 +451,7 @@ class _TopicQuestionBankDetailScreenState
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '${_oneLiners.length} verified one-liner Q&A loaded',
+              '${_oneLiners.length} सत्यापित प्रश्नोत्तर लोड हुए',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -475,20 +475,20 @@ class _TopicQuestionBankDetailScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Q${index + 1}. ${item.questionText}',
+                        'प्रश्न ${index + 1}. ${item.questionText}',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
-                      Text('Answer: ${item.answerText}'),
+                      Text('उत्तर: ${item.answerText}'),
                       const SizedBox(height: 8),
                       Text(
-                        'Verified source evidence: ${item.sourceEvidence}',
+                        'सत्यापित स्रोत-साक्ष्य: ${item.sourceEvidence}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       if (item.sourceUrl != null) ...[
                         const SizedBox(height: 4),
                         SelectableText(
-                          'Source: ${item.sourceUrl}',
+                          'स्रोत: ${item.sourceUrl}',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -507,7 +507,7 @@ class _TopicQuestionBankDetailScreenState
                 : OutlinedButton.icon(
                     onPressed: () => _loadOneLiners(),
                     icon: const Icon(Icons.expand_more),
-                    label: const Text('Load more one-liners'),
+                    label: const Text('और एक-पंक्ति प्रश्न देखें'),
                   ),
           ),
       ],
@@ -521,17 +521,17 @@ class _TopicQuestionBankDetailScreenState
     if (_previousError != null && _previousQuestions.isEmpty) {
       return _QuestionBankMessage(
         icon: Icons.cloud_off_outlined,
-        title: 'Previous-year questions unavailable',
+        title: 'पिछले वर्षों के प्रश्न उपलब्ध नहीं हैं',
         message: _previousError!,
-        actionLabel: 'Retry',
+        actionLabel: 'पुनः प्रयास करें',
         onAction: () => _loadPreviousQuestions(reset: true),
       );
     }
     if (_previousLoaded && _previousQuestions.isEmpty) {
       return const _QuestionBankMessage(
         icon: Icons.history_edu,
-        title: 'No verified previous-paper questions yet',
-        message: 'Only questions backed by a verified official paper and its matched official answer key appear here. Unverified answers are not guessed.',
+        title: 'अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं',
+        message: 'यहाँ केवल आधिकारिक प्रश्नपत्र और उससे मेल खाती सत्यापित उत्तर-कुंजी वाले प्रश्न दिखते हैं। अपुष्ट उत्तर अनुमान से नहीं जोड़े जाते।',
       );
     }
     return Column(
@@ -541,7 +541,7 @@ class _TopicQuestionBankDetailScreenState
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '${_previousQuestions.length} verified previous-paper questions loaded',
+              '${_previousQuestions.length} सत्यापित पुराने प्रश्न लोड हुए',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -560,7 +560,7 @@ class _TopicQuestionBankDetailScreenState
               final item = _previousQuestions[index];
               final shiftText = item.examShift == null || item.examShift!.isEmpty
                   ? ''
-                  : ' • Shift ${item.examShift}';
+                  : ' • पारी ${item.examShift}';
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -568,7 +568,7 @@ class _TopicQuestionBankDetailScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${item.examName} • ${item.examYear}$shiftText • Q${item.examQuestionNumber}',
+                        '${item.examName} • ${item.examYear}$shiftText • प्रश्न ${item.examQuestionNumber}',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       const SizedBox(height: 12),
@@ -598,7 +598,7 @@ class _TopicQuestionBankDetailScreenState
                         ),
                       const Divider(height: 24),
                       Text(
-                        'Verified answer: ${item.correctOptionKey}. ${item.correctOptionText}',
+                        'सत्यापित उत्तर: ${item.correctOptionKey}. ${item.correctOptionText}',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -608,12 +608,12 @@ class _TopicQuestionBankDetailScreenState
                       Text(item.explanation, style: Theme.of(context).textTheme.bodySmall),
                       const SizedBox(height: 8),
                       Text(
-                        'Verified appearances: ${item.verifiedAppearanceCount}',
+                        'सत्यापित बार पूछे जाने की संख्या: ${item.verifiedAppearanceCount}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       SelectableText(
-                        'Official paper: ${item.sourceUrl}\n'
-                        'Official answer key: ${item.answerKeySourceUrl}',
+                        'आधिकारिक प्रश्नपत्र: ${item.sourceUrl}\n'
+                        'आधिकारिक उत्तर-कुंजी: ${item.answerKeySourceUrl}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -631,7 +631,7 @@ class _TopicQuestionBankDetailScreenState
                 : OutlinedButton.icon(
                     onPressed: () => _loadPreviousQuestions(),
                     icon: const Icon(Icons.expand_more),
-                    label: const Text('Load more previous-year questions'),
+                    label: const Text('और पुराने प्रश्न देखें'),
                   ),
           ),
       ],
