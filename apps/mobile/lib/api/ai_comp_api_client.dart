@@ -335,6 +335,33 @@ class AiCompApiClient {
         .toList(growable: false);
   }
 
+  Future<List<TopicOneLinerItem>> getPendingTopicOneLiners(
+    String conceptId, {
+    int limit = 100,
+    int offset = 0,
+    String? languageCode,
+  }) async {
+    final query = <String, String>{
+      'concept_id': conceptId,
+      'limit': '$limit',
+      'offset': '$offset',
+    };
+    if (languageCode != null && languageCode.trim().isNotEmpty) {
+      query['language_code'] = languageCode.trim();
+    }
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/pending-one-liners',
+      query: query,
+    );
+    final raw = json['items'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(TopicOneLinerItem.fromJson)
+        .toList(growable: false);
+  }
+
   Future<PreviousYearQuestionPage> getPreviousYearQuestionPage(
     String conceptId, {
     String? subjectId,
