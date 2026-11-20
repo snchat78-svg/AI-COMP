@@ -71,3 +71,15 @@ All 368 imported rows remain `NEEDS_REVIEW`. Publication to `VERIFIED` requires 
 ## 8. Phase control
 
 Phase 6.56 remains `IN_PROGRESS` until its official syllabus/source gates, live import and acceptance checks are closed. Phase 6.57 stays `PLANNED`; Phase 6.58 stays `BLOCKED`. Do not start the next book chapter before Chapter 2 scope and source/review checks are complete.
+
+
+## 2026-11-20 — Offline Chapter 2 draft fallback
+
+- Added `apps/mobile/assets/question_bank/rajasthan_history_chapter_2_drafts.json`, generated from the exact 368 rows in database migration 0030/source-of-record. Counts: KAL 311, AHB 20, GJ 18, BRT 9, MTS 10. All carry `NEEDS_REVIEW` and Hindi language code.
+- Registered the JSON asset in Flutter `pubspec.yaml`; added `LocalQuestionBankDrafts` with a cached loader, concept-specific queries, total count 368 and five stable per-concept counts.
+- The mobile One-Liner screen now loads the server pending lane and the bundled local copy, merges by stable `one_liner_id`, prefers the server representation for duplicates, and fills any missing rows from the APK asset. Sorting by stable source ID gives consistent pagination.
+- When the server returns zero rows or the pending endpoint is temporarily unavailable, the local copy still displays with the exact **AI मसौदा — समीक्षा बाकी** label and an explanatory local-copy banner. It never becomes VERIFIED and is never shown as a PYQ.
+- Subject, parent chapter and child-topic pending counts use the greater of the live API count and the known bundled local count, so the screenshot's zero pending indicator is corrected even before migration 0030 is live.
+- Added tests for 368 asset records, all five group counts, unique IDs, NEEDS_REVIEW-only status, and the screen rendering KAL-001 when the server pending endpoint returns 503. Flutter CI must pass before this offline increment is merged.
+- Migration 0030 is still required to synchronize draft content to PostgreSQL and make it available across devices. The bundled fallback guarantees this APK can show the 368 Chapter 2 drafts without waiting for that DB write.
+- Phase 6.56 remains `IN_PROGRESS`; 6.57 `PLANNED`; 6.58 `BLOCKED`.
