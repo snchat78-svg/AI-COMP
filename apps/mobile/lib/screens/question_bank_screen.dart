@@ -508,7 +508,8 @@ class _TopicQuestionBankDetailScreenState
       );
     }
     if (hasAnyLoaded && !hasAnyItems &&
-        _oneLinersLoaded && _pendingOneLinersLoaded) {
+        _oneLinersLoaded && _pendingOneLinersLoaded &&
+        _oneLinersError == null && _pendingOneLinersError == null) {
       return const _QuestionBankMessage(
         icon: Icons.sticky_note_2_outlined,
         title: 'अभी कोई एक-पंक्ति प्रश्न उपलब्ध नहीं है',
