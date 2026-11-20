@@ -28,6 +28,7 @@ void main() {
         'topic': 'नदियाँ एवं अपवाह तंत्र',
         'subtopic': label,
         'verified_one_liner_count': 0,
+        'pending_one_liner_count': 0,
       };
 
   AiCompApiClient apiFor(MockClient client) => AiCompApiClient(
@@ -111,6 +112,17 @@ void main() {
           'error': {'code': 'CONTENT_UNAVAILABLE', 'message': 'No content.'},
         }, 503);
       }
+      if (request.url.path.endsWith('/question-bank/pending-one-liners')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100,
+            'offset': 0,
+            'returned': 0,
+            'has_more': false,
+          },
+        });
+      }
       if (request.url.path.endsWith('/question-bank/previous-papers')) {
         return jsonResponse({
           'items': [],
@@ -136,7 +148,7 @@ void main() {
     await tester.tap(find.text('लूणी नदी'));
     await tester.pumpAndSettle();
 
-    expect(find.text('एक-पंक्ति प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
+    expect(find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'), findsOneWidget);
     expect(requests.any((path) => path.endsWith('/question-bank/one-liners')), isTrue);
     expect(requests.any((path) => path.endsWith('/question-bank/previous-papers')), isTrue);
 
@@ -144,7 +156,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('अभी कोई सत्यापित पुराने प्रश्न उपलब्ध नहीं हैं'), findsOneWidget);
-    expect(find.text('एक-पंक्ति प्रश्न उपलब्ध नहीं हैं'), findsNothing);
+    expect(find.textContaining('सत्यापित प्रश्न लोड नहीं हो सके'), findsNothing);
   });
 
   testWidgets('displays separate verified one-liner and historical lists', (tester) async {
@@ -270,6 +282,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'कालीबंगा',
               'verified_one_liner_count': 0,
+              'pending_one_liner_count': 311,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ahar_banas_culture',
@@ -278,6 +291,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'आहड़-बनास संस्कृति',
               'verified_one_liner_count': 0,
+              'pending_one_liner_count': 20,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture',
@@ -286,6 +300,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'गणेश्वर-जोधपुरा संस्कृति',
               'verified_one_liner_count': 0,
+              'pending_one_liner_count': 18,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_bairat',
@@ -294,6 +309,7 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'बैराठ / विराटनगर',
               'verified_one_liner_count': 0,
+              'pending_one_liner_count': 9,
             },
             {
               'concept_id': 'catalog.rajasthan_history_ancient_history_matsya_janapada',
@@ -302,12 +318,13 @@ void main() {
               'topic': 'राजस्थान के प्राचीन सभ्यता स्थल',
               'subtopic': 'मत्स्य जनपद',
               'verified_one_liner_count': 0,
+              'pending_one_liner_count': 10,
             },
           ],
           'pagination': {
             'limit': 100,
             'offset': 0,
-            'returned': 4,
+            'returned': 5,
             'has_more': false,
           },
         });
@@ -330,7 +347,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('राजस्थान के प्राचीन सभ्यता स्थल'), findsOneWidget);
-    expect(find.text('5 उप-विषय • 0 सत्यापित प्रश्नोत्तर'), findsOneWidget);
+    expect(find.text('5 उप-विषय • 0 सत्यापित • 368 समीक्षा बाकी'), findsOneWidget);
     expect(find.text('कालीबंगा'), findsOneWidget);
     expect(find.text('आहड़-बनास संस्कृति'), findsOneWidget);
     expect(find.text('गणेश्वर-जोधपुरा संस्कृति'), findsOneWidget);
@@ -401,6 +418,80 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('लूणी नदी'), findsNWidgets(2));
     expect(requestedSubject, 'Rajasthan Geography');
+  });
+
+
+  testWidgets('shows Chapter 2 AI drafts in a clearly labelled pending lane', (tester) async {
+    final requests = <String>[];
+    final mock = MockClient((request) async {
+      requests.add(request.url.path);
+      if (request.url.path.endsWith('/question-bank/one-liners')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 0, 'has_more': false,
+          },
+        });
+      }
+      if (request.url.path.endsWith('/question-bank/pending-one-liners')) {
+        expect(request.url.queryParameters['concept_id'], 'catalog.rajasthan_history_ancient_history_kalibangan');
+        expect(request.url.queryParameters['language_code'], 'hi');
+        return jsonResponse({
+          'items': [
+            {
+              'one_liner_id': 'ch2_KAL-001',
+              'concept_id': 'catalog.rajasthan_history_ancient_history_kalibangan',
+              'question_text': 'कालीबंगा राजस्थान के किस जिले में स्थित है?',
+              'answer_text': 'हनुमानगढ़ जिले में।',
+              'language_code': 'hi',
+              'source_url': 'https://example.gov.in/kalibanga.pdf',
+              'source_evidence': 'KAL-001 — S4, मुद्रित पृष्ठ 34 — स्वतंत्र स्रोत-समीक्षा लंबित।',
+              'verification_status': 'NEEDS_REVIEW',
+              'importance_score': 0.8,
+            },
+          ],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 1, 'has_more': false,
+          },
+        });
+      }
+      if (request.url.path.endsWith('/question-bank/previous-papers')) {
+        return jsonResponse({
+          'items': [],
+          'pagination': {
+            'limit': 100, 'offset': 0, 'returned': 0,
+            'total_count': 0, 'has_more': false,
+          },
+        });
+      }
+      return jsonResponse({'error': {'code': 'UNEXPECTED', 'message': 'Unexpected request.'}}, 500);
+    });
+    addTearDown(mock.close);
+    final api = apiFor(mock);
+    addTearDown(api.close);
+
+    await tester.pumpWidget(MaterialApp(
+      home: TopicQuestionBankDetailScreen(
+        api: api,
+        topic: const QuestionBankTopic(
+          conceptId: 'catalog.rajasthan_history_ancient_history_kalibangan',
+          label: 'कालीबंगा',
+          subject: 'राजस्थान इतिहास',
+          topic: 'राजस्थान के प्राचीन सभ्यता स्थल',
+          subtopic: 'कालीबंगा',
+          verifiedOneLinerCount: 0,
+          pendingOneLinerCount: 311,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('AI मसौदा — समीक्षा बाकी'), findsOneWidget);
+    expect(find.textContaining('कालीबंगा राजस्थान के किस जिले में स्थित है?'), findsOneWidget);
+    expect(find.text('उत्तर: हनुमानगढ़ जिले में।'), findsOneWidget);
+    expect(find.textContaining('स्रोत-सूचक (जाँच बाकी)'), findsOneWidget);
+    expect(find.text('सत्यापित प्रश्न'), findsNothing);
+    expect(requests, contains('/api/v1/learners/learner-1/question-bank/pending-one-liners'));
   });
 
 }
