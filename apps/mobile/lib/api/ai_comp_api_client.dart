@@ -241,6 +241,14 @@ class AiCompApiClient {
     return AnswerReview.fromJson(json);
   }
 
+  Future<QuestionBankContentManifest> getQuestionBankContentManifest() async {
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/content-manifest',
+    );
+    return QuestionBankContentManifest.fromJson(json);
+  }
+
   Future<QuestionBankReadiness> getQuestionBankReadiness({String? subjectId}) async {
     final query = subjectId == null ? null : <String, String>{'subject_id': subjectId};
     final json = await _send('GET', '$_learnerPath/question-bank/readiness', query: query);
