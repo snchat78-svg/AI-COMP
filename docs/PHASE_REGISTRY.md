@@ -787,3 +787,12 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - कुल कालीबंगा हिंदी-प्रथम पूर्ण: KAL-001–KAL-180 (180/311 pairs)। अगला सीमित बैच: KAL-181–KAL-240।
 - Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
 - APK नियम: PR validation के बाद merge पर main-branch Flutter analyze, mobile tests, release APK, verify और artifact upload सभी सफल होना चाहिए; main APK artifact सत्यापित किए बिना increment को user-ready न कहें।
+
+
+## 2026-11-22 — Screenshot diagnosis and Smart Dashboard continuation (issue #124)
+
+- The latest user APK screenshot shows 34/34 child topics, 7 parent groups, 0 VERIFIED and 368 review-pending. The code/docs diagnosis confirms this is the intended publication boundary: Chapter-2 AI-authored candidates are `NEEDS_REVIEW`; learner verified reads return only independently approved records. Pending rows have a separate learner lane/local APK fallback. Do not mark drafts VERIFIED/PYQ to make the count look nonzero.
+- Chapter-2 candidate counts: KAL 311, AHB 20, GJ 18, BRT 9, MTS 10 (368 total). PR #123 merged at `a3900af50fd5eb8dc13b8db335fc86c911bfe071`; KAL-001–KAL-180 are Hindi-first and synchronized across canonical notes, SQL migration 0030 and APK offline asset. All remain NEEDS_REVIEW.
+- Opened issue [#124](https://github.com/snchat78-svg/AI-COMP/issues/124) for independent reviewer acceptance, count reconciliation, Hindi-first Smart Dashboard/Question Bank redesign, and content continuation. See [screenshot diagnosis and dashboard work record](PHASE_6_56_SCREENSHOT_DIAGNOSIS_AND_SMART_DASHBOARD.md).
+- Next bounded content slice: KAL-181–KAL-240 with exact Markdown/SQL/offline-asset parity and regression tests. Dashboard must clearly separate VERIFIED, AI draft/review-pending, PYQ and generated practice; show meaningful topic coverage/progress without equating catalogue rows with completion.
+- Main-branch APK artifact after PR #123 was not established by the commit-workflow lookup in this session; require main Actions run + artifact ID/SHA before calling APK ready. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No phase transition or bulk verification is claimed.
