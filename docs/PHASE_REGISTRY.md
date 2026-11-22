@@ -835,3 +835,11 @@ The user has explicitly ordered that **all Rajasthan content must be completed b
 - Immediate active topic remains Rajasthan History book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” in its canonical parent file; existing 368 Q&A candidates are not a verified/complete topic. Finish this parent topic before Chapter 3 and follow the supplied book sequence. Do not begin Indian History/Indus Valley now.
 - Learner-facing hierarchy: one main topic card contains its subtopic sections and all important one-liners; Hindi Q&A wording for every subject, with only essential English terms/examples retained in English subject.
 - The full sequence and acceptance criteria are recorded in the topic-wise roadmap and study-notes README.
+
+## 2026-11-22 — नवीनतम content स्थिति (PR #126 branch पर; main में अभी merged नहीं)
+
+- User-directed main unit: पूरा पुस्तक-अध्याय/parent topic; उसके सभी child-sites और subtopics एक hierarchy में। Chapter acceptance से पहले अगला main chapter नहीं।
+- Active content unit: Rajasthan History Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”; 368 candidate drafts across KAL/AHB/GJ/BRT/MTS, all NEEDS_REVIEW.
+- KAL-001–KAL-240 Hindi-first; batch KAL-181–KAL-240 synchronized across canonical Markdown, migration 0030, and Flutter offline JSON; content hashes recomputed; branch-side lexical scan passed; parity/language regression tests extended.
+- This is not independent fact verification, official syllabus mapping, live DB migration application, or learner publication. Chapter 2 remains IN_PROGRESS.
+- Phase states unchanged: Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not mark a phase complete or build-ready until exact-head CI, required deployment/database checks and APK artifact gates pass.
