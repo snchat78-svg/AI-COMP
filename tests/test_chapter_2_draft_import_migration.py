@@ -55,7 +55,7 @@ def test_chapter_2_import_keeps_the_five_existing_canonical_concepts() -> None:
         assert concept_id in sql
 
 
-def test_kalibanga_batches_3_and_4_match_markdown_migration_and_offline_asset() -> None:
+def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
     root = Path(__file__).resolve().parents[1]
     notes = (
         root
@@ -77,45 +77,52 @@ def test_kalibanga_batches_3_and_4_match_markdown_migration_and_offline_asset() 
     )
     sql = MIGRATION.read_text(encoding="utf-8")
     values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
-    row_pattern = re.compile(
-        r"^\s+\('(ch2_KAL-(?:12[1-9]|1[3-9]\d|2[0-3]\d|240))', "
-        r"'([^']+)', '([^']*)', '([^']*)', 'hi', '([^']+)', "
-        r"'([^']*)', 'NEEDS_REVIEW', 0\.80, '([0-9a-f]{64})', NULL\),?$"
-    )
-    migration_rows = {
-        match.group(1): {
-            "question_text": match.group(3),
-            "answer_text": match.group(4),
-            "content_hash": match.group(7),
-        }
-        for line in values.splitlines()
-        if (match := row_pattern.match(line)) is not None
+
+    expected_ids = {
+        f"ch2_{prefix}-{number:03d}"
+        for prefix, count in {"KAL": 311, "AHB": 20, "GJ": 18, "BRT": 9, "MTS": 10}.items()
+        for number in range(1, count + 1)
     }
-    asset_rows = {
-        row["one_liner_id"]: row
-        for row in asset
-        if row["one_liner_id"].startswith("ch2_KAL-")
-    }
+    asset_rows = {row["one_liner_id"]: row for row in asset}
+    assert len(asset_rows) == 368
+    assert set(asset_rows) == expected_ids
+
     note_rows = {}
     for line in notes.splitlines():
-        if not re.match(r"^\| KAL-(?:12[1-9]|1[3-7]\d|180) \|", line):
+        if not re.match(r"^\| (?:KAL|AHB|GJ|BRT|MTS)-\d{3} \|", line):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
         note_rows["ch2_" + cells[0]] = (cells[1], cells[2])
+    assert set(note_rows) == expected_ids
 
-    expected = {f"ch2_KAL-{number:03d}" for number in range(121, 241)}
-    assert set(migration_rows) == expected
-    assert expected.issubset(asset_rows)
-    assert set(note_rows) == expected
+    row_pattern = re.compile(
+        r"^\s+\('(ch2_(?:KAL|AHB|GJ|BRT|MTS)-\d{3})', "
+        r"'([^']+)', '((?:[^']|'')*)', '((?:[^']|'')*)', "
+        r"'([^']+)', '([^']*)', '((?:[^']|'')*)', "
+        r"'(NEEDS_REVIEW)', (0\.80), '([0-9a-f]{64})', NULL\),?$"
+    )
+    migration_rows = {}
+    for line in values.splitlines():
+        match = row_pattern.match(line)
+        if match is None:
+            continue
+        migration_rows[match.group(1)] = {
+            "question_text": match.group(3).replace("''", "'"),
+            "answer_text": match.group(4).replace("''", "'"),
+            "language_code": match.group(5),
+            "verification_status": match.group(8),
+            "content_hash": match.group(10),
+        }
+    assert set(migration_rows) == expected_ids
 
-    for one_liner_id in expected:
+    for one_liner_id in expected_ids:
         question, answer = note_rows[one_liner_id]
         local = asset_rows[one_liner_id]
         migrated = migration_rows[one_liner_id]
         assert local["question_text"] == migrated["question_text"] == question
         assert local["answer_text"] == migrated["answer_text"] == answer
-        assert local["verification_status"] == "NEEDS_REVIEW"
-        assert local["language_code"] == "hi"
+        assert local["language_code"] == migrated["language_code"] == "hi"
+        assert local["verification_status"] == migrated["verification_status"] == "NEEDS_REVIEW"
         normalized_question = " ".join(question.casefold().split())
         normalized_answer = " ".join(answer.casefold().split())
         payload = f"{normalized_question}\\n{normalized_answer}"
