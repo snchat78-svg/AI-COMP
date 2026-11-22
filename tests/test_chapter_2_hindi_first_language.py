@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -77,3 +78,33 @@ def test_phase_changes_trigger_a_firebase_configured_release_apk() -> None:
     assert "GOOGLE_SERVICES_JSON_BASE64 is required" in workflow
     assert "flutter build apk --release" in workflow
     assert "actions/upload-artifact@v4" in workflow
+
+
+def test_all_chapter_2_question_and_answer_text_is_hindi_first() -> None:
+    asset = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "apps"
+            / "mobile"
+            / "assets"
+            / "question_bank"
+            / "rajasthan_history_chapter_2_drafts.json"
+        ).read_text(encoding="utf-8")
+    )
+    expected_counts = {"KAL": 311, "AHB": 20, "GJ": 18, "BRT": 9, "MTS": 10}
+    assert len(asset) == sum(expected_counts.values())
+
+    for prefix, expected_count in expected_counts.items():
+        rows = [row for row in asset if row["one_liner_id"].startswith(f"ch2_{prefix}-")]
+        assert len(rows) == expected_count
+        for row in rows:
+            prose = re.sub(
+                r"\b(?:KLB-(?:I{1,2}|\d+)|K-\d+|GM-KAM-RJ-\d+|VI-A|[A-F])\b",
+                "",
+                f"{row['question_text']} {row['answer_text']}",
+            )
+            assert not re.search(r"[A-Za-z]", prose), row["one_liner_id"]
+            assert re.search(r"[\u0900-\u097F]", row["question_text"]), row["one_liner_id"]
+            assert re.search(r"[\u0900-\u097F]", row["answer_text"]), row["one_liner_id"]
+            assert row["language_code"] == "hi", row["one_liner_id"]
+            assert row["verification_status"] == "NEEDS_REVIEW", row["one_liner_id"]
