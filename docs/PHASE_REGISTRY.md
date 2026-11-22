@@ -825,3 +825,13 @@ This requirement is accepted by the user but is NOT implemented or verified mere
 - Add a typed Flutter manifest model and authenticated API client reader; verify the route, bearer token and parsed revision/count fields.
 - This slice includes the server-side revision contract and a typed Flutter manifest model/API reader with bearer-authenticated client coverage. It does not yet compare or persist revisions, download changed records, perform background refresh, or maintain a downloaded-content cache. The next dependent slice adds automatic manifest comparison, authenticated delta retrieval, persisted local revision and offline-safe cache. Do not claim the installed APK auto-updates until those parts and real API/device E2E are accepted.
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Preserve all prior content verification and APK release gates.
+
+## 2026-11-22 — User directive: Rajasthan-first strict content sequence
+
+The user has explicitly ordered that **all Rajasthan content must be completed before Indian GK begins**. This directive supersedes the earlier parallel subject queue. Current content lane stays Phase 6.56 IN_PROGRESS; no new numbered software phase is implied by this curriculum reorder.
+
+- Sequence: Rajasthan History → Rajasthan Geography → Rajasthan Polity & Administration → Rajasthan Art & Culture → Rajasthan Economy → remaining Rajasthan-specific areas/current affairs → Rajasthan acceptance gate → Indian GK (History, Geography, Polity, Economy, Science/Technology, Art/Culture, national current affairs) → Hindi → English → Mathematics → Reasoning → Computer Awareness.
+- Rajasthan is not complete merely because the catalogue has concept rows or draft question counts. Each applicable topic requires source-backed high-yield coverage, duplicate audit, independent-review status and exam-syllabus mapping where available. Preserve NEEDS_REVIEW for AI drafts.
+- Immediate active topic remains Rajasthan History book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” in its canonical parent file; existing 368 Q&A candidates are not a verified/complete topic. Finish this parent topic before Chapter 3 and follow the supplied book sequence. Do not begin Indian History/Indus Valley now.
+- Learner-facing hierarchy: one main topic card contains its subtopic sections and all important one-liners; Hindi Q&A wording for every subject, with only essential English terms/examples retained in English subject.
+- The full sequence and acceptance criteria are recorded in the topic-wise roadmap and study-notes README.
