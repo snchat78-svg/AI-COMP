@@ -137,3 +137,14 @@ def test_manifest_rejects_invalid_database_digest():
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "QUESTION_BANK_CONTENT_MANIFEST_UNAVAILABLE"
     assert connection.closed is True
+
+
+def test_manifest_revision_changes_when_catalogue_revision_changes():
+    first = _client(_Connection(_row(catalogue_revision="a" * 32))).get(
+        "/api/v1/learners/learner-1/question-bank/content-manifest"
+    ).json()
+    second = _client(_Connection(_row(catalogue_revision="d" * 32))).get(
+        "/api/v1/learners/learner-1/question-bank/content-manifest"
+    ).json()
+
+    assert first["revision"] != second["revision"]
