@@ -5,6 +5,7 @@ import re
 from http import HTTPStatus
 
 from fastapi import APIRouter, Request
+from starlette.responses import Response
 
 from ai_comp.api.preparation_guidance_routes import (
     _authenticated_learner_or_error,
@@ -66,14 +67,14 @@ def _digest(value: object) -> str:
     "/{learner_id}/question-bank/content-manifest",
     name="get_question_bank_content_manifest",
 )
-def get_question_bank_content_manifest(learner_id: str, request: Request):
+def get_question_bank_content_manifest(learner_id: str, request: Request) -> Response:
     """Return a stable, authenticated revision for client-side content sync.
 
     The published revision includes only independently VERIFIED one-liners.
     Draft/review-pending rows are counted for status displays but never enter
     the published revision.
     """
-    authenticated_learner_id, error = _authenticated_learner_or_error(learner_id, request)
+    _, error = _authenticated_learner_or_error(learner_id, request)
     if error is not None:
         return error
 
