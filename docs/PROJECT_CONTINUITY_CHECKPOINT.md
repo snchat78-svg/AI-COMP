@@ -1051,3 +1051,15 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Next: audit the Chapter 2 file and its evidence locators/coverage checklist, finish missing high-yield facts and source/duplicate checks, keep all new content NEEDS_REVIEW, then proceed to the next Rajasthan History chapter only when this main topic is closed.
 - Do not create Indian History/Indus Valley content yet. Do not start Hindi/English/Mathematics until Rajasthan and Indian GK are completed.
 - Read the registry, coverage CSV, continuity standard and topic roadmap before every next content batch; update these in the same PR as the content work.
+
+## 2026-11-22 — एक मुख्य टॉपिक में पूरा अध्याय और कालीबंगा batch 4
+
+- उपयोगकर्ता ने स्पष्ट किया कि एक learner-facing main topic में उस अध्याय के सभी महत्त्वपूर्ण प्रश्न और उपविषय एक साथ पूरे किए जाएँ; बार-बार उसी topic पर लौटने या हर स्थल को अलग main topic बनाने से बचें।
+- Roadmap में parent-chapter completion pack जोड़ा: child-site coverage matrix, high-yield Q&A, exact source locator, uncertainty/conflict tracking, exact/normalized duplicate audit, independent review gate और integrated learner hierarchy।
+- Rajasthan History Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है। उसके child-sites: कालीबंगा, आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ/विराटनगर और मत्स्य जनपद। मौजूदा 368 rows candidate inventory हैं; completeness प्रमाणित नहीं।
+- KAL-181–KAL-240 के 60 मौजूदा प्रश्न/उत्तर हिंदी-प्रथम किए; तथ्य, संख्याएँ, source locators और uncertainty wording सुरक्षित रखने का लक्ष्य रखा। कोई नया question count-padding के लिए नहीं जोड़ा।
+- Markdown note, SQL migration 0030 और APK offline JSON में 60/60 समान question/answer values sync; SQL hashes पुनर्गणित। Regression tests भाषा-जाँच KAL-240 तक और data parity KAL-121–KAL-240 तक बढ़ाते हैं।
+- Batch 4 के 60/60 entries NEEDS_REVIEW हैं। KAL-001–KAL-240 का lexical language check branch-side static scan में पास; इससे source correctness या independent review सिद्ध नहीं होता।
+- वर्तमान संचयी स्थिति: कालीबंगा 240/311 हिंदी-प्रथम; KAL-241–KAL-311 शेष। अध्याय 2 में कुल 368 candidate drafts हैं, सभी review-pending। AHB/GJ/BRT/MTS के subtopic coverage gaps और पूरे parent chapter का cross-site/duplicate/source audit अभी बाकी है।
+- परिवर्तन PR #126 की branch roadmap/rajasthan-first-complete-sequence पर है; PR अभी open है। नई revision के CI results, database migration application, learner API verification और main-branch APK artifact अभी confirm नहीं हुए। Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED ही रहेंगे।
+- अगला content step: इसी parent chapter के भीतर KAL-241–KAL-311 को पूरा करना, फिर AHB/GJ/BRT/MTS coverage matrix और one-pass chapter acceptance audit। Chapter 2 का gate पास होने से पहले Rajasthan History Chapter 3 शुरू न करें।
