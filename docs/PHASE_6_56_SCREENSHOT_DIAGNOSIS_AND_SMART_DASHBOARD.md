@@ -49,3 +49,16 @@ The user approved a content-first update model so newly published questions/cont
 - **Verification:** test first install, existing APK upgrade path, delta update, duplicate/idempotent sync, offline read, reconnect/retry, auth expiry, empty update and rollback/corrupt payload handling. Record backend + Flutter CI and exact main-branch APK artifact after merged app-code changes.
 
 This requirement is accepted by the user but is NOT implemented or verified merely by this roadmap entry. Phase 6.56 stays IN_PROGRESS; 6.57 stays PLANNED; 6.58 stays BLOCKED. Preserve current review/PYQ boundaries.
+
+
+## 2026-11-22 — Automatic content sync implementation slice 1 (manifest API)
+
+**Status: IN_PROGRESS — design scoped; code and tests pending in branch `phase-6-56-content-manifest-api`.**
+
+- Reuse the existing Firebase-authenticated learner API and configured `question_bank_connection_factory`; do not add another authentication system or database connection lifecycle.
+- Add read-only endpoint `GET /api/v1/learners/{learner_id}/question-bank/content-manifest`.
+- The manifest will provide a deterministic revision derived from the canonical `concepts` catalogue and the **VERIFIED-only** `question_bank_one_liners` publication set, plus aggregate concept/verified/pending counts. Pending drafts are represented only as a count and are never included in the published-content revision or silently promoted.
+- No migration is intended for this first slice: derive the manifest from existing `concepts` and `question_bank_one_liners` data and existing `updated_at`/`content_hash` fields.
+- Add regression coverage for authenticated access, learner-scope rejection, fail-closed unconfigured DB, deterministic revision, revision changes when catalogue/published question content changes, and exclusion of NEEDS_REVIEW/DRAFT rows from published revision.
+- This slice is only the server-side revision contract. The next dependent slice adds a typed Flutter client reader, persisted local revision, delta retrieval and offline-safe sync. Do not claim the installed APK auto-updates until those client parts and real API/device E2E are accepted.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Preserve all prior content verification and APK release gates.
