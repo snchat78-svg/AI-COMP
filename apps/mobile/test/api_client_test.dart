@@ -487,3 +487,47 @@ void main() {
 
 
 }
+
+
+test('question-bank content manifest uses the authenticated learner API', () async {
+  late http.Request received;
+  final mock = MockClient((request) async {
+    received = request;
+    return http.Response(
+      jsonEncode({
+        'schema_version': 1,
+        'revision': 'a' * 64,
+        'catalogue_revision': 'b' * 32,
+        'published_questions_revision': 'c' * 32,
+        'topic_count': 34,
+        'verified_one_liner_count': 12,
+        'review_pending_one_liner_count': 368,
+      }),
+      200,
+      headers: {'content-type': 'application/json'},
+    );
+  });
+  addTearDown(mock.close);
+  final api = AiCompApiClient(
+    baseUrl: 'https://api.example.test/gateway/',
+    learnerId: 'learner-1',
+    accessToken: 'firebase-id-token',
+    httpClient: mock,
+  );
+
+  final manifest = await api.getQuestionBankContentManifest();
+
+  expect(received.method, 'GET');
+  expect(
+    received.url.path,
+    '/gateway/api/v1/learners/learner-1/question-bank/content-manifest',
+  );
+  expect(received.headers['authorization'], 'Bearer firebase-id-token');
+  expect(manifest.schemaVersion, 1);
+  expect(manifest.revision, 'a' * 64);
+  expect(manifest.catalogueRevision, 'b' * 32);
+  expect(manifest.publishedQuestionsRevision, 'c' * 32);
+  expect(manifest.topicCount, 34);
+  expect(manifest.verifiedOneLinerCount, 12);
+  expect(manifest.reviewPendingOneLinerCount, 368);
+});
