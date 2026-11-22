@@ -1027,3 +1027,17 @@ The user approved a content-first update model so newly published questions/cont
 - **Verification:** test first install, existing APK upgrade path, delta update, duplicate/idempotent sync, offline read, reconnect/retry, auth expiry, empty update and rollback/corrupt payload handling. Record backend + Flutter CI and exact main-branch APK artifact after merged app-code changes.
 
 This requirement is accepted by the user but is NOT implemented or verified merely by this roadmap entry. Phase 6.56 stays IN_PROGRESS; 6.57 stays PLANNED; 6.58 stays BLOCKED. Preserve current review/PYQ boundaries.
+
+
+## 2026-11-22 — Automatic content sync implementation slice 1 (manifest API)
+
+**Status: IN_PROGRESS — design scoped; code and tests pending in branch `phase-6-56-content-manifest-api`.**
+
+- Reuse the existing Firebase-authenticated learner API and configured `question_bank_connection_factory`; do not add another authentication system or database connection lifecycle.
+- Add read-only endpoint `GET /api/v1/learners/{learner_id}/question-bank/content-manifest`.
+- The manifest will provide a deterministic revision derived from the canonical `concepts` catalogue and the **VERIFIED-only** `question_bank_one_liners` publication set, plus aggregate concept/verified/pending counts. Pending drafts are represented only as a count and are never included in the published-content revision or silently promoted.
+- No migration is intended for this first slice: derive the manifest from existing `concepts` and `question_bank_one_liners` data and existing `updated_at`/`content_hash` fields.
+- Add regression coverage for authenticated access, learner-scope rejection, fail-closed unconfigured DB, deterministic revision, revision changes when catalogue/published question content changes, and exclusion of NEEDS_REVIEW/DRAFT rows from published revision.
+- Add a typed Flutter manifest model and authenticated API client reader; verify the route, bearer token and parsed revision/count fields.
+- This slice includes the server-side revision contract and a typed Flutter manifest model/API reader with bearer-authenticated client coverage. It does not yet compare or persist revisions, download changed records, perform background refresh, or maintain a downloaded-content cache. The next dependent slice adds automatic manifest comparison, authenticated delta retrieval, persisted local revision and offline-safe cache. Do not claim the installed APK auto-updates until those parts and real API/device E2E are accepted.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Preserve all prior content verification and APK release gates.

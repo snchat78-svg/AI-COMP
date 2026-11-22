@@ -805,6 +805,38 @@ class TestHistoryItem {
   }
 }
 
+class QuestionBankContentManifest {
+  const QuestionBankContentManifest({
+    required this.schemaVersion,
+    required this.revision,
+    required this.catalogueRevision,
+    required this.publishedQuestionsRevision,
+    required this.topicCount,
+    required this.verifiedOneLinerCount,
+    required this.reviewPendingOneLinerCount,
+  });
+
+  final int schemaVersion;
+  final String revision;
+  final String catalogueRevision;
+  final String publishedQuestionsRevision;
+  final int topicCount;
+  final int verifiedOneLinerCount;
+  final int reviewPendingOneLinerCount;
+
+  factory QuestionBankContentManifest.fromJson(Map<String, dynamic> json) {
+    return QuestionBankContentManifest(
+      schemaVersion: _integer(json['schema_version'], 1),
+      revision: _string(json['revision']),
+      catalogueRevision: _string(json['catalogue_revision']),
+      publishedQuestionsRevision: _string(json['published_questions_revision']),
+      topicCount: _integer(json['topic_count'], 0),
+      verifiedOneLinerCount: _integer(json['verified_one_liner_count'], 0),
+      reviewPendingOneLinerCount: _integer(json['review_pending_one_liner_count'], 0),
+    );
+  }
+}
+
 Map<String, dynamic> _map(Object? value) =>
     value is Map<String, dynamic> ? value : <String, dynamic>{};
 

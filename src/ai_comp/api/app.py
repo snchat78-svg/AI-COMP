@@ -13,6 +13,7 @@ from ai_comp.api.preparation_guidance_routes import content_admin_router, router
 from ai_comp.api.exam_syllabus_admin_routes import router as exam_syllabus_admin_router
 from ai_comp.api.examinable_point_routes import router as examinable_point_router
 from ai_comp.api.source_health_routes import router as source_health_router
+from ai_comp.api.question_bank_content_manifest import router as question_bank_content_manifest_router
 from ai_comp.api.postgres_preparation_context import (
     ConnectionScopedPreparationTestRequestRepository,
     PostgresPreparationContextProvider,
@@ -66,6 +67,7 @@ def create_app(
     app.include_router(exam_syllabus_admin_router)
     app.include_router(examinable_point_router)
     app.include_router(source_health_router)
+    app.include_router(question_bank_content_manifest_router)
     return app
 
 
