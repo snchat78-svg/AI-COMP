@@ -566,3 +566,27 @@ This roadmap records required work and observed caveats; it does not claim compl
 
 ### Immediate next slice
 Resume the existing Rajasthan History Chapter 2 parent file; do not start Indian History or the previously proposed Indus Valley Indian topic. Audit current 368 draft rows and remaining gaps; add only missing, source-backed high-yield questions with exact source locators and parity checks where existing SQL/offline assets are affected. The chapter remains DRAFTING/NEEDS_REVIEW until independent review and applicable exam mapping are complete.
+
+## 2026-11-22 — उपयोगकर्ता का “एक मुख्य टॉपिक, पूरा अध्याय” नियम
+
+एक learner-facing main topic एक पूरा पुस्तक-अध्याय होगा। उसके भीतर सभी संबंधित स्थल/वंश/थीम/subtopics nested रहेंगे; हर स्थल या छोटे subtopic को अलग मुख्य टॉपिक नहीं बनाया जाएगा। एक अध्याय के पूरा होने से पहले अगले पुस्तक-अध्याय पर काम शुरू नहीं होगा।
+
+### एक टॉपिक का पूर्णता-पैक
+
+1. **अध्याय सीमा तय करें:** उपयोगकर्ता की पुस्तक-सूची/वर्तमान आधिकारिक syllabus locator के अनुसार parent chapter, child sites और stable concept IDs सूचीबद्ध करें।
+2. **कवरेज मैट्रिक्स:** हर child-site पर लागू बिंदु जाँचें—स्थान/जिला/नदी/मानचित्र; कालक्रम/तिथियाँ; खोज/सर्वेक्षण/उत्खनन; प्रमुख व्यक्ति/संस्थाएँ; विशिष्ट पुरावशेष/स्थापत्य/मृद्भांड/औज़ार; अर्थव्यवस्था/शिल्प/कृषि; धर्म/अनुष्ठान; अभिलेख/लिपि; दफन/मानव/पशु-अवशेष; तुलनात्मक पहचान; और स्रोत-विरोध/अनिश्चितता। जो बिंदु किसी स्थल पर लागू न हो उसे स्पष्ट रूप से N/A करें।
+3. **महत्त्वपूर्ण प्रश्न:** प्रत्येक independently testable high-yield तथ्य को एक बार ही पूछें। परिभाषा, नाम, स्थान, क्रम, तिथि, सूची, प्रकार, विशेषता, तुलना और कारण-परिणाम जहाँ परीक्षा-मूल्य हो वहीं शामिल करें। कोई मनमाना प्रश्न-कोटा नहीं; obscure catalogue minutiae या wording बदलकर दोहराव नहीं।
+4. **स्रोत-अनुशासन:** हर उत्तर के साथ URL और सटीक मुद्रित पृष्ठ/तालिका/अभिलेख/शीर्षक locator रखें। अनुमान/लेखक की व्याख्या/परंपरा/विवाद को उसी रूप में चिह्नित करें; परस्पर विरोधी दावों को चुपचाप एक न करें।
+5. **गुणवत्ता-जाँच:** exact तथा normalized duplicate audit; question-answer correctness audit; सभी तथ्य-सूचकों की पुनःजाँच; cross-site comparison और omitted high-yield point audit।
+6. **प्रकाशन-सीमा:** AI draft NEEDS_REVIEW रहेगा। अलग reviewer का source-and-answer audit और review log होने पर ही VERIFIED। वास्तविक PYQ अलग content type और official paper/answer-key evidence के साथ ही।
+7. **एकीकृत पैक:** parent topic index, child-subtopic notes, Q&A, source ledger, unresolved-items ledger, coverage checklist और learner topic view एक ही parent hierarchy में। प्रश्न की मूल entry एक ही जगह; अन्य जगह केवल stable ID cross-reference।
+8. **आगे बढ़ने का gate:** सभी child-sites की high-yield कवरेज, स्रोत/डुप्लिकेट/समीक्षा की स्थिति और open gaps स्पष्ट होने तक chapter IN_PROGRESS रहेगा। उसके बाद ही अगले book chapter को unlock करें।
+
+**अध्याय 2 पर लागू:** “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है; कालीबंगा, आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ/विराटनगर और मत्स्य जनपद इसके child-subtopics हैं। वर्तमान 368 drafts केवल मौजूदा candidate inventory हैं, complete coverage या verified truth का प्रमाण नहीं। पहले इसी parent chapter को पूरा और स्वीकार्य बनाना है।
+
+### 2026-11-22 content increment
+
+- कालीबंगा KAL-181–KAL-240 का Hindi-first pass पूरा; 60/60 rows Markdown, SQL migration 0030 और Flutter offline JSON में sync।
+- हिंदी lexical scan: KAL-001–KAL-240 पर शून्य अनपेक्षित Latin-script prose; स्थिर catalogue/site IDs और प्रकाशित पट्ट-संकेत पहचान-चिह्न के रूप में सुरक्षित।
+- SQL content hashes पुनर्गणित; language और data-parity regression tests KAL-240 तक बढ़ाए।
+- सभी 368 Chapter-2 drafts NEEDS_REVIEW हैं। यह increment न independent fact review है, न live DB apply, न learner publication, न APK release evidence।

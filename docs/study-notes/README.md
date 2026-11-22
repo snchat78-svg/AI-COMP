@@ -158,3 +158,9 @@ The user has explicitly reset the content priority. Follow this strict sequence 
 
 ### Immediate active content
 Resume Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” in its canonical parent file. The current 368 candidate Q&A (311 KAL + 20 AHB + 18 GJ + 9 BRT + 10 MTS) are draft/review-pending, not a completed or verified topic. Complete the missing high-yield site coverage, reconcile source conflicts and exact/semantic duplicates, then continue the next history chapter in the supplied book order. India topics are explicitly deferred.
+
+## 2026-11-22 — एक parent topic में पूरा पुस्तक-अध्याय
+
+एक main learner topic पूरा chapter होगा; उसके सभी child sites/themes/subtopics उसी के अंदर रहेंगे। Rajasthan History Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” के child units कालीबंगा, आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ/विराटनगर और मत्स्य जनपद हैं। मौजूदा 368 Q&A drafts completion प्रमाणित नहीं करते; प्रत्येक child-site की coverage, source locator, duplicate और independent review gate बाकी है।
+
+**वर्तमान content increment:** कालीबंगा KAL-001–KAL-240 हिंदी-प्रथम हैं (KAL-181–KAL-240 अभी PR #126 branch पर); SQL migration 0030 और offline APK JSON में parity regression जोड़ी गई। सभी drafts NEEDS_REVIEW ही हैं। पूरा Chapter 2 स्वीकार होने से पहले अध्याय 3 या India topics शुरू नहीं होंगे।
