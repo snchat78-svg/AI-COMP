@@ -55,7 +55,6 @@ def test_chapter_2_import_keeps_the_five_existing_canonical_concepts() -> None:
         assert concept_id in sql
 
 
-
 def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> None:
     root = Path(__file__).resolve().parents[1]
     notes = (
@@ -79,9 +78,9 @@ def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> Non
     sql = MIGRATION.read_text(encoding="utf-8")
     values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
     row_pattern = re.compile(
-        r"^\\s+\\('(ch2_KAL-(?:12[1-9]|1[3-7]\\d|180))', "
+        r"^\s+\('(ch2_KAL-(?:12[1-9]|1[3-7]\d|180))', "
         r"'([^']+)', '([^']*)', '([^']*)', 'hi', '([^']+)', "
-        r"'([^']*)', 'NEEDS_REVIEW', 0\\.80, '([0-9a-f]{64})', NULL\\),?$"
+        r"'([^']*)', 'NEEDS_REVIEW', 0\.80, '([0-9a-f]{64})', NULL\),?$"
     )
     migration_rows = {
         match.group(1): {
@@ -99,7 +98,7 @@ def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> Non
     }
     note_rows = {}
     for line in notes.splitlines():
-        if not re.match(r"^\\| KAL-(?:12[1-9]|1[3-7]\\d|180) \\|", line):
+        if not re.match(r"^\| KAL-(?:12[1-9]|1[3-7]\d|180) \|", line):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
         note_rows["ch2_" + cells[0]] = (cells[1], cells[2])
@@ -119,6 +118,6 @@ def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> Non
         assert local["language_code"] == "hi"
         normalized_question = " ".join(question.casefold().split())
         normalized_answer = " ".join(answer.casefold().split())
-        payload = f"{normalized_question}\\\\n{normalized_answer}"
+        payload = f"{normalized_question}\\n{normalized_answer}"
         expected_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
         assert migrated["content_hash"] == expected_hash
