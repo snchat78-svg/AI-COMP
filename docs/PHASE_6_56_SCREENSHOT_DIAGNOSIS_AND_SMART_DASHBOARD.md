@@ -34,3 +34,18 @@ PR #123 merged into main at `a3900af50fd5eb8dc13b8db335fc86c911bfe071`. KAL-001â
 - Do not infer complete syllabus coverage from the 34-topic catalogue or a raw question count.
 - Do not mark Phase 6.56 complete or start Phase 6.57 until official syllabus/source identity, live migration and authentic-data mobile E2E gates are proven.
 - A merged PR is not proof of a post-merge APK artifact. Record the exact main workflow and artifact ID/hash before saying a new APK is ready.
+
+
+## 2026-11-22 â€” User-approved no-reinstall content sync requirement
+
+The user approved a content-first update model so newly published questions/content reach the installed APK without repeated APK downloads. Add this as a required Phase 6.56 product requirement (implementation/acceptance still pending):
+
+- **Cloud content source:** published question-bank content, answers, explanations, topic catalogue and practice sets are served by authenticated/versioned API endpoints; the APK is not the source of truth for future content.
+- **Automatic sync:** on app launch/resume and when the learner opens a relevant subject/topic, check a lightweight content revision/manifest; fetch only changed records (delta sync), not the entire bank.
+- **Background refresh:** refresh published content in the background when network/connectivity and platform lifecycle permit; show last-sync state and retry safely. Do not promise instant push delivery while the app is closed; use polling/next-open sync unless a separately configured push channel is added.
+- **Offline-first:** persist downloaded content in the local database/cache; previously synced questions remain usable offline. Queue safe learner progress locally and reconcile idempotently when online.
+- **Publication safety:** only server-published content is synced as published. NEEDS_REVIEW drafts remain clearly labelled and are never silently promoted to VERIFIED or PYQ. Keep source/evidence, language, topic IDs, content revision and status with each record.
+- **Compatibility:** content schema/API changes must remain backward-compatible with supported APK versions; if a mandatory app-code change is needed, clearly indicate that a Play Store/APK update is required. Content updates alone must not require reinstall.
+- **Verification:** test first install, existing APK upgrade path, delta update, duplicate/idempotent sync, offline read, reconnect/retry, auth expiry, empty update and rollback/corrupt payload handling. Record backend + Flutter CI and exact main-branch APK artifact after merged app-code changes.
+
+This requirement is accepted by the user but is NOT implemented or verified merely by this roadmap entry. Phase 6.56 stays IN_PROGRESS; 6.57 stays PLANNED; 6.58 stays BLOCKED. Preserve current review/PYQ boundaries.
