@@ -80,11 +80,11 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
 
     expected_ids = {
         f"ch2_{prefix}-{number:03d}"
-        for prefix, count in {"KAL": 311, "AHB": 20, "GJ": 18, "BRT": 9, "MTS": 10}.items()
+        for prefix, count in {"KAL": 311, "AHB": 26, "GJ": 18, "BRT": 11, "MTS": 10}.items()
         for number in range(1, count + 1)
     }
     asset_rows = {row["one_liner_id"]: row for row in asset}
-    assert len(asset_rows) == 368
+    assert len(asset_rows) == 376
     assert set(asset_rows) == expected_ids
 
     note_rows = {}
