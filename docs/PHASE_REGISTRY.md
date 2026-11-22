@@ -796,3 +796,18 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - Opened issue [#124](https://github.com/snchat78-svg/AI-COMP/issues/124) for independent reviewer acceptance, count reconciliation, Hindi-first Smart Dashboard/Question Bank redesign, and content continuation. See [screenshot diagnosis and dashboard work record](PHASE_6_56_SCREENSHOT_DIAGNOSIS_AND_SMART_DASHBOARD.md).
 - Next bounded content slice: KAL-181–KAL-240 with exact Markdown/SQL/offline-asset parity and regression tests. Dashboard must clearly separate VERIFIED, AI draft/review-pending, PYQ and generated practice; show meaningful topic coverage/progress without equating catalogue rows with completion.
 - Main-branch APK artifact after PR #123 was not established by the commit-workflow lookup in this session; require main Actions run + artifact ID/SHA before calling APK ready. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. No phase transition or bulk verification is claimed.
+
+
+## 2026-11-22 — User-approved no-reinstall content sync requirement
+
+The user approved a content-first update model so newly published questions/content reach the installed APK without repeated APK downloads. Add this as a required Phase 6.56 product requirement (implementation/acceptance still pending):
+
+- **Cloud content source:** published question-bank content, answers, explanations, topic catalogue and practice sets are served by authenticated/versioned API endpoints; the APK is not the source of truth for future content.
+- **Automatic sync:** on app launch/resume and when the learner opens a relevant subject/topic, check a lightweight content revision/manifest; fetch only changed records (delta sync), not the entire bank.
+- **Background refresh:** refresh published content in the background when network/connectivity and platform lifecycle permit; show last-sync state and retry safely. Do not promise instant push delivery while the app is closed; use polling/next-open sync unless a separately configured push channel is added.
+- **Offline-first:** persist downloaded content in the local database/cache; previously synced questions remain usable offline. Queue safe learner progress locally and reconcile idempotently when online.
+- **Publication safety:** only server-published content is synced as published. NEEDS_REVIEW drafts remain clearly labelled and are never silently promoted to VERIFIED or PYQ. Keep source/evidence, language, topic IDs, content revision and status with each record.
+- **Compatibility:** content schema/API changes must remain backward-compatible with supported APK versions; if a mandatory app-code change is needed, clearly indicate that a Play Store/APK update is required. Content updates alone must not require reinstall.
+- **Verification:** test first install, existing APK upgrade path, delta update, duplicate/idempotent sync, offline read, reconnect/retry, auth expiry, empty update and rollback/corrupt payload handling. Record backend + Flutter CI and exact main-branch APK artifact after merged app-code changes.
+
+This requirement is accepted by the user but is NOT implemented or verified merely by this roadmap entry. Phase 6.56 stays IN_PROGRESS; 6.57 stays PLANNED; 6.58 stays BLOCKED. Preserve current review/PYQ boundaries.
