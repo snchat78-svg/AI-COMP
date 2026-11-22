@@ -55,7 +55,7 @@ def test_chapter_2_import_keeps_the_five_existing_canonical_concepts() -> None:
         assert concept_id in sql
 
 
-def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> None:
+def test_kalibanga_batches_3_and_4_match_markdown_migration_and_offline_asset() -> None:
     root = Path(__file__).resolve().parents[1]
     notes = (
         root
@@ -78,7 +78,7 @@ def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> Non
     sql = MIGRATION.read_text(encoding="utf-8")
     values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
     row_pattern = re.compile(
-        r"^\s+\('(ch2_KAL-(?:12[1-9]|1[3-7]\d|180))', "
+        r"^\s+\('(ch2_KAL-(?:12[1-9]|1[3-9]\d|2[0-3]\d|240))', "
         r"'([^']+)', '([^']*)', '([^']*)', 'hi', '([^']+)', "
         r"'([^']*)', 'NEEDS_REVIEW', 0\.80, '([0-9a-f]{64})', NULL\),?$"
     )
@@ -103,7 +103,7 @@ def test_kalibanga_batch_3_matches_markdown_migration_and_offline_asset() -> Non
         cells = [cell.strip() for cell in line.strip("|").split("|")]
         note_rows["ch2_" + cells[0]] = (cells[1], cells[2])
 
-    expected = {f"ch2_KAL-{number:03d}" for number in range(121, 181)}
+    expected = {f"ch2_KAL-{number:03d}" for number in range(121, 241)}
     assert set(migration_rows) == expected
     assert expected.issubset(asset_rows)
     assert set(note_rows) == expected
