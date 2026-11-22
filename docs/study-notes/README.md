@@ -134,3 +134,27 @@ Book chapters, not every internal site/subheading, are the main topic units. All
 ## 2026-11-18 — chapter 2 child-site question batches
 
 The shared parent chapter now contains 358 primary Hindi drafts (KAL 311 + AHB 20 + GJ 18 + BRT 9); all remain NEEDS_REVIEW. New source locators are ASI *Indian Archaeology 1981–82 — A Review*, Ganeshwar excavation pp.61–62, and ASI Jaipur Circle Inventory entry 107, Bairat p.143, with PMML support for the two inscription names. No new main topic was created.
+
+## 2026-11-22 — User-approved strict Rajasthan-first study sequence
+
+The user has explicitly reset the content priority. Follow this strict sequence and do not begin Indian GK while any Rajasthan subject/topic has material coverage or review gaps:
+
+1. **Complete Rajasthan History** — all existing catalogue concepts and book chapters: sources, ancient sites, dynasties, regional states, battles/treaties, architecture, 1857, peasant/tribal movements, Prajamandal, integration, freedom fighters, personalities and all remaining syllabus-backed history themes.
+2. **Complete Rajasthan Geography** — physical/location, boundaries, divisions/districts, relief, climate, rivers, lakes, soils, forests, wildlife, protected areas, minerals, energy, irrigation, agriculture, population, maps and regional geography.
+3. **Complete Rajasthan Polity & Administration** — constitutional/administrative structure, Governor, CM/Council, Assembly, High Court, districts/divisions, local government, Panchayati Raj, commissions, institutions and state administration.
+4. **Complete Rajasthan Art & Culture** — folk deities/saints, sects, fairs/festivals, dances, music, instruments, paintings, architecture, handicrafts, textiles, ornaments, language/dialects, literature and regional traditions.
+5. **Complete Rajasthan Economy** — state budget and economic review by year, agriculture, livestock, irrigation, industries, MSME, minerals, energy, tourism, infrastructure, employment, banking/cooperatives, poverty/development indicators and current state schemes.
+6. **Complete remaining Rajasthan-specific syllabus areas** — census/demography, tribes, society, education, sports, awards, institutions, environment, schemes and Rajasthan current affairs. Add/extend canonical concept rows rather than create a parallel taxonomy.
+7. Only after the Rajasthan completion gate is independently accepted, start **Indian GK** (History → Geography → Polity → Economy → Science/Technology → Art/Culture → national current affairs).
+8. Only after Indian GK, cover **Hindi → English → Mathematics → Reasoning → Computer Awareness**, in that order unless a specific official exam syllabus requires a justified reorder.
+
+### One-Liner coverage standard
+- Keep the hierarchy Subject → one main topic/chapter → subtopic; show the whole topic in one coherent learner-facing unit. Subtopics are sections within it, not scattered unrelated topic cards.
+- Draft concise Hindi question → direct Hindi answer, including English subject questions/answers in Hindi with only necessary English terms/examples retained.
+- Use a high-yield checklist (definitions, identities, names, places, dates, sequence, classifications, differences, causes/effects, data/tables/maps, formulas/rules/exceptions and current facts where relevant). No fixed question count; include all important examinable points and avoid repetition/obscure trivia.
+- Every factual draft has a reliable source URL and precise page/section/table/notification locator; mark source date for changing facts.
+- AI-created content remains NEEDS_REVIEW until independent review. Do not label it VERIFIED or PYQ. Keep real PYQs and practice content separate.
+- Finish one main topic fully (content coverage, source audit, duplicate audit, review status and ledger update) before starting another topic.
+
+### Immediate active content
+Resume Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” in its canonical parent file. The current 368 candidate Q&A (311 KAL + 20 AHB + 18 GJ + 9 BRT + 10 MTS) are draft/review-pending, not a completed or verified topic. Complete the missing high-yield site coverage, reconcile source conflicts and exact/semantic duplicates, then continue the next history chapter in the supplied book order. India topics are explicitly deferred.

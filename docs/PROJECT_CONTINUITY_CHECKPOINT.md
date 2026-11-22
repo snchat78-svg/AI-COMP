@@ -1041,3 +1041,13 @@ This requirement is accepted by the user but is NOT implemented or verified mere
 - Add a typed Flutter manifest model and authenticated API client reader; verify the route, bearer token and parsed revision/count fields.
 - This slice includes the server-side revision contract and a typed Flutter manifest model/API reader with bearer-authenticated client coverage. It does not yet compare or persist revisions, download changed records, perform background refresh, or maintain a downloaded-content cache. The next dependent slice adds automatic manifest comparison, authenticated delta retrieval, persisted local revision and offline-safe cache. Do not claim the installed APK auto-updates until those parts and real API/device E2E are accepted.
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Preserve all prior content verification and APK release gates.
+
+## 2026-11-22 — Strict Rajasthan-first priority and restart instruction
+
+User instruction: first complete every Rajasthan-related subject and important topic (History, Geography, Polity/Administration, Art & Culture, Economy and remaining Rajasthan GK/current affairs). Only after the Rajasthan acceptance gate may Indian GK start. After Indian GK, complete Hindi, English and Mathematics, then Reasoning and Computer Awareness. This supersedes any earlier suggestion to work on India/Indian History in parallel.
+
+- Current active content topic: Rajasthan History → Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल”, canonical file docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md.
+- Existing candidate count on main checkpoint: 311 KAL + 20 AHB + 18 GJ + 9 BRT + 10 MTS = 368. All are draft/review-pending; count is not verification or full topic completion. Reconcile current exact main file before adding more; do not assume branch-only later edits are merged.
+- Next: audit the Chapter 2 file and its evidence locators/coverage checklist, finish missing high-yield facts and source/duplicate checks, keep all new content NEEDS_REVIEW, then proceed to the next Rajasthan History chapter only when this main topic is closed.
+- Do not create Indian History/Indus Valley content yet. Do not start Hindi/English/Mathematics until Rajasthan and Indian GK are completed.
+- Read the registry, coverage CSV, continuity standard and topic roadmap before every next content batch; update these in the same PR as the content work.
