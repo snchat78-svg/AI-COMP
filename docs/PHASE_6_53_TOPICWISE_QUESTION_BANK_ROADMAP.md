@@ -540,3 +540,29 @@ This roadmap records required work and observed caveats; it does not claim compl
 - कुल कालीबंगा हिंदी-प्रथम पूर्ण: KAL-001–KAL-180 (180/311 pairs)। अगला सीमित बैच: KAL-181–KAL-240।
 - Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
 - APK नियम: PR validation के बाद merge पर main-branch Flutter analyze, mobile tests, release APK, verify और artifact upload सभी सफल होना चाहिए; main APK artifact सत्यापित किए बिना increment को user-ready न कहें।
+
+## 2026-11-22 — Strict Rajasthan-first curriculum order (user directive)
+
+**This supersedes the earlier cross-subject parallel queue.** The learner-facing study sequence is a hard dependency chain: complete every Rajasthan-specific subject and important topic before any Indian GK; after Indian GK, proceed to Hindi, English and Mathematics (then Reasoning and Computer Awareness). Do not create Indian-history drafts while Rajasthan History/Geography/Polity/Culture/Economy/remaining Rajasthan GK is incomplete.
+
+### Ordered curriculum gates
+1. Rajasthan History — all 34 current catalogue concepts plus every relevant main book chapter/theme; first resume Chapter 2 ancient civilization sites, then follow the verified book chapter sequence and close all remaining history concepts.
+2. Rajasthan Geography — all 32 current concepts plus syllabus/source-backed gaps (physical, rivers/lakes, climate, soils, agriculture, irrigation, forests/wildlife, minerals/energy, population, maps and regional geography).
+3. Rajasthan Polity & Administration — all 21 current concepts plus applicable administration/local governance/institutions.
+4. Rajasthan Art & Culture — all 29 current concepts plus any source-backed gaps (folk deities/saints, fairs, festivals, dance, music, instruments, paintings, architecture, crafts, textiles, ornaments, language/literature).
+5. Rajasthan Economy — all 21 current concepts plus budget/economic review, agriculture, livestock, industry, minerals, energy, tourism, infrastructure, employment, cooperatives, development and state schemes.
+6. Rajasthan-specific remaining areas/current affairs — census, tribes, society, education, sports, awards, environment, institutions, schemes and dated current affairs; extend existing taxonomy where necessary.
+7. Rajasthan acceptance gate: every applicable main topic/subtopic has an examinable-point checklist; important points have source-backed Hindi Q&A; duplicates and disputed facts are resolved or explicitly excluded; independent review status is honest; coverage ledger updated. Only then unlock Indian GK.
+8. Indian GK: History → Geography → Polity → Economy → General Science/Technology → Art & Culture → national current affairs.
+9. Language/aptitude: Hindi → English → Mathematics → Reasoning → Computer Awareness.
+
+### Topic construction and learner UI
+- One main topic is one coherent study unit. Keep all its subtopics grouped under that topic with an internal subtopic index and searchable question list; do not scatter one chapter into separate top-level topic cards.
+- Optimize for coverage, not count: each question tests one distinct useful fact. Combine closely related facts only when the question remains unambiguous. Remove exact and semantic duplicates.
+- Question and direct answer should be in Hindi for every subject; retain English words only when they are the subject of the English rule/example.
+- Every candidate carries canonical concept ID, source URL, precise evidence locator, language and NEEDS_REVIEW status. AI authorship is not verification. Actual PYQs remain a separate provenance-backed pool.
+- Use official syllabus/notifications and authoritative Rajasthan Government, department, Gazetteer, Board/NCERT/SCERT and primary archival sources as applicable. Date changing information (budget, office holders, schemes, statistics).
+- No fixed question quota. Close the full high-yield examinable-point checklist before advancing to the next main topic.
+
+### Immediate next slice
+Resume the existing Rajasthan History Chapter 2 parent file; do not start Indian History or the previously proposed Indus Valley Indian topic. Audit current 368 draft rows and remaining gaps; add only missing, source-backed high-yield questions with exact source locators and parity checks where existing SQL/offline assets are affected. The chapter remains DRAFTING/NEEDS_REVIEW until independent review and applicable exam mapping are complete.
