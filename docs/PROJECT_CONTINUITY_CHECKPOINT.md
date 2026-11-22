@@ -1002,3 +1002,13 @@ Status remains **Phase 2.2 BLOCKED**, **Phase 6.56 IN_PROGRESS**, **Phase 6.57 P
 - कुल कालीबंगा हिंदी-प्रथम पूर्ण: KAL-001–KAL-180 (180/311 pairs)। अगला सीमित बैच: KAL-181–KAL-240।
 - Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
 - APK नियम: PR validation के बाद merge पर main-branch Flutter analyze, mobile tests, release APK, verify और artifact upload सभी सफल होना चाहिए; main APK artifact सत्यापित किए बिना increment को user-ready न कहें।
+
+
+## 2026-11-22 — Screenshot diagnosis and next work (issue #124)
+
+- User screenshot shows Rajasthan History: 34/34 child topics, 7 parent groups, 0 verified, 368 review-pending. Confirmed intended reason: Chapter-2 AI-authored candidates are `NEEDS_REVIEW`; verified learner endpoint intentionally exposes only independently reviewed records. Pending drafts have a separate API/local APK lane and must not be relabelled as verified or PYQ.
+- Chapter-2 counts remain KAL 311, AHB 20, GJ 18, BRT 9, MTS 10. PR #123 merged at `a3900af50fd5eb8dc13b8db335fc86c911bfe071`; KAL-001–KAL-180 are Hindi-first and synchronized across notes/SQL/offline asset; all 180 remain NEEDS_REVIEW.
+- Created issue [#124](https://github.com/snchat78-svg/AI-COMP/issues/124) for independent review workflow acceptance, accurate status/count reconciliation, Hindi-first Smart Dashboard/Question Bank redesign and next bounded content batch.
+- New work record: [PHASE_6_56_SCREENSHOT_DIAGNOSIS_AND_SMART_DASHBOARD.md](PHASE_6_56_SCREENSHOT_DIAGNOSIS_AND_SMART_DASHBOARD.md).
+- Next content slice remains KAL-181–KAL-240 with strict Markdown/SQL/APK asset parity. Next product increment is dashboard/question-bank presentation and verified-vs-draft separation; preserve existing auth, tests and PYQ separation.
+- Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. Do not bulk-promote drafts or advance phases. Post-merge main APK artifact for PR #123 was not confirmed by the commit-workflow lookup in this session; check Actions and artifact ID/SHA before claiming a new APK is ready.
