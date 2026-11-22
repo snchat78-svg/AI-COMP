@@ -1,0 +1,74 @@
+# अध्याय 2 — हिंदी-प्रथम One-Liner भाषा-जाँच
+
+**दिनांक:** 22 नवम्बर 2026  
+**चरण:** Phase 6.56 के भीतर सामग्री-गुणवत्ता सुधार  
+**स्थिति:** पहला batch पूरा; अध्याय-स्तरीय भाषा-सुधार जारी  
+**मुख्य स्रोत:** `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md`
+
+## समस्या और प्रारम्भिक माप
+
+368 प्रश्नों के पूरे अध्याय-2 bank की जाँच में प्रश्न और उत्तर के भीतर देवनागरी के साथ लैटिन-लिपि वाले शब्द मिले। प्रारम्भिक heuristic scan में:
+
+- 292/368 प्रश्नों में लैटिन-लिपि के अक्षर थे।
+- 254/368 उत्तरों में लैटिन-लिपि के अक्षर थे।
+
+यह केवल लिपि/शब्द-जाँच है; इससे अपने-आप तथ्यात्मक गलती या गलत भाषा-निर्णय सिद्ध नहीं होता। व्यक्तियों के नाम, तकनीकी शब्द और स्थिर पुरातात्त्विक संकेतांक अलग-अलग पहचानकर सुधारना आवश्यक है।
+
+## Batch 1 — कालीबंगा KAL-001 से KAL-060
+
+**परिणाम: 60/60 प्रश्न और 60/60 उत्तर हिंदी-प्रथम।**
+
+सभी 60 प्रश्नों और उत्तरों में देवनागरी है; स्थिर स्थल-संकेतांक जैसे `KLB-I`, `KLB-II`, `KLB-1`, `KLB-2`, `KLB-3`, `KLB-8` को स्रोत से मिलान और पहचान के लिए जस का तस रखा गया। इनके अतिरिक्त प्रश्न/उत्तर के prose में लैटिन-अक्षर शेष नहीं रहे।
+
+| पहले प्रयुक्त पद | हिंदी-प्रथम रूप |
+|---|---|
+| Early Harappan | प्रारम्भिक हड़प्पा |
+| Mature Harappan | परिपक्व हड़प्पा |
+| mound | टीला |
+| cemetery mound | समाधि-टीला |
+| burial forms | शवाधान के प्रकार |
+| mud bricks | कच्ची ईंटें |
+| pottery | मृद्भांड |
+| seasons | उत्खनन सत्र |
+| citadel | दुर्ग क्षेत्र |
+| Lower Town | निचला नगर |
+| fire altars | अग्निवेदियाँ |
+| galleries | प्रदर्शनी-दीर्घाएँ |
+| beads | मनके |
+| decipher | पढ़ना / व्याख्यायित करना |
+
+व्यक्तियों के नाम देवनागरी में लिखे गए, जैसे एल. पी. टेसिटोरी, ऑरेल स्टाइन और जेम्स टॉड। प्रश्नों के तथ्य, तारीखें, माप, क्रम, उत्तर और source evidence columns को भाषा सुधार के अतिरिक्त नहीं बदला गया। source locator और S-ID जस के तस हैं।
+
+## Batch के बाद पुनः माप
+
+पूरे 368-row chapter पर वही सरल लैटिन-अक्षर heuristic फिर चलाने पर, स्थिर KLB संकेतांकों को हटाकर:
+
+- 252/368 प्रश्नों में अब भी लैटिन-लिपि के पद हैं।
+- 211/368 उत्तरों में अब भी लैटिन-लिपि के पद हैं।
+- KAL-001–KAL-060 में प्रश्न और उत्तर दोनों की शेष संख्या 0 है।
+
+इसलिए शेष 308 rows पर भाषा-सुधार अभी लंबित है। अगले batch में KAL-061–KAL-120 लिए जाएँगे; उसके बाद शेष कालीबंगा तथा आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ और मत्स्य जनपद के प्रश्नों पर यही प्रक्रिया लागू होगी। अंग्रेज़ी लिपि की हर घटना को अंधाधुंध बदलना उचित नहीं; code, आधिकारिक नाम, वैज्ञानिक संकेत और स्रोत-पहचान सुरक्षित रहेंगे।
+
+## प्रकाशन और गुणवत्ता नियंत्रण
+
+- सभी 368 प्रश्न अब भी AI-authored review drafts हैं; भाषा सुधार अपने-आप factual verification या syllabus approval नहीं है।
+- बदले गए 60 प्रश्नों के `NEEDS_REVIEW` status और स्रोत-सूचक नहीं बदले।
+- किसी प्रश्न को `VERIFIED` या PYQ नहीं बनाया गया।
+- अगले चरण में स्रोत-समीक्षा, निकट-समान प्रश्नों का मानवीय निर्णय और official syllabus applicability अलग gates रहेंगे।
+
+## APK अनिवार्यता
+
+`.github/workflows/flutter-mobile.yml` को इस प्रकार बढ़ाया गया है कि main पर Phase 6.56 दस्तावेज़, study-note सामग्री, coverage ledger या database migrations बदलने पर Flutter release pipeline भी चले। इसी तरह PR validation भी इन files पर चलेगा। Pipeline:
+1. Flutter analyze;
+2. सभी mobile tests;
+3. release-mode Android APK build;
+4. वास्तविक Firebase configuration अनिवार्य;
+5. APK artifact verification और upload।
+
+CI-only placeholder Firebase configuration से build को distributable APK artifact के रूप में सफल घोषित नहीं किया जाएगा। हर meaningful Phase/content/database merge के बाद main-run artifact की पुष्टि करनी होगी।
+
+## Phase स्थिति और अगला काम
+
+Phase 6.56 अभी `IN_PROGRESS` है। Phase 6.57 `PLANNED` और Phase 6.58 `BLOCKED` रहेंगे।  
+**अगला bounded content batch:** KAL-061–KAL-120 का हिंदी-प्रथम सुधार, फिर समान automated language regression test।  
+**अगला technical gate:** इस branch के exact head पर backend tests, Flutter analyze/tests, APK build, verification और artifact upload पास होना।
