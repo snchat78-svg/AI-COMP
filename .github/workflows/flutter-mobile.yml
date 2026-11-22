@@ -8,10 +8,22 @@ on:
       - ".github/workflows/flutter-mobile.yml"
       - "src/ai_comp/api/preparation_guidance_routes.py"
       - "src/ai_comp/api/preparation_client_contract.py"
+      # Every meaningful phase/content/database increment also gets a fresh APK.
+      - "docs/study-notes/**"
+      - "docs/PHASE_6_56*.md"
+      - "docs/PHASE_REGISTRY.md"
+      - "docs/PROJECT_CONTINUITY_CHECKPOINT.md"
+      - "docs/QUESTION_BANK_CONTENT_COVERAGE.*"
+      - "database/migrations/**"
   pull_request:
     paths:
       - "apps/mobile/**"
       - "docs/study-notes/**"
+      - "docs/PHASE_6_56*.md"
+      - "docs/PHASE_REGISTRY.md"
+      - "docs/PROJECT_CONTINUITY_CHECKPOINT.md"
+      - "docs/QUESTION_BANK_CONTENT_COVERAGE.*"
+      - "database/migrations/**"
       - ".github/workflows/flutter-mobile.yml"
       - "src/ai_comp/api/preparation_guidance_routes.py"
       - "src/ai_comp/api/preparation_client_contract.py"
@@ -85,6 +97,12 @@ jobs:
             echo "firebase_configured=false" >> "$GITHUB_OUTPUT"
             echo "Firebase secret unavailable; compiling with a CI-only placeholder. No APK artifact will be published."
           fi
+
+      - name: Require real Firebase configuration for distributable APK
+        if: steps.firebase-config.outputs.firebase_configured != 'true'
+        run: |
+          echo "::error::GOOGLE_SERVICES_JSON_BASE64 is required for a distributable APK. Add the repository secret; the CI-only placeholder is not accepted."
+          exit 1
 
       - name: Resolve Flutter dependencies
         run: flutter pub get

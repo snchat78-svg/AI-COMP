@@ -502,3 +502,14 @@ This roadmap records required work and observed caveats; it does not claim compl
 - Added tests for 368 asset records, all five group counts, unique IDs, NEEDS_REVIEW-only status, and the screen rendering KAL-001 when the server pending endpoint returns 503. Flutter CI must pass before this offline increment is merged.
 - Migration 0030 is still required to synchronize draft content to PostgreSQL and make it available across devices. The bundled fallback guarantees this APK can show the 368 Chapter 2 drafts without waiting for that DB write.
 - Phase 6.56 remains `IN_PROGRESS`; 6.57 `PLANNED`; 6.58 `BLOCKED`.
+
+
+## 2026-11-22 — हिंदी-प्रथम प्रश्न batch 1 और अनिवार्य APK gate
+
+- Chapter-2 के पूरे 368 Hindi Q&A पर lexical audit ने प्रारम्भ में 292 प्रश्नों और 254 उत्तरों में Latin-script terms पाए। यह heuristic scan था; proper names, technical terms और fixed site identifiers को अलग-अलग संभालना आवश्यक था।
+- KAL-001–KAL-060 का Hindi-first rewrite पूरा हुआ। अब इन 60 प्रश्नों/उत्तर pairs के prose में KLB fixed identifiers (KLB-I, KLB-II, KLB-1 आदि) को छोड़कर कोई Latin-script word नहीं है। स्रोत-आधारित अर्थ, तिथियाँ, माप और evidence columns सुरक्षित रखे गए। 368 में से 252 प्रश्नों और 211 उत्तरों में अभी भी अन्य Latin-script terms हैं; शेष batches लंबित हैं।
+- Audit report: `docs/reviews/CHAPTER_2_HINDI_LANGUAGE_AUDIT_2026-11-22.md`. Regression tests first 60 Hindi rows, site-code preservation और Phase-file-to-APK CI triggers को enforce करते हैं।
+- Updated `.github/workflows/flutter-mobile.yml`: Phase 6.56 docs, study notes, coverage ledger और DB migrations के push/PR changes भी Flutter release workflow चलाते हैं। Real Firebase config अब distributable APK artifact के लिए required है; analyze, tests, release build, verify और upload सभी gates हैं।
+- कोई draft VERIFIED/PYQ नहीं किया गया। सभी 368 question drafts review-pending रहते हैं।
+- Next bounded content batch: KAL-061–KAL-120 Hindi-first rewrite. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
+- **APK rule:** every merged content/phase/database increment must have a matching successful main-branch Flutter release run and a verified `ai-comp-mobile-android-apk` artifact. A PR-only build does not replace this main-head artifact check.
