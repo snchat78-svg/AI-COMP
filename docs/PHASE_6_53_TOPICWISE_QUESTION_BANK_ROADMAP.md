@@ -513,3 +513,16 @@ This roadmap records required work and observed caveats; it does not claim compl
 - कोई draft VERIFIED/PYQ नहीं किया गया। सभी 368 question drafts review-pending रहते हैं।
 - Next bounded content batch: KAL-061–KAL-120 Hindi-first rewrite. Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED.
 - **APK rule:** every merged content/phase/database increment must have a matching successful main-branch Flutter release run and a verified `ai-comp-mobile-android-apk` artifact. A PR-only build does not replace this main-head artifact check.
+
+
+## 2026-11-22 — कालीबंगा हिंदी-प्रथम बैच 2 (KAL-061–KAL-120)
+
+- Phase 6.56 के भीतर अगला सीमित भाषा-सुधार बैच पूरा: KAL-061 से KAL-120 तक 60 प्रश्न और 60 उत्तरों को हिंदी-प्रथम रूप दिया गया।
+- प्रश्न/उत्तर के अंग्रेज़ी सामान्य पदों को हिंदी में बदला; स्थिर पुरातात्त्विक स्थल-संकेतांक और स्रोत-साक्ष्य/पृष्ठ-लोकेटर सुरक्षित रखे। श्रेणी A–F जैसे स्रोत-निर्धारित वर्ग संकेत सुरक्षित हैं।
+- अर्थ, संख्याएँ, माप, स्रोत attribution और सावधानी-सूचनाएँ नहीं बदली गईं; यह भाषा-सुधार है, स्वतंत्र तथ्य-जाँच या परीक्षा-पाठ्यक्रम स्वीकृति नहीं।
+- सभी 60 प्रश्न NEEDS_REVIEW ही हैं; कोई VERIFIED/PYQ promotion नहीं।
+- Batch 2 lexical audit: 60/60 प्रश्न और 60/60 उत्तरों में देवनागरी prose; केवल स्थिर वर्ग-संकेत A–F को अपवाद रखा गया। Audit report: `docs/reviews/CHAPTER_2_HINDI_LANGUAGE_AUDIT_2026-11-22.md` में batch 2 section जोड़ा गया।
+- कुल कालीबंगा हिंदी-प्रथम पूर्ण: KAL-001–KAL-120 (120 प्रश्न/उत्तर pairs)। शेष Chapter 2 rows पर काम लंबित है।
+- अगला सीमित बैच: KAL-121–KAL-180।
+- Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
+- APK gate अपरिवर्तित: हर merge के बाद main-branch Flutter analyze, mobile tests, release APK build, artifact verification और upload सभी पास तथा artifact मौजूद होना अनिवार्य।
