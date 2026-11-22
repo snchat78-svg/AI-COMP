@@ -91,7 +91,7 @@ def test_all_chapter_2_question_and_answer_text_is_hindi_first() -> None:
             / "rajasthan_history_chapter_2_drafts.json"
         ).read_text(encoding="utf-8")
     )
-    expected_counts = {"KAL": 311, "AHB": 20, "GJ": 18, "BRT": 9, "MTS": 10}
+    expected_counts = {"KAL": 311, "AHB": 26, "GJ": 18, "BRT": 11, "MTS": 10}
     assert len(asset) == sum(expected_counts.values())
 
     for prefix, expected_count in expected_counts.items():
