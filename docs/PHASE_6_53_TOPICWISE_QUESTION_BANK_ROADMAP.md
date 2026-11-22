@@ -526,3 +526,17 @@ This roadmap records required work and observed caveats; it does not claim compl
 - अगला सीमित बैच: KAL-121–KAL-180।
 - Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
 - APK gate अपरिवर्तित: हर merge के बाद main-branch Flutter analyze, mobile tests, release APK build, artifact verification और upload सभी पास तथा artifact मौजूद होना अनिवार्य।
+
+
+## 2026-11-22 — कालीबंगा हिंदी-प्रथम बैच 3 (KAL-121–KAL-180)
+
+- Phase 6.56 के भीतर KAL-121 से KAL-180 तक 60 अतिरिक्त प्रश्न/उत्तर जोड़े नहीं गए; मौजूदा स्रोत-पंक्तियों का अर्थ-सुरक्षित हिंदी-प्रथम रूपांतरण किया गया।
+- संग्रहालय-सूची, पत्थर के औज़ार, हाथीदाँत/हड्डी की वस्तुएँ, हड़प्पाई लिपि-अध्ययन, प्राणी-अस्थि अध्ययन और पुरावनस्पति साक्ष्य से जुड़े प्रश्नों में अंग्रेज़ी सामान्य पदों को हिंदी किया।
+- स्रोत-साक्ष्य, पृष्ठ-लोकेटर, संख्याएँ, मापन, व्याख्यात्मक सावधानियाँ तथा स्थिर identifiers (KLB site IDs, catalogue K-IDs) सुरक्षित रखे।
+- वही 60 प्रश्न/उत्तर SQL migration 0030 और Flutter offline JSON asset में भी sync किए गए। Migration content hashes को repository की normalized-question + literal backslash-n + normalized-answer convention से पुनर्गणित किया और पुराने migration hash convention से मिलाया।
+- Integrity: 60/60 Markdown↔SQL↔APK asset records match; 60/60 rows NEEDS_REVIEW; कोई row VERIFIED/PYQ नहीं।
+- Hindi lexical audit: KAL-001–KAL-180 के 180/180 प्रश्न और उत्तरों में देवनागरी prose है; स्थिर KLB/K catalogue IDs तथा A–F source class markers ही exception हैं। Scan report इसी audit file में दर्ज।
+- Regression tests अब पहले 180 कालीबंगा rows के Hindi-first स्वरूप और batch 3 के Markdown/SQL/offline-asset parity तथा content hashes जाँचते हैं।
+- कुल कालीबंगा हिंदी-प्रथम पूर्ण: KAL-001–KAL-180 (180/311 pairs)। अगला सीमित बैच: KAL-181–KAL-240।
+- Phase 6.56 अभी IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED।
+- APK नियम: PR validation के बाद merge पर main-branch Flutter analyze, mobile tests, release APK, verify और artifact upload सभी सफल होना चाहिए; main APK artifact सत्यापित किए बिना increment को user-ready न कहें।
