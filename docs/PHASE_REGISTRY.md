@@ -843,3 +843,11 @@ The user has explicitly ordered that **all Rajasthan content must be completed b
 - KAL-001–KAL-240 Hindi-first; batch KAL-181–KAL-240 synchronized across canonical Markdown, migration 0030, and Flutter offline JSON; content hashes recomputed; branch-side lexical scan passed; parity/language regression tests extended.
 - This is not independent fact verification, official syllabus mapping, live DB migration application, or learner publication. Chapter 2 remains IN_PROGRESS.
 - Phase states unchanged: Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Do not mark a phase complete or build-ready until exact-head CI, required deployment/database checks and APK artifact gates pass.
+
+
+## 2026-11-23 — Latest Chapter 2 and review-status checkpoint
+
+- Current canonical Chapter 2 inventory reconciled to 376 rows: KAL 311, AHB 26, GJ 18, BRT 11 and MTS 10. The earlier 368 figures in prior dated records are historical snapshots.
+- Markdown, migration 0030 and offline JSON contain 376/376 matching IDs and Q&A values; exact normalized duplicate stems/pairs: 0. The full 376 learner-facing Q&A text passes the Hindi-first lexical check.
+- User states they have checked the questions. No row is marked VERIFIED in this checkpoint: formal review audit events have not been submitted/confirmed through the protected independent-review endpoint.
+- Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Active parent topic remains Rajasthan History Chapter 2. Do not advance to Chapter 3 until source/page verification, official syllabus mapping, independent review and coverage acceptance are closed.
