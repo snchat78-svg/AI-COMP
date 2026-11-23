@@ -590,3 +590,12 @@ Resume the existing Rajasthan History Chapter 2 parent file; do not start Indian
 - हिंदी lexical scan: KAL-001–KAL-240 पर शून्य अनपेक्षित Latin-script prose; स्थिर catalogue/site IDs और प्रकाशित पट्ट-संकेत पहचान-चिह्न के रूप में सुरक्षित।
 - SQL content hashes पुनर्गणित; language और data-parity regression tests KAL-240 तक बढ़ाए।
 - सभी 368 Chapter-2 drafts NEEDS_REVIEW हैं। यह increment न independent fact review है, न live DB apply, न learner publication, न APK release evidence।
+
+
+## 2026-11-23 — Chapter 2 count correction and active work
+
+Re-read the exact canonical Chapter 2 file, SQL migration 0030 and offline APK JSON. Current count is 376 (KAL 311 + AHB 26 + GJ 18 + BRT 11 + MTS 10), superseding the older 368 snapshot. All three Git artifacts contain the same 376 IDs and Q&A values. Exact normalized question-stem and Q&A-pair duplicates found: 0.
+
+The full 376 question/answer texts pass the Hindi-first lexical rule, including KAL-241–KAL-311. Every item is still NEEDS_REVIEW. The user has stated they checked all items, but the protected review endpoint has not yet written reviewer audit events; do not bulk-change Git or database status without the separate review credential and per-record audit.
+
+Next: complete the Chapter 2 source/syllabus coverage matrix and secure review submission; keep working inside this same parent chapter. Do not start Rajasthan History Chapter 3 or Indian GK until the Chapter 2 acceptance gate is actually closed.
