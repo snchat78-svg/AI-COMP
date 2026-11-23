@@ -11,9 +11,9 @@
 | क्रम | इस parent chapter के अंदर स्थल/उपविषय | स्थायी concept ID | प्रश्न/स्थिति |
 |---:|---|---|---|
 | 1 | कालीबंगा | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311; 311 draft Q&A; NEEDS_REVIEW |
-| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-020; 20 draft Q&A; NEEDS_REVIEW |
+| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-026; 26 draft Q&A; NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
-| 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-009; 9 draft Q&A; NEEDS_REVIEW |
+| 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-011; 11 draft Q&A; NEEDS_REVIEW |
 | 5 | मत्स्य जनपद | `catalog.rajasthan_history_ancient_history_matsya_janapada` | MTS-001–MTS-010; 10 draft Q&A; NEEDS_REVIEW |
 | 6 | अन्य प्राचीन स्थल / जनपद-संदर्भ | मौजूदा concept ledger के अनुसार | पुस्तक के पृष्ठ 145–149 और चुने हुए exam syllabus से scope की पुष्टि के बाद ही जोड़ें |
 
@@ -775,7 +775,7 @@ The following five additions retain only details that were not already adequatel
 - **S23:** B.R. Meena, “Recent Exploration in the Valley of Khari and Mansi Rivers, Rajasthan”, *Puratattva*, No. 16 (1985–86), विशेषतः printed pp. 20–21. Official-library scanned copy hosted at IGNCA: https://ignca.gov.in/Asi_data/74144.pdf
 - **S24:** Parth Chouhan, “Chalcolithic Cultures Northern and Central India”, e-PG Pathshala / INFLIBNET, Chapter 27, §4 “The Ahar-Banas Culture”: https://ebooks.inflibnet.ac.in/icp02/chapter/152/
 - S23 में Ahar की अवस्थिति, R.C. Agrawal (1954–55), Tambamati, विशिष्ट pottery और अलग chronology proposals दर्ज हैं। S24 में क्षेत्रीय विस्तार, प्रमुख स्थल, Balathal chronology, settlement, economy और pottery groups का संक्षिप्त शैक्षिक संश्लेषण है।
-- S23 और S24 की हर entry अभी स्वतंत्र reviewer द्वारा जाँची जानी है। AHB-001–AHB-020 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावे नहीं।
+- S23 और S24 की हर entry अभी स्वतंत्र reviewer द्वारा जाँची जानी है। AHB-001–AHB-026 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावे नहीं।
 
 
 
@@ -846,7 +846,7 @@ The following five additions retain only details that were not already adequatel
 - **S27:** Prime Ministers’ Museum & Library, Meenakshi Vashisth, “Understanding the Ashokan Inscriptions and the Archaeological Landscape of Bairat”: https://pmml.nic.in/downloadSeries/342
 - S26 बैराठ को मत्स्यदेश की राजधानी कहता है; इसे ASI inventory का अभिलेखित परिचय मानें, स्वतंत्र रूप से सिद्ध प्राचीन राजधानी का पूर्ण इतिहास नहीं।
 - S26 में बिजक-की-पहाड़ी का स्तूप-मंदिर और मठीय अवशेष दिए हैं। PDF page-image screenshot प्रयास में timeout आया; मूल page/plan image की स्वतंत्र जाँच शेष है।
-- BRT-001–BRT-009 सभी NEEDS_REVIEW हैं; कोई learner VERIFIED या PYQ दावा नहीं।
+- BRT-001–BRT-011 सभी NEEDS_REVIEW हैं; कोई learner VERIFIED या PYQ दावा नहीं।
 
 ## उपविषय 5 — मत्स्य जनपद
 
@@ -898,3 +898,23 @@ The following five additions retain only details that were not already adequatel
 - S28 searchable text supports MTS-001–006 and MTS-010; S29 printed p.137 supports MTS-007–009. Source-specific boundary descriptions must remain separate. Epic references remain literary tradition.
 - PDF page-image inspection could not be completed (timeouts/size limit). The user's exact printed pp.145–149 were not available; therefore Matsya's placement under this specific book Chapter 2 remains pending confirmation. Do not treat the child list as complete or start Chapter 3 yet.
 - All 368 questions remain NEEDS_REVIEW; this audit does not prove semantic uniqueness, full historical correctness, exam applicability or PYQ status. Detailed method/results: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
+
+
+## 2026-11-23 — नवीनतम Chapter 2 inventory reconciliation
+
+इस canonical parent chapter में वर्तमान प्रश्न-सूचियों की वास्तविक संख्या 376 है। पुराने 368-count वाले audit/checkpoint ऐतिहासिक snapshots हैं; उनके बाद आहड़-बनास और बैराठ के अतिरिक्त entries जुड़ीं।
+
+| Child-site | वर्तमान ID range | Q&A संख्या |
+|---|---|---:|
+| कालीबंगा | KAL-001–KAL-311 | 311 |
+| आहड़-बनास संस्कृति | AHB-001–AHB-026 | 26 |
+| गणेश्वर-जोधपुरा संस्कृति | GJ-001–GJ-018 | 18 |
+| बैराठ / विराटनगर | BRT-001–BRT-011 | 11 |
+| मत्स्य जनपद | MTS-001–MTS-010 | 10 |
+| **कुल** | | **376** |
+
+- Static reconciliation में Markdown, SQL migration 0030 और Flutter offline JSON में 376/376 stable IDs तथा प्रश्न–उत्तर text समान मिले; कोई missing ID या cross-file Q&A mismatch नहीं मिला।
+- normalized exact question-stem और exact Q&A-pair comparison में 0 duplicate groups मिले। यह semantic duplicate review का विकल्प नहीं है।
+- सभी 376 candidate rows अभी NEEDS_REVIEW हैं। किसी row को VERIFIED या PYQ नहीं माना गया है।
+- उपयोगकर्ता ने बताया है कि उन्होंने प्रश्न जाँच लिए हैं। औपचारिक publication status तभी बदलेगा जब सुरक्षित स्वतंत्र-review endpoint प्रत्येक row के लिए reviewer identity, source-check time और review note सहित append-only audit दर्ज करे।
+- Chapter 2 अभी IN PROGRESS — NOT COMPLETE है: child-site source/page verification, official exam-syllabus applicability, remaining scope check और independent review gate खुले हैं।
