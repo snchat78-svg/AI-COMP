@@ -1063,3 +1063,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - वर्तमान संचयी स्थिति: कालीबंगा 240/311 हिंदी-प्रथम; KAL-241–KAL-311 शेष। अध्याय 2 में कुल 368 candidate drafts हैं, सभी review-pending। AHB/GJ/BRT/MTS के subtopic coverage gaps और पूरे parent chapter का cross-site/duplicate/source audit अभी बाकी है।
 - परिवर्तन PR #126 की branch roadmap/rajasthan-first-complete-sequence पर है; PR अभी open है। नई revision के CI results, database migration application, learner API verification और main-branch APK artifact अभी confirm नहीं हुए। Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED ही रहेंगे।
 - अगला content step: इसी parent chapter के भीतर KAL-241–KAL-311 को पूरा करना, फिर AHB/GJ/BRT/MTS coverage matrix और one-pass chapter acceptance audit। Chapter 2 का gate पास होने से पहले Rajasthan History Chapter 3 शुरू न करें।
+
+
+## 2026-11-23 — Exact current state for next session
+
+- Resume from PR #126 branch roadmap/rajasthan-first-complete-sequence; inspect its latest head and exact-SHA GitHub Actions before merging.
+- Current Rajasthan History Chapter 2 canonical inventory is 376: KAL 311, AHB 26, GJ 18, BRT 11, MTS 10. Older 368 counts in dated notes are historical snapshots; do not use them as the present count.
+- Static comparison: 376/376 IDs and Q&A text match across canonical Markdown, SQL migration 0030 and offline JSON; no missing IDs or file-parity mismatches; exact normalized question-stem/pair duplicate groups 0. All Q&A pass the Hindi-first lexical check.
+- All 376 statuses remain NEEDS_REVIEW. User has said they personally checked the questions, but the protected independent-review API has not yet written per-record audit events. Do not change statuses by editing SQL or JSON directly. The review endpoint needs its separate server token and configured reviewer identity, and a non-empty reviewer note for each decision.
+- Chapter 2 remains IN PROGRESS, not complete. Finish source/page and exam-syllabus applicability checks, verify/reconcile child-site coverage, then record review audit before moving to Chapter 3. No Indian GK before all Rajasthan is complete.
+- Phase states: 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No new numbered phase starts from this count reconciliation.
