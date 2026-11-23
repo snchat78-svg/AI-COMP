@@ -132,3 +132,15 @@ Phase 6.56 अभी `IN_PROGRESS` है। Phase 6.57 `PLANNED` और Phase 6
 - KAL-181–KAL-240: 60/60 हिंदी-प्रथम
 - कुल कालीबंगा: 240/311 हिंदी-प्रथम; शेष KAL-241–KAL-311
 - पूरा अध्याय 2: 368 मसौदा प्रश्न; सभी अभी NEEDS_REVIEW हैं।
+
+
+## 2026-11-23 — Chapter 2 full-inventory language and parity audit
+
+**Current inventory:** 376 question–answer candidates across the one parent chapter: KAL 311, AHB 26, GJ 18, BRT 11 and MTS 10.
+
+- KAL-001–KAL-311 pass the question/answer Hindi-first lexical rule. The remaining 71 KAL entries (KAL-241–KAL-311) were checked in the canonical notes and APK asset; no general English prose remains in their question or answer text.
+- The full 376-row offline JSON scan passed the same rule. Fixed archaeological/site identifiers, museum accession IDs, fixed plate label VI-A and source-defined A–F class markers are preserved as identifiers, not prose.
+- Markdown → SQL migration 0030 → APK offline JSON: 376/376 stable IDs, language codes, question text, answer text and NEEDS_REVIEW states match in the static comparison. Exact-head CI is still required for the repository regression tests.
+- Exact normalized question-stem duplicates: 0. Exact normalized Q&A-pair duplicates: 0. This does not claim semantic similarity review or cross-database duplicate analysis.
+- All 376 rows remain NEEDS_REVIEW; this is a language and data-integrity audit, not factual verification, source-page inspection, exam-syllabus approval, live database migration proof or PYQ recognition.
+- The user has stated that they personally checked all questions. Formal VERIFIED status still requires the existing independent-review endpoint to append a per-record reviewer identity, source-check timestamp and non-empty review note. No status was bulk-promoted by this audit.
