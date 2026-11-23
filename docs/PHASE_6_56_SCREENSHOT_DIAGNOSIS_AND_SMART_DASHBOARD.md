@@ -63,3 +63,20 @@ This requirement is accepted by the user but is NOT implemented or verified mere
 - Add a typed Flutter manifest model and authenticated API client reader; verify the route, bearer token and parsed revision/count fields.
 - This slice includes the server-side revision contract and a typed Flutter manifest model/API reader with bearer-authenticated client coverage. It does not yet compare or persist revisions, download changed records, perform background refresh, or maintain a downloaded-content cache. The next dependent slice adds automatic manifest comparison, authenticated delta retrieval, persisted local revision and offline-safe cache. Do not claim the installed APK auto-updates until those parts and real API/device E2E are accepted.
 - Phase 6.56 remains IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Preserve all prior content verification and APK release gates.
+
+
+## 2026-11-23 — Current inventory, user review statement and publication gate
+
+The latest canonical Markdown, migration 0030 and offline JSON contain 376 rows, not 368:
+
+- कालीबंगा: 311
+- आहड़-बनास संस्कृति: 26
+- गणेश्वर-जोधपुरा संस्कृति: 18
+- बैराठ / विराटनगर: 11
+- मत्स्य जनपद: 10
+
+Static reconciliation found 376/376 matching IDs and Q&A values across all three Git artifacts, with zero exact normalized question-stem or Q&A-pair duplicates. The repository import-count regression test had stale 368 / AHB-20 / BRT-9 expectations; those are being corrected to the current 376 / AHB-26 / BRT-11 inventory.
+
+The user stated that they have checked the questions. This statement is preserved as a user attestation, not as a completed API review event. The existing independent reviewer route requires the separate server-side review token; each VERIFIED decision must write reviewer identity, source-check time and review note to the append-only audit. Until that endpoint succeeds, all 376 remain NEEDS_REVIEW and the learner VERIFIED count must not be inflated.
+
+The dashboard should show the reconciled 376 pending count by child-site, show verified and pending separately, and show source-check/audit status without treating catalogue counts as topic completion. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
