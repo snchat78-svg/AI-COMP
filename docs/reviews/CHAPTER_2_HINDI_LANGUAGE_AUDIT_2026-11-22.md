@@ -132,3 +132,33 @@ Phase 6.56 अभी `IN_PROGRESS` है। Phase 6.57 `PLANNED` और Phase 6
 - KAL-181–KAL-240: 60/60 हिंदी-प्रथम
 - कुल कालीबंगा: 240/311 हिंदी-प्रथम; शेष KAL-241–KAL-311
 - पूरा अध्याय 2: 368 मसौदा प्रश्न; सभी अभी NEEDS_REVIEW हैं।
+
+
+## 2026-11-23 — Chapter 2 full-inventory language and parity audit
+
+**Current inventory:** 376 question–answer candidates across the one parent chapter: KAL 311, AHB 26, GJ 18, BRT 11 and MTS 10.
+
+- KAL-001–KAL-311 pass the question/answer Hindi-first lexical rule. The remaining 71 KAL entries (KAL-241–KAL-311) were checked in the canonical notes and APK asset; no general English prose remains in their question or answer text.
+- The full 376-row offline JSON scan passed the same rule. Fixed archaeological/site identifiers, museum accession IDs, fixed plate label VI-A and source-defined A–F class markers are preserved as identifiers, not prose.
+- Markdown → SQL migration 0030 → APK offline JSON: 376/376 stable IDs, language codes, question text, answer text and NEEDS_REVIEW states match in the static comparison. Exact-head CI is still required for the repository regression tests.
+- Exact normalized question-stem duplicates: 0. Exact normalized Q&A-pair duplicates: 0. This does not claim semantic similarity review or cross-database duplicate analysis.
+- All 376 rows remain NEEDS_REVIEW; this is a language and data-integrity audit, not factual verification, source-page inspection, exam-syllabus approval, live database migration proof or PYQ recognition.
+- The user has stated that they personally checked all questions. Formal VERIFIED status still requires the existing independent-review endpoint to append a per-record reviewer identity, source-check timestamp and non-empty review note. No status was bulk-promoted by this audit.
+
+
+## 2026-11-23 — Selected source-text spot checks (not formal approval)
+
+The following source-text spot checks were performed against the exact citations used by Chapter 2 candidates. They strengthen the provenance check but do **not** create independent reviewer audit events and do not mark any row VERIFIED.
+
+| Candidate group | Source checked | Spot-check result and limits |
+|---|---|---|
+| AHB-021–AHB-026 | S24, Parth Chouhan, e-PG Pathshala / INFLIBNET, Chapter 27 §4 | The chapter text covers 111 reported sites, Balathal's enclosure and uncertain function, grain stores, crops, fauna, and the mud rampart. Treat “111 sites”, date range and “oldest” rampart as statements of this educational synthesis pending primary excavation-report comparison. |
+| GJ-001–GJ-018 | S25, ASI, *Indian Archaeology 1981–82 — A Review*, “Excavation at Ganeshwar”, printed pp. 61–62 | The report text matches location, Kantali source, Copper Age phase/deposit, copper finds, microlith tools/materials, OCP forms/motifs/graffiti and the quoted C-14 range. Ore availability and flood-platform purpose remain report-author interpretations. Original page-image screenshots timed out; text extraction was available. |
+| BRT-001–BRT-007 and BRT-009 | S26, ASI Jaipur Circle Inventory, Vol. II Part 1, entry 107, printed p. 143 | Indexed source text supports district/tehsil/coordinates, Matsya association as described by ASI, Ashokan/Buddhist remains, circular shrine/monastery features, 26 pillars and notification date. One adjacent page image was viewed, but the exact entry page screenshot timed out; no claim of visual figure/plan verification. |
+| BRT-008, BRT-010–BRT-011 | S27, Meenakshi Vashisth, PMML Occasional Paper 88, 2017 | The abstract names the two inscriptions; translation and archaeological-significance sections support the quoted edict summary and the 1935–36 excavation/two-terrace description. Architectural identification is attributed to the paper's cited excavation interpretation. Page-image screenshots timed out. |
+| MTS-001–MTS-006, MTS-010 | S28, RBSE, *History and Culture of Rajasthan*, Class X, Chapter 1, printed p. 7 | Text supports the textbook's 16 janapadas reference, Rigvedic/other textual references, Matsya capital and district description. Epic narratives remain literary tradition, not archaeological proof. Page-image screenshot timed out. |
+| MTS-007–MTS-009 | S29, S. M. Ali, *The Geography of the Purāṇas*, Chapter X, “Matsya”, printed p. 137 | Text supports Ali's reconstruction of the Vairāta/Alwar region, proximity to Sabi/Banganga headwaters and approximate middle-Banas southern boundary. These are attributed to Ali, not a settled universal boundary. Page-image retrieval exceeded the source-size limit. |
+
+- S23 (used for AHB-004–AHB-011 and AHB-020) and the remaining detailed Kalibanga excavation/catalogue sources have not all been independently page-image checked in this session.
+- This was a source-text comparison against the available extracted passages, not a second human reviewer using the protected review API. All 376 Chapter 2 records remain `NEEDS_REVIEW`.
+- The complete reviewer acceptance still requires exact-source checks for every row, a documented reviewer note and the append-only server audit event. Do not infer approval of an entire site solely from a sample check.

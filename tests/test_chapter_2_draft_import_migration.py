@@ -15,7 +15,7 @@ MIGRATION = (
 )
 
 
-def test_chapter_2_import_contains_all_368_unique_hindi_review_pending_drafts() -> None:
+def test_chapter_2_import_contains_all_376_unique_hindi_review_pending_drafts() -> None:
     sql = MIGRATION.read_text(encoding="utf-8")
     values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
     row_pattern = re.compile(
@@ -28,14 +28,14 @@ def test_chapter_2_import_contains_all_368_unique_hindi_review_pending_drafts() 
         if match is not None:
             records.append((match.group(1), match.group(2), match.group(3)))
 
-    assert len(records) == 368
-    assert len({(prefix, number) for prefix, number, _ in records}) == 368
-    assert len({content_hash for _, _, content_hash in records}) == 368
+    assert len(records) == 376
+    assert len({(prefix, number) for prefix, number, _ in records}) == 376
+    assert len({content_hash for _, _, content_hash in records}) == 376
     assert Counter(prefix for prefix, _, _ in records) == {
         "KAL": 311,
-        "AHB": 20,
+        "AHB": 26,
         "GJ": 18,
-        "BRT": 9,
+        "BRT": 11,
         "MTS": 10,
     }
     assert "ON CONFLICT DO NOTHING" in sql
@@ -80,11 +80,11 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
 
     expected_ids = {
         f"ch2_{prefix}-{number:03d}"
-        for prefix, count in {"KAL": 311, "AHB": 20, "GJ": 18, "BRT": 9, "MTS": 10}.items()
+        for prefix, count in {"KAL": 311, "AHB": 26, "GJ": 18, "BRT": 11, "MTS": 10}.items()
         for number in range(1, count + 1)
     }
     asset_rows = {row["one_liner_id"]: row for row in asset}
-    assert len(asset_rows) == 368
+    assert len(asset_rows) == 376
     assert set(asset_rows) == expected_ids
 
     note_rows = {}
