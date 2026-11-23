@@ -15,7 +15,7 @@ MIGRATION = (
 )
 
 
-def test_chapter_2_import_contains_all_368_unique_hindi_review_pending_drafts() -> None:
+def test_chapter_2_import_contains_all_376_unique_hindi_review_pending_drafts() -> None:
     sql = MIGRATION.read_text(encoding="utf-8")
     values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
     row_pattern = re.compile(
@@ -28,14 +28,14 @@ def test_chapter_2_import_contains_all_368_unique_hindi_review_pending_drafts() 
         if match is not None:
             records.append((match.group(1), match.group(2), match.group(3)))
 
-    assert len(records) == 368
-    assert len({(prefix, number) for prefix, number, _ in records}) == 368
-    assert len({content_hash for _, _, content_hash in records}) == 368
+    assert len(records) == 376
+    assert len({(prefix, number) for prefix, number, _ in records}) == 376
+    assert len({content_hash for _, _, content_hash in records}) == 376
     assert Counter(prefix for prefix, _, _ in records) == {
         "KAL": 311,
-        "AHB": 20,
+        "AHB": 26,
         "GJ": 18,
-        "BRT": 9,
+        "BRT": 11,
         "MTS": 10,
     }
     assert "ON CONFLICT DO NOTHING" in sql
