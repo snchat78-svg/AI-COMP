@@ -18,9 +18,9 @@ class LocalQuestionBankDrafts {
 
   static const Map<String, int> _countsByConcept = {
     'catalog.rajasthan_history_ancient_history_kalibangan': 311,
-    'catalog.rajasthan_history_ancient_history_ahar_banas_culture': 20,
+    'catalog.rajasthan_history_ancient_history_ahar_banas_culture': 26,
     'catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture': 18,
-    'catalog.rajasthan_history_ancient_history_bairat': 9,
+    'catalog.rajasthan_history_ancient_history_bairat': 11,
     'catalog.rajasthan_history_ancient_history_matsya_janapada': 10,
   };
 
