@@ -124,7 +124,7 @@ def test_content_delta_returns_bounded_records_with_status_and_timestamp():
 
     query, params = connection.calls[0]
     assert "ORDER BY updated_at, one_liner_id" in query
-    assert "verification_status" not in query
+    assert query.count("verification_status") == 1
     assert params == (None, None, "", 3)
 
 
