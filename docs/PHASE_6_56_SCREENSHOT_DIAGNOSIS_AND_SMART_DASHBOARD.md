@@ -80,3 +80,14 @@ Static reconciliation found 376/376 matching IDs and Q&A values across all three
 The user stated that they have checked the questions. This statement is preserved as a user attestation, not as a completed API review event. The existing independent reviewer route requires the separate server-side review token; each VERIFIED decision must write reviewer identity, source-check time and review note to the append-only audit. Until that endpoint succeeds, all 376 remain NEEDS_REVIEW and the learner VERIFIED count must not be inflated.
 
 The dashboard should show the reconciled 376 pending count by child-site, show verified and pending separately, and show source-check/audit status without treating catalogue counts as topic completion. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
+
+
+## 2026-11-25 — Phase 6.56 verified-content delta sync (implementation started)
+
+Base main: `845776cd493838ace5f250cf278cd9588ffa31da` (PR #128 merged). Active branch: `phase-6-56-authenticated-content-delta-cache`.
+
+The existing manifest reader is now being extended with an authenticated, paginated delta feed and a local published-content cache. Only `VERIFIED` Q&A records enter that cache. Any record returned with `DRAFT`, `NEEDS_REVIEW` or `REJECTED` is removed from the published cache. The already bundled Chapter 2 pending-review asset remains separate and all 376 Chapter-2 rows remain NEEDS_REVIEW until the protected per-record reviewer audit is actually completed.
+
+The detail screen now attempts manifest sync and then reads the cached verified rows; when no cache exists or the network is unavailable it preserves the established direct API fallback. This first sync slice is intentionally limited to published one-liner Q&A; it does not yet implement full catalogue/history/practice sync, app-wide launch/resume/background refresh or prove a live device round trip.
+
+Backend and Flutter tests have been added but exact-branch CI is still pending. Do not call the APK distributable or the no-reinstall feature complete until real Firebase-configured release artifact, authenticated live API/device test, cache corruption/offline/reconnect and sync-consistency tests all pass.
