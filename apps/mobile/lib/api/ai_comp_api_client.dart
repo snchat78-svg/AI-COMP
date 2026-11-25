@@ -249,6 +249,25 @@ class AiCompApiClient {
     return QuestionBankContentManifest.fromJson(json);
   }
 
+  Future<QuestionBankContentDeltaPage> getQuestionBankContentDelta({
+    String? cursor,
+    int limit = 100,
+  }) async {
+    if (limit < 1 || limit > 100) {
+      throw ArgumentError.value(limit, 'limit', 'Must be between 1 and 100.');
+    }
+    final query = <String, String>{'limit': '$limit'};
+    if (cursor != null && cursor.isNotEmpty) {
+      query['cursor'] = cursor;
+    }
+    final json = await _send(
+      'GET',
+      '$_learnerPath/question-bank/content-delta',
+      query: query,
+    );
+    return QuestionBankContentDeltaPage.fromJson(json);
+  }
+
   Future<QuestionBankReadiness> getQuestionBankReadiness({String? subjectId}) async {
     final query = subjectId == null ? null : <String, String>{'subject_id': subjectId};
     final json = await _send('GET', '$_learnerPath/question-bank/readiness', query: query);
