@@ -607,6 +607,7 @@ The previous slice (PR #125) added the authenticated content-manifest contract a
 
 - Server-side authenticated `question-bank/content-delta` with validated cursor and bounded keyset pagination.
 - Flutter delta API/model and application-support cache for independently VERIFIED one-liners only.
+- Migration `0031_phase_6_56_question_bank_delta_cursor_index.sql` adds the `(updated_at, one_liner_id)` index needed by the global keyset feed; live application remains a separate deployment gate.
 - Manifest comparison and incremental resume; catalogue revision changes force a complete one-liner snapshot. A second manifest read prevents a mixed-revision cache from replacing a known-good snapshot.
 - Status transitions from VERIFIED to NEEDS_REVIEW/DRAFT/REJECTED remove the record from the published cache. The Chapter 2 static review-pending APK asset remains separate.
 - Topic detail reads the local verified snapshot first and keeps the existing direct API fallback when no valid local snapshot exists.
