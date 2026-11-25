@@ -110,7 +110,7 @@ class QuestionBankContentCache {
     };
     final encoded = utf8.encode(jsonEncode(payload));
     if (encoded.length > _maximumCacheBytes) {
-      throw const FileSystemException('Published question cache exceeds the safe size limit.');
+      throw FileSystemException('Published question cache exceeds the safe size limit.');
     }
 
     final target = await _file();
@@ -170,9 +170,9 @@ class QuestionBankContentSyncService {
         previous.catalogueRevision == startingManifest.catalogueRevision;
     final merged = <String, TopicOneLinerItem>{
       if (canContinue)
-        for (final item in previous!.items) item.oneLinerId: item,
+        for (final item in previous.items) item.oneLinerId: item,
     };
-    var cursor = canContinue ? previous!.cursor : null;
+    var cursor = canContinue ? previous.cursor : null;
     var completed = false;
 
     for (var pageNumber = 0;
