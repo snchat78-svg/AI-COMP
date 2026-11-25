@@ -256,18 +256,25 @@ def get_question_bank_content_delta(
         for row in selected:
             if len(row) != 10:
                 raise ValueError("content delta row has an invalid shape")
-            items.append({
+            delta_item = {
                 "one_liner_id": row[0],
-                "concept_id": row[1],
-                "question_text": row[2],
-                "answer_text": row[3],
-                "language_code": row[4],
-                "source_url": row[5],
-                "source_evidence": row[6],
                 "verification_status": row[7],
-                "importance_score": row[8],
                 "updated_at": _iso_timestamp(row[9]),
-            })
+            }
+            # A downgrade is a cache tombstone, not a second way to read drafts.
+            # The existing review-pending lane remains the only learner API that
+            # returns full NEEDS_REVIEW/DRAFT question text.
+            if row[7] == "VERIFIED":
+                delta_item.update({
+                    "concept_id": row[1],
+                    "question_text": row[2],
+                    "answer_text": row[3],
+                    "language_code": row[4],
+                    "source_url": row[5],
+                    "source_evidence": row[6],
+                    "importance_score": row[8],
+                })
+            items.append(delta_item)
 
         has_more = len(rows) > limit
         next_cursor = cursor
