@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ai_comp_mobile/api/ai_comp_api_client.dart';
 import 'package:ai_comp_mobile/data/question_bank_content_sync.dart';
+import 'package:ai_comp_mobile/models/preparation_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
