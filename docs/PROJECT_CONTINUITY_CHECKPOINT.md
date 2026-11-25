@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-18 (review branch `content/kalibangan-single-topic-hierarchy-structure`, PR #115 open/unmerged. User's supplied ToC resets the main unit to book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” (p.145; exercise p.148; Chapter 3 p.150). The new canonical parent file contains 311 Kalibanga + 20 Ahar-Banas Hindi Q&A drafts; all NEEDS_REVIEW. The 11 Kalibanga internal headings and the Ahar site questions are nested under one chapter. Ganeshwar-Jodhpura and Bairat remain in-scope child-sites. Static structure checks passed; independent review and live DB semantic dedupe remain open.)
+**Last updated:** 2026-11-25 (main merge checkpoint `845776cd493838ace5f250cf278cd9588ffa31da`, PR #128; continuation branch `phase-6-56-authenticated-content-delta-cache`). Phase 6.56 remains IN_PROGRESS. The 376 Chapter-2 Q&A rows remain NEEDS_REVIEW; formal reviewer audit events are outstanding. Phase 6.57 is PLANNED and Phase 6.58 BLOCKED.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -1073,3 +1073,16 @@ User instruction: first complete every Rajasthan-related subject and important t
 - All 376 statuses remain NEEDS_REVIEW. User has said they personally checked the questions, but the protected independent-review API has not yet written per-record audit events. Do not change statuses by editing SQL or JSON directly. The review endpoint needs its separate server token and configured reviewer identity, and a non-empty reviewer note for each decision.
 - Chapter 2 remains IN PROGRESS, not complete. Finish source/page and exam-syllabus applicability checks, verify/reconcile child-site coverage, then record review audit before moving to Chapter 3. No Indian GK before all Rajasthan is complete.
 - Phase states: 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No new numbered phase starts from this count reconciliation.
+
+
+## 2026-11-25 — Current restart point: Phase 6.56 authenticated content delta + offline cache
+
+- Reconciled main at `845776cd493838ace5f250cf278cd9588ffa31da`; PR #128 is merged. Work is continuing in `phase-6-56-authenticated-content-delta-cache`.
+- The manifest endpoint/model/client from PR #125 are already present. Do not recreate them. The missing dependent work is now being implemented in this branch.
+- Added the authenticated `question-bank/content-delta` backend route with validated opaque keyset cursor, limit 1–100, changed Q&A payloads (including status transitions) and short-lived DB connection cleanup.
+- Added `QuestionBankContentDeltaPage`, authenticated Flutter delta request, `QuestionBankContentCache` using application-support storage, and `QuestionBankContentSyncService` with manifest comparison, cursor continuation, full reset on catalogue revision change, verified-only upsert, status-regression eviction and end-of-sync manifest consistency guard.
+- The topic detail screen now attempts sync/read from this cache before using the existing verified API read path; the pre-existing NEEDS_REVIEW offline asset remains an independent lane.
+- Test files added/updated: backend `tests/test_question_bank_content_delta_api.py`; Flutter `apps/mobile/test/question_bank_content_sync_test.dart` and `apps/mobile/test/api_client_test.dart`. CI has not yet run on this branch; do not describe these tests as passed.
+- Next action: finish code review for compile/runtime edge cases, then open a PR to trigger backend pytest/API-container and Flutter analyze/widget/mobile/release-APK workflows. Verify the exact PR-head SHA and artifact; a placeholder-Firebase APK is not a distributable production build.
+- Still outstanding after CI: live authenticated manifest/delta round trip, real Firebase/device test, background/resume refresh and full offline coverage beyond one-liner Q&A, controlled migration status, official syllabus/source proof, and per-record independent review of the 376 content drafts.
+- Never promote drafts directly in Git/SQL. Phase states remain 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Keep Rajasthan Chapter 2 as the active parent topic and do not start Chapter 3/Indian GK before the current coverage/review gate passes.
