@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api/ai_comp_api_client.dart';
 import '../data/local_question_bank_drafts.dart';
+import '../data/question_bank_content_sync.dart';
 import '../localization/question_bank_labels.dart';
 import '../models/preparation_models.dart';
 
@@ -346,6 +347,38 @@ class _TopicQuestionBankDetailScreenState
       }
     });
     try {
+      final cache = QuestionBankContentCache();
+      if (reset) {
+        try {
+          await QuestionBankContentSyncService(
+            api: widget.api,
+            cache: cache,
+          ).sync();
+        } catch (_) {
+          // A previously verified cache remains usable when the network is down.
+        }
+      }
+      final snapshot = await cache.read();
+      if (snapshot != null) {
+        final topicItems = snapshot.items
+            .where((item) => item.conceptId == widget.topic.conceptId)
+            .toList(growable: false);
+        final cachedPage = topicItems
+            .skip(offset)
+            .take(_pageSize)
+            .toList(growable: false);
+        if (!mounted) return;
+        setState(() {
+          _oneLiners = reset ? cachedPage : [..._oneLiners, ...cachedPage];
+          _oneLinerOffset = offset + cachedPage.length;
+          _oneLinersHasMore = _oneLinerOffset < topicItems.length;
+          _oneLinersLoading = false;
+          _oneLinersLoaded = true;
+          _oneLinersError = null;
+        });
+        return;
+      }
+
       final page = await widget.api.getTopicOneLiners(
         widget.topic.conceptId,
         limit: _pageSize,

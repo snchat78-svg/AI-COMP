@@ -533,4 +533,77 @@ test('question-bank content manifest uses the authenticated learner API', () asy
   expect(manifest.reviewPendingOneLinerCount, 368);
 });
 
+
+test('question-bank delta client sends cursor with bearer authentication', () async {
+  const cursor = 'opaque-next-page-cursor';
+  late http.Request received;
+  final mock = MockClient((request) async {
+    received = request;
+    return http.Response(
+      jsonEncode({
+        'schema_version': 1,
+        'items': [
+          {
+            'one_liner_id': 'verified-1',
+            'concept_id': 'topic-river',
+            'question_text': 'नदी किस दिशा में बहती है?',
+            'answer_text': 'दक्षिण-पश्चिम दिशा में।',
+            'language_code': 'hi',
+            'source_url': 'https://example.gov.in/river',
+            'source_evidence': 'नदी अनुभाग, अनुच्छेद 2',
+            'verification_status': 'VERIFIED',
+            'importance_score': 0.9,
+            'updated_at': '2026-11-23T10:00:00+00:00',
+          },
+        ],
+        'pagination': {
+          'limit': 25,
+          'returned': 1,
+          'has_more': false,
+          'next_cursor': cursor,
+        },
+      }),
+      200,
+      headers: {'content-type': 'application/json'},
+    );
+  });
+  addTearDown(mock.close);
+  final api = AiCompApiClient(
+    baseUrl: 'https://api.example.test/gateway/',
+    learnerId: 'learner-1',
+    accessToken: 'firebase-id-token',
+    httpClient: mock,
+  );
+
+  final page = await api.getQuestionBankContentDelta(cursor: cursor, limit: 25);
+
+  expect(received.method, 'GET');
+  expect(
+    received.url.path,
+    '/gateway/api/v1/learners/learner-1/question-bank/content-delta',
+  );
+  expect(received.headers['authorization'], 'Bearer firebase-id-token');
+  expect(received.url.queryParameters['cursor'], cursor);
+  expect(received.url.queryParameters['limit'], '25');
+  expect(page.items.single.oneLinerId, 'verified-1');
+  expect(page.items.single.updatedAt, '2026-11-23T10:00:00+00:00');
+  expect(page.hasMore, isFalse);
+  expect(page.nextCursor, cursor);
+});
+
+test('question-bank delta client rejects an out-of-range page size', () async {
+  final api = AiCompApiClient(
+    baseUrl: 'https://api.example.test',
+    learnerId: 'learner-1',
+    accessToken: 'token',
+    httpClient: MockClient((_) async => http.Response('{}', 200)),
+  );
+
+  await expectLater(
+    api.getQuestionBankContentDelta(limit: 101),
+    throwsArgumentError,
+  );
+  api.close();
+});
+
 }
