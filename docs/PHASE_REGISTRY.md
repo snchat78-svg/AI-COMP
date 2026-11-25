@@ -856,7 +856,7 @@ The user has explicitly ordered that **all Rajasthan content must be completed b
 ## 2026-11-25 — Phase 6.56 continuation: authenticated content delta sync (started)
 
 - Base `main` checkpoint: `845776cd493838ace5f250cf278cd9588ffa31da` (PR #128 merged). New work branch: `phase-6-56-authenticated-content-delta-cache`.
-- Confirmed the earlier manifest slice from PR #125: authenticated `content-manifest` and typed Flutter manifest reader are present. The next dependent slice is the missing delta endpoint + verified-content offline cache; no duplicate auth, question table or migration is introduced.
+- Confirmed the earlier manifest slice from PR #125: authenticated `content-manifest` and typed Flutter manifest reader are present. This continuation adds the missing delta endpoint + verified-content offline cache without duplicating auth or question storage; only the targeted keyset index migration 0031 is added.
 - Started `GET /api/v1/learners/{learner_id}/question-bank/content-delta`: bounded keyset pagination, opaque validated cursor, bearer/learner-scope gate, all review-state changes returned so a client can evict a row that leaves VERIFIED, and one-microsecond final-page overlap for idempotent replay.
 - Added Flutter delta API/model and a disk-backed application-support cache. Sync compares the manifest, resumes from the saved cursor when catalogue identity is stable, performs a full content snapshot when it changes, upserts VERIFIED rows only, removes records that become DRAFT/NEEDS_REVIEW/REJECTED, and rechecks the manifest before writing a new cache snapshot.
 - Chapter-2 bundled review-pending drafts remain separate; they are never promoted into the verified cache. No database migration is required for this slice.
