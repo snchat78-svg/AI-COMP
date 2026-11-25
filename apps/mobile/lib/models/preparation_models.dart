@@ -200,6 +200,7 @@ class TopicOneLinerItem {
     required this.sourceEvidence,
     required this.verificationStatus,
     required this.importanceScore,
+    this.updatedAt = '',
   });
 
   final String oneLinerId;
@@ -211,6 +212,7 @@ class TopicOneLinerItem {
   final String sourceEvidence;
   final String verificationStatus;
   final double importanceScore;
+  final String updatedAt;
 
   factory TopicOneLinerItem.fromJson(Map<String, dynamic> json) {
     return TopicOneLinerItem(
@@ -223,8 +225,22 @@ class TopicOneLinerItem {
       sourceEvidence: _string(json['source_evidence']),
       verificationStatus: _string(json['verification_status']),
       importanceScore: _double(json['importance_score']),
+      updatedAt: _string(json['updated_at']),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'one_liner_id': oneLinerId,
+        'concept_id': conceptId,
+        'question_text': questionText,
+        'answer_text': answerText,
+        'language_code': languageCode,
+        'source_url': sourceUrl,
+        'source_evidence': sourceEvidence,
+        'verification_status': verificationStatus,
+        'importance_score': importanceScore,
+        'updated_at': updatedAt,
+      };
 }
 
 class QuestionBankPageInfo {
@@ -833,6 +849,35 @@ class QuestionBankContentManifest {
       topicCount: _integer(json['topic_count'], 0),
       verifiedOneLinerCount: _integer(json['verified_one_liner_count'], 0),
       reviewPendingOneLinerCount: _integer(json['review_pending_one_liner_count'], 0),
+    );
+  }
+}
+
+class QuestionBankContentDeltaPage {
+  const QuestionBankContentDeltaPage({
+    required this.items,
+    required this.hasMore,
+    this.nextCursor,
+  });
+
+  final List<TopicOneLinerItem> items;
+  final bool hasMore;
+  final String? nextCursor;
+
+  factory QuestionBankContentDeltaPage.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['items'];
+    final pagination = _map(json['pagination']);
+    return QuestionBankContentDeltaPage(
+      items: rawItems is List
+          ? rawItems
+              .whereType<Map>()
+              .map((item) => TopicOneLinerItem.fromJson(
+                    Map<String, dynamic>.from(item),
+                  ))
+              .toList(growable: false)
+          : const [],
+      hasMore: pagination['has_more'] == true,
+      nextCursor: _optionalString(pagination['next_cursor']),
     );
   }
 }
