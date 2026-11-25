@@ -599,3 +599,16 @@ Re-read the exact canonical Chapter 2 file, SQL migration 0030 and offline APK J
 The full 376 question/answer texts pass the Hindi-first lexical rule, including KAL-241–KAL-311. Every item is still NEEDS_REVIEW. The user has stated they checked all items, but the protected review endpoint has not yet written reviewer audit events; do not bulk-change Git or database status without the separate review credential and per-record audit.
 
 Next: complete the Chapter 2 source/syllabus coverage matrix and secure review submission; keep working inside this same parent chapter. Do not start Rajasthan History Chapter 3 or Indian GK until the Chapter 2 acceptance gate is actually closed.
+
+
+## 2026-11-25 — Phase 6.56 content-sync follow-on slice
+
+The previous slice (PR #125) added the authenticated content-manifest contract and typed Flutter reader. The next dependent slice is being implemented on `phase-6-56-authenticated-content-delta-cache` from main `845776cd493838ace5f250cf278cd9588ffa31da`:
+
+- Server-side authenticated `question-bank/content-delta` with validated cursor and bounded keyset pagination.
+- Flutter delta API/model and application-support cache for independently VERIFIED one-liners only.
+- Manifest comparison and incremental resume; catalogue revision changes force a complete one-liner snapshot. A second manifest read prevents a mixed-revision cache from replacing a known-good snapshot.
+- Status transitions from VERIFIED to NEEDS_REVIEW/DRAFT/REJECTED remove the record from the published cache. The Chapter 2 static review-pending APK asset remains separate.
+- Topic detail reads the local verified snapshot first and keeps the existing direct API fallback when no valid local snapshot exists.
+
+This is still a bounded partial implementation, not the full accepted no-reinstall feature. App launch/resume/background scheduling, automatic sync for catalogue/previous-paper/practice data, end-to-end offline queue/reconciliation, real device E2E and production Firebase/APK verification remain open. No release or phase-completion claim is made until exact-branch CI and all acceptance gates are evidenced. Phase 6.56 remains IN_PROGRESS; Phase 6.57 remains PLANNED; Phase 6.58 remains BLOCKED.
