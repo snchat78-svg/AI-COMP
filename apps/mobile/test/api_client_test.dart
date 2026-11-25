@@ -535,7 +535,6 @@ test('question-bank content manifest uses the authenticated learner API', () asy
 
 
 test('question-bank delta client sends cursor with bearer authentication', () async {
-  final revision = List.filled(64, 'a').join();
   const cursor = 'opaque-next-page-cursor';
   late http.Request received;
   final mock = MockClient((request) async {
