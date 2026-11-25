@@ -215,7 +215,7 @@ class QuestionBankContentSyncService {
     final endingManifest = await api.getQuestionBankContentManifest();
     if (endingManifest.revision != startingManifest.revision ||
         endingManifest.catalogueRevision != startingManifest.catalogueRevision) {
-      throw const StateError('Published question-bank content changed during sync.');
+      throw StateError('Published question-bank content changed during sync.');
     }
 
     final items = merged.values.toList()
