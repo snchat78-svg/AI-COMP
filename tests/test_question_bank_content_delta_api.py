@@ -119,6 +119,12 @@ def test_content_delta_returns_bounded_records_with_status_and_timestamp():
     assert [item["verification_status"] for item in payload["items"]] == [
         "VERIFIED", "NEEDS_REVIEW"
     ]
+    assert payload["items"][0]["question_text"] == "नदी किस दिशा में बहती है?"
+    assert payload["items"][1] == {
+        "one_liner_id": "q-2",
+        "verification_status": "NEEDS_REVIEW",
+        "updated_at": timestamp.isoformat(),
+    }
     assert payload["items"][0]["updated_at"] == timestamp.isoformat()
     assert connection.closed is True
 
