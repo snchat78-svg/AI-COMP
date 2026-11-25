@@ -89,6 +89,9 @@ class QuestionBankContentCache {
       return null;
     } on StateError {
       return null;
+    } catch (_) {
+      // Missing platform plugins and filesystem access errors are cache misses.
+      return null;
     }
   }
 
