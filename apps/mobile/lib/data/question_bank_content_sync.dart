@@ -183,10 +183,13 @@ class QuestionBankContentSyncService {
         limit: _pageSize,
       );
       for (final item in page.items) {
-        if (item.oneLinerId.isEmpty || item.conceptId.isEmpty) {
+        if (item.oneLinerId.isEmpty) {
           throw const FormatException('The content delta contains an invalid question identity.');
         }
         if (item.verificationStatus == 'VERIFIED') {
+          if (item.conceptId.isEmpty) {
+            throw const FormatException('A verified delta row has no topic identity.');
+          }
           merged[item.oneLinerId] = item;
         } else {
           // A review/rejection transition removes the old published copy.
