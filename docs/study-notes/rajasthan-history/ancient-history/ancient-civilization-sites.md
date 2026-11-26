@@ -11,7 +11,7 @@
 | क्रम | इस parent chapter के अंदर स्थल/उपविषय | स्थायी concept ID | प्रश्न/स्थिति |
 |---:|---|---|---|
 | 1 | कालीबंगा | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311; 311 draft Q&A; NEEDS_REVIEW |
-| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-026; 26 draft Q&A; NEEDS_REVIEW |
+| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-032; 32 draft Q&A; NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
 | 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-011; 11 draft Q&A; NEEDS_REVIEW |
 | 5 | मत्स्य जनपद | `catalog.rajasthan_history_ancient_history_matsya_janapada` | MTS-001–MTS-010; 10 draft Q&A; NEEDS_REVIEW |
@@ -736,7 +736,7 @@ The following five additions retain only details that were not already adequatel
 ## उपविषय 2 — आहड़-बनास संस्कृति
 
 **स्थायी concept ID:** `catalog.rajasthan_history_ancient_history_ahar_banas_culture`  
-**स्थिति:** DRAFTING — 20 प्राथमिक हिंदी One-Liner Q&A; सभी `NEEDS_REVIEW`।  
+**स्थिति:** DRAFTING — 32 प्राथमिक हिंदी One-Liner Q&A; सभी `NEEDS_REVIEW`।  
 **स्रोत-सावधानी:** S23 का indexed text उपलब्ध है, लेकिन मूल PDF page-image screenshot 15.6 MB file-size limit पर विफल हुआ। S24 INFLIBNET का HTML अध्याय सीधे पढ़ा गया। तिथियों में विद्वानों के अलग प्रस्ताव हैं; किसी एक range को पूरी संस्कृति का निर्विवाद काल न बताएं।
 
 ### महत्त्वपूर्ण One-Liner प्रश्नोत्तर
@@ -769,13 +769,21 @@ The following five additions retain only details that were not already adequatel
 | AHB-024 | आहड़-बनास संस्कृति के प्रमुख कृषि-अनाज और दलहनी फसलें कौन-सी बताई गई हैं? | गेहूँ, जौ, मसूर, मटर, रागी/फिंगर मिलेट, इटालियन मिलेट और पैनिकम मिलेट; ओजियाना से चावल, चना, तिल और सूरजमुखी सहित अन्य फसल-अवशेष भी बताए गए हैं। | महत्त्वपूर्ण | S24 — Parth Chouhan, अध्याय 27, §4, पंक्तियाँ 112–113; फसल-सूची शोध-लेख में दिए वनस्पति-अवशेषों का सार है — स्वतंत्र वनस्पति-अवशेष समीक्षा लंबित। |
 | AHB-025 | आहड़-बनास संस्कृति में पालतू पशुओं और शिकार किए जाने वाले प्रमुख जंगली पशुओं के कौन-से अवशेष मिले? | पालतू पशुओं में गाय-बैल, भैंस, भेड़, बकरी और सूअर; शिकार के पशुओं में गौर, नीलगाय, चौसिंगा और काला हिरण के अवशेष बताए गए हैं। कछुए, मोलस्क और मछलियों के अवशेष भी मिले। | महत्त्वपूर्ण | S24 — Parth Chouhan, अध्याय 27, §4, पंक्तियाँ 113–115; प्रजातियों के नाम मूल शैक्षिक स्रोत के अनुसार — स्वतंत्र जीव-अवशेष समीक्षा लंबित। |
 | AHB-026 | राजस्थान के किस आहड़-बनास स्थल से लगभग 30 × 15 मीटर का प्राचीन मिट्टी का परकोटा दर्ज किया गया है? | बालाथल से; ई-पीजी पाठशाला का अध्याय इसे राजस्थान का सबसे पुराना मिट्टी का परकोटा बताता है। यह स्रोत-विशिष्ट दावा स्वतंत्र पुरातात्त्विक समीक्षा के अधीन है। | महत्त्वपूर्ण | S24 — Parth Chouhan, अध्याय 27, §4, पंक्ति 111; सबसे पुराने मिट्टी के परकोटे का दावा लेखक का प्रकाशित कथन है — स्वतंत्र तुलनात्मक समीक्षा लंबित। |
+| AHB-027 | आहड़ और बालाथल में मिली लाल जली हुई किनारों और तलों वाली छोटी ‘यू’ आकार की अग्नि-रचनाओं को अध्ययन में किस उपयोग से जोड़ा गया? | ताँबे को गलाने और गर्म करने वाली भट्टियों के रूप में; यह उत्खनन-साक्ष्य की लेखकीय व्याख्या है। | अत्यंत महत्त्वपूर्ण | S30 — Shinde, Possehl और Sinha-Deshpande, “The Ceramic Assemblage in Protohistoric Mewar”, *Puratattva* 32 (2001–02), मुद्रित पृ. 7; पृष्ठ-चित्र जाँच लंबित। |
+| AHB-028 | बालाथल में एक के ऊपर एक किस प्रकार की दो भट्टियाँ मिलीं? | दो आयताकार मृद्भांड पकाने की भट्टियाँ। | महत्त्वपूर्ण | S30 — “The Ceramic Assemblage in Protohistoric Mewar”, *Puratattva* 32, मुद्रित पृ. 7; पृष्ठ-चित्र जाँच लंबित। |
+| AHB-029 | आहड़ स्थल के ताम्रपाषाणिक काल के मृद्भांडों के तीन उपचरण कौन-से हैं और उनकी अनुमानित तिथियाँ क्या दी गई हैं? | प्रथम उपचरण 2580–2170 ईसा पूर्व, द्वितीय 2170–2080 ईसा पूर्व और तृतीय 2080–1500 ईसा पूर्व। ये आहड़ स्थल के लिए उसी अध्ययन में उद्धृत तिथियाँ हैं, पूरे आहड़-बनास क्षेत्र की निर्विवाद काल-सीमा नहीं। | अत्यंत महत्त्वपूर्ण | S30 — “The Ceramic Assemblage in Protohistoric Mewar”, *Puratattva* 32, मुद्रित पृ. 7; कालक्रम स्रोत-विशिष्ट है और स्वतंत्र समीक्षा लंबित। |
+| AHB-030 | आहड़ स्थल के ताम्रपाषाणिक तृतीय उपचरण की दो प्रमुख मृद्भांड विशेषताएँ क्या थीं? | तीव्र कोण वाले काले-लाल मृद्भांड के कटोरे और गुजरात के रंगपुर से मिलते-जुलते चमकीले लाल मृद्भांड। | महत्त्वपूर्ण | S30 — “The Ceramic Assemblage in Protohistoric Mewar”, *Puratattva* 32, मुद्रित पृ. 7; तुलना को रंगपुर-समरूपता तक सीमित रखें। |
+| AHB-031 | आहड़-बनास संस्कृति के मध्य चरण में बस्तियों की संरचना और मृद्भांडों में कौन-से परिवर्तन दिखते हैं? | किलेबंदी और भंडारण संरचनाएँ उभरीं; चाक पर बने तथा उच्च गुणवत्ता वाले मृद्भांड प्रचलित हुए; निर्माण में मुख्यतः कच्ची ईंट और पत्थर का उपयोग हुआ। | अत्यंत महत्त्वपूर्ण | S31 — Debasri Dasgupta, “Site Catchment Analysis of the Chalcolithic Settlement of Gilund in the Banas Basin”, *Puratattva* 35 (2004–05), मुद्रित पृ. 103; लेख में उद्धृत Shinde et al. (2001–02) का सांस्कृतिक चरण-विभाजन। |
+| AHB-032 | आहड़-बनास संस्कृति के अंतिम चरण में बस्ती-निर्माण और मृद्भांडों का स्वरूप किस प्रकार बदलता बताया गया है? | फिर से लकड़ी-मिट्टी की बुनावट वाली संरचनाएँ और मोटे, कम पके मृद्भांड दिखाई देते हैं; संबंधित अध्ययन इसे अवनति का संकेत मानता है। | महत्त्वपूर्ण | S31 — Debasri Dasgupta, *Puratattva* 35 (2004–05), मुद्रित पृ. 103; “अवनति” मूल लेखकों की व्याख्या है, निर्विवाद निष्कर्ष नहीं। |
 
 ### Ahar-Banas स्रोत और समीक्षा स्थिति
 
 - **S23:** B.R. Meena, “Recent Exploration in the Valley of Khari and Mansi Rivers, Rajasthan”, *Puratattva*, No. 16 (1985–86), विशेषतः printed pp. 20–21. Official-library scanned copy hosted at IGNCA: https://ignca.gov.in/Asi_data/74144.pdf
 - **S24:** Parth Chouhan, “Chalcolithic Cultures Northern and Central India”, e-PG Pathshala / INFLIBNET, Chapter 27, §4 “The Ahar-Banas Culture”: https://ebooks.inflibnet.ac.in/icp02/chapter/152/
+- **S30:** Vasant Shinde, Gregory L. Possehl और Shweta Sinha-Deshpande, “The Ceramic Assemblage in Protohistoric Mewar (Rajasthan), with Special Reference to Gilund and Balathal”, *Puratattva* 32 (2001–02), मुद्रित pp. 7–8. IGNCA-hosted scan from the Government of India Central Archaeological Library: https://ignca.gov.in/Asi_data/87125.pdf
+- **S31:** Debasri Dasgupta, “Site Catchment Analysis of the Chalcolithic Settlement of Gilund in the Banas Basin”, *Puratattva* 35 (2004–05), मुद्रित pp. 103–104. IGNCA-hosted scan: https://ignca.gov.in/Asi_data/88233.pdf
 - S23 में Ahar की अवस्थिति, R.C. Agrawal (1954–55), Tambamati, विशिष्ट pottery और अलग chronology proposals दर्ज हैं। S24 में क्षेत्रीय विस्तार, प्रमुख स्थल, Balathal chronology, settlement, economy और pottery groups का संक्षिप्त शैक्षिक संश्लेषण है।
-- S23 और S24 की हर entry अभी स्वतंत्र reviewer द्वारा जाँची जानी है। AHB-001–AHB-026 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावे नहीं।
+- S23 और S24 की entries तथा नए S30/S31-आधारित प्रश्न स्वतंत्र reviewer द्वारा जाँचे जाने हैं। AHB-001–AHB-032 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावा नहीं। S30/S31 के indexed text से प्रश्न लिखे गए; PDF page-image retrieval बड़े file-size के कारण असफल रहा, इसलिए दृश्य-पृष्ठ सत्यापन अभी बाकी है। AHB-016 की बालाथल-आधारित तिथि और AHB-029 की आहड़-स्थल चरण-तिथियों को अलग स्रोत/स्थल-विशिष्ट मानें।
 
 
 
@@ -882,7 +890,7 @@ The following five additions retain only details that were not already adequatel
 | Child-site | मसौदा स्थिति | शेष उच्च-प्राथमिकता कार्य |
 |---|---|---|
 | कालीबंगा | 311 Q&A drafts | primary report page/plate cross-check, unresolved source conflicts, exam mapping और independent review |
-| आहड़-बनास | 20 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
+| आहड़-बनास | 32 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
 | बैराठ / विराटनगर | 9 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
 | मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
@@ -918,3 +926,10 @@ The following five additions retain only details that were not already adequatel
 - सभी 376 candidate rows अभी NEEDS_REVIEW हैं। किसी row को VERIFIED या PYQ नहीं माना गया है।
 - उपयोगकर्ता ने बताया है कि उन्होंने प्रश्न जाँच लिए हैं। औपचारिक publication status तभी बदलेगा जब सुरक्षित स्वतंत्र-review endpoint प्रत्येक row के लिए reviewer identity, source-check time और review note सहित append-only audit दर्ज करे।
 - Chapter 2 अभी IN PROGRESS — NOT COMPLETE है: child-site source/page verification, official exam-syllabus applicability, remaining scope check और independent review gate खुले हैं।
+
+## 2026-11-26 — आहड़-बनास संस्कृति: स्रोत-आधारित One-Liner batch 3
+
+- AHB-027–AHB-032 के छह नए हिंदी प्रश्न जोड़े गए; ये संख्या बढ़ाने के लिए बनाए गए दोहराव नहीं हैं। विषय: आहड़/बालाथल में ताँबा-कार्य की संभावित भट्टियाँ, बालाथल की मृद्भांड भट्टियाँ, आहड़ स्थल का स्रोत-विशिष्ट ताम्रपाषाणिक उपचरण-कालक्रम और आहड़-बनास संस्कृति के मध्य/अंतिम चरण के बस्ती व मृद्भांड परिवर्तन।
+- स्रोत S30: Shinde, Possehl और Sinha-Deshpande, *Puratattva* 32 (2001–02), printed pp. 7–8. स्रोत S31: Debasri Dasgupta, *Puratattva* 35 (2004–05), printed pp. 103–104. दोनों IGNCA/ASI Central Archaeological Library scans से indexed text के रूप में उपयोग किए गए।
+- PDF page-image retrieval file-size सीमा के कारण सफल नहीं हुई; इसलिए प्रत्येक पृष्ठ/तालिका/चित्र की दृश्य जाँच स्वतंत्र reviewer के लिए लंबित रखी गई है। तिथियों और व्याख्याओं को उनके लेख/स्थल से स्पष्ट रूप से बाँधा गया है।
+- छहों प्रश्न मूल हिंदी में AI द्वारा नए रूप में लिखे गए हैं; किसी को वास्तविक PYQ नहीं कहा गया। सभी `NEEDS_REVIEW` हैं।
