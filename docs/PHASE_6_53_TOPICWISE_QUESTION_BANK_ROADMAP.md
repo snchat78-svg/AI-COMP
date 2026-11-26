@@ -605,5 +605,5 @@ Next: complete the Chapter 2 source/syllabus coverage matrix and secure review s
 
 - Added six Hindi-first Ahar-Banas Q&A drafts AHB-027–AHB-032 from S30 (*Puratattva* 32, 2001–02, printed pp. 7–8) and S31 (*Puratattva* 35, 2004–05, printed pp. 103–104). Scope: copper-working furnace interpretations, pottery kilns, Ahar ceramic sub-phase chronology, ceramic traits, middle/late settlement and pottery transitions.
 - These are AI-authored paraphrased study-note drafts, not actual PYQs. PDF page-image verification is pending; preserve source-specific wording and independent review gate.
-- Chapter 2 now contains 382 drafts (KAL 311, AHB 32, GJ 18, BRT 11, MTS 10). The six new rows are added to migration 0032 and the offline asset; all remain NEEDS_REVIEW. The corresponding test/coverage/registry/checkpoint updates are part of the same content PR.
+- Chapter 2 now contains 382 drafts (KAL 311, AHB 32, GJ 18, BRT 11, MTS 10). The six new rows are added to migration 0031 and the offline asset; all remain NEEDS_REVIEW. The corresponding test/coverage/registry/checkpoint updates are part of the same content PR.
 - Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. Do not advance beyond Chapter 2 until every child-site coverage, source-page and independent-review gate passes.
