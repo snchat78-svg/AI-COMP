@@ -85,7 +85,7 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
             / "rajasthan_history_chapter_2_drafts.json"
         ).read_text(encoding="utf-8")
     )
-    sql = MIGRATION.read_text(encoding="utf-8")
+    sql = _migration_sql()
     values = _migration_values()
 
     expected_ids = {
