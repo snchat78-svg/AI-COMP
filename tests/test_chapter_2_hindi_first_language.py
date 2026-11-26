@@ -18,7 +18,7 @@ SOURCE = (
 def _chapter_rows() -> dict[str, tuple[str, str, str]]:
     result: dict[str, tuple[str, str, str]] = {}
     for line in SOURCE.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("| KAL-"):
+        if not line.startswith(("| KAL-", "| AHB-")):
             continue
         columns = [value.strip() for value in line.strip("|").split("|")]
         if len(columns) < 4:
@@ -56,6 +56,20 @@ def test_kalibangan_site_identifiers_and_review_provenance_are_preserved() -> No
     assert all(rows[f"KAL-{number:03d}"][2] for number in range(1, 241))
 
 
+
+def test_ahar_banas_batch_027_to_032_is_hindi_first_and_review_pending() -> None:
+    rows = _chapter_rows()
+    expected_ids = {f"AHB-{number:03d}" for number in range(27, 33)}
+    assert expected_ids.issubset(rows)
+
+    for draft_id in sorted(expected_ids):
+        question, answer, evidence = rows[draft_id]
+        assert not re.search(r"[A-Za-z]", f"{question} {answer}"), draft_id
+        assert re.search(r"[\\u0900-\\u097F]", question), draft_id
+        assert re.search(r"[\\u0900-\\u097F]", answer), draft_id
+        assert evidence.strip(), draft_id
+
+
 def test_phase_changes_trigger_a_firebase_configured_release_apk() -> None:
     workflow = (
         Path(__file__).resolve().parents[1]
@@ -91,7 +105,7 @@ def test_all_chapter_2_question_and_answer_text_is_hindi_first() -> None:
             / "rajasthan_history_chapter_2_drafts.json"
         ).read_text(encoding="utf-8")
     )
-    expected_counts = {"KAL": 311, "AHB": 26, "GJ": 18, "BRT": 11, "MTS": 10}
+    expected_counts = {"KAL": 311, "AHB": 32, "GJ": 18, "BRT": 11, "MTS": 10}
     assert len(asset) == sum(expected_counts.values())
 
     for prefix, expected_count in expected_counts.items():
