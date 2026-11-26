@@ -7,17 +7,27 @@ from collections import Counter
 from pathlib import Path
 
 
-MIGRATION = (
-    Path(__file__).resolve().parents[1]
-    / "database"
-    / "migrations"
-    / "0030_import_chapter_2_hindi_draft_one_liners.sql"
+ROOT = Path(__file__).resolve().parents[1]
+MIGRATIONS = (
+    ROOT / "database" / "migrations" / "0030_import_chapter_2_hindi_draft_one_liners.sql",
+    ROOT / "database" / "migrations" / "0031_phase_6_56_ahar_banas_one_liners_027_032.sql",
 )
 
 
-def test_chapter_2_import_contains_all_376_unique_hindi_review_pending_drafts() -> None:
-    sql = MIGRATION.read_text(encoding="utf-8")
-    values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
+def _migration_sql() -> str:
+    return "\n".join(path.read_text(encoding="utf-8") for path in MIGRATIONS)
+
+
+def _migration_values() -> str:
+    return "\n".join(
+        path.read_text(encoding="utf-8").split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
+        for path in MIGRATIONS
+    )
+
+
+def test_chapter_2_import_contains_all_382_unique_hindi_review_pending_drafts() -> None:
+    sql = _migration_sql()
+    values = _migration_values()
     row_pattern = re.compile(
         r"^\s+\('ch2_(KAL|AHB|GJ|BRT|MTS)-(\d{3})',.*?, "
         r"'NEEDS_REVIEW', 0\.80, '([0-9a-f]{64})', NULL\),?$"
@@ -28,12 +38,12 @@ def test_chapter_2_import_contains_all_376_unique_hindi_review_pending_drafts() 
         if match is not None:
             records.append((match.group(1), match.group(2), match.group(3)))
 
-    assert len(records) == 376
-    assert len({(prefix, number) for prefix, number, _ in records}) == 376
-    assert len({content_hash for _, _, content_hash in records}) == 376
+    assert len(records) == 382
+    assert len({(prefix, number) for prefix, number, _ in records}) == 382
+    assert len({content_hash for _, _, content_hash in records}) == 382
     assert Counter(prefix for prefix, _, _ in records) == {
         "KAL": 311,
-        "AHB": 26,
+        "AHB": 32,
         "GJ": 18,
         "BRT": 11,
         "MTS": 10,
@@ -44,7 +54,7 @@ def test_chapter_2_import_contains_all_376_unique_hindi_review_pending_drafts() 
 
 
 def test_chapter_2_import_keeps_the_five_existing_canonical_concepts() -> None:
-    sql = MIGRATION.read_text(encoding="utf-8")
+    sql = _migration_sql()
     for concept_id in (
         "catalog.rajasthan_history_ancient_history_kalibangan",
         "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
@@ -75,16 +85,16 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
             / "rajasthan_history_chapter_2_drafts.json"
         ).read_text(encoding="utf-8")
     )
-    sql = MIGRATION.read_text(encoding="utf-8")
-    values = sql.split("VALUES", 1)[1].split("ON CONFLICT DO NOTHING", 1)[0]
+    sql = _migration_sql()
+    values = _migration_values()
 
     expected_ids = {
         f"ch2_{prefix}-{number:03d}"
-        for prefix, count in {"KAL": 311, "AHB": 26, "GJ": 18, "BRT": 11, "MTS": 10}.items()
+        for prefix, count in {"KAL": 311, "AHB": 32, "GJ": 18, "BRT": 11, "MTS": 10}.items()
         for number in range(1, count + 1)
     }
     asset_rows = {row["one_liner_id"]: row for row in asset}
-    assert len(asset_rows) == 376
+    assert len(asset_rows) == 382
     assert set(asset_rows) == expected_ids
 
     note_rows = {}

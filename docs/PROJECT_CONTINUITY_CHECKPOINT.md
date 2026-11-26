@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-18 (review branch `content/kalibangan-single-topic-hierarchy-structure`, PR #115 open/unmerged. User's supplied ToC resets the main unit to book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” (p.145; exercise p.148; Chapter 3 p.150). The new canonical parent file contains 311 Kalibanga + 20 Ahar-Banas Hindi Q&A drafts; all NEEDS_REVIEW. The 11 Kalibanga internal headings and the Ahar site questions are nested under one chapter. Ganeshwar-Jodhpura and Bairat remain in-scope child-sites. Static structure checks passed; independent review and live DB semantic dedupe remain open.)
+**Last updated:** 2026-11-26 (main checkpoint `845776cd493838ace5f250cf278cd9588ffa31da`; content branch `content/phase6-56-ahb-one-liners-027-032`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 382 candidates are review-pending, not verified.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -1073,3 +1073,17 @@ User instruction: first complete every Rajasthan-related subject and important t
 - All 376 statuses remain NEEDS_REVIEW. User has said they personally checked the questions, but the protected independent-review API has not yet written per-record audit events. Do not change statuses by editing SQL or JSON directly. The review endpoint needs its separate server token and configured reviewer identity, and a non-empty reviewer note for each decision.
 - Chapter 2 remains IN PROGRESS, not complete. Finish source/page and exam-syllabus applicability checks, verify/reconcile child-site coverage, then record review audit before moving to Chapter 3. No Indian GK before all Rajasthan is complete.
 - Phase states: 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. No new numbered phase starts from this count reconciliation.
+
+
+## 2026-11-26 — Next-session restart: Ahar-Banas AHB-027–032
+
+- Branch: `content/phase6-56-ahb-one-liners-027-032`, created from main checkpoint `845776cd493838ace5f250cf278cd9588ffa31da`.
+- Added AHB-027–AHB-032 in `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md` under the existing Ahar-Banas child section. Do not create another main topic or advance to Chapter 3.
+- S30: Shinde, Possehl and Sinha-Deshpande, *Puratattva* 32 (2001–02), pp. 7–8. S31: Debasri Dasgupta, *Puratattva* 35 (2004–05), pp. 103–104. Indexed text was retrieved, but page-image inspection failed at the runtime file-size limit. Each relevant page/plate must be visually rechecked by an independent reviewer.
+- Added SQL migration `0031_phase_6_56_ahar_banas_one_liners_027_032.sql`; all six are `NEEDS_REVIEW`, `reviewed_at=NULL`; no live application of 0032 is claimed.
+- Added the six matching objects to `apps/mobile/assets/question_bank/rajasthan_history_chapter_2_drafts.json`; total offline candidates 382. Updated AHB concept count to 32 in `LocalQuestionBankDrafts`.
+- Updated `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`, migration-parity test, Hindi-first language test, local offline data test and Question Bank dashboard review-count fixture. Check these changes and exact-head CI before merging.
+- New AHB 6 are original AI-authored Hindi Q&A from published-source summaries; not PYQs or verified. The entire Chapter 2 count is now 382 = KAL 311 + AHB 32 + GJ 18 + BRT 11 + MTS 10; every item remains NEEDS_REVIEW.
+- No protected independent-review API audit, live DB count, official exam syllabus mapping, migration-application proof or APK artifact is established by this content branch. Do not change statuses by editing SQL/JSON.
+- PR #129 (`phase-6-56-authenticated-content-delta-cache`) is a separate open/unmerged software continuation; do not assume its CI or work has been merged into this content branch.
+- Next action: finish review of affected test expectations/other hard-coded counts, open content PR, pass backend pytest and Flutter analyze/tests, then record exact-head CI and APK artifact status. Continue only within Chapter 2 until all child-site coverage and reviewer/source gates pass.
