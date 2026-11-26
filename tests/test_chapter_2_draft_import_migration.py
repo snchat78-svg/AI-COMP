@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = (
     ROOT / "database" / "migrations" / "0030_import_chapter_2_hindi_draft_one_liners.sql",
-    ROOT / "database" / "migrations" / "0032_phase_6_56_ahar_banas_one_liners_027_032.sql",
+    ROOT / "database" / "migrations" / "0031_phase_6_56_ahar_banas_one_liners_027_032.sql",
 )
 
 
