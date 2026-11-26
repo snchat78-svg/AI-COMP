@@ -66,7 +66,7 @@ def test_ahar_banas_batch_027_to_032_is_hindi_first_and_review_pending() -> None
         question, answer, evidence = rows[draft_id]
         assert not re.search(r"[A-Za-z]", f"{question} {answer}"), draft_id
         assert re.search(r"[\u0900-\u097F]", question), draft_id
-        assert re.search(r"[\\u0900-\\u097F]", answer), draft_id
+        assert re.search(r"[\u0900-\u097F]", answer), draft_id
         assert evidence.strip(), draft_id
 
 
