@@ -1080,7 +1080,7 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Branch: `content/phase6-56-ahb-one-liners-027-032`, created from main checkpoint `845776cd493838ace5f250cf278cd9588ffa31da`.
 - Added AHB-027–AHB-032 in `docs/study-notes/rajasthan-history/ancient-history/ancient-civilization-sites.md` under the existing Ahar-Banas child section. Do not create another main topic or advance to Chapter 3.
 - S30: Shinde, Possehl and Sinha-Deshpande, *Puratattva* 32 (2001–02), pp. 7–8. S31: Debasri Dasgupta, *Puratattva* 35 (2004–05), pp. 103–104. Indexed text was retrieved, but page-image inspection failed at the runtime file-size limit. Each relevant page/plate must be visually rechecked by an independent reviewer.
-- Added SQL migration `0032_phase_6_56_ahar_banas_one_liners_027_032.sql`; all six are `NEEDS_REVIEW`, `reviewed_at=NULL`; no live application of 0032 is claimed.
+- Added SQL migration `0031_phase_6_56_ahar_banas_one_liners_027_032.sql`; all six are `NEEDS_REVIEW`, `reviewed_at=NULL`; no live application of 0032 is claimed.
 - Added the six matching objects to `apps/mobile/assets/question_bank/rajasthan_history_chapter_2_drafts.json`; total offline candidates 382. Updated AHB concept count to 32 in `LocalQuestionBankDrafts`.
 - Updated `docs/QUESTION_BANK_CONTENT_COVERAGE.csv`, migration-parity test, Hindi-first language test, local offline data test and Question Bank dashboard review-count fixture. Check these changes and exact-head CI before merging.
 - New AHB 6 are original AI-authored Hindi Q&A from published-source summaries; not PYQs or verified. The entire Chapter 2 count is now 382 = KAL 311 + AHB 32 + GJ 18 + BRT 11 + MTS 10; every item remains NEEDS_REVIEW.
