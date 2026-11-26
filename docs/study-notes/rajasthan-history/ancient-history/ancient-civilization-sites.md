@@ -892,7 +892,7 @@ The following five additions retain only details that were not already adequatel
 | कालीबंगा | 311 Q&A drafts | primary report page/plate cross-check, unresolved source conflicts, exam mapping और independent review |
 | आहड़-बनास | 32 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
-| बैराठ / विराटनगर | 9 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
+| बैराठ / विराटनगर | 11 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
 | मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
 | अन्य स्थल | scope confirmation pending | user book chapter 2 और selected official syllabus से ही जोड़ें |
 
@@ -908,9 +908,9 @@ The following five additions retain only details that were not already adequatel
 - All 368 questions remain NEEDS_REVIEW; this audit does not prove semantic uniqueness, full historical correctness, exam applicability or PYQ status. Detailed method/results: `docs/reviews/CHAPTER_2_STATIC_AUDIT_2026-11-19.md`.
 
 
-## 2026-11-23 — नवीनतम Chapter 2 inventory reconciliation
+## 2026-11-23 — उस समय का Chapter 2 inventory reconciliation
 
-इस canonical parent chapter में वर्तमान प्रश्न-सूचियों की वास्तविक संख्या 376 है। पुराने 368-count वाले audit/checkpoint ऐतिहासिक snapshots हैं; उनके बाद आहड़-बनास और बैराठ के अतिरिक्त entries जुड़ीं।
+इस 2026-11-23 checkpoint के समय canonical parent chapter में 376 प्रश्न थे। यह ऐतिहासिक snapshot है; 2026-11-26 का नवीनतम कुल और छह अतिरिक्त Ahar-Banas प्रश्न नीचे दर्ज हैं।
 
 | Child-site | वर्तमान ID range | Q&A संख्या |
 |---|---|---:|
@@ -927,9 +927,11 @@ The following five additions retain only details that were not already adequatel
 - उपयोगकर्ता ने बताया है कि उन्होंने प्रश्न जाँच लिए हैं। औपचारिक publication status तभी बदलेगा जब सुरक्षित स्वतंत्र-review endpoint प्रत्येक row के लिए reviewer identity, source-check time और review note सहित append-only audit दर्ज करे।
 - Chapter 2 अभी IN PROGRESS — NOT COMPLETE है: child-site source/page verification, official exam-syllabus applicability, remaining scope check और independent review gate खुले हैं।
 
-## 2026-11-26 — आहड़-बनास संस्कृति: स्रोत-आधारित One-Liner batch 3
+## 2026-11-26 — नवीनतम Chapter 2 inventory: 382; आहड़-बनास One-Liner batch 3
 
+- नवीनतम Chapter 2 count 382 है: कालीबंगा 311, आहड़-बनास 32, गणेश्वर-जोधपुरा 18, बैराठ 11 और मत्स्य जनपद 10।
 - AHB-027–AHB-032 के छह नए हिंदी प्रश्न जोड़े गए; ये संख्या बढ़ाने के लिए बनाए गए दोहराव नहीं हैं। विषय: आहड़/बालाथल में ताँबा-कार्य की संभावित भट्टियाँ, बालाथल की मृद्भांड भट्टियाँ, आहड़ स्थल का स्रोत-विशिष्ट ताम्रपाषाणिक उपचरण-कालक्रम और आहड़-बनास संस्कृति के मध्य/अंतिम चरण के बस्ती व मृद्भांड परिवर्तन।
 - स्रोत S30: Shinde, Possehl और Sinha-Deshpande, *Puratattva* 32 (2001–02), printed pp. 7–8. स्रोत S31: Debasri Dasgupta, *Puratattva* 35 (2004–05), printed pp. 103–104. दोनों IGNCA/ASI Central Archaeological Library scans से indexed text के रूप में उपयोग किए गए।
 - PDF page-image retrieval file-size सीमा के कारण सफल नहीं हुई; इसलिए प्रत्येक पृष्ठ/तालिका/चित्र की दृश्य जाँच स्वतंत्र reviewer के लिए लंबित रखी गई है। तिथियों और व्याख्याओं को उनके लेख/स्थल से स्पष्ट रूप से बाँधा गया है।
 - छहों प्रश्न मूल हिंदी में AI द्वारा नए रूप में लिखे गए हैं; किसी को वास्तविक PYQ नहीं कहा गया। सभी `NEEDS_REVIEW` हैं।
+- छह नई पंक्तियाँ SQL migration 0032 और मोबाइल offline JSON में भी जोड़ी गई हैं; app count map और regression-test expectations 382 / AHB 32 के अनुसार updated हैं। Exact parity/CI अभी PR-head validation से गुजरना है; live migration लागू होने का दावा नहीं है।
