@@ -171,3 +171,10 @@ Resume Rajasthan History → Book Chapter 2 “राजस्थान के �
 The exact current Chapter 2 parent file contains 376 question–answer candidates: KAL 311, AHB 26, GJ 18, BRT 11 and MTS 10. Markdown, migration 0030 and offline JSON reconcile at 376/376; exact normalized question-stem and Q&A-pair duplicates: 0. Full learner-facing Q&A text passes the Hindi-first lexical rule.
 
 All entries remain NEEDS_REVIEW. The user has stated that they checked the set, but the formal review endpoint has not yet recorded per-item source-check audit events. Finish the protected review submission and Chapter 2 coverage gates before advancing to the next main topic.
+
+
+## 2026-11-26 — Current Rajasthan History Chapter 2 inventory and next batch
+
+Chapter 2 remains the active parent topic. The content branch `content/phase6-56-ahb-one-liners-027-032` adds AHB-027–AHB-032 to the existing Ahar-Banas child section. Chapter total is now **382 AI-authored Hindi-first candidate Q&A**: KAL 311 + AHB 32 + GJ 18 + BRT 11 + MTS 10. New facts cover copper-working furnaces, Balathal pottery kilns, Ahar's source-specific ceramic phases, and middle/late settlement and pottery transitions.
+
+Canonical Markdown, migration 0030 + new migration 0032, and the Flutter offline asset are being kept in parity. All 382 remain `NEEDS_REVIEW`; source-page visual re-check, official exam-syllabus mapping, independent per-item audit, live database migration status and learner publication remain outstanding. No PYQ/VERIFIED claim is made. Finish the entire Chapter 2 parent and its five nested child-site audits before Chapter 3 or Indian GK.
