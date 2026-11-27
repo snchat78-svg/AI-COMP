@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
@@ -182,3 +183,59 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
         if one_liner_id in {f"ch2_AHB-{number:03d}" for number in range(41, 49)}:
             assert local["source_url"] == migrated["source_url"]
             assert local["source_evidence"] == migrated["source_evidence"]
+
+
+def test_chapter_2_has_no_exact_normalized_duplicate_question_stems_or_pairs() -> None:
+    asset = json.loads(
+        (
+            ROOT
+            / "apps"
+            / "mobile"
+            / "assets"
+            / "question_bank"
+            / "rajasthan_history_chapter_2_drafts.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert len(asset) == 398
+
+    def normalize(value: str) -> str:
+        return " ".join(unicodedata.normalize("NFKC", value).casefold().split())
+
+    question_stems = [normalize(row["question_text"]) for row in asset]
+    question_answer_pairs = [
+        (normalize(row["question_text"]), normalize(row["answer_text"]))
+        for row in asset
+    ]
+    assert len(question_stems) == len(set(question_stems))
+    assert len(question_answer_pairs) == len(set(question_answer_pairs))
+
+
+def test_ahar_banas_batch_043_to_048_respects_one_liner_shape() -> None:
+    asset = json.loads(
+        (
+            ROOT
+            / "apps"
+            / "mobile"
+            / "assets"
+            / "question_bank"
+            / "rajasthan_history_chapter_2_drafts.json"
+        ).read_text(encoding="utf-8")
+    )
+    items = {
+        row["one_liner_id"]: row
+        for row in asset
+        if row["one_liner_id"] in {
+            f"ch2_AHB-{number:03d}" for number in range(43, 49)
+        }
+    }
+    assert set(items) == {
+        f"ch2_AHB-{number:03d}" for number in range(43, 49)
+    }
+    for draft_id, row in items.items():
+        assert row["question_text"].count("?") == 1, draft_id
+        assert len(row["question_text"]) <= 240, draft_id
+        assert len(row["answer_text"]) <= 240, draft_id
+        assert row["language_code"] == "hi", draft_id
+        assert row["verification_status"] == "NEEDS_REVIEW", draft_id
+        assert row["source_url"] == "https://ebooks.inflibnet.ac.in/icp02/chapter/152/", draft_id
+        assert row["source_evidence"], draft_id
