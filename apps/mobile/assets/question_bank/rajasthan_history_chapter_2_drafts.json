@@ -4200,5 +4200,115 @@
     "source_evidence": "AHB-032 — S31 — Debasri Dasgupta, Puratattva 35 (2004–05), मुद्रित पृ. 103; अवनति मूल लेखकों की व्याख्या है, निर्विवाद निष्कर्ष नहीं।",
     "verification_status": "NEEDS_REVIEW",
     "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-033",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़ की ताम्रपाषाणिक बस्ती जिस टीले के नीचे मिली, उस टीले का नाम क्या था?",
+    "answer_text": "धूलकोट; राजस्थान बोर्ड की कक्षा 10 की पुस्तक में ‘धूलकोट’ का अर्थ मिट्टी का टीला बताया गया है।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-033 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; PDF page-image review लंबित।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-034",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़ के दफन-साक्ष्यों में मृतकों के साथ कौन-सी वस्तुएँ रखने का उल्लेख मिलता है?",
+    "answer_text": "आभूषण और गहने; पाठ्यपुस्तक के लेखक इसे मृत्यु के बाद जीवन में विश्वास का संकेत मानते हैं।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-034 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; विश्वास-संबंधी कथन पाठ्यपुस्तक की व्याख्या है。",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-035",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़ से मिले किस प्रकार के ब्लॉकों को वस्त्र-रंगाई और छपाई से जोड़ा गया है?",
+    "answer_text": "ऐसे ब्लॉक मिले जिन्हें कपड़े की रंगाई और छपाई के काम का संकेत माना गया।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-035 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; कार्य-निर्धारण स्रोत की व्याख्या है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-036",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "गिलूंड में पहली और बाद की प्रमुख खुदाइयों का नेतृत्व किन्होंने और कब किया?",
+    "answer_text": "पहली खुदाई 1957–58 में बी. बी. लाल के निर्देशन में हुई; बाद में वी. एस. शिंदे और ग्रेगरी पोसेल ने 1998–2003 में उत्खनन किया।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-036 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; उत्खनन इतिहास पाठ्यपुस्तक के अनुसार।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-037",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "राजस्थान बोर्ड की पुस्तक के अनुसार गिलूंड की ताम्रपाषाणिक संस्कृति के कितने चरण मिले और दूसरे चरण का संभावित आरंभ कब माना गया?",
+    "answer_text": "दो चरण; दूसरा चरण संभवतः दूसरी सहस्राब्दी ईसा पूर्व के मध्य में शुरू हुआ।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-037 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; ‘संभवतः’ स्रोत की अनिश्चितता सुरक्षित रखता है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-038",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "राजस्थान बोर्ड की पुस्तक में गिलूंड के ताम्रपाषाणिक मृद्भांड कितने और किन व्यापक वर्गों में बाँटे गए हैं?",
+    "answer_text": "पाँच—लाल, काले-लाल, चित्रित, बफ (हल्के पीले-भूरे) और धूसर मृद्भांड।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-038 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; वर्गीकरण पाठ्यपुस्तक के अनुसार।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-039",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "गिलूंड से मृद्भांडों के अलावा कौन-सी तीन प्रमुख वस्तुएँ मिलने का उल्लेख है?",
+    "answer_text": "मिट्टी के खिलौने, मनके और हाथीदाँत की चूड़ियाँ।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-039 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-040",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "गिलूंड और आहड़ के बीच पकी ईंटों के प्रयोग में क्या अंतर बताया गया है?",
+    "answer_text": "गिलूंड में पकी ईंटों के उपयोग और निर्माण, दोनों के साक्ष्य मिले; पुस्तक के अनुसार आहड़ में पकी ईंटों का प्रयोग नहीं था।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-040 — S32 — राजस्थान माध्यमिक शिक्षा बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4; स्थल-विशिष्ट अंतर पाठ्यपुस्तक के अनुसार।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-041",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़ के प्रारंभिक उत्खनन और स्थल-परिचय का श्रेय दो स्रोतों में कैसे अलग दर्ज है?",
+    "answer_text": "राजस्थान बोर्ड की कक्षा 10 की पुस्तक 1953 में अक्षयकीर्ति व्यास से प्रारंभिक खुदाई शुरू होने का उल्लेख करती है; बी. आर. मीणा का शोध-लेख आर. सी. अग्रवाल को 1954–55 में स्थल प्रकाश में लाने का श्रेय देता है। दोनों कथनों को उनके अपने स्रोतों के साथ पढ़ना चाहिए।",
+    "language_code": "hi",
+    "source_url": "https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf",
+    "source_evidence": "AHB-041 — S32, कक्षा 10 की पुस्तक, मुद्रित पृ. 4: 1953 में अक्षयकीर्ति व्यास; S23, B.R. Meena, Puratattva 16, मुद्रित पृ. 20: R.C. Agrawal, 1954–55, https://ignca.gov.in/Asi_data/74144.pdf; स्रोतों का श्रेय-विवरण अलग है, स्वतंत्र समाधान लंबित।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-042",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "शोध के अनुसार आहड़-बनास समुदायों के हड़प्पा समुदाय से बढ़ते व्यापारिक संपर्क लगभग कब से बताए गए हैं?",
+    "answer_text": "लगभग 2600 ईसा पूर्व के बाद; यह प्रकाशित अध्ययन का क्षेत्रीय संपर्क संबंधी निष्कर्ष है।",
+    "language_code": "hi",
+    "source_url": "https://ignca.gov.in/Asi_data/87125.pdf",
+    "source_evidence": "AHB-042 — S30 — Shinde, Possehl और Sinha-Deshpande, The Ceramic Assemblage in Protohistoric Mewar, Puratattva 32 (2001–02), मुद्रित पृ. 5–6; संपर्क संबंधी कथन लेखकों का निष्कर्ष है。",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
   }
 ]
