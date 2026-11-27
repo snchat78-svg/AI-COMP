@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = (
     ROOT / "database" / "migrations" / "0030_import_chapter_2_hindi_draft_one_liners.sql",
     ROOT / "database" / "migrations" / "0031_phase_6_56_ahar_banas_one_liners_027_032.sql",
+    ROOT / "database" / "migrations" / "0032_phase_6_56_ahar_banas_one_liners_033_042.sql",
 )
 
 
@@ -25,7 +26,7 @@ def _migration_values() -> str:
     )
 
 
-def test_chapter_2_import_contains_all_382_unique_hindi_review_pending_drafts() -> None:
+def test_chapter_2_import_contains_all_392_unique_hindi_review_pending_drafts() -> None:
     sql = _migration_sql()
     values = _migration_values()
     row_pattern = re.compile(
@@ -38,12 +39,12 @@ def test_chapter_2_import_contains_all_382_unique_hindi_review_pending_drafts() 
         if match is not None:
             records.append((match.group(1), match.group(2), match.group(3)))
 
-    assert len(records) == 382
-    assert len({(prefix, number) for prefix, number, _ in records}) == 382
-    assert len({content_hash for _, _, content_hash in records}) == 382
+    assert len(records) == 392
+    assert len({(prefix, number) for prefix, number, _ in records}) == 392
+    assert len({content_hash for _, _, content_hash in records}) == 392
     assert Counter(prefix for prefix, _, _ in records) == {
         "KAL": 311,
-        "AHB": 32,
+        "AHB": 42,
         "GJ": 18,
         "BRT": 11,
         "MTS": 10,
@@ -94,7 +95,7 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
         for number in range(1, count + 1)
     }
     asset_rows = {row["one_liner_id"]: row for row in asset}
-    assert len(asset_rows) == 382
+    assert len(asset_rows) == 392
     assert set(asset_rows) == expected_ids
 
     note_rows = {}
