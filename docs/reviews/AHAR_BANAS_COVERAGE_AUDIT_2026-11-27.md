@@ -61,7 +61,7 @@ The authoring inventory now contains **48 Hindi-first AI-authored candidate Q&A 
 
 - AHB-041 is revised to the RBSE Class X book's own sequence: Akshayakirti Vyas began excavation in 1953, followed by Ratan Chandra Agrawal and H.D. Sankalia. The previous draft's claim that S23 provided a conflicting attribution was too strong and has been removed.
 - AHB-042 now exactly reflects S30's Introduction (printed p.5): Ahar Culture developed and flourished with growing trade contact with the Harappans after 2600 B.C. The answer no longer generalises the claim to every community in the full Banas region.
-- New forward migration 0033 updates only records still NEEDS_REVIEW with reviewed_at NULL, avoiding any overwrite of an independent reviewer decision. All 392 rows remain NEEDS_REVIEW in the Git/offline candidate bank; live DB effect remains unconfirmed.
+- New forward migration 0033 updates only records still NEEDS_REVIEW with reviewed_at NULL, avoiding any overwrite of an independent reviewer decision. All 398 rows remain NEEDS_REVIEW in this branch's Git/offline candidate bank; live DB effect remains unconfirmed.
 
 
 ## 2026-11-27 — Ahar-Banas draft coverage continuation AHB-043–048
