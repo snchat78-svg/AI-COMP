@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-27 (main base `07663f3c39b9a355be7da7b1782bd0a06505f9ba`; active implementation branch `feature/rajasthan-parallel-offline-study-library`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. User-directed work now covers five Rajasthan subjects in parallel: 137 canonical concepts and 486 offline source-backed Hindi candidates, all review-pending. No subject lane, chapter or phase is complete.
+**Last updated:** 2026-11-27 (main checkpoint `706fd541d100a0fd8a1b2ccae2886409c14fa449`; PR #135 merged; APK artifact 15179534142 inspected). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Rajasthan offline library contains 5 subjects, 137 canonical concepts and 486 review-pending Hindi Q&A candidates. Only 32 concepts currently have candidates; 105 are visible content gaps. No subject, chapter or phase is complete.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -1136,3 +1136,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Dashboard entry opens offline library without API connectivity. Navigate subject → topic → subtopic → Hindi Q&A and source evidence. Catalogue concepts with no current draft remain visible and marked “प्रश्न तैयारी में”.
 - All rows remain NEEDS_REVIEW; source-page visual review, independent review, exam-specific syllabus mapping and live DB import have not been completed. Real PYQs remain separate.
 - Added Python integrity tests; exact PR-head backend/Flutter CI and APK artifact are pending. Continue only from this branch/PR; do not recreate the 486 content batch or reset the existing Phase 6.56 work.
+
+
+## 2026-11-27 — Current installable Rajasthan offline build
+
+- PR #135 is merged at `706fd541d100a0fd8a1b2ccae2886409c14fa449`. Current app includes dashboard action **Open Rajasthan Offline Study Library · 486 Q&A**.
+- APK artifact [15179534142](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520684/artifacts/15179534142) from exact tested head `38c60a36dc362c0ec475e4cf7277b680c894a14c`; backend run 45958520679 and Flutter run 45958520684 passed. APK SHA-256: `4b0272d1e6603f7c67654b5bf846e3a8fbc3bdc789fca391573b8f3aa2bb389c`.
+- The verified APK bundles 398 History Chapter-2 candidates + 88 candidates across Geography, Polity & Administration, Art & Culture and Economy. Five subjects / 28 topic groups / 137 concept nodes; 486 unique Q&A IDs / normalized question stems. All remain NEEDS_REVIEW and are not PYQs.
+- Only 32 concepts currently carry question candidates; 105 are visibly marked “प्रश्न तैयारी में”. Keep filling uncovered concepts in parallel, prioritizing important Rajasthan exam facts and preserving the existing master taxonomy.
+- APK is a CI release-mode test build signed with the configured debug signing key, not Play Store/store-signed. Live database import, independent review, syllabus mapping and authenticated device E2E remain outstanding.
+- Do not recreate the merged offline assets or screen. Continue by taking uncovered concept IDs from the CSV ledger, adding source-backed Hindi drafts in cross-subject batches, and rerunning backend + Flutter/APK CI.
