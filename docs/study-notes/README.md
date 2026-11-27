@@ -187,3 +187,8 @@ The Ahar-Banas child-section now contains **42 Hindi-first AI-authored draft Q&A
 ## 2026-11-27 — Ahar-Banas source correction
 
 The follow-up source check corrected two items without changing the 392-row chapter total. AHB-041 now reports the RBSE textbook's excavation sequence (Akshayakirti Vyas, 1953; then R.C. Agrawal and H.D. Sankalia) without treating the earlier S23 note as a proven contradiction. AHB-042 cites S30's precise statement on growing Harappan contact after 2600 B.C., printed p.5. Forward migration 0033 only updates still-review-pending rows and preserves any reviewer decision. All 392 remain NEEDS_REVIEW; no live database apply is claimed.
+
+
+## 2026-11-27 — Ahar-Banas one-liner continuation AHB-043–048
+
+Six additional Hindi-first AI-authored draft Q&A were added from INFLIBNET/e-PG Pathshala, Chapter 27, §4: Ojiyana terracotta animal figurines, Balathal satellite sites and planned lanes, X-ray diffraction evidence interpreted as a regional trade centre, Tan Ware forms, and functional differences between fine/coarse pottery. Ahar-Banas now has 48 drafts; this branch's Chapter 2 total is 398 (KAL311 + AHB48 + GJ18 + BRT11 + MTS10). Migration 0034 and offline JSON are intended to match. All 398 remain NEEDS_REVIEW; no PYQ/VERIFIED claim, live DB apply or complete-Chapter-2 claim is made.
