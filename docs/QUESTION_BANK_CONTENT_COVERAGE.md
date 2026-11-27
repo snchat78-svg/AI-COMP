@@ -3,7 +3,7 @@
 **Canonical phase/status source:** [Phase Registry](PHASE_REGISTRY.md)  
 **Machine-readable topic ledger:** [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Roadmap:** [Topic-wise Question Bank roadmap](PHASE_6_53_TOPICWISE_QUESTION_BANK_ROADMAP.md)  
-**Last checkpoint:** 2026-10-30
+**Last checkpoint:** 2026-11-27
 
 ## Non-negotiable product goal
 
@@ -144,3 +144,8 @@ AHB-041 now reflects the RBSE textbook's stated sequence, not an inferred confli
 ## 2026-11-27 — Ahar-Banas AHB-043–048 coverage addition
 
 S24 (INFLIBNET/e-PG Pathshala, Chapter 27, §4) is now represented for Ojiyana's terracotta cow/painted-bull figurines, Balathal satellite sites and planned streets/lanes, X-ray diffraction evidence of a regional ceramic trade centre, Tan Ware forms and fine/coarse pottery function. AHB now has 48 draft candidates; Chapter 2 branch count is 398. These remain NEEDS_REVIEW and do not satisfy semantic review, official exam-specific mapping, independent page review or live DB acceptance.
+
+
+## 2026-11-27 — five-subject Rajasthan offline snapshot
+
+The offline bundle currently contains 486 Hindi-first, source-attributed candidates across five Rajasthan subjects and 137 canonical concepts: History 398, Geography 36, Polity & Administration 27, Art & Culture 9, Economy 16. Every row remains NEEDS_REVIEW, none is a verified PYQ, live DB import is NOT_QUERIED, and the official syllabus mapping is not accepted. See [parallel coverage checkpoint](study-notes/RAJASTHAN_PARALLEL_COVERAGE_STATUS_2026-11-27.md). The CSV concept ledger remains the detailed count/status authority.
