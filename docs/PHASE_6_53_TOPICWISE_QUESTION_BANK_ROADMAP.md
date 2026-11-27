@@ -582,7 +582,7 @@ Resume the existing Rajasthan History Chapter 2 parent file; do not start Indian
 7. **एकीकृत पैक:** parent topic index, child-subtopic notes, Q&A, source ledger, unresolved-items ledger, coverage checklist और learner topic view एक ही parent hierarchy में। प्रश्न की मूल entry एक ही जगह; अन्य जगह केवल stable ID cross-reference।
 8. **आगे बढ़ने का gate:** सभी child-sites की high-yield कवरेज, स्रोत/डुप्लिकेट/समीक्षा की स्थिति और open gaps स्पष्ट होने तक chapter IN_PROGRESS रहेगा। उसके बाद ही अगले book chapter को unlock करें।
 
-**अध्याय 2 पर लागू:** “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है; कालीबंगा, आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ/विराटनगर और मत्स्य जनपद इसके child-subtopics हैं। वर्तमान 368 drafts केवल मौजूदा candidate inventory हैं, complete coverage या verified truth का प्रमाण नहीं। पहले इसी parent chapter को पूरा और स्वीकार्य बनाना है।
+**अध्याय 2 पर लागू:** “राजस्थान के प्राचीन सभ्यता स्थल” एक parent topic है; कालीबंगा, आहड़-बनास, गणेश्वर-जोधपुरा, बैराठ/विराटनगर और मत्स्य जनपद इसके child-subtopics हैं। वर्तमान 398 drafts केवल मौजूदा candidate inventory हैं, complete coverage या verified truth का प्रमाण नहीं। पहले इसी parent chapter को पूरा और स्वीकार्य बनाना है।
 
 ### 2026-11-22 content increment
 
@@ -621,3 +621,12 @@ AHB-041 was tightened to the RBSE Class X textbook's stated sequence (Akshayakir
 ## 2026-11-27 — Ahar-Banas content continuation AHB-043–048
 
 AHB-043–048 add six sourced Hindi-first draft Q&A from INFLIBNET/e-PG Pathshala Chapter 27 §4: Ojiyana terracotta cow and painted bull figurines; Balathal resource-supporting satellite sites and planned streets/lanes; ceramic X-ray diffraction evidence interpreted as a regional trading-centre indicator; Tan Ware shapes; and fine/coarse ware uses. This branch takes the Ahar-Banas candidate count to 48 and Chapter 2 to 398 (KAL311 + AHB48 + GJ18 + BRT11 + MTS10). All remain NEEDS_REVIEW. This is a drafting increment, not independent approval, syllabus completion or live publication. Migration 0034 follows content migrations 0031/0032 and source correction migration 0033.
+
+
+## 2026-11-27 — AHB-043–048 merged; 398-row APK verified
+
+- PR [#133](https://github.com/snchat78-svg/AI-COMP/pull/133) was squash-merged into `main` at `2e8dbcd9f7f2f281724ddac8b10d309f7cb99f2c`. Exact PR-head backend run [45950284769](https://github.com/snchat78-svg/AI-COMP/actions/runs/45950284769) passed `pytest tests -q` and the API container build. Flutter run [45950284840](https://github.com/snchat78-svg/AI-COMP/actions/runs/45950284840) passed dependency resolution, `flutter analyze`, `flutter test`, release-mode APK build, artifact verification and upload.
+- Current Chapter 2 offline candidate inventory: **398** = KAL 311 + AHB 48 + GJ 18 + BRT 11 + MTS 10. The APK's packaged JSON was extracted and parsed: all 398 rows are Hindi (`language_code=hi`), have source URL/evidence, and remain `NEEDS_REVIEW`. These are AI-authored study-note candidates, not verified facts or PYQs.
+- Actions artifact [15176023964](https://github.com/snchat78-svg/AI-COMP/actions/runs/45950284840) was downloaded and inspected. APK SHA-256: `b062946349882632a2235046511dadc5579c6391a41b05416986c05766e7bc91`; artifact ZIP SHA-256: `9d3d50ba7a460683b6abdefb6d852e0e2bb9eaa012b86c60998f059317cebe71`. This is a CI release-mode test APK signed with Flutter's debug key; the real-Firebase distributable gate was skipped, so it is not a production/store-signed release.
+- The existing Flutter topic detail view already shows bundled `NEEDS_REVIEW` drafts in the separate `एक-पंक्ति प्रश्नोत्तर` tab and keeps them out of the VERIFIED/PYQ lanes. Install this build to get the 398-row bundle. Verified records still require the protected review process and live database; the app's Firebase/API production configuration and authenticated device E2E are not proven by this artifact.
+- Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. Next software continuation is PR #129's authenticated verified-content delta/cache work. It is stale/conflicting against the current main: rebase/port it onto this main head, renumber its overlapping cursor index migration to `0035_phase_6_56_question_bank_delta_cursor_index.sql`, and rerun exact-head backend + Flutter/APK CI before merge. Do not expose review-pending rows through the verified cache.
