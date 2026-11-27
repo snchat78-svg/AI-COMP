@@ -57,9 +57,9 @@ def test_kalibangan_site_identifiers_and_review_provenance_are_preserved() -> No
 
 
 
-def test_ahar_banas_batch_027_to_032_is_hindi_first_and_review_pending() -> None:
+def test_ahar_banas_batch_027_to_042_is_hindi_first_and_review_pending() -> None:
     rows = _chapter_rows()
-    expected_ids = {f"AHB-{number:03d}" for number in range(27, 33)}
+    expected_ids = {f"AHB-{number:03d}" for number in range(27, 43)}
     assert expected_ids.issubset(rows)
 
     for draft_id in sorted(expected_ids):
@@ -105,7 +105,7 @@ def test_all_chapter_2_question_and_answer_text_is_hindi_first() -> None:
             / "rajasthan_history_chapter_2_drafts.json"
         ).read_text(encoding="utf-8")
     )
-    expected_counts = {"KAL": 311, "AHB": 32, "GJ": 18, "BRT": 11, "MTS": 10}
+    expected_counts = {"KAL": 311, "AHB": 42, "GJ": 18, "BRT": 11, "MTS": 10}
     assert len(asset) == sum(expected_counts.values())
 
     for prefix, expected_count in expected_counts.items():
