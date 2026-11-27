@@ -39,7 +39,7 @@ class _OfflineStudyLibraryScreenState extends State<OfflineStudyLibraryScreen> {
         .map((row) => Map<String, dynamic>.from(row))
         .toList(growable: false);
     final questions = <Map<String, dynamic>>[
-      ...(historyRaw as List)
+      ...historyRaw
           .whereType<Map>()
           .map((row) => Map<String, dynamic>.from(row)),
       ...(parallelRaw['items'] as List)
