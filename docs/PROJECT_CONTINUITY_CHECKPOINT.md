@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-27 (base `main` checkpoint `91736e8568b845f32b05e55fd4aa14716ca2aa91`; active branch `content/phase6-56-ahb-one-liners-033-042`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 392 candidates are review-pending, not verified.
+**Last updated:** 2026-11-27 (main checkpoint `d45c738bba63be610c88078a9c227cd228c9e072`; active branch `content/phase6-56-ahb-source-corrections-041-042`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 392 candidates are review-pending, not verified.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
