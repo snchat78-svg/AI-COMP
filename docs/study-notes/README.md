@@ -202,3 +202,8 @@ The source correction PR #132 is merged into main at `5d8e8fe6611c781477894b1931
 ## 2026-11-27 — Offline Rajasthan library implementation
 
 The Flutter implementation adds a dashboard entry to a self-contained offline study library. It loads the existing Chapter-2 asset plus the 88-row cross-subject draft batch and the 137-concept catalogue. Subject, main topic and subtopic navigation is available without an API connection; every row shows Hindi Q&A and source evidence. The implementation rejects an invalid bundle count or any item missing Hindi status, HTTPS source or evidence. Flutter tests and exact-head APK CI are pending; do not call this production-ready until those checks pass.
+
+
+## 2026-11-27 — Rajasthan Offline Study Library APK
+
+PR #135 is merged and the offline Flutter library is included in the latest verified CI APK. The dashboard entry opens five Rajasthan subjects without API connectivity and preserves subject → main topic → subtopic navigation. Bundle: 398 Rajasthan History Chapter-2 candidates and 88 parallel candidates across Geography, Polity & Administration, Art & Culture and Economy; 137 concepts and 486 Q&A total. Exact-head backend and Flutter CI passed; artifact ID 15179534142. The APK is debug-signed for testing, not a production/store-signed release. All candidates remain NEEDS_REVIEW; 105 catalogue concepts still have no question candidate and are explicitly marked “प्रश्न तैयारी में”.

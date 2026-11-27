@@ -56,3 +56,12 @@ Dashboard → **Open Rajasthan Offline Study Library** → विषय → म�
 6. उसके बाद ही approved study notes से practice MCQ; वास्तविक PYQ अलग रखे जाएँ।
 
 **स्थिति:** Offline library implementation branch में है; CI/APK और live DB publication अभी सत्यापित नहीं हैं। Phase 6.56/6.57/6.58 के canonical states Phase Registry से ही लिए जाएँ।
+
+
+## 2026-11-27 — APK and merge acceptance
+
+- PR #135 merged into main at `706fd541d100a0fd8a1b2ccae2886409c14fa449`.
+- Exact-head backend workflow [45958520679](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520679) passed pytest and API container build; exact-head Flutter workflow [45958520684](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520684) passed analyze, all widget/client tests, release APK build, artifact verification and upload.
+- APK artifact [15179534142](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520684/artifacts/15179534142). SHA-256 of APK: `4b0272d1e6603f7c67654b5bf846e3a8fbc3bdc789fca391573b8f3aa2bb389c`. This is release-mode CI APK using debug signing, not production/store signing.
+- APK contents rechecked: 398 History Chapter-2 candidates + 88 cross-subject candidates = 486 unique IDs and zero exact normalized duplicate stems. All Hindi, HTTPS/evidence-backed, NEEDS_REVIEW.
+- Coverage status: 137 catalogue concepts; 32 concepts with candidate questions; 105 concepts with no questions. Keep blanks visible and create parallel important-question batches; do not fabricate fill or claim full coverage.

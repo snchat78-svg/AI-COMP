@@ -639,3 +639,10 @@ AHB-043–048 add six sourced Hindi-first draft Q&A from INFLIBNET/e-PG Pathshal
 - Flutter offline library opens from the preparation dashboard without API connectivity; empty concepts remain visible, not hidden or filled with fabricated questions.
 - All 486 remain NEEDS_REVIEW; all carry source URLs and evidence locators; exact normalized stem audit reports zero duplicates. This does not satisfy full coverage, independent review, official exam syllabus mapping or live DB publication.
 - See [RAJASTHAN_PARALLEL_COVERAGE_STATUS_2026-11-27.md](study-notes/RAJASTHAN_PARALLEL_COVERAGE_STATUS_2026-11-27.md). Continue parallel source batches and quality gates within the five Rajasthan subjects.
+
+
+## 2026-11-27 — PR #135 and verified Rajasthan offline APK
+
+PR [#135](https://github.com/snchat78-svg/AI-COMP/pull/135) merged at `706fd541d100a0fd8a1b2ccae2886409c14fa449`. Exact tested head `38c60a36dc362c0ec475e4cf7277b680c894a14c`: backend workflow [45958520679](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520679) and Flutter/APK workflow [45958520684](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520684) succeeded. Artifact [15179534142](https://github.com/snchat78-svg/AI-COMP/actions/runs/45958520684/artifacts/15179534142); extracted APK SHA-256 `4b0272d1e6603f7c67654b5bf846e3a8fbc3bdc789fca391573b8f3aa2bb389c`.
+
+The packaged offline data contains 5 Rajasthan subjects, 28 main topic groups, 137 concept nodes and 486 source-backed Hindi candidates: History 398; Geography 36; Polity & Administration 27; Art & Culture 9; Economy 16. Exact normalized duplicate question-stem count is 0. All 486 remain NEEDS_REVIEW, not verified facts or PYQs. Only 32/137 concepts currently have question candidates; 105 are visible as content gaps. Continue parallel source-backed batches across those uncovered concepts; do not mark full coverage or phase completion until reviewed.
