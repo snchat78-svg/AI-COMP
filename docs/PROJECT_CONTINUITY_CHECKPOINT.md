@@ -1107,3 +1107,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Canonical notes, offline JSON, correction-parity test and coverage audit have been updated. Candidate total remains 392. Live migration status is still unqueried.
 - PR #129's competing cursor-index migration must be renumbered to 0034 after rebasing; 0033 is reserved for this source correction.
 - Source PDF page-image screenshot attempts failed due file-size/timeout limits; visual inspection, independent audit and syllabus mapping remain open. Do not close Chapter 2.
+
+
+## 2026-11-27 — Ahar-Banas next batch AHB-043–048
+
+- Branch `content/phase6-56-ahb-one-liners-043-048` starts from PR #132 source correction head `2ce3320d83a64bdf56bb09c40a689d63e9f0d88d`; PR #132 itself is pending merge at the time of this checkpoint.
+- Added AHB-043–048 under the same Ahar-Banas concept from S24: Ojiyana terracotta cow/painted-bull figures and source-attributed possible religious meaning; Balathal supporting satellite sites; streets and lanes/planned settlement; X-ray diffraction interpreted as regional trading-centre evidence; Tan Ware shapes; and fine/coarse ware use.
+- Added contiguous content migration `0034_phase_6_56_ahar_banas_one_liners_043_048.sql`; updated canonical note, offline JSON, backend parity+hash regression, Hindi-first regression, local count map and dashboard review-pending fixture.
+- Ahar-Banas branch total 48; Chapter 2 branch total 398 (KAL311 + AHB48 + GJ18 + BRT11 + MTS10). All remain NEEDS_REVIEW and are original AI-written paraphrases, not actual PYQs.
+- PR #129 delta-cache remains separate and unmerged. Its cursor-index migration should be renumbered to 0035 after this content migration is merged.
+- Do not declare Chapter 2 complete. Target book pp.145–149, exam-specific official syllabus, semantic duplicate review, visual/manual evidence check, independent reviewer events, live DB apply/query and authenticated mobile E2E remain open.
