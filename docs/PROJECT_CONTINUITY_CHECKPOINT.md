@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-27 (main checkpoint `2e8dbcd9f7f2f281724ddac8b10d309f7cb99f2c`; PR #133 merged). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 398 candidates (KAL 311, AHB 48, GJ 18, BRT 11, MTS 10) are review-pending, not verified.
+**Last updated:** 2026-11-27 (main base `07663f3c39b9a355be7da7b1782bd0a06505f9ba`; active implementation branch `feature/rajasthan-parallel-offline-study-library`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. User-directed work now covers five Rajasthan subjects in parallel: 137 canonical concepts and 486 offline source-backed Hindi candidates, all review-pending. No subject lane, chapter or phase is complete.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -1126,3 +1126,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Actions artifact [15176023964](https://github.com/snchat78-svg/AI-COMP/actions/runs/45950284840) was downloaded and inspected. APK SHA-256: `b062946349882632a2235046511dadc5579c6391a41b05416986c05766e7bc91`; artifact ZIP SHA-256: `9d3d50ba7a460683b6abdefb6d852e0e2bb9eaa012b86c60998f059317cebe71`. This is a CI release-mode test APK signed with Flutter's debug key; the real-Firebase distributable gate was skipped, so it is not a production/store-signed release.
 - The existing Flutter topic detail view already shows bundled `NEEDS_REVIEW` drafts in the separate `एक-पंक्ति प्रश्नोत्तर` tab and keeps them out of the VERIFIED/PYQ lanes. Install this build to get the 398-row bundle. Verified records still require the protected review process and live database; the app's Firebase/API production configuration and authenticated device E2E are not proven by this artifact.
 - Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. Next software continuation is PR #129's authenticated verified-content delta/cache work. It is stale/conflicting against the current main: rebase/port it onto this main head, renumber its overlapping cursor index migration to `0035_phase_6_56_question_bank_delta_cursor_index.sql`, and rerun exact-head backend + Flutter/APK CI before merge. Do not expose review-pending rows through the verified cache.
+
+
+## 2026-11-27 — Restart point: parallel Rajasthan offline study library
+
+- Active branch: `feature/rajasthan-parallel-offline-study-library` (based on main `07663f3c39b9a355be7da7b1782bd0a06505f9ba`).
+- Offline assets: `rajasthan_history_chapter_2_drafts.json` (398) + `rajasthan_parallel_subjects_drafts.json` (88) + `rajasthan_offline_catalogue.json` (137 concepts, 5 Rajasthan subjects, 28 topic groups).
+- Candidate split: History 398; Geography 36 unique Q&A (37 concept references because RGEO-011 is cross-referenced); Polity 27; Art & Culture 9; Economy 16. Total 486 unique IDs and exact-normalized question stems.
+- Dashboard entry opens offline library without API connectivity. Navigate subject → topic → subtopic → Hindi Q&A and source evidence. Catalogue concepts with no current draft remain visible and marked “प्रश्न तैयारी में”.
+- All rows remain NEEDS_REVIEW; source-page visual review, independent review, exam-specific syllabus mapping and live DB import have not been completed. Real PYQs remain separate.
+- Added Python integrity tests; exact PR-head backend/Flutter CI and APK artifact are pending. Continue only from this branch/PR; do not recreate the 486 content batch or reset the existing Phase 6.56 work.
