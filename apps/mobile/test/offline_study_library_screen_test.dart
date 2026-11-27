@@ -39,7 +39,7 @@ void main() {
     await pumpLibrary(tester);
 
     await tester.tap(find.text('राजस्थान भूगोल'));
-    await pumpLibrary(tester);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('नदियाँ एवं अपवाह तंत्र'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('लूणी नदी').last);
@@ -58,7 +58,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(home: OfflineStudyLibraryScreen()),
     );
-    await tester.pumpAndSettle();
+    await pumpLibrary(tester);
 
     await tester.tap(find.text('राजस्थान अर्थव्यवस्था'));
     await tester.pumpAndSettle();
