@@ -4310,5 +4310,71 @@
     "source_evidence": "AHB-042 — S30 — Shinde, Possehl और Sinha-Deshpande, The Ceramic Assemblage in Protohistoric Mewar, Puratattva 32 (2001–02), मुद्रित पृ. 5, Introduction; लेख में Harappans के साथ growing trade contact after 2600 B.C. स्पष्ट कहा गया है।",
     "verification_status": "NEEDS_REVIEW",
     "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-043",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "ओजियाना स्थल से किस प्रकार की टेराकोटा पशु-आकृतियाँ मिलने का उल्लेख है?",
+    "answer_text": "गाय की आकृतियाँ और विशिष्ट चित्रित बैल-आकृतियाँ; INFLIBNET अध्याय के अनुसार चित्रित बैलों को किसी पंथ या धार्मिक आस्था से जोड़ा गया है, लेकिन यह एक पुरातात्त्विक व्याख्या है।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-043 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML lines 102–103; चित्रित बैलों का धार्मिक अर्थ स्रोत में संभावित व्याख्या के रूप में है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-044",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "बालाथल के आसपास स्थल-परिक्षेत्र अध्ययन में किस प्रकार के सहायक स्थल पहचाने गए?",
+    "answer_text": "बड़े स्थलों को संसाधन जुटाने में सहायता देने वाले छोटे उपग्रह स्थल पहचाने गए।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-044 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 101; छोटे स्थलों की भूमिका संसाधन-अधिग्रहण में सहायता के रूप में बताई गई है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-045",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "बालाथल में सड़कों और गलियों के साक्ष्य से बस्ती की योजना के बारे में क्या संकेत मिलता है?",
+    "answer_text": "ये साक्ष्य बताते हैं कि बस्ती के गाँव और छोटे नगर नियोजित या सुव्यवस्थित थे; अध्ययन उनकी तुलना हड़प्पाई स्थलों से करता है।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-045 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 108; लेखक streets and lanes को structured settlements का संकेत मानता है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-046",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "बालाथल के मृद्भांड नमूनों के एक्स-रे विवर्तन विश्लेषण से स्थल की क्या भूमिका सुझाई गई?",
+    "answer_text": "विश्लेषण ने बालाथल को क्षेत्रीय व्यापारिक केंद्र होने का संकेत दिया।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-046 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 117; एक्स-रे विवर्तन निष्कर्ष लेख में संक्षेपित है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-047",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़-बनास संस्कृति के महीन समूह के तन मृद्भांडों के प्रमुख पात्र-रूप कौन-से बताए गए हैं?",
+    "answer_text": "कोणयुक्त थालियाँ, आधार-युक्त थालियाँ और गोलाकार मटके; बाहरी सतह पर ऊँची चिपकी पट्टियों के बीच गहरी खाँचें भी बताई गई हैं।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-047 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 118; पात्र-रूप और सजावट Tan Ware के लिए स्रोत में दिए हैं।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
+  },
+  {
+    "one_liner_id": "ch2_AHB-048",
+    "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture",
+    "question_text": "आहड़-बनास संस्कृति के महीन और मोटे मृद्भांडों के उपयोग में क्या अंतर बताया गया है?",
+    "answer_text": "महीन मृद्भांडों का उपयोग मुख्यतः पीने और खाने में; जबकि मोटे मृद्भांड—जैसे घड़े और हाँडियाँ—भंडारण तथा पकाने में होते थे।",
+    "language_code": "hi",
+    "source_url": "https://ebooks.inflibnet.ac.in/icp02/chapter/152/",
+    "source_evidence": "AHB-048 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 119; बर्तनों के उपयोग को उनकी गुणवत्ता और पात्र-रूप से जोड़ा गया है।",
+    "verification_status": "NEEDS_REVIEW",
+    "importance_score": 0.8
   }
 ]
