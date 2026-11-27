@@ -87,3 +87,12 @@ def test_parallel_subject_draft_counts_match_the_five_subject_dashboard():
         "राजस्थान कला एवं संस्कृति": 9,
         "राजस्थान अर्थव्यवस्था": 16,
     }
+
+
+def test_assembly_candidates_use_their_matching_official_source_pages():
+    _, parallel, _ = _bundle()
+    items = {item["one_liner_id"]: item for item in parallel}
+    assert items["RPO-001"]["source_url"].endswith("/Introduction.aspx")
+    assert items["RPO-002"]["source_url"].endswith("/HouseTenure.aspx")
+    assert items["RPO-003"]["source_url"].endswith("/Introduction.aspx")
+    assert items["RPO-004"]["source_url"].endswith("/HouseTenure.aspx")
