@@ -54,8 +54,12 @@ OfflineStudyLibraryData _fixture() {
       'topic_groups': [
         {
           'topic_name': definition['topic_name'],
-          'subtopics': subtopics,
-        }
+          'subtopics': subtopics.take(1).toList(growable: false),
+        },
+        {
+          'topic_name': 'अन्य उप-विषय',
+          'subtopics': subtopics.skip(1).toList(growable: false),
+        },
       ],
     };
   }).toList(growable: false);
