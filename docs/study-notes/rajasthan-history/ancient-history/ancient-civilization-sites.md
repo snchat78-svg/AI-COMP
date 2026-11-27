@@ -11,7 +11,7 @@
 | क्रम | इस parent chapter के अंदर स्थल/उपविषय | स्थायी concept ID | प्रश्न/स्थिति |
 |---:|---|---|---|
 | 1 | कालीबंगा | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311; 311 draft Q&A; NEEDS_REVIEW |
-| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-032; 32 draft Q&A; NEEDS_REVIEW |
+| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-048; 48 draft Q&A; NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
 | 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-011; 11 draft Q&A; NEEDS_REVIEW |
 | 5 | मत्स्य जनपद | `catalog.rajasthan_history_ancient_history_matsya_janapada` | MTS-001–MTS-010; 10 draft Q&A; NEEDS_REVIEW |
@@ -907,7 +907,7 @@ The following five additions retain only details that were not already adequatel
 | Child-site | मसौदा स्थिति | शेष उच्च-प्राथमिकता कार्य |
 |---|---|---|
 | कालीबंगा | 311 Q&A drafts | primary report page/plate cross-check, unresolved source conflicts, exam mapping और independent review |
-| आहड़-बनास | 32 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
+| आहड़-बनास | 48 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
 | बैराठ / विराटनगर | 11 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
 | मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
