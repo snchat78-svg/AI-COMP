@@ -139,3 +139,8 @@ AHB-033–AHB-042 extend the existing Ahar-Banas subtopic to 42 source-attribute
 ## 2026-11-27 — AHB-041/042 source correction
 
 AHB-041 now reflects the RBSE textbook's stated sequence, not an inferred conflict between two sources. AHB-042 now narrows the wording to the exact *Puratattva* 32 Introduction claim on printed p.5. Migration 0033 applies the revised text/hash/source evidence only to still-unreviewed database rows. The ledger count/status does not change: AHB has 42 Git/offline candidates, NOT_YET_MAPPED_TO_EXAM_SPECIFIC_OFFICIAL_SYLLABUS, and NOT_QUERIED_LIVE_DB.
+
+
+## 2026-11-27 — Ahar-Banas AHB-043–048 coverage addition
+
+S24 (INFLIBNET/e-PG Pathshala, Chapter 27, §4) is now represented for Ojiyana's terracotta cow/painted-bull figurines, Balathal satellite sites and planned streets/lanes, X-ray diffraction evidence of a regional ceramic trade centre, Tan Ware forms and fine/coarse pottery function. AHB now has 48 draft candidates; Chapter 2 branch count is 398. These remain NEEDS_REVIEW and do not satisfy semantic review, official exam-specific mapping, independent page review or live DB acceptance.

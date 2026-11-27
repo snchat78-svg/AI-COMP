@@ -1,0 +1,20 @@
+-- Phase 6.56: six additional Hindi-first Ahar-Banas candidates (AHB-043–048).
+-- All rows remain NEEDS_REVIEW; this migration does not approve facts or mark PYQs.
+-- Source: INFLIBNET/e-PG Pathshala, Chapter 27, section 4.
+BEGIN;
+
+INSERT INTO question_bank_one_liners (
+    one_liner_id, concept_id, question_text, answer_text, language_code,
+    source_url, source_evidence, verification_status, importance_score,
+    content_hash, reviewed_at
+)
+VALUES
+  ('ch2_AHB-043', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'ओजियाना स्थल से किस प्रकार की टेराकोटा पशु-आकृतियाँ मिलने का उल्लेख है?', 'गाय की आकृतियाँ और विशिष्ट चित्रित बैल-आकृतियाँ; संबंधित अध्याय में चित्रित बैलों को किसी पंथ या धार्मिक आस्था से जोड़ने की संभावना बताई गई है, लेकिन यह एक व्याख्या है।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-043 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML lines 102–103; चित्रित बैलों का धार्मिक अर्थ स्रोत में संभावित व्याख्या के रूप में है।', 'NEEDS_REVIEW', 0.80, '43c1b13c8c0658e68411776029014734ca95836d5a12f8606318ba5d9289b6dc', NULL),
+  ('ch2_AHB-044', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'बालाथल के आसपास स्थल-परिक्षेत्र अध्ययन में किस प्रकार के सहायक स्थल पहचाने गए?', 'बड़े स्थलों को संसाधन जुटाने में सहायता देने वाले छोटे उपग्रह स्थल पहचाने गए।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-044 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 101; छोटे स्थलों की भूमिका संसाधन-अधिग्रहण में सहायता के रूप में बताई गई है।', 'NEEDS_REVIEW', 0.80, 'fd9440d4cc727a3fffdd4248348b7946e8c18925c36dc00aea498ddd48159c5b', NULL),
+  ('ch2_AHB-045', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'बालाथल में सड़कों और गलियों के साक्ष्य से बस्ती की योजना के बारे में क्या संकेत मिलता है?', 'ये साक्ष्य बताते हैं कि बस्ती के गाँव और छोटे नगर नियोजित या सुव्यवस्थित थे; अध्ययन उनकी तुलना हड़प्पाई स्थलों से करता है।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-045 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 108; लेखक streets and lanes को structured settlements का संकेत मानता है।', 'NEEDS_REVIEW', 0.80, 'b97bb578ec25d06eb8bcd2daf285c38f61b7c171197805f61e85b110ba1c9bb5', NULL),
+  ('ch2_AHB-046', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'बालाथल के मृद्भांड नमूनों के एक्स-रे विवर्तन विश्लेषण से स्थल की क्या भूमिका सुझाई गई?', 'विश्लेषण ने बालाथल को क्षेत्रीय व्यापारिक केंद्र होने का संकेत दिया।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-046 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 117; एक्स-रे विवर्तन निष्कर्ष लेख में संक्षेपित है।', 'NEEDS_REVIEW', 0.80, '4c54c1929b6d14d32155d70d5cee7dec09f8e520b6ca09a2d26550c99e9d9a02', NULL),
+  ('ch2_AHB-047', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'आहड़-बनास संस्कृति के महीन समूह के तन मृद्भांडों के प्रमुख पात्र-रूप कौन-से बताए गए हैं?', 'कोणयुक्त थालियाँ, आधार-युक्त थालियाँ और गोलाकार मटके; बाहरी सतह पर ऊँची चिपकी पट्टियों के बीच गहरी खाँचें भी बताई गई हैं।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-047 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 118; पात्र-रूप और सजावट Tan Ware के लिए स्रोत में दिए हैं।', 'NEEDS_REVIEW', 0.80, '54de01ceb1604edff9089ac64f85f43f759860d21d99c1f44202855c44400797', NULL),
+  ('ch2_AHB-048', 'catalog.rajasthan_history_ancient_history_ahar_banas_culture', 'आहड़-बनास संस्कृति के महीन और मोटे मृद्भांडों के उपयोग में क्या अंतर बताया गया है?', 'महीन मृद्भांडों का उपयोग मुख्यतः पीने और खाने में; जबकि मोटे मृद्भांड—जैसे घड़े और हाँडियाँ—भंडारण तथा पकाने में होते थे।', 'hi', 'https://ebooks.inflibnet.ac.in/icp02/chapter/152/', 'AHB-048 — S24 — Parth Chouhan, INFLIBNET e-PG Pathshala, अध्याय 27, §4, HTML line 119; बर्तनों के उपयोग को उनकी गुणवत्ता और पात्र-रूप से जोड़ा गया है।', 'NEEDS_REVIEW', 0.80, '4634a9ea7c5d4f36b5e83ef3270fdd4ac0c492c9cf740057beeeccffe53a05de', NULL)
+ON CONFLICT DO NOTHING;
+
+COMMIT;

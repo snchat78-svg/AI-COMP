@@ -11,7 +11,7 @@
 | क्रम | इस parent chapter के अंदर स्थल/उपविषय | स्थायी concept ID | प्रश्न/स्थिति |
 |---:|---|---|---|
 | 1 | कालीबंगा | `catalog.rajasthan_history_ancient_history_kalibangan` | KAL-001–KAL-311; 311 draft Q&A; NEEDS_REVIEW |
-| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-032; 32 draft Q&A; NEEDS_REVIEW |
+| 2 | आहड़-बनास संस्कृति | `catalog.rajasthan_history_ancient_history_ahar_banas_culture` | AHB-001–AHB-048; 48 draft Q&A; NEEDS_REVIEW |
 | 3 | गणेश्वर-जोधपुरा संस्कृति | `catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture` | GJ-001–GJ-018; 18 draft Q&A; NEEDS_REVIEW |
 | 4 | बैराठ / विराटनगर | `catalog.rajasthan_history_ancient_history_bairat` | BRT-001–BRT-011; 11 draft Q&A; NEEDS_REVIEW |
 | 5 | मत्स्य जनपद | `catalog.rajasthan_history_ancient_history_matsya_janapada` | MTS-001–MTS-010; 10 draft Q&A; NEEDS_REVIEW |
@@ -736,7 +736,7 @@ The following five additions retain only details that were not already adequatel
 ## उपविषय 2 — आहड़-बनास संस्कृति
 
 **स्थायी concept ID:** `catalog.rajasthan_history_ancient_history_ahar_banas_culture`  
-**स्थिति:** DRAFTING — 42 प्राथमिक हिंदी One-Liner Q&A; सभी `NEEDS_REVIEW`।  
+**स्थिति:** DRAFTING — 48 प्राथमिक हिंदी One-Liner Q&A; सभी `NEEDS_REVIEW`।  
 **स्रोत-सावधानी:** S23 का indexed text उपलब्ध है, लेकिन मूल PDF page-image screenshot 15.6 MB file-size limit पर विफल हुआ। S24 INFLIBNET का HTML अध्याय सीधे पढ़ा गया। तिथियों में विद्वानों के अलग प्रस्ताव हैं; किसी एक range को पूरी संस्कृति का निर्विवाद काल न बताएं।
 
 ### महत्त्वपूर्ण One-Liner प्रश्नोत्तर
@@ -785,6 +785,12 @@ The following five additions retain only details that were not already adequatel
 | AHB-040 | गिलूंड और आहड़ के बीच पकी ईंटों के प्रयोग में क्या अंतर बताया गया है? | गिलूंड में पकी ईंटों के उपयोग और निर्माण, दोनों के साक्ष्य मिले; पुस्तक के अनुसार आहड़ में पकी ईंटों का प्रयोग नहीं था। | महत्त्वपूर्ण | S32 — राजस्थान बोर्ड, कक्षा 10, मुद्रित पृ. 4 |
 | AHB-041 | राजस्थान बोर्ड की कक्षा 10 की पुस्तक के अनुसार आहड़ में सबसे पहले उत्खनन किसने किया और उसके बाद किन पुरातत्वविदों ने कार्य किया? | पुस्तक के अनुसार 1953 में अक्षयकीर्ति व्यास ने प्रारंभिक उत्खनन किया; बाद में रतन चंद्र अग्रवाल और एच. डी. सांकलिया ने उत्खनन कार्य किया। | अत्यंत महत्त्वपूर्ण | S32 — राजस्थान बोर्ड, History and Culture of Rajasthan, कक्षा 10, मुद्रित पृ. 4, Ahar अनुच्छेद |
 | AHB-042 | शोध के अनुसार आहड़ संस्कृति में हड़प्पा सभ्यता के साथ बढ़ता व्यापारिक संपर्क कब से बताया गया है? | लगभग 2600 ईसा पूर्व के बाद; लेखक इसे आहड़ संस्कृति के विकास और उत्कर्ष से जोड़ते हैं। | महत्त्वपूर्ण | S30 — Shinde, Possehl और Sinha-Deshpande, Puratattva 32 (2001–02), मुद्रित पृ. 5, Introduction |
+| AHB-043 | ओजियाना स्थल से किस प्रकार की टेराकोटा पशु-आकृतियाँ मिलने का उल्लेख है? | गाय की आकृतियाँ और विशिष्ट चित्रित बैल-आकृतियाँ; संबंधित अध्याय में चित्रित बैलों को किसी पंथ या धार्मिक आस्था से जोड़ने की संभावना बताई गई है, लेकिन यह एक व्याख्या है। | अत्यंत महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 102–103 |
+| AHB-044 | बालाथल के आसपास स्थल-परिक्षेत्र अध्ययन में किस प्रकार के सहायक स्थल पहचाने गए? | बड़े स्थलों को संसाधन जुटाने में सहायता देने वाले छोटे उपग्रह स्थल पहचाने गए। | महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 101 |
+| AHB-045 | बालाथल में सड़कों और गलियों के साक्ष्य से बस्ती की योजना के बारे में क्या संकेत मिलता है? | ये साक्ष्य बताते हैं कि बस्ती के गाँव और छोटे नगर नियोजित या सुव्यवस्थित थे; अध्ययन उनकी तुलना हड़प्पाई स्थलों से करता है। | महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 108 |
+| AHB-046 | बालाथल के मृद्भांड नमूनों के एक्स-रे विवर्तन विश्लेषण से स्थल की क्या भूमिका सुझाई गई? | विश्लेषण ने बालाथल को क्षेत्रीय व्यापारिक केंद्र होने का संकेत दिया। | अत्यंत महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 117 |
+| AHB-047 | आहड़-बनास संस्कृति के महीन समूह के तन मृद्भांडों के प्रमुख पात्र-रूप कौन-से बताए गए हैं? | कोणयुक्त थालियाँ, आधार-युक्त थालियाँ और गोलाकार मटके; बाहरी सतह पर ऊँची चिपकी पट्टियों के बीच गहरी खाँचें भी बताई गई हैं। | महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 118 |
+| AHB-048 | आहड़-बनास संस्कृति के महीन और मोटे मृद्भांडों के उपयोग में क्या अंतर बताया गया है? | महीन मृद्भांडों का उपयोग मुख्यतः पीने और खाने में; जबकि मोटे मृद्भांड—जैसे घड़े और हाँडियाँ—भंडारण तथा पकाने में होते थे। | महत्त्वपूर्ण | S24 — INFLIBNET, अध्याय 27, §4, HTML lines 119 |
 
 ### Ahar-Banas स्रोत और समीक्षा स्थिति
 
@@ -794,7 +800,7 @@ The following five additions retain only details that were not already adequatel
 - **S32:** Rajasthan Board of Secondary Education, *History and Culture of Rajasthan*, Class X, printed p. 4, “Ancient Civilisations of Rajasthan”: https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf
 - **S31:** Debasri Dasgupta, “Site Catchment Analysis of the Chalcolithic Settlement of Gilund in the Banas Basin”, *Puratattva* 35 (2004–05), मुद्रित pp. 103–104. IGNCA-hosted scan: https://ignca.gov.in/Asi_data/88233.pdf
 - S23 में Ahar की अवस्थिति, R.C. Agrawal (1954–55), Tambamati, विशिष्ट pottery और अलग chronology proposals दर्ज हैं। S24 में क्षेत्रीय विस्तार, प्रमुख स्थल, Balathal chronology, settlement, economy और pottery groups का संक्षिप्त शैक्षिक संश्लेषण है।
-- S23, S24, S30, S31 और नए S32-आधारित प्रश्न स्वतंत्र reviewer द्वारा जाँचे जाने हैं। AHB-001–AHB-042 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावा नहीं। S30/S31/S32 के indexed text से प्रश्न लिखे गए; PDF page-image retrieval बड़े file-size के कारण असफल रहा, इसलिए दृश्य-पृष्ठ सत्यापन अभी बाकी है। AHB-016 की बालाथल-आधारित तिथि और AHB-029 की आहड़-स्थल चरण-तिथियों को अलग स्रोत/स्थल-विशिष्ट मानें। AHB-041 अब S32 में दिए उत्खनन-क्रम (1953 में अक्षयकीर्ति व्यास, बाद में आर. सी. अग्रवाल और एच. डी. सांकलिया) को उसी पुस्तक के अनुसार प्रस्तुत करता है; S23 को इस प्रश्न में विरोधी attribution के रूप में उपयोग नहीं किया गया। AHB-042 का 2600 ईसा पूर्व के बाद बढ़ते हड़प्पाई व्यापार-संपर्क वाला कथन S30 के मुद्रित पृ. 5 के Introduction से लिया गया है। S30/S32 के पृष्ठ-चित्र की दृश्य जाँच और सभी नए तथ्यों की स्वतंत्र समीक्षा लंबित है।
+- S23, S24, S30, S31 और S32-आधारित प्रश्न स्वतंत्र reviewer द्वारा जाँचे जाने हैं। AHB-001–AHB-048 सभी NEEDS_REVIEW हैं; कोई PYQ/VERIFIED दावा नहीं। S30/S31/S32 के indexed text से प्रश्न लिखे गए; PDF page-image retrieval बड़े file-size के कारण असफल रहा, इसलिए दृश्य-पृष्ठ सत्यापन अभी बाकी है। AHB-016 की बालाथल-आधारित तिथि और AHB-029 की आहड़-स्थल चरण-तिथियों को अलग स्रोत/स्थल-विशिष्ट मानें। AHB-041 अब S32 में दिए उत्खनन-क्रम (1953 में अक्षयकीर्ति व्यास, बाद में आर. सी. अग्रवाल और एच. डी. सांकलिया) को उसी पुस्तक के अनुसार प्रस्तुत करता है; S23 को इस प्रश्न में विरोधी attribution के रूप में उपयोग नहीं किया गया। AHB-042 का 2600 ईसा पूर्व के बाद बढ़ते हड़प्पाई व्यापार-संपर्क वाला कथन S30 के मुद्रित पृ. 5 के Introduction से लिया गया है। AHB-043–AHB-048 में ओजियाना की टेराकोटा आकृतियाँ, बालाथल के सहायक उपग्रह स्थल और गलियाँ, मृद्भांडों का क्षेत्रीय व्यापार-संकेत, तन मृद्भांड के पात्र-रूप तथा महीन/मोटे मृद्भांडों के उपयोग शामिल हैं। ये सभी S24 के ऑनलाइन अध्याय 27, §4 के HTML पंक्ति-सूचकों से लिखे गए हैं; धार्मिक अर्थ और व्यापारिक भूमिका को स्रोत की व्याख्या के रूप में ही रखें। S30/S32 के पृष्ठ-चित्र की दृश्य जाँच और सभी नए तथ्यों की स्वतंत्र समीक्षा लंबित है।
 
 
 
@@ -901,7 +907,7 @@ The following five additions retain only details that were not already adequatel
 | Child-site | मसौदा स्थिति | शेष उच्च-प्राथमिकता कार्य |
 |---|---|---|
 | कालीबंगा | 311 Q&A drafts | primary report page/plate cross-check, unresolved source conflicts, exam mapping और independent review |
-| आहड़-बनास | 32 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
+| आहड़-बनास | 48 Q&A drafts | textbook chapter pages 145–149 से subtopic scope confirm; chronology/ pottery/ site facts independent review |
 | गणेश्वर-जोधपुरा | 18 Q&A drafts | मुख्य report page-image check, later-phase/chronology cross-check और independent review |
 | बैराठ / विराटनगर | 11 Q&A drafts | Ashokan inscription context, plan/photo verification और independent review |
 | मत्स्य जनपद | 10 Q&A drafts | सीमा-विवरण के स्रोत-भेद, पाठ्यपुस्तक/प्राथमिक संदर्भ और independent review |
