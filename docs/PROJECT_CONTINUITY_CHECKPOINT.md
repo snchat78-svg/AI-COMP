@@ -1097,3 +1097,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - Important unresolved item: AHB-041 preserves S32's 1953 Akshayakirti Vyas excavation account and S23's 1954–55 R.C. Agrawal site-recognition attribution separately. Do not collapse them into one unsourced answer.
 - PR #129 is still open on old base and has an overlapping 0031 migration index; rebase/renumber that index to 0033 after this 0032 content migration before merging. Do not merge as-is.
 - Do not declare Chapter 2 complete. Official syllabus fit, full printed chapter scope check, semantic duplicate review, page-image review, independent reviewer audit, live DB apply/count, and authenticated learner/mobile E2E remain open. Phase 6.56 remains IN_PROGRESS; no move to Chapter 3 or Indian GK.
+
+
+## 2026-11-27 — AHB-041/042 source wording correction
+
+- AHB-041 now asks for the RBSE Class X textbook's source-specific excavation sequence at Ahar: Akshayakirti Vyas in 1953, then Ratan Chandra Agrawal and H.D. Sankalia. The previous “conflicting attribution” claim has been removed.
+- AHB-042 now uses the exact S30 Introduction finding: growing Harappan trade contact after 2600 B.C., printed p.5. The previous generic wording “Ahar-Banas communities” was narrowed to the source's “Ahar Culture”.
+- New migration `0033_phase_6_56_ahar_banas_source_corrections_041_042.sql` is deliberately forward-only and updates only still-unreviewed rows (`NEEDS_REVIEW` and `reviewed_at IS NULL`); reviewed/verified/rejected rows are not overwritten.
+- Canonical notes, offline JSON, correction-parity test and coverage audit have been updated. Candidate total remains 392. Live migration status is still unqueried.
+- PR #129's competing cursor-index migration must be renumbered to 0034 after rebasing; 0033 is reserved for this source correction.
+- Source PDF page-image screenshot attempts failed due file-size/timeout limits; visual inspection, independent audit and syllabus mapping remain open. Do not close Chapter 2.
