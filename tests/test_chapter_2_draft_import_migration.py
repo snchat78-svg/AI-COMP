@@ -178,3 +178,6 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
         payload = f"{normalized_question}\\n{normalized_answer}"
         expected_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
         assert migrated["content_hash"] == expected_hash
+        if one_liner_id in {"ch2_AHB-041", "ch2_AHB-042"}:
+            assert local["source_url"] == migrated["source_url"]
+            assert local["source_evidence"] == migrated["source_evidence"]
