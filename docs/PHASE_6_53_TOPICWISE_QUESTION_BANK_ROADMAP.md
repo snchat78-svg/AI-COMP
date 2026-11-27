@@ -607,3 +607,7 @@ Next: complete the Chapter 2 source/syllabus coverage matrix and secure review s
 - These are AI-authored paraphrased study-note drafts, not actual PYQs. PDF page-image verification is pending; preserve source-specific wording and independent review gate.
 - Chapter 2 now contains 382 drafts (KAL 311, AHB 32, GJ 18, BRT 11, MTS 10). The six new rows are added to migration 0031 and the offline asset; all remain NEEDS_REVIEW. The corresponding test/coverage/registry/checkpoint updates are part of the same content PR.
 - Phase 6.56 remains IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED. Do not advance beyond Chapter 2 until every child-site coverage, source-page and independent-review gate passes.
+
+## 2026-11-27 — Ahar-Banas Hindi one-liner continuation
+
+AHB-033–AHB-042 add ten new source-attributed draft Q&A under the existing Ahar-Banas child section. This brings the Chapter 2 draft inventory to 392 (KAL311 + AHB42 + GJ18 + BRT11 + MTS10). Scope adds RBSE textbook facts on Dhoolkot, burials, craft, Gilund chronology, pottery and bricks; AHB-041 records rather than erases the differing S32/S23 excavation attributions; AHB-042 is an attributed research interpretation of post-c.2600 BCE Harappan trade contacts. All candidates stay NEEDS_REVIEW. The static content sweep is not full Chapter 2 completion: page images, official exam mapping, independent audit, live DB and semantic duplication gates remain open. Migration 0032 follows merged content migration 0031; PR #129's stale 0031 cursor-index migration must be renumbered 0033 before merge.
