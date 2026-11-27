@@ -1,0 +1,725 @@
+{
+  "schema_version": 1,
+  "generated_on": "2026-11-27",
+  "description": "राजस्थान के पाँच विषयों का offline concept catalogue; सभी 137 concepts मूल coverage ledger से लिए गए हैं।",
+  "subjects": [
+    {
+      "subject_id": "राजस्थान इतिहास",
+      "subject_label": "राजस्थान इतिहास",
+      "topic_groups": [
+        {
+          "topic_name": "राजस्थान के प्राचीन सभ्यता स्थल",
+          "subtopics": [
+            {
+              "label": "कालीबंगा",
+              "concept_id": "catalog.rajasthan_history_ancient_history_kalibangan"
+            },
+            {
+              "label": "आहड़-बनास संस्कृति",
+              "concept_id": "catalog.rajasthan_history_ancient_history_ahar_banas_culture"
+            },
+            {
+              "label": "गणेश्वर-जोधपुरा संस्कृति",
+              "concept_id": "catalog.rajasthan_history_ancient_history_ganeshwar_jodhpura_culture"
+            },
+            {
+              "label": "बैराठ / विराटनगर",
+              "concept_id": "catalog.rajasthan_history_ancient_history_bairat"
+            },
+            {
+              "label": "मत्स्य जनपद",
+              "concept_id": "catalog.rajasthan_history_ancient_history_matsya_janapada"
+            }
+          ]
+        },
+        {
+          "topic_name": "प्रमुख राजवंश",
+          "subtopics": [
+            {
+              "label": "गुहिल एवं सिसोदिया वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_guhila_and_sisodia"
+            },
+            {
+              "label": "चौहान वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_chauhan"
+            },
+            {
+              "label": "राठौड़ वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_rathore"
+            },
+            {
+              "label": "कछवाहा वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_kachwaha"
+            },
+            {
+              "label": "भाटी वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_bhati"
+            },
+            {
+              "label": "हाड़ा वंश",
+              "concept_id": "catalog.rajasthan_history_major_dynasties_hada"
+            }
+          ]
+        },
+        {
+          "topic_name": "मध्यकालीन राजस्थान",
+          "subtopics": [
+            {
+              "label": "मेवाड़",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_mewar"
+            },
+            {
+              "label": "मारवाड़",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_marwar"
+            },
+            {
+              "label": "आमेर-जयपुर",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_amber_jaipur"
+            },
+            {
+              "label": "बीकानेर",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_bikaner"
+            },
+            {
+              "label": "जैसलमेर",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_jaisalmer"
+            },
+            {
+              "label": "बूंदी एवं कोटा",
+              "concept_id": "catalog.rajasthan_history_medieval_rajasthan_bundi_and_kota"
+            }
+          ]
+        },
+        {
+          "topic_name": "युद्ध एवं संधियाँ",
+          "subtopics": [
+            {
+              "label": "खानवा का युद्ध",
+              "concept_id": "catalog.rajasthan_history_battles_and_treaties_battle_of_khanwa"
+            },
+            {
+              "label": "हल्दीघाटी का युद्ध",
+              "concept_id": "catalog.rajasthan_history_battles_and_treaties_battle_of_haldighati"
+            },
+            {
+              "label": "दिवेर का युद्ध",
+              "concept_id": "catalog.rajasthan_history_battles_and_treaties_battle_of_dewair"
+            },
+            {
+              "label": "1818 की संधि",
+              "concept_id": "catalog.rajasthan_history_battles_and_treaties_treaty_of_1818"
+            }
+          ]
+        },
+        {
+          "topic_name": "किसान एवं जनजातीय आंदोलन",
+          "subtopics": [
+            {
+              "label": "बिजौलिया किसान आंदोलन",
+              "concept_id": "catalog.rajasthan_history_peasant_and_tribal_movements_bijolia_movement"
+            },
+            {
+              "label": "बेगूँ किसान आंदोलन",
+              "concept_id": "catalog.rajasthan_history_peasant_and_tribal_movements_begun_movement"
+            },
+            {
+              "label": "एकी आंदोलन",
+              "concept_id": "catalog.rajasthan_history_peasant_and_tribal_movements_eki_movement"
+            },
+            {
+              "label": "जनजातीय प्रतिरोध आंदोलन",
+              "concept_id": "catalog.rajasthan_history_peasant_and_tribal_movements_tribal_resistance"
+            },
+            {
+              "label": "प्रजामंडल आंदोलन",
+              "concept_id": "catalog.rajasthan_history_peasant_and_tribal_movements_praja_mandal_movements"
+            }
+          ]
+        },
+        {
+          "topic_name": "स्वतंत्रता आंदोलन एवं राजस्थान का एकीकरण",
+          "subtopics": [
+            {
+              "label": "राजस्थान में 1857 का विद्रोह",
+              "concept_id": "catalog.rajasthan_history_freedom_movement_and_integration_revolt_of_1857_in_rajasthan"
+            },
+            {
+              "label": "स्वतंत्रता सेनानी",
+              "concept_id": "catalog.rajasthan_history_freedom_movement_and_integration_freedom_fighters"
+            },
+            {
+              "label": "मत्स्य संघ",
+              "concept_id": "catalog.rajasthan_history_freedom_movement_and_integration_matsya_union"
+            },
+            {
+              "label": "वृहद राजस्थान का गठन",
+              "concept_id": "catalog.rajasthan_history_freedom_movement_and_integration_formation_of_greater_rajasthan"
+            }
+          ]
+        },
+        {
+          "topic_name": "ऐतिहासिक स्रोत",
+          "subtopics": [
+            {
+              "label": "अभिलेख",
+              "concept_id": "catalog.rajasthan_history_historical_sources_inscriptions"
+            },
+            {
+              "label": "सिक्के",
+              "concept_id": "catalog.rajasthan_history_historical_sources_coins"
+            },
+            {
+              "label": "ताम्रपत्र",
+              "concept_id": "catalog.rajasthan_history_historical_sources_copper_plates"
+            },
+            {
+              "label": "दुर्ग एवं ऐतिहासिक स्मारक",
+              "concept_id": "catalog.rajasthan_history_historical_sources_forts_and_historical_monuments"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subject_id": "राजस्थान भूगोल",
+      "subject_label": "राजस्थान भूगोल",
+      "topic_groups": [
+        {
+          "topic_name": "स्थिति एवं भौतिक स्वरूप",
+          "subtopics": [
+            {
+              "label": "स्थिति एवं विस्तार",
+              "concept_id": "catalog.rajasthan_geography_location_and_physical_features_location_and_extent"
+            },
+            {
+              "label": "अरावली पर्वतमाला",
+              "concept_id": "catalog.rajasthan_geography_location_and_physical_features_aravalli_range"
+            },
+            {
+              "label": "थार मरुस्थल",
+              "concept_id": "catalog.rajasthan_geography_location_and_physical_features_thar_desert"
+            },
+            {
+              "label": "पूर्वी मैदानी प्रदेश",
+              "concept_id": "catalog.rajasthan_geography_location_and_physical_features_eastern_plains"
+            },
+            {
+              "label": "दक्षिण-पूर्वी पठार",
+              "concept_id": "catalog.rajasthan_geography_location_and_physical_features_south_eastern_plateau"
+            }
+          ]
+        },
+        {
+          "topic_name": "नदियाँ एवं अपवाह तंत्र",
+          "subtopics": [
+            {
+              "label": "लूणी नदी",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_luni_river"
+            },
+            {
+              "label": "चंबल नदी",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_chambal_river"
+            },
+            {
+              "label": "बनास नदी",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_banas_river"
+            },
+            {
+              "label": "माही नदी",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_mahi_river"
+            },
+            {
+              "label": "साबरमती नदी",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_sabarmati_river"
+            },
+            {
+              "label": "आंतरिक अपवाह",
+              "concept_id": "catalog.rajasthan_geography_rivers_and_drainage_inland_drainage"
+            }
+          ]
+        },
+        {
+          "topic_name": "झीलें, बाँध एवं नहरें",
+          "subtopics": [
+            {
+              "label": "सांभर झील",
+              "concept_id": "catalog.rajasthan_geography_lakes_dams_and_canals_sambhar_lake"
+            },
+            {
+              "label": "जयसमंद झील",
+              "concept_id": "catalog.rajasthan_geography_lakes_dams_and_canals_jaisamand_lake"
+            },
+            {
+              "label": "पिछोला एवं फतेह सागर",
+              "concept_id": "catalog.rajasthan_geography_lakes_dams_and_canals_pichola_and_fateh_sagar"
+            },
+            {
+              "label": "प्रमुख बाँध",
+              "concept_id": "catalog.rajasthan_geography_lakes_dams_and_canals_major_dams"
+            },
+            {
+              "label": "इंदिरा गांधी नहर",
+              "concept_id": "catalog.rajasthan_geography_lakes_dams_and_canals_indira_gandhi_canal"
+            }
+          ]
+        },
+        {
+          "topic_name": "जलवायु एवं पर्यावरण",
+          "subtopics": [
+            {
+              "label": "जलवायु प्रदेश",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_climate_regions"
+            },
+            {
+              "label": "वर्षा",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_rainfall"
+            },
+            {
+              "label": "सूखा",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_drought"
+            },
+            {
+              "label": "मृदाएँ",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_soils"
+            },
+            {
+              "label": "प्राकृतिक वनस्पति",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_natural_vegetation"
+            },
+            {
+              "label": "राष्ट्रीय उद्यान एवं अभयारण्य",
+              "concept_id": "catalog.rajasthan_geography_climate_and_environment_national_parks_and_sanctuaries"
+            }
+          ]
+        },
+        {
+          "topic_name": "कृषि एवं संसाधन",
+          "subtopics": [
+            {
+              "label": "प्रमुख फसलें",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_major_crops"
+            },
+            {
+              "label": "सिंचाई",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_irrigation"
+            },
+            {
+              "label": "पशुधन",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_livestock"
+            },
+            {
+              "label": "धात्विक खनिज",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_metallic_minerals"
+            },
+            {
+              "label": "अधात्विक खनिज",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_non_metallic_minerals"
+            },
+            {
+              "label": "ऊर्जा संसाधन",
+              "concept_id": "catalog.rajasthan_geography_agriculture_and_resources_energy_resources"
+            }
+          ]
+        },
+        {
+          "topic_name": "जनसंख्या एवं मानव भूगोल",
+          "subtopics": [
+            {
+              "label": "जनगणना 2011 की मूल बातें",
+              "concept_id": "catalog.rajasthan_geography_population_and_human_geography_census_2011_basics"
+            },
+            {
+              "label": "जनजातियाँ एवं वितरण",
+              "concept_id": "catalog.rajasthan_geography_population_and_human_geography_tribes_and_distribution"
+            },
+            {
+              "label": "परिवहन गलियारे",
+              "concept_id": "catalog.rajasthan_geography_population_and_human_geography_transport_corridors"
+            },
+            {
+              "label": "शहरी केंद्र",
+              "concept_id": "catalog.rajasthan_geography_population_and_human_geography_urban_centres"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subject_id": "राजस्थान राजव्यवस्था एवं प्रशासन",
+      "subject_label": "राजस्थान राजव्यवस्था एवं प्रशासन",
+      "topic_groups": [
+        {
+          "topic_name": "राज्य सरकार",
+          "subtopics": [
+            {
+              "label": "राज्यपाल",
+              "concept_id": "catalog.rajasthan_polity_and_administration_state_government_governor"
+            },
+            {
+              "label": "मुख्यमंत्री एवं मंत्रिपरिषद",
+              "concept_id": "catalog.rajasthan_polity_and_administration_state_government_chief_minister_and_council_of_ministers"
+            },
+            {
+              "label": "राज्य विधानमंडल",
+              "concept_id": "catalog.rajasthan_polity_and_administration_state_government_state_legislature"
+            },
+            {
+              "label": "राजस्थान उच्च न्यायालय",
+              "concept_id": "catalog.rajasthan_polity_and_administration_state_government_rajasthan_high_court"
+            }
+          ]
+        },
+        {
+          "topic_name": "संवैधानिक एवं वैधानिक निकाय",
+          "subtopics": [
+            {
+              "label": "राजस्थान लोक सेवा आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_rpsc"
+            },
+            {
+              "label": "राज्य निर्वाचन आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_election_commission"
+            },
+            {
+              "label": "राज्य सूचना आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_information_commission"
+            },
+            {
+              "label": "लोकायुक्त",
+              "concept_id": "catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_lokayukta"
+            },
+            {
+              "label": "राज्य मानवाधिकार आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_constitutional_and_statutory_bodies_state_human_rights_commission"
+            }
+          ]
+        },
+        {
+          "topic_name": "स्थानीय स्वशासन",
+          "subtopics": [
+            {
+              "label": "पंचायती राज",
+              "concept_id": "catalog.rajasthan_polity_and_administration_local_self_government_panchayati_raj"
+            },
+            {
+              "label": "ग्राम पंचायत",
+              "concept_id": "catalog.rajasthan_polity_and_administration_local_self_government_gram_panchayat"
+            },
+            {
+              "label": "पंचायत समिति",
+              "concept_id": "catalog.rajasthan_polity_and_administration_local_self_government_panchayat_samiti"
+            },
+            {
+              "label": "जिला परिषद",
+              "concept_id": "catalog.rajasthan_polity_and_administration_local_self_government_zila_parishad"
+            },
+            {
+              "label": "नगर निगम एवं नगर परिषद",
+              "concept_id": "catalog.rajasthan_polity_and_administration_local_self_government_municipal_corporation_and_council"
+            }
+          ]
+        },
+        {
+          "topic_name": "प्रशासन एवं कानून",
+          "subtopics": [
+            {
+              "label": "जिला प्रशासन",
+              "concept_id": "catalog.rajasthan_polity_and_administration_administration_and_law_district_administration"
+            },
+            {
+              "label": "राजस्व प्रशासन",
+              "concept_id": "catalog.rajasthan_polity_and_administration_administration_and_law_revenue_administration"
+            },
+            {
+              "label": "पुलिस प्रशासन",
+              "concept_id": "catalog.rajasthan_polity_and_administration_administration_and_law_police_administration"
+            },
+            {
+              "label": "सूचना का अधिकार एवं नागरिक सेवाएँ",
+              "concept_id": "catalog.rajasthan_polity_and_administration_administration_and_law_rti_and_citizen_services"
+            }
+          ]
+        },
+        {
+          "topic_name": "राजस्थान के राज्य स्तरीय संस्थान",
+          "subtopics": [
+            {
+              "label": "राज्य लोक सेवा आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_public_service_commission"
+            },
+            {
+              "label": "राज्य वित्त आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_finance_commission"
+            },
+            {
+              "label": "महिला एवं बाल आयोग",
+              "concept_id": "catalog.rajasthan_polity_and_administration_rajasthan_state_institutions_state_commissions_for_women_and_children"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subject_id": "राजस्थान कला एवं संस्कृति",
+      "subject_label": "राजस्थान कला एवं संस्कृति",
+      "topic_groups": [
+        {
+          "topic_name": "मेले एवं त्योहार",
+          "subtopics": [
+            {
+              "label": "पुष्कर मेला",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_pushkar_fair"
+            },
+            {
+              "label": "बेणेश्वर मेला",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_beneshwar_fair"
+            },
+            {
+              "label": "रामदेवरा मेला",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_ramdevra_fair"
+            },
+            {
+              "label": "गणगौर",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_gangaur"
+            },
+            {
+              "label": "तीज",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_teej"
+            },
+            {
+              "label": "मरु महोत्सव",
+              "concept_id": "catalog.rajasthan_art_and_culture_fairs_and_festivals_desert_festival"
+            }
+          ]
+        },
+        {
+          "topic_name": "लोक नृत्य एवं संगीत",
+          "subtopics": [
+            {
+              "label": "घूमर",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_ghoomar"
+            },
+            {
+              "label": "कालबेलिया नृत्य",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_kalbelia_dance"
+            },
+            {
+              "label": "भवाई",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_bhavai"
+            },
+            {
+              "label": "तेरह ताली",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_terah_taali"
+            },
+            {
+              "label": "मांड गायन",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_maand"
+            },
+            {
+              "label": "लोक वाद्ययंत्र",
+              "concept_id": "catalog.rajasthan_art_and_culture_folk_dance_and_music_folk_instruments"
+            }
+          ]
+        },
+        {
+          "topic_name": "चित्रकला एवं हस्तशिल्प",
+          "subtopics": [
+            {
+              "label": "फड़ चित्रकला",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_phad_painting"
+            },
+            {
+              "label": "किशनगढ़ चित्रशैली",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_kishangarh_school"
+            },
+            {
+              "label": "मेवाड़ चित्रशैली",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_mewar_school"
+            },
+            {
+              "label": "नीली मृद्भांड कला",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_blue_pottery"
+            },
+            {
+              "label": "बंधेज एवं लहरिया",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_bandhani_and_leheriya"
+            },
+            {
+              "label": "थेवा कला",
+              "concept_id": "catalog.rajasthan_art_and_culture_painting_and_handicrafts_thewa_art"
+            }
+          ]
+        },
+        {
+          "topic_name": "स्थापत्य एवं विरासत",
+          "subtopics": [
+            {
+              "label": "पर्वतीय दुर्ग",
+              "concept_id": "catalog.rajasthan_art_and_culture_architecture_and_heritage_hill_forts"
+            },
+            {
+              "label": "हवेलियाँ",
+              "concept_id": "catalog.rajasthan_art_and_culture_architecture_and_heritage_havelis"
+            },
+            {
+              "label": "बावड़ियाँ",
+              "concept_id": "catalog.rajasthan_art_and_culture_architecture_and_heritage_stepwells"
+            },
+            {
+              "label": "मंदिर",
+              "concept_id": "catalog.rajasthan_art_and_culture_architecture_and_heritage_temples"
+            },
+            {
+              "label": "छतरियाँ एवं स्मारक",
+              "concept_id": "catalog.rajasthan_art_and_culture_architecture_and_heritage_cenotaphs_and_chhatris"
+            }
+          ]
+        },
+        {
+          "topic_name": "भाषा, जनजातियाँ एवं परंपराएँ",
+          "subtopics": [
+            {
+              "label": "राजस्थानी बोलियाँ",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_rajasthani_dialects"
+            },
+            {
+              "label": "भील जनजाति",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_bhil"
+            },
+            {
+              "label": "मीणा जनजाति",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_meena"
+            },
+            {
+              "label": "गरासिया जनजाति",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_garasia"
+            },
+            {
+              "label": "पारंपरिक वेशभूषा एवं आभूषण",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_traditional_dress_and_ornaments"
+            },
+            {
+              "label": "संत एवं संप्रदाय",
+              "concept_id": "catalog.rajasthan_art_and_culture_language_tribes_and_traditions_saints_and_sects"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subject_id": "राजस्थान अर्थव्यवस्था",
+      "subject_label": "राजस्थान अर्थव्यवस्था",
+      "topic_groups": [
+        {
+          "topic_name": "कृषि एवं पशुपालन",
+          "subtopics": [
+            {
+              "label": "कृषि के प्रतिरूप",
+              "concept_id": "catalog.rajasthan_economy_agriculture_and_livestock_agriculture_patterns"
+            },
+            {
+              "label": "पशुपालन",
+              "concept_id": "catalog.rajasthan_economy_agriculture_and_livestock_animal_husbandry"
+            },
+            {
+              "label": "डेयरी सहकारी समितियाँ",
+              "concept_id": "catalog.rajasthan_economy_agriculture_and_livestock_dairy_cooperatives"
+            },
+            {
+              "label": "प्रमुख सिंचाई परियोजनाएँ",
+              "concept_id": "catalog.rajasthan_economy_agriculture_and_livestock_major_irrigation_projects"
+            }
+          ]
+        },
+        {
+          "topic_name": "खनिज एवं उद्योग",
+          "subtopics": [
+            {
+              "label": "खनन अर्थव्यवस्था",
+              "concept_id": "catalog.rajasthan_economy_minerals_and_industry_mining_economy"
+            },
+            {
+              "label": "सीमेंट उद्योग",
+              "concept_id": "catalog.rajasthan_economy_minerals_and_industry_cement_industry"
+            },
+            {
+              "label": "वस्त्र उद्योग",
+              "concept_id": "catalog.rajasthan_economy_minerals_and_industry_textile_industry"
+            },
+            {
+              "label": "हस्तशिल्प उद्योग",
+              "concept_id": "catalog.rajasthan_economy_minerals_and_industry_handicraft_industry"
+            },
+            {
+              "label": "औद्योगिक क्षेत्र",
+              "concept_id": "catalog.rajasthan_economy_minerals_and_industry_industrial_areas"
+            }
+          ]
+        },
+        {
+          "topic_name": "ऊर्जा एवं आधारभूत संरचना",
+          "subtopics": [
+            {
+              "label": "सौर ऊर्जा",
+              "concept_id": "catalog.rajasthan_economy_energy_and_infrastructure_solar_energy"
+            },
+            {
+              "label": "पवन ऊर्जा",
+              "concept_id": "catalog.rajasthan_economy_energy_and_infrastructure_wind_energy"
+            },
+            {
+              "label": "विद्युत परियोजनाएँ",
+              "concept_id": "catalog.rajasthan_economy_energy_and_infrastructure_power_projects"
+            },
+            {
+              "label": "सड़क एवं रेल आधारभूत संरचना",
+              "concept_id": "catalog.rajasthan_economy_energy_and_infrastructure_road_and_rail_infrastructure"
+            }
+          ]
+        },
+        {
+          "topic_name": "पर्यटन एवं सेवाएँ",
+          "subtopics": [
+            {
+              "label": "विरासत पर्यटन",
+              "concept_id": "catalog.rajasthan_economy_tourism_and_services_heritage_tourism"
+            },
+            {
+              "label": "मरुस्थलीय पर्यटन",
+              "concept_id": "catalog.rajasthan_economy_tourism_and_services_desert_tourism"
+            },
+            {
+              "label": "वन्यजीव पर्यटन",
+              "concept_id": "catalog.rajasthan_economy_tourism_and_services_wildlife_tourism"
+            },
+            {
+              "label": "पर्यटन अर्थव्यवस्था",
+              "concept_id": "catalog.rajasthan_economy_tourism_and_services_tourism_economy"
+            }
+          ]
+        },
+        {
+          "topic_name": "योजना एवं विकास",
+          "subtopics": [
+            {
+              "label": "राज्य नियोजन",
+              "concept_id": "catalog.rajasthan_economy_planning_and_development_state_planning"
+            },
+            {
+              "label": "सहकारिता",
+              "concept_id": "catalog.rajasthan_economy_planning_and_development_cooperatives"
+            },
+            {
+              "label": "रोजगार एवं कौशल विकास",
+              "concept_id": "catalog.rajasthan_economy_planning_and_development_employment_and_skill_development"
+            },
+            {
+              "label": "लोक वित्त की मूल बातें",
+              "concept_id": "catalog.rajasthan_economy_planning_and_development_public_finance_basics"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
