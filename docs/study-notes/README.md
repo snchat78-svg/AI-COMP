@@ -44,14 +44,14 @@ The existing 340 concept rows across 14 navigation subjects remain the working c
 
 - [Rajasthan History — all 34 catalogue topics](rajasthan-history/README.md). Work through the list in order and close each topic's coverage gaps before moving forward.
 
-## Existing drafts — queued, not being expanded in parallel
+## Parallel Rajasthan subject lanes — 27 November 2026
 
-- [Rajasthan History](rajasthan-history/README.md): Book Chapter 2 “राजस्थान के प्राचीन सभ्यता स्थल” — 311 Kalibanga + 20 Ahar-Banas + 18 Ganeshwar-Jodhpura + 9 Bairat primary Hindi Q&A drafts in one canonical parent chapter file; all NEEDS_REVIEW.
-- [Rajasthan Geography](rajasthan-geography/initial-source-review.md): 29 new Hindi Q&A drafts from the Rajasthan Government “Rajasthan at a Glance” and Forest Department protected-area tables; 7 earlier seed candidates remain separate and need review.
-- [Rajasthan Polity & Administration](rajasthan-polity-administration/initial-source-review.md): 27 Hindi Q&A drafts; all NEEDS_REVIEW.
-- [Hindi](hindi/initial-source-review.md): 24 Hindi grammar Q&A drafts across वर्णमाला and संधि; all NEEDS_REVIEW.
-- [English](english/initial-source-review.md): 23 Q&A drafts across Parts of Speech, Tenses and Modals; questions/answers in Hindi with English examples only where needed; all NEEDS_REVIEW.
-- The master structure still tracks all 21 + 24 + 21 canonical concepts in Polity, Hindi and English; these first batches cover only initial subtopics, not whole subjects.
+- Rajasthan History — Chapter 2: **398** Hindi study drafts (KAL311 + AHB48 + GJ18 + BRT11 + MTS10), all NEEDS_REVIEW.
+- Rajasthan Geography — **36** candidates (29 RGEO notes + 7 existing seed candidates), all NEEDS_REVIEW.
+- Rajasthan Polity & Administration — **27** RPO source-backed Hindi candidates, all NEEDS_REVIEW.
+- Rajasthan Art & Culture — **9** Kalbelia candidates (3 seed + 6 UNESCO-based additions), all NEEDS_REVIEW.
+- Rajasthan Economy — **16** candidates from Rajasthan Economic Review 2025-26, all NEEDS_REVIEW and date-scoped.
+- The offline APK lane packages all five subjects and **137 concepts / 486 Q&A candidates**. This is a first-pass bundle, not full topic coverage: empty concepts remain visible as “प्रश्न तैयारी में”. See [parallel coverage checkpoint](RAJASTHAN_PARALLEL_COVERAGE_STATUS_2026-11-27.md).
 
 ## First content slice
 
@@ -197,3 +197,8 @@ Six additional Hindi-first AI-authored draft Q&A were added from INFLIBNET/e-PG 
 ## 2026-11-27 — Ahar-Banas latest branch inventory AHB-001–048
 
 The source correction PR #132 is merged into main at `5d8e8fe6611c781477894b1931fc67e32ba515cd`. The follow-up branch `content/phase6-56-ahb-one-liners-043-048` adds six S24-backed Q&A and contiguous migration 0034, bringing this branch's Chapter 2 total to **398** (KAL311 + AHB48 + GJ18 + BRT11 + MTS10). All 398 remain NEEDS_REVIEW; main remains 392 until this content PR merges. Exact normalized duplicate tests are added. PR #129 delta cursor index is next migration 0035. No live DB publication, source-page visual review, independent reviewer approval or Chapter 2 completion is claimed.
+
+
+## 2026-11-27 — Offline Rajasthan library implementation
+
+The Flutter implementation adds a dashboard entry to a self-contained offline study library. It loads the existing Chapter-2 asset plus the 88-row cross-subject draft batch and the 137-concept catalogue. Subject, main topic and subtopic navigation is available without an API connection; every row shows Hindi Q&A and source evidence. The implementation rejects an invalid bundle count or any item missing Hindi status, HTTPS source or evidence. Flutter tests and exact-head APK CI are pending; do not call this production-ready until those checks pass.
