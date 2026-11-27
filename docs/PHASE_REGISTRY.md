@@ -1,7 +1,7 @@
 # AI-COMP Phase Registry — Single Source of Truth
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified (phase state):** 2026-11-27 (current `main` checkpoint `91736e8568b845f32b05e55fd4aa14716ca2aa91`; active content continuation `content/phase6-56-ahb-one-liners-033-042`). Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Rajasthan History Chapter 2 has 392 AI-authored Hindi-first candidates: KAL 311, AHB 42, GJ 18, BRT 11, MTS 10. All 392 remain NEEDS_REVIEW; the chapter and Phase 6.56 are NOT COMPLETE.
+**Last verified (phase state):** 2026-11-27 (current `main` checkpoint `d45c738bba63be610c88078a9c227cd228c9e072`; active correction branch `content/phase6-56-ahb-source-corrections-041-042`). Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Rajasthan History Chapter 2 has 392 AI-authored Hindi-first candidates: KAL 311, AHB 42, GJ 18, BRT 11, MTS 10. All 392 remain NEEDS_REVIEW; the chapter and Phase 6.56 are NOT COMPLETE.
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
