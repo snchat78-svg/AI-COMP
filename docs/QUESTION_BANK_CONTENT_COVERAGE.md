@@ -134,3 +134,8 @@ AI-generated candidates must be short direct Q&A, not essay snippets: one questi
 ## 2026-11-27 Ahar-Banas candidate coverage note
 
 AHB-033–AHB-042 extend the existing Ahar-Banas subtopic to 42 source-attributed Hindi draft Q&A. Newly represented dimensions: site/mound terminology, burial goods, possible textile craft, Gilund excavation sequence, culture phases, pottery grouping, artifacts, brick technology, contested excavation attribution, and regional trade interpretation. This is a **draft-authoring coverage pass**, not a completeness certification. Verify these points against printed source page images; reconcile textbook chapter scope and official exam-specific syllabus; run semantic deduplication; obtain an independent reviewer event for every candidate; apply/query migrations in the live database; and verify authenticated learner-facing content. Keep AHB's syllabus map NOT_YET_MAPPED_TO_EXAM_SPECIFIC_OFFICIAL_SYLLABUS and live DB state NOT_QUERIED until evidenced.
+
+
+## 2026-11-27 — AHB-041/042 source correction
+
+AHB-041 now reflects the RBSE textbook's stated sequence, not an inferred conflict between two sources. AHB-042 now narrows the wording to the exact *Puratattva* 32 Introduction claim on printed p.5. Migration 0033 applies the revised text/hash/source evidence only to still-unreviewed database rows. The ledger count/status does not change: AHB has 42 Git/offline candidates, NOT_YET_MAPPED_TO_EXAM_SPECIFIC_OFFICIAL_SYLLABUS, and NOT_QUERIED_LIVE_DB.

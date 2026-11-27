@@ -182,3 +182,8 @@ Canonical Markdown, migration 0030 + new migration 0031, and the Flutter offline
 ## 2026-11-27 — Ahar-Banas content continuation AHB-033–042
 
 The Ahar-Banas child-section now contains **42 Hindi-first AI-authored draft Q&A**. Ten new items add RBSE textbook facts on Dhoolkot, burial goods, possible textile-printing blocks, Gilund excavation history/phases/pottery/artifacts and fired-brick use; AHB-041 records a source-attribution difference rather than flattening it, and AHB-042 captures the research interpretation of growing Harappan trade contacts after c.2600 BCE. Chapter 2 total: **392** (KAL 311 + AHB 42 + GJ 18 + BRT 11 + MTS 10). New SQL migration 0032 and the bundled Flutter JSON are updated together. Every one of the 392 candidate rows remains NEEDS_REVIEW. Page-image inspection, independent review, official exam-syllabus mapping, live database reconciliation and semantic duplicate review remain open; Chapter 2 is not complete.
+
+
+## 2026-11-27 — Ahar-Banas source correction
+
+The follow-up source check corrected two items without changing the 392-row chapter total. AHB-041 now reports the RBSE textbook's excavation sequence (Akshayakirti Vyas, 1953; then R.C. Agrawal and H.D. Sankalia) without treating the earlier S23 note as a proven contradiction. AHB-042 cites S30's precise statement on growing Harappan contact after 2600 B.C., printed p.5. Forward migration 0033 only updates still-review-pending rows and preserves any reviewer decision. All 392 remain NEEDS_REVIEW; no live database apply is claimed.

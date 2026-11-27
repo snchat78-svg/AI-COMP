@@ -1,7 +1,7 @@
 # AI-COMP Phase Registry — Single Source of Truth
 **Registry policy:** This file is the canonical index for phase identity, current status, evidence and next actions. Update the registry whenever a phase starts, changes status, is merged, or is validated. Other roadmaps may explain design details, but must link here and must not redefine status independently.
 
-**Last verified (phase state):** 2026-11-27 (current `main` checkpoint `91736e8568b845f32b05e55fd4aa14716ca2aa91`; active content continuation `content/phase6-56-ahb-one-liners-033-042`). Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Rajasthan History Chapter 2 has 392 AI-authored Hindi-first candidates: KAL 311, AHB 42, GJ 18, BRT 11, MTS 10. All 392 remain NEEDS_REVIEW; the chapter and Phase 6.56 are NOT COMPLETE.
+**Last verified (phase state):** 2026-11-27 (current `main` checkpoint `d45c738bba63be610c88078a9c227cd228c9e072`; active correction branch `content/phase6-56-ahb-source-corrections-041-042`). Phase 2.2 BLOCKED; Phase 6.56 IN_PROGRESS; Phase 6.57 PLANNED; Phase 6.58 BLOCKED. Rajasthan History Chapter 2 has 392 AI-authored Hindi-first candidates: KAL 311, AHB 42, GJ 18, BRT 11, MTS 10. All 392 remain NEEDS_REVIEW; the chapter and Phase 6.56 are NOT COMPLETE.
 **Repository:** `snchat78-svg/AI-COMP`
 **Persistent content coverage ledger:** [QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md) + [QUESTION_BANK_CONTENT_COVERAGE.csv](QUESTION_BANK_CONTENT_COVERAGE.csv)  
 **Restart checkpoint:** [PROJECT_CONTINUITY_CHECKPOINT.md](PROJECT_CONTINUITY_CHECKPOINT.md)  
@@ -872,3 +872,12 @@ The user has explicitly ordered that **all Rajasthan content must be completed b
 - AHB-041 deliberately preserves differing source attributions; it does not declare one source wrong. All ten additions remain NEEDS_REVIEW, are AI-authored paraphrases, and are not PYQs. All 392 Chapter 2 rows remain NEEDS_REVIEW.
 - No live database migration/query, independent audit submission, official exam-specific syllabus approval, semantic duplicate audit or authenticated device acceptance is claimed. Chapter 2 remains IN_PROGRESS; Phase 6.56 IN_PROGRESS; 6.57 PLANNED; 6.58 BLOCKED.
 - PR #129 remains a separate open software continuation. Its branch defines a competing migration 0031 cursor index; because this content batch consumes migration 0032, PR #129 must be rebased and its cursor-index migration renumbered to 0033 (plus tests/docs) before merge. Do not merge its stale migration numbering as-is.
+
+
+## 2026-11-27 — Ahar-Banas source precision correction
+
+- Source check against the RBSE Class X textbook, printed p.4, confirms its stated excavation sequence: Akshayakirti Vyas (1953), followed by Ratan Chandra Agrawal and H.D. Sankalia. AHB-041 has been rewritten to state that single source's sequence; the earlier assertion of a conflict with S23 has been withdrawn.
+- The *Puratattva* 32 article is textually explicit in its Introduction (printed p.5): the Ahar Culture developed and flourished with growing Harappan trade contact after 2600 B.C. AHB-042 is narrowed to this claim and exact page.
+- Added forward migration 0033 to update AHB-041/AHB-042 only where the row is still NEEDS_REVIEW and reviewed_at is NULL. It must not overwrite a reviewer decision. Git/offline candidate totals remain 392; live database application/query remains unconfirmed.
+- PR #129's cursor-index migration must now be renumbered to 0034 (not 0033), because migration 0033 is reserved for the safe content correction. Update its migration tests and docs after rebase.
+- Large PDF page-image screenshot attempts still failed on the runtime size/time limits; textual lines are sourced, visual review remains a separate gate.

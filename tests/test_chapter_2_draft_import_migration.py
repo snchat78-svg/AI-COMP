@@ -13,6 +13,9 @@ MIGRATIONS = (
     ROOT / "database" / "migrations" / "0031_phase_6_56_ahar_banas_one_liners_027_032.sql",
     ROOT / "database" / "migrations" / "0032_phase_6_56_ahar_banas_one_liners_033_042.sql",
 )
+CORRECTION_MIGRATION = (
+    ROOT / "database" / "migrations" / "0033_phase_6_56_ahar_banas_source_corrections_041_042.sql"
+)
 
 
 def _migration_sql() -> str:
@@ -52,6 +55,16 @@ def test_chapter_2_import_contains_all_392_unique_hindi_review_pending_drafts() 
     assert "ON CONFLICT DO NOTHING" in sql
     assert "'VERIFIED'" not in values
     assert "NULL)" in values
+
+
+def test_ahar_banas_source_correction_migration_only_updates_unreviewed_rows() -> None:
+    sql = CORRECTION_MIGRATION.read_text(encoding="utf-8")
+    for draft_id in ("ch2_AHB-041", "ch2_AHB-042"):
+        assert f"WHERE one_liner_id = '{draft_id}'" in sql
+        assert "AND verification_status = 'NEEDS_REVIEW'" in sql
+        assert "AND reviewed_at IS NULL" in sql
+    assert sql.count("UPDATE question_bank_one_liners") == 2
+    assert "'VERIFIED'" not in sql
 
 
 def test_chapter_2_import_keeps_the_five_existing_canonical_concepts() -> None:
@@ -121,9 +134,35 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
             "question_text": match.group(3).replace("''", "'"),
             "answer_text": match.group(4).replace("''", "'"),
             "language_code": match.group(5),
+            "source_url": match.group(6),
+            "source_evidence": match.group(7).replace("''", "'"),
             "verification_status": match.group(8),
             "content_hash": match.group(10),
         }
+
+    correction_sql = CORRECTION_MIGRATION.read_text(encoding="utf-8")
+    correction_pattern = re.compile(
+        r"UPDATE question_bank_one_liners\s+SET\s+"
+        r"question_text = '([^']*)',\s+answer_text = '([^']*)',\s+"
+        r"source_url = '([^']*)',\s+source_evidence = '([^']*)',\s+"
+        r"content_hash = '([0-9a-f]{64})'\s+"
+        r"WHERE one_liner_id = '(ch2_AHB-\d{3})'\s+"
+        r"AND verification_status = 'NEEDS_REVIEW'\s+"
+        r"AND reviewed_at IS NULL;",
+        re.DOTALL,
+    )
+    corrected_ids = set()
+    for match in correction_pattern.finditer(correction_sql):
+        draft_id = match.group(6)
+        corrected_ids.add(draft_id)
+        migration_rows[draft_id].update({
+            "question_text": match.group(1),
+            "answer_text": match.group(2),
+            "source_url": match.group(3),
+            "source_evidence": match.group(4),
+            "content_hash": match.group(5),
+        })
+    assert corrected_ids == {"ch2_AHB-041", "ch2_AHB-042"}
     assert set(migration_rows) == expected_ids
 
     for one_liner_id in expected_ids:
@@ -139,3 +178,6 @@ def test_full_chapter_2_markdown_sql_and_offline_asset_match() -> None:
         payload = f"{normalized_question}\\n{normalized_answer}"
         expected_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
         assert migrated["content_hash"] == expected_hash
+        if one_liner_id in {"ch2_AHB-041", "ch2_AHB-042"}:
+            assert local["source_url"] == migrated["source_url"]
+            assert local["source_evidence"] == migrated["source_evidence"]
