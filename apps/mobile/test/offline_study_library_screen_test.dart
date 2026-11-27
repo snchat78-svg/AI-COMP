@@ -4,13 +4,24 @@ import 'package:flutter_test/flutter_test.dart';
 
 Future<void> pumpLibrary(WidgetTester tester) async {
   await tester.pump();
-  final title = find.text('राजस्थान अध्ययन लाइब्रेरी');
-  for (var attempt = 0; attempt < 30 && title.evaluate().isEmpty; attempt++) {
+  final loadedCount = find.text('486');
+  final errorTitle = find.text('अध्ययन सामग्री लोड नहीं हो सकी');
+  for (var attempt = 0;
+      attempt < 60 &&
+          loadedCount.evaluate().isEmpty &&
+          errorTitle.evaluate().isEmpty;
+      attempt++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+  expect(
+    loadedCount,
+    findsOneWidget,
+    reason: errorTitle.evaluate().isNotEmpty
+        ? 'Offline study bundle failed to load.'
+        : 'Offline study bundle did not finish loading.',
+  );
   await tester.pump();
 }
-
 Future<void> scrollToText(WidgetTester tester, String value) async {
   final finder = find.text(value);
   for (var attempt = 0; attempt < 12 && finder.evaluate().isEmpty; attempt++) {
