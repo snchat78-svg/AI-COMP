@@ -2,6 +2,15 @@ import 'package:ai_comp_mobile/screens/offline_study_library_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> pumpLibrary(WidgetTester tester) async {
+  await tester.pump();
+  final title = find.text('राजस्थान अध्ययन लाइब्रेरी');
+  for (var attempt = 0; attempt < 30 && title.evaluate().isEmpty; attempt++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  await tester.pump();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -10,7 +19,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(home: OfflineStudyLibraryScreen()),
     );
-    await tester.pumpAndSettle();
+    await pumpLibrary(tester);
 
     expect(find.text('राजस्थान अध्ययन लाइब्रेरी'), findsOneWidget);
     expect(find.text('राजस्थान इतिहास'), findsOneWidget);
@@ -27,10 +36,10 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(home: OfflineStudyLibraryScreen()),
     );
-    await tester.pumpAndSettle();
+    await pumpLibrary(tester);
 
     await tester.tap(find.text('राजस्थान भूगोल'));
-    await tester.pumpAndSettle();
+    await pumpLibrary(tester);
     await tester.tap(find.text('नदियाँ एवं अपवाह तंत्र'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('लूणी नदी').last);
