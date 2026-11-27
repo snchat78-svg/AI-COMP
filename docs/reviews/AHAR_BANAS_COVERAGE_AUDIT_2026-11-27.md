@@ -20,7 +20,7 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 | Trade / exchange / interregional contact | AHB-021, 042 | AHB-042 attributes the c.2600 BCE trend to S30; check S30 page/figure and independent scholarship |
 | Burial / beliefs / material culture / crafts | AHB-034–035, 039 | Burial-belief inference is textbook interpretation; blocks' function also source-attributed |
 | Book-Chapter 2 scope and exam applicability | Child-topic exists in parent file | User's printed pp.145–149 and the selected official exam-specific syllabus must be mapped before claiming complete |
-| Duplicate / semantic coverage | IDs unique by construction in new batch | Exact/static parity tests are not semantic duplicate review; database-side semantic check pending |
+| Duplicate / semantic coverage | All 392 IDs unique; exact normalized question-stem and exact Q&A-pair scan returned 0 duplicate groups | This is exact-string screening only; semantic/concept-equivalence audit and database-side duplicate check remain pending |
 
 ## Source register
 
@@ -29,6 +29,12 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 - **S30:** Vasant Shinde, Gregory L. Possehl and Shweta Sinha-Deshpande, “The Ceramic Assemblage in Protohistoric Mewar (Rajasthan), with Special Reference to Gilund and Balathal”, *Puratattva* 32 (2001–02), printed pp.5–8. IGNCA scan: https://ignca.gov.in/Asi_data/87125.pdf
 - **S31:** Debasri Dasgupta, “Site Catchment Analysis of the Chalcolithic Settlement of Gilund in the Banas Basin”, *Puratattva* 35 (2004–05), printed pp.103–104. IGNCA scan: https://ignca.gov.in/Asi_data/88233.pdf
 - **S32:** Rajasthan Board of Secondary Education, *History and Culture of Rajasthan*, Class X, printed p.4: https://rajeduboard.rajasthan.gov.in/books-2019/books-2022/cls10/HistorynCulture.pdf
+
+## Additional static checks on AHB-033–AHB-042
+
+- All 10 new IDs are unique; across the 392-row Chapter 2 offline pool, normalized exact question-stem duplicates: 0 groups, and exact normalized Q&A-pair duplicates: 0 groups.
+- Each new question contains exactly one question mark, contains Devanagari prose without Latin-script prose, and each question and answer is under the 240-character one-liner limit.
+- All 10 rows use `language_code=hi`, `verification_status=NEEDS_REVIEW`, and retain source evidence; none is a PYQ or verified row.
 
 ## Material limitations
 
