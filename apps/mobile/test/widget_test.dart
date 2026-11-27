@@ -9,6 +9,12 @@ void main() {
     expect(find.text('AI-COMP Preparation'), findsOneWidget);
     expect(find.text('Prepare smarter.\nLearn with clarity.'), findsOneWidget);
     expect(find.text('Study library'), findsOneWidget);
+    final offlineLibraryButton = find.widgetWithText(
+      FilledButton,
+      'Open Rajasthan Offline Study Library · 486 Q&A',
+    );
+    expect(offlineLibraryButton, findsOneWidget);
+    expect(tester.widget<FilledButton>(offlineLibraryButton).onPressed, isNotNull);
     expect(find.textContaining('Main chapter'), findsOneWidget);
     expect(find.text('Explore study library'), findsOneWidget);
     expect(find.text('Choose a subject to continue'), findsOneWidget);

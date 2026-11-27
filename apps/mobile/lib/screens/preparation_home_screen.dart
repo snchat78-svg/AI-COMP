@@ -6,6 +6,7 @@ import '../localization/question_bank_labels.dart';
 import '../models/preparation_models.dart';
 import 'test_session_screen.dart';
 import 'question_bank_screen.dart';
+import 'offline_study_library_screen.dart';
 
 class PreparationHomeScreen extends StatefulWidget {
   const PreparationHomeScreen({super.key, this.firebaseUser});
@@ -798,6 +799,30 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
               ),
             ),
             const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                key: const ValueKey('open-offline-rajasthan-library'),
+                onPressed: _loading
+                    ? null
+                    : () => Navigator.of(context).push<void>(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const OfflineStudyLibraryScreen(),
+                          ),
+                        ),
+                icon: const Icon(Icons.offline_pin_rounded),
+                label: const Text('Open Rajasthan Offline Study Library · 486 Q&A'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF312E81),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               key: const ValueKey('study-library-subject-selector'),
               initialValue: _subjects.any((item) => item.subjectId == _selectedSubjectId)
@@ -834,7 +859,7 @@ class _PreparationHomeScreenState extends State<PreparationHomeScreen> {
             if (!_connected) ...[
               const SizedBox(height: 8),
               Text(
-                'Connect to the study service below to unlock subjects and questions.',
+                'Offline Rajasthan study material is available above. Connect below to sync server-based exam data and progress.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
