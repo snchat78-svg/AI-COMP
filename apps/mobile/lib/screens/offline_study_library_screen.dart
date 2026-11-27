@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class OfflineStudyLibraryScreen extends StatefulWidget {
-  const OfflineStudyLibraryScreen({super.key});
+  const OfflineStudyLibraryScreen({
+    super.key,
+    this.dataLoader,
+  });
+
+  final Future<OfflineStudyLibraryData> Function()? dataLoader;
 
   @override
   State<OfflineStudyLibraryScreen> createState() =>
@@ -12,9 +17,15 @@ class OfflineStudyLibraryScreen extends StatefulWidget {
 }
 
 class _OfflineStudyLibraryScreenState extends State<OfflineStudyLibraryScreen> {
-  late final Future<_OfflineLibraryData> _libraryFuture = _loadLibrary();
+  late final Future<OfflineStudyLibraryData> _libraryFuture;
 
-  Future<_OfflineLibraryData> _loadLibrary() async {
+  @override
+  void initState() {
+    super.initState();
+    _libraryFuture = widget.dataLoader?.call() ?? _loadLibrary();
+  }
+
+  Future<OfflineStudyLibraryData> _loadLibrary() async {
     final catalogueSource = await rootBundle.loadString(
       'assets/question_bank/rajasthan_offline_catalogue.json',
     );
@@ -62,7 +73,7 @@ class _OfflineStudyLibraryScreenState extends State<OfflineStudyLibraryScreen> {
         'Offline library में हिंदी, स्रोत-साक्ष्य या review status की जाँच विफल हुई।',
       );
     }
-    return _OfflineLibraryData(subjects: subjects, questions: questions);
+    return OfflineStudyLibraryData(subjects: subjects, questions: questions);
   }
 
   @override
@@ -77,7 +88,7 @@ class _OfflineStudyLibraryScreenState extends State<OfflineStudyLibraryScreen> {
         backgroundColor: const Color(0xFFF5F7FC),
         surfaceTintColor: Colors.transparent,
       ),
-      body: FutureBuilder<_OfflineLibraryData>(
+      body: FutureBuilder<OfflineStudyLibraryData>(
         future: _libraryFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -274,8 +285,8 @@ class _OfflineStudyLibraryScreenState extends State<OfflineStudyLibraryScreen> {
   }
 }
 
-class _OfflineLibraryData {
-  const _OfflineLibraryData({required this.subjects, required this.questions});
+class OfflineStudyLibraryData {
+  const OfflineStudyLibraryData({required this.subjects, required this.questions});
 
   final List<Map<String, dynamic>> subjects;
   final List<Map<String, dynamic>> questions;
@@ -341,7 +352,7 @@ class _OfflineSubjectScreen extends StatelessWidget {
   });
 
   final Map<String, dynamic> subject;
-  final _OfflineLibraryData library;
+  final OfflineStudyLibraryData library;
 
   @override
   Widget build(BuildContext context) {
