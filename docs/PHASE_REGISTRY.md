@@ -881,3 +881,12 @@ The user has explicitly ordered that **all Rajasthan content must be completed b
 - Added forward migration 0033 to update AHB-041/AHB-042 only where the row is still NEEDS_REVIEW and reviewed_at is NULL. It must not overwrite a reviewer decision. Git/offline candidate totals remain 392; live database application/query remains unconfirmed.
 - PR #129's cursor-index migration must now be renumbered to 0034 (not 0033), because migration 0033 is reserved for the safe content correction. Update its migration tests and docs after rebase.
 - Large PDF page-image screenshot attempts still failed on the runtime size/time limits; textual lines are sourced, visual review remains a separate gate.
+
+
+## 2026-11-27 — Ahar-Banas coverage continuation AHB-043–048
+
+- Added six S24-based Hindi-first candidate Q&A: Ojiyana terracotta animal figurines; small Balathal satellite sites for resource acquisition; streets/lanes as evidence for planned settlement; Balathal X-ray diffraction analysis interpreted as regional trade-centre evidence; Tan Ware vessel shapes; fine/coarse pottery functions.
+- Canonical note, migration 0034, mobile offline asset, Hindi-first and migration-parity tests, local count, dashboard fixture, coverage ledger and Ahar-Banas draft audit updated on branch `content/phase6-56-ahb-one-liners-043-048`.
+- Ahar-Banas branch count 48; Chapter 2 branch total 398 = KAL311 + AHB48 + GJ18 + BRT11 + MTS10. All candidates remain NEEDS_REVIEW.
+- PR #132 source-correction branch is a parent dependency and must pass exact-head CI/APK before this content branch is merged. Main remains 392 pending those merges.
+- PR #129 cursor-index migration should use 0035 once this content migration 0034 is merged; do not reuse migration numbers.
