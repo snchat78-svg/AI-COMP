@@ -5,7 +5,7 @@
 Canonical parent: Rajasthan History → Chapter 2, “राजस्थान के प्राचीन सभ्यता स्थल”.
 Child concept: `catalog.rajasthan_history_ancient_history_ahar_banas_culture`.
 
-The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A (AHB-001–AHB-042)**. The additions in this batch were derived from the RBSE Class X textbook (S32) and the published *Puratattva* analysis (S30). This is a draft-scope sweep only; it is not a verified syllabus-completeness result.
+The authoring inventory now contains **48 Hindi-first AI-authored candidate Q&A (AHB-001–AHB-048)**. The additions in this batch were derived from the RBSE Class X textbook (S32) and the published *Puratattva* analysis (S30). This is a draft-scope sweep only; it is not a verified syllabus-completeness result.
 
 | Coverage dimension | Draft coverage in current set | Audit status / remaining check |
 |---|---|---|
@@ -20,7 +20,7 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 | Trade / exchange / interregional contact | AHB-021, 042 | S30 Introduction, printed p.5, explicitly dates growing Harappan trade contact after c.2600 BCE; independently assess how broadly that inference applies |
 | Burial / beliefs / material culture / crafts | AHB-034–035, 039 | Burial-belief inference is textbook interpretation; blocks' function also source-attributed |
 | Book-Chapter 2 scope and exam applicability | Child-topic exists in parent file | User's printed pp.145–149 and the selected official exam-specific syllabus must be mapped before claiming complete |
-| Duplicate / semantic coverage | All 392 IDs unique; exact normalized question-stem and exact Q&A-pair scan returned 0 duplicate groups | This is exact-string screening only; semantic/concept-equivalence audit and database-side duplicate check remain pending |
+| Duplicate / semantic coverage | All 398 IDs unique; exact normalized question-stem and exact Q&A-pair scan returned 0 duplicate groups | This is exact-string screening only; semantic/concept-equivalence audit and database-side duplicate check remain pending |
 
 ## Source register
 
@@ -32,7 +32,7 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 
 ## Additional static checks on AHB-033–AHB-042
 
-- All 10 new IDs are unique; across the 392-row Chapter 2 offline pool, normalized exact question-stem duplicates: 0 groups, and exact normalized Q&A-pair duplicates: 0 groups.
+- All 10 new IDs are unique; across the 398-row Chapter 2 offline pool, normalized exact question-stem duplicates: 0 groups, and exact normalized Q&A-pair duplicates: 0 groups.
 - Each new question contains exactly one question mark, contains Devanagari prose without Latin-script prose, and each question and answer is under the 240-character one-liner limit.
 - All 10 rows use `language_code=hi`, `verification_status=NEEDS_REVIEW`, and retain source evidence; none is a PYQ or verified row.
 
@@ -41,8 +41,8 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 1. The source text/indexed content was retrievable, but screenshot/page-image inspection of the large RBSE and IGNCA-hosted PDFs failed due runtime file-size limits. Printed page/plate images remain a mandatory independent-review task.
 2. AHB-041 has been tightened to the S32 textbook's explicit sequence: Akshayakirti Vyas (1953), followed by Ratan Chandra Agrawal and H.D. Sankalia. The previous draft incorrectly framed S23 as a conflicting discovery attribution; that interpretation has been removed. A full excavation-history review remains open.
 3. No official exam-specific syllabus mapping has been accepted.
-4. The live database has not been queried after migration 0032. Git migration files and local JSON do not prove production persistence.
-5. All 42 AHB and all 392 Chapter 2 candidates remain `NEEDS_REVIEW`; no reviewer audit events, VERIFIED status or PYQ provenance are claimed.
+4. The live database has not been queried after migration 0034. Git migration files and local JSON do not prove production persistence.
+5. All 48 AHB and all 398 Chapter 2 candidates remain `NEEDS_REVIEW`; no reviewer audit events, VERIFIED status or PYQ provenance are claimed.
 6. The full Chapter 2 parent has five child-site sections. Completing this Ahar-Banas drafting pass does not complete Chapter 2.
 
 ## Acceptance actions still required
@@ -62,3 +62,12 @@ The authoring inventory now contains **42 Hindi-first AI-authored candidate Q&A 
 - AHB-041 is revised to the RBSE Class X book's own sequence: Akshayakirti Vyas began excavation in 1953, followed by Ratan Chandra Agrawal and H.D. Sankalia. The previous draft's claim that S23 provided a conflicting attribution was too strong and has been removed.
 - AHB-042 now exactly reflects S30's Introduction (printed p.5): Ahar Culture developed and flourished with growing trade contact with the Harappans after 2600 B.C. The answer no longer generalises the claim to every community in the full Banas region.
 - New forward migration 0033 updates only records still NEEDS_REVIEW with reviewed_at NULL, avoiding any overwrite of an independent reviewer decision. All 392 rows remain NEEDS_REVIEW in the Git/offline candidate bank; live DB effect remains unconfirmed.
+
+
+## 2026-11-27 — Ahar-Banas draft coverage continuation AHB-043–048
+
+- Added six new Hindi-first AI-authored candidates using S24, INFLIBNET/e-PG Pathshala, Chapter 27, §4, HTML line locators 101–119.
+- New dimensions: Ojiyana's terracotta cow and painted bull figurines (religious meaning is only the source's interpretation); small satellite sites associated with Balathal catchment analysis; streets/lanes as evidence of planned settlement; X-ray diffraction finding interpreted as regional trade-centre evidence; Tan Ware shapes and decorative grooves; and functional distinction between fine wares for eating/drinking and coarse jars/handis for storage/cooking.
+- These details extend rather than replace existing chronology, pottery taxonomy, settlement and trade questions. All six are still NEEDS_REVIEW.
+- Exact question-stem and Q&A-pair duplicate screening is run in regression tests for the complete 398-row pool. This does not constitute semantic/concept-equivalence audit.
+- AHB count on this branch is 48; Chapter 2 branch total is 398 (KAL311 + AHB48 + GJ18 + BRT11 + MTS10). The user-supplied book pages 145–149 and selected exam-specific syllabus mapping remain unconfirmed.
