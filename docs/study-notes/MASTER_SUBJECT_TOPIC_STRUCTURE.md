@@ -412,3 +412,8 @@ The single Kalibanga topic's architecture subtopic now indexes KAL-001–KAL-311
 ## 2026-11-18 — chapter 2 child-site coverage extension
 
 Book Chapter 2 now holds 358 primary Hindi Q&A drafts in one parent file: Kalibanga 311, Ahar-Banas 20, Ganeshwar-Jodhpura 18, Bairat/Viratnagar 9. Existing concept IDs remain as child references. All are NEEDS_REVIEW; PDF page-image/plan verification and independent review remain open.
+
+
+## 2026-11-27 — पाँच Rajasthan विषयों के लिए parallel offline coverage
+
+नवीन offline catalogue में राजस्थान इतिहास, भूगोल, राजव्यवस्था एवं प्रशासन, कला एवं संस्कृति और अर्थव्यवस्था के **137 canonical concepts** (5 subjects, 28 topic groups) रखे गए हैं। इनका learner hierarchy वही है: subject → main topic → subtopic। वर्तमान source-backed Hindi-first candidate bundle: इतिहास 398; भूगोल 36 (RGEO-001–029 + 7 पहले से मौजूद seed); राजव्यवस्था 27 (RPO-001–027); कला-संस्कृति 9 (3 Kalbelia seed + 6 UNESCO-sourced additions); अर्थव्यवस्था 16 (Economic Review 2025-26)। कुल **486** candidate Q&A; सभी NEEDS_REVIEW, actual PYQ नहीं। Source-page visual review, independent audit, official exam syllabus fit और live DB import pending हैं। रिक्त concepts catalogue में बने रहेंगे और “प्रश्न तैयारी में” दिखेंगे। See [parallel coverage checkpoint](RAJASTHAN_PARALLEL_COVERAGE_STATUS_2026-11-27.md).
