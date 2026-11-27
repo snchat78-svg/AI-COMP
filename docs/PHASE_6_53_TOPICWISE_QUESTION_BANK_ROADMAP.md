@@ -615,7 +615,7 @@ AHB-033–AHB-042 add ten new source-attributed draft Q&A under the existing Aha
 
 ## 2026-11-27 — Ahar-Banas source precision review
 
-AHB-041 was tightened to the RBSE Class X textbook's stated sequence (Akshayakirti Vyas, 1953; subsequently Ratan Chandra Agrawal and H.D. Sankalia); the previous claim that S23 contradicted this sequence was too strong and has been removed. AHB-042 is narrowed to the exact S30 Introduction claim that Ahar Culture grew with increasing Harappan trade contact after 2600 B.C. (printed p.5). Forward migration 0033 applies only to rows still NEEDS_REVIEW with reviewed_at NULL; it must not overwrite independent reviewer events. All 392 Chapter 2 records remain candidates, not verified. PR #129's cursor-index migration must be renumbered 0034 after rebase.
+AHB-041 was tightened to the RBSE Class X textbook's stated sequence (Akshayakirti Vyas, 1953; subsequently Ratan Chandra Agrawal and H.D. Sankalia); the previous claim that S23 contradicted this sequence was too strong and has been removed. AHB-042 is narrowed to the exact S30 Introduction claim that Ahar Culture grew with increasing Harappan trade contact after 2600 B.C. (printed p.5). Forward migration 0033 applies only to rows still NEEDS_REVIEW with reviewed_at NULL; it must not overwrite independent reviewer events. All 392 main-branch Chapter 2 records remain candidates, not verified. PR #129's cursor-index migration must be renumbered 0035 after rebase because migration 0034 is reserved for AHB-043–048.
 
 
 ## 2026-11-27 — Ahar-Banas content continuation AHB-043–048
