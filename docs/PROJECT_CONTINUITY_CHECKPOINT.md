@@ -2,7 +2,7 @@
 
 **This file is the first-read checkpoint for every new AI-COMP chat/session.** Do not restart from conversation memory alone. Check the repository state in GitHub because it is the shared durable record.
 
-**Last updated:** 2026-11-26 (main checkpoint `845776cd493838ace5f250cf278cd9588ffa31da`; content branch `content/phase6-56-ahb-one-liners-027-032`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 382 candidates are review-pending, not verified.
+**Last updated:** 2026-11-27 (base `main` checkpoint `91736e8568b845f32b05e55fd4aa14716ca2aa91`; active branch `content/phase6-56-ahb-one-liners-033-042`). Phase states: 6.56 IN_PROGRESS, 6.57 PLANNED, 6.58 BLOCKED. Active parent remains Rajasthan History book Chapter 2; 392 candidates are review-pending, not verified.
 **Repository:** https://github.com/snchat78-svg/AI-COMP  
 **Canonical state ledger:** [docs/PHASE_REGISTRY.md](PHASE_REGISTRY.md)  
 **Permanent full-topic content goal:** [docs/QUESTION_BANK_CONTENT_COVERAGE.md](QUESTION_BANK_CONTENT_COVERAGE.md)  
@@ -1087,3 +1087,13 @@ User instruction: first complete every Rajasthan-related subject and important t
 - No protected independent-review API audit, live DB count, official exam syllabus mapping, migration-application proof or APK artifact is established by this content branch. Do not change statuses by editing SQL/JSON.
 - PR #129 (`phase-6-56-authenticated-content-delta-cache`) is a separate open/unmerged software continuation; do not assume its CI or work has been merged into this content branch.
 - Next action: finish review of affected test expectations/other hard-coded counts, open content PR, pass backend pytest and Flutter analyze/tests, then record exact-head CI and APK artifact status. Continue only within Chapter 2 until all child-site coverage and reviewer/source gates pass.
+
+## 2026-11-27 — Ahar-Banas AHB-033–042 content continuation
+
+- Branch: `content/phase6-56-ahb-one-liners-033-042`, based on main merge commit `91736e8568b845f32b05e55fd4aa14716ca2aa91`.
+- Added ten original Hindi Q&A drafts under the existing Ahar-Banas child concept. Scope includes Dhoolkot, burial goods, craft blocks, Gilund excavations and phases, five pottery classes, artifacts, brick technology, divergent source attributions for early Ahar excavation/recognition, and reported increase in Harappan trade contacts after c.2600 BCE.
+- New source S32: Rajasthan Board of Secondary Education, *History and Culture of Rajasthan*, Class X, printed p.4. S30 supports trade-contact interpretation; S23 is paired with S32 for the explicit source-attribution difference in AHB-041. PDF indexed text was used; large-file screenshot/page-image inspection remains outstanding.
+- Added contiguous migration `0032_phase_6_56_ahar_banas_one_liners_033_042.sql`; updated offline JSON, canonical Markdown, parity/language tests and learner draft-count fixtures. Chapter 2 inventory is 392: KAL311 + AHB42 + GJ18 + BRT11 + MTS10. All remain NEEDS_REVIEW, none is PYQ or verified.
+- Important unresolved item: AHB-041 preserves S32's 1953 Akshayakirti Vyas excavation account and S23's 1954–55 R.C. Agrawal site-recognition attribution separately. Do not collapse them into one unsourced answer.
+- PR #129 is still open on old base and has an overlapping 0031 migration index; rebase/renumber that index to 0033 after this 0032 content migration before merging. Do not merge as-is.
+- Do not declare Chapter 2 complete. Official syllabus fit, full printed chapter scope check, semantic duplicate review, page-image review, independent reviewer audit, live DB apply/count, and authenticated learner/mobile E2E remain open. Phase 6.56 remains IN_PROGRESS; no move to Chapter 3 or Indian GK.
