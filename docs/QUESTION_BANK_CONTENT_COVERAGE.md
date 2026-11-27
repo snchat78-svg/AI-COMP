@@ -129,3 +129,8 @@ PR [#104](https://github.com/snchat78-svg/AI-COMP/pull/104) merged the concept-b
 ## One-Liner format gate — 30 October 2026
 
 AI-generated candidates must be short direct Q&A, not essay snippets: one question ending in exactly one `?` or `？`, no line breaks, at most 240 characters for each field, and a concise non-question answer. The application enforces these structural rules before persistence; malformed items are rejected. This is not a factual verification or completeness signal. Keep all candidates NEEDS_REVIEW until an independent reviewer verifies source authority, exact evidence, answer correctness, date-sensitivity and fit to the selected exam's reviewed syllabus. A per-topic count is not proof that all examinable points are covered.
+
+
+## 2026-11-27 Ahar-Banas candidate coverage note
+
+AHB-033–AHB-042 extend the existing Ahar-Banas subtopic to 42 source-attributed Hindi draft Q&A. Newly represented dimensions: site/mound terminology, burial goods, possible textile craft, Gilund excavation sequence, culture phases, pottery grouping, artifacts, brick technology, contested excavation attribution, and regional trade interpretation. This is a **draft-authoring coverage pass**, not a completeness certification. Verify these points against printed source page images; reconcile textbook chapter scope and official exam-specific syllabus; run semantic deduplication; obtain an independent reviewer event for every candidate; apply/query migrations in the live database; and verify authenticated learner-facing content. Keep AHB's syllabus map NOT_YET_MAPPED_TO_EXAM_SPECIFIC_OFFICIAL_SYLLABUS and live DB state NOT_QUERIED until evidenced.
